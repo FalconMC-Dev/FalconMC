@@ -1,0 +1,13 @@
+# cargo
+target/
+
+# intellij
+.idea/
+
+# mac OS
+*.DS_Store
+
+# run
+config/
+logs/
+protocols/
