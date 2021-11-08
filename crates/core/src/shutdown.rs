@@ -1,12 +1,21 @@
 use tokio::sync::{broadcast, mpsc};
 
-/// A handle to help asynchronously shutting down our application
+/// A wrapper around two [Tokio channels](https://docs.rs/tokio/1.13.0/tokio/sync/index.html) to asynchronously control
+/// proper application clean-up upon termination.
 ///
-/// # Safety
-/// This handler can safely be cloned, it is even the way you're supposed
-/// to pass this handle to other parts of the program. Internally it uses
-/// two channels: one for sending a shutdown signal to all clones,
-/// and one it uses as a marker to signal a "shutdown complete from this part of the program" when the handle goes out of scope.
+/// `ShutdownHandle` allows us to easily make sure everything is cleaned up across different threads
+/// before terminating the running application.
+///
+/// This handle has no limitation to only be used for shutdown; on the contrary,
+/// this is a multithreaded flag that allows signaling all related flags from any related flag
+/// and has one master receiver waiting for all flags to signal their tasks having been completed.
+///
+/// ## Cloning
+/// Every thread/task running should own an instance of this struct. Passing
+/// related handles across different threads is done by cloning one such handle.
+///
+/// As long as at least one handle is not dropped, the program will not terminate until all handles
+/// are dropped and thus all tasks have ended.
 pub struct ShutdownHandle {
     #[doc(hidden)]
     signal_sender: broadcast::Sender<()>,
@@ -17,66 +26,55 @@ pub struct ShutdownHandle {
 }
 
 impl ShutdownHandle {
-    /// Returns a Shutdown handle with the sender ("hook") given.
+    /// Creates a new `ShutdownHandle` instance and returns a `Receiver` along with it.
     ///
-    /// # Arguments
-    ///
-    /// * `finished_hook` - A Tokio sender from which the corresponding receiver can be used
-    /// to know whether the process owning this handle is finished.
-    ///
-    /// # Note
-    /// This handle is also able to signal all other clones of this handle
-    /// when the program wants to shut down in order for necessary cleanup to happen.
-    ///
-    /// More info under [`Self::send_shutdown()`] and [`Self::wait_for_shutdown()`].
+    /// This `Receiver` receives a message when all instances related to this handle are dropped.\
+    /// Idiomatically, this `Receiver` should be used in the main loop to wait before quitting.
     ///
     /// # Examples
     ///
     /// ```ignore
-    /// use tokio::sync::mpsc::channel;
     /// use std::mem::drop;
     ///
-    /// use limbo_core::ShutdownHandle;
+    /// use falcon_core::ShutdownHandle;
     ///
-    /// async fn process() {
-    ///     let (send, mut recv) = channel(1);
-    ///     let shutdown_handle = ShutdownHandle::new(send);
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let (shutdown_handle, finish_rx) = ShutdownHandle::new();
     ///
-    ///     // Pass this handle through cloning to other parts of the program that should be cleaned up when shutting down
+    ///     // Pass this handle through cloning to other tasks of the program
     ///
-    ///     // Drop the local scope handle before waiting
+    ///     // Drop the handle in this scope before waiting
     ///     drop(shutdown_handle);
     ///     let _ = recv.recv().await;
-    ///     // everything has shut down
+    ///     // everything is guaranteed to have shut down
     /// }
     /// ```
-    pub fn new(finished_hook: mpsc::Sender<()>) -> ShutdownHandle {
+    pub fn new() -> (ShutdownHandle, mpsc::Receiver<()>) {
+        let (shutdown_finished_tx, shutdown_finished_rx) = mpsc::channel(1);
         let (sender, receiver) = broadcast::channel(1);
-        ShutdownHandle {
+        (ShutdownHandle {
             signal_sender: sender,
             signal_receiver: receiver,
-            shutdown_finished: finished_hook,
-        }
+            shutdown_finished: shutdown_finished_tx,
+        }, shutdown_finished_rx)
     }
 
-    /// Signals all clones of this Handle to initiate shutdown.
-    ///
-    /// When the owner of this handle has finished, it should make sure to have this handle go out of scope.
+    /// Signals all clones of this `ShutdownHandle` to terminate their associated tasks,
+    /// after which each `ShutdownHandle` should be dropped.
     ///
     /// # Examples
     /// ```ignore
-    /// use tokio::sync::mpsc::channel;
     /// use std::mem::drop;
     ///
-    /// use limbo_core::ShutdownHandle;
+    /// use falcon_core::ShutdownHandle;
     ///
-    /// fn do_something() {
-    ///     let (send, mut recv) = channel(1);
-    ///     let shutdown_handle = ShutdownHandle::new(send);
+    /// async fn do_something() {
+    ///     let (shutdown_handle, recv) = ShutdownHandle::new();
     ///
-    ///     // Pass this handle through cloning to all other parts of the program that should know when to shut down
+    ///     // Pass this handle through cloning to all other tasks of the program
     ///
-    ///     // when we want to shutdown
+    ///     // when we want to terminate
     ///     shutdown_handle.send_shutdown();
     ///
     ///     // now we can wait for everything to have shutdown as explained in `ShutdownHandle::new()`
@@ -85,13 +83,7 @@ impl ShutdownHandle {
         let _ = self.signal_sender.send(());
     }
 
-    /// Polls for the status of this handle's signal status.
-    /// # Returns
-    /// True when a shutdown signal was received.
-    ///
-    /// False when a shutdown signal was received.
-    /// # Note
-    /// This function does not block.
+    /// Returns `true` if a shutdown signal has already been received, and `false` otherwise.
     pub fn try_is_shutdown(&mut self) -> bool {
         if let Err(error) = self.signal_receiver.try_recv() {
             if error == broadcast::error::TryRecvError::Empty {
@@ -101,11 +93,7 @@ impl ShutdownHandle {
         true
     }
 
-    /// Waits for this handle to receive a shutdown signal and returns.
-    /// # Note
-    /// Use this function to know when to trigger the shutdown sequence of its owner.
-    ///
-    /// This function asynchronously waits before returning
+    /// Waits asynchronously for this handle to receive a shutdown signal before returning.
     pub async fn wait_for_shutdown(&mut self) -> Result<(), broadcast::error::RecvError> {
         self.signal_receiver.recv().await
     }
