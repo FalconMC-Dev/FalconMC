@@ -49,7 +49,7 @@ pub trait PacketBufferRead {
         if len > max_length * 4 + 3 {
             bail!(ErrorKind::StringTooLong);
         }
-        let result = String::from_utf8(self.read_u8_array(len as usize)?)?;
+        let result = String::from_utf8(self.read_u8_array(len as usize)?).chain_err(|| ErrorKind::BadString)?;
         if result.chars().count() > max_length as usize {
             bail!(ErrorKind::StringTooLong);
         }

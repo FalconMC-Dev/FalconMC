@@ -1,9 +1,6 @@
 use error_chain::error_chain;
 
 error_chain! {
-    foreign_links {
-        Utf8(::std::string::FromUtf8Error);
-    }
     errors {
         /// The PacketBuffer has no more bytes left.
         NoMoreBytes {
@@ -28,11 +25,6 @@ error_chain! {
         /// The received String was longer than the packet field allows for.
         StringTooLong {
             display("String was longer than expected!")
-        }
-
-        /// Plugin errors
-        LibraryLoadingError(message: String) {
-            display("Couldn't load library '{}'", message)
         }
     }
 }
