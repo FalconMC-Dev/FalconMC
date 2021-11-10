@@ -53,11 +53,14 @@ impl ShutdownHandle {
     pub fn new() -> (ShutdownHandle, mpsc::Receiver<()>) {
         let (shutdown_finished_tx, shutdown_finished_rx) = mpsc::channel(1);
         let (sender, receiver) = broadcast::channel(1);
-        (ShutdownHandle {
-            signal_sender: sender,
-            signal_receiver: receiver,
-            shutdown_finished: shutdown_finished_tx,
-        }, shutdown_finished_rx)
+        (
+            ShutdownHandle {
+                signal_sender: sender,
+                signal_receiver: receiver,
+                shutdown_finished: shutdown_finished_tx,
+            },
+            shutdown_finished_rx,
+        )
     }
 
     /// Signals all clones of this `ShutdownHandle` to terminate their associated tasks,

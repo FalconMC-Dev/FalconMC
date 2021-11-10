@@ -6,6 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+falcon_core_derive = { path = "../core_derive" }
+
 log = { version = "0.4", "features" = [ "release_max_level_info" ] }
+error-chain = "0.12"
+
+uuid = "0.8"
+bytes = "1.1"
 
 tokio = { version = "1", features = [ "sync" ] }
