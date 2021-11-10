@@ -2,11 +2,14 @@ use crate::errors::*;
 
 mod packet_macros;
 
+use crossbeam::channel::Sender;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
+use crate::network::PacketHandlerState;
+use crate::server::McTask;
 
-/// Defines the ID of a packet.
-/// All outgoing packets should implement this trait.\
+/// Defines the ID of a packet.\
+/// All outgoing packets should implement this trait.
 pub trait PacketId {
     fn get_packet_id(&self) -> i32;
 }
@@ -19,6 +22,15 @@ pub trait PacketEncode {
 /// Deserializes a type from a network buffer.
 pub trait PacketDecode: Sized {
     fn from_buf(buf: &mut dyn PacketBufferRead) -> Result<Self>;
+}
+
+/// This trait defines the packet logic when a packet gets received.
+pub trait PacketHandler {
+    /// Executes packet logic.
+    fn handle_packet(&mut self, state: &mut PacketHandlerState, task_tx: &mut Sender<Box<McTask>>);
+
+    /// Human-readable identifier of the packet type
+    fn get_name(&self) -> &'static str;
 }
 
 impl_packet_primitive_self!(u8, write_u8, read_u8);
