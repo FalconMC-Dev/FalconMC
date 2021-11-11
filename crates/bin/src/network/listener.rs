@@ -1,6 +1,8 @@
 use tokio::net::TcpListener;
 use falcon_core::ShutdownHandle;
 
+use crate::errors::*;
+
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
 }
@@ -17,10 +19,10 @@ impl NetworkListener {
     }
 
     async fn start_listening(mut self) {
-        let listener = match TcpListener::bind(("127.0.0.1", 30000)).await {
+        let listener = match TcpListener::bind(("127.0.0.1", 30000)).await.chain_err(|| "Could not bind to port 30000!") {
             Ok(listener) => listener,
-            Err(error) => {
-                error!("Could not bind to port due to \"{}\"", error);
+            Err(ref error) => {
+                print_error!(error);
                 return self.shutdown_handle.send_shutdown();
             }
         };

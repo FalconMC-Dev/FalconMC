@@ -17,14 +17,7 @@ async fn main() {
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
     if let Err(ref e) = MainServer::start_server(shutdown_handle.clone()) {
-        println!("error: {}", e);
-        for e in e.iter().skip(1) {
-            println!("caused by: {}", e);
-        }
-
-        if let Some(backtrace) = e.backtrace() {
-            println!("backtrace: {:?}", backtrace);
-        }
+        print_error!(e);
         shutdown_handle.send_shutdown();
     } else {
         tokio::select! {
