@@ -26,5 +26,7 @@ impl MainServer {
         Ok(())
     }
 
-    fn start_server_logic(mut self) {}
+    fn start_server_logic(mut self) {
+        // TODO: ticking etc.
+    }
 }

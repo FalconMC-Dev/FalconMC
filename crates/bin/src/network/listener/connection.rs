@@ -30,7 +30,7 @@ impl ClientConnection {
         connection.start_packet_loop().await;
     }
 
-    pub(self) async fn start_packet_loop(mut self) {
+    async fn start_packet_loop(mut self) {
         loop {
             tokio::select! {
                 _ = self.shutdown_handle.wait_for_shutdown() => {

@@ -40,8 +40,7 @@ impl NetworkListener {
                     match connection {
                         Ok((socket, addr)) => {
                             debug!("Accepted connection at {}", &addr);
-                            let client_connection = ClientConnection::process_socket(self.shutdown_handle.clone(), socket, addr);
-                            tokio::spawn(client_connection);
+                            tokio::spawn(ClientConnection::process_socket(self.shutdown_handle.clone(), socket, addr));
                         },
                         Err(e) => {
                             print_error!(arbitrary_error!(e, ErrorKind::Msg(String::from("Connection broke!"))));
