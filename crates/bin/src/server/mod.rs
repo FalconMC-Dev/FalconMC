@@ -14,7 +14,9 @@ impl MainServer {
 
         let server = MainServer { shutdown_handle };
 
-        tokio::spawn(NetworkListener::start_network_listening(server.shutdown_handle.clone()));
+        tokio::spawn(NetworkListener::start_network_listening(
+            server.shutdown_handle.clone(),
+        ));
 
         thread::Builder::new()
             .name(String::from("Main Server Thread"))

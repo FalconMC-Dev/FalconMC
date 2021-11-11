@@ -1,7 +1,10 @@
+use crate::errors::*;
+
+mod connection;
+
+use connection::ClientConnection;
 use falcon_core::ShutdownHandle;
 use tokio::net::TcpListener;
-
-use crate::errors::*;
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
@@ -35,8 +38,10 @@ impl NetworkListener {
                 }
                 connection = listener.accept() => {
                     match connection {
-                        Ok((_socket, addr)) => {
+                        Ok((socket, addr)) => {
                             debug!("Accepted connection at {}", &addr);
+                            let client_connection = ClientConnection::process_socket(self.shutdown_handle.clone(), socket, addr);
+                            tokio::spawn(client_connection);
                         },
                         Err(e) => {
                             print_error!(arbitrary_error!(e, ErrorKind::Msg(String::from("Connection broke!"))));

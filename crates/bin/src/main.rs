@@ -5,8 +5,6 @@ mod errors;
 mod network;
 mod server;
 
-use errors::*;
-
 use crate::server::MainServer;
 use falcon_core::ShutdownHandle;
 

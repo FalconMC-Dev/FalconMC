@@ -27,7 +27,8 @@ macro_rules! print_error {
 /// Returns a reference.
 macro_rules! arbitrary_error {
     ($err:expr, $chained:expr) => {{
-        let state = ::error_chain::State::new::<$crate::errors::Error>(::std::boxed::Box::new($err));
+        let state =
+            ::error_chain::State::new::<$crate::errors::Error>(::std::boxed::Box::new($err));
         &::error_chain::ChainedError::new($chained, state)
-    }}
+    }};
 }
