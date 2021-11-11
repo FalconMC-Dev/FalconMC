@@ -10,13 +10,13 @@ error_chain! {
 
 macro_rules! print_error {
     ($e:ident) => {{
-        error!("error: {}", $e);
+        ::log::error!("error: {}", $e);
         for e in $e.iter().skip(1) {
-            error!("caused by: {}", e);
+            ::log::error!("caused by: {}", e);
         }
 
         if let Some(backtrace) = $e.backtrace() {
-            error!("backtrace: {:?}", backtrace);
+            ::log::error!("backtrace: {:?}", backtrace);
         }
     }};
 }
