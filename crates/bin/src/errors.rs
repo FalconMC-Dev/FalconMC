@@ -18,5 +18,5 @@ macro_rules! print_error {
         if let Some(backtrace) = $e.backtrace() {
             error!("backtrace: {:?}", backtrace);
         }
-    }}
+    }};
 }

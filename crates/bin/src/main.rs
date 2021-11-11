@@ -2,13 +2,13 @@
 extern crate log;
 
 mod errors;
-mod server;
 mod network;
+mod server;
 
 use errors::*;
 
-use falcon_core::ShutdownHandle;
 use crate::server::MainServer;
+use falcon_core::ShutdownHandle;
 
 #[tokio::main]
 async fn main() {

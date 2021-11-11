@@ -2,5 +2,4 @@
 
 pub type McTask = dyn Fn(&mut dyn MinecraftServer) -> () + Send + Sync;
 
-pub trait MinecraftServer {
-}
+pub trait MinecraftServer {}

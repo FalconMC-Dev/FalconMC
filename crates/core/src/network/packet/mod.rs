@@ -2,11 +2,11 @@ use crate::errors::*;
 
 mod packet_macros;
 
-use crossbeam::channel::Sender;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
-pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use crate::network::PacketHandlerState;
 use crate::server::McTask;
+use crossbeam::channel::Sender;
+pub use falcon_core_derive::{PacketDecode, PacketEncode};
 
 /// Defines the ID of a packet.\
 /// All outgoing packets should implement this trait.
