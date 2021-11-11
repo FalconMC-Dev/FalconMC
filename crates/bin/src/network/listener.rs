@@ -34,8 +34,13 @@ impl NetworkListener {
                     break;
                 }
                 connection = listener.accept() => {
-                    if let Ok((_socket, addr)) = connection {
-                        debug!("Accepted connection at {}", &addr);
+                    match connection {
+                        Ok((_socket, addr)) => {
+                            debug!("Accepted connection at {}", &addr);
+                        },
+                        Err(e) => {
+                            print_error!(arbitrary_error!(e, ErrorKind::Msg(String::from("Connection broke!"))));
+                        }
                     }
                 }
             }

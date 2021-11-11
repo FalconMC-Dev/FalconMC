@@ -14,13 +14,12 @@ impl MainServer {
 
         let server = MainServer { shutdown_handle };
 
-        let shutdown_handle2 = server.shutdown_handle.clone();
+        tokio::spawn(NetworkListener::start_network_listening(server.shutdown_handle.clone()));
+
         thread::Builder::new()
             .name(String::from("Main Server Thread"))
             .spawn(|| server.start_server_logic())
             .chain_err(|| "Couldn't start server logic!")?;
-
-        tokio::spawn(NetworkListener::start_network_listening(shutdown_handle2));
 
         Ok(())
     }
