@@ -208,6 +208,7 @@ dependencies = [
  "crossbeam",
  "error-chain",
  "falcon_core",
+ "falcon_protocol",
  "log",
  "log4rs",
  "tokio",
@@ -233,6 +234,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "falcon_protocol"
+version = "0.1.0"
+dependencies = [
+ "error-chain",
+ "falcon_core",
+ "libloading",
+ "log",
+ "once_cell",
 ]
 
 [[package]]
@@ -316,6 +328,16 @@ name = "libc"
 version = "0.2.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fbe5e23404da5b4f555ef85ebed98fb4083e55a00c317800bc2a50ede9f3d219"
+
+[[package]]
+name = "libloading"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0cf036d15402bea3c5d4de17b3fce76b3e4a56ebc1f577be0e7a72f7c607cf0"
+dependencies = [
+ "cfg-if",
+ "winapi",
+]
 
 [[package]]
 name = "linked-hash-map"

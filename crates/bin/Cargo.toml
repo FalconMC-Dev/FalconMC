@@ -11,6 +11,7 @@ path = "src/main.rs"
 
 [dependencies]
 falcon_core = { path = "../core" }
+falcon_protocol = { path = "../protocol" }
 
 log = { version = "0.4", "features" = [ "release_max_level_info" ] }
 log4rs = { version = "1.0", features = [ "gzip", "background_rotation" ] }
