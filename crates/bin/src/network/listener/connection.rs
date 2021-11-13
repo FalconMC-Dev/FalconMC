@@ -4,7 +4,7 @@ use std::io::Cursor;
 use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
-use falcon_core::network::connection::ConnectionTask;
+use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use std::net::SocketAddr;
@@ -50,7 +50,17 @@ impl ClientConnection {
                 _ = self.shutdown_handle.wait_for_shutdown() => {
                     break;
                 }
-                Ok(n) = self.socket.read_buf(&mut self.buffer) => {
+                Some(task) = self.connection_sync.1.recv() => {
+                    task(&mut self);
+                }
+                length = self.socket.read_buf(&mut self.buffer) => {
+                    let n = match length {
+                        Ok(n) => n,
+                        Err(error) => {
+                            print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
+                            break;
+                        }
+                    };
                     if n == 0 {
                         // TODO: fix handling here
                         // disconnect
@@ -115,3 +125,5 @@ impl ClientConnection {
         Err(ErrorKind::InvalidPacketLength.into())
     }
 }
+
+impl MinecraftConnection for ClientConnection {}
