@@ -1,7 +1,7 @@
 use crate::errors::*;
 use std::io::Cursor;
 
-use bytes::{Buf, Bytes, BytesMut};
+use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
 use falcon_core::network::connection::ConnectionTask;
@@ -58,18 +58,43 @@ impl ClientConnection {
                     }
 
                     // TODO: read packets
-
+                    match self.parse_frame() {
+                        Ok(packet) => {
+                            if let Some((preceding, len)) = packet {
+                                if let Err(ref error) = self.handle_packet_buffer(preceding, len) { // TODO: disconnect
+                                    print_error!(error);
+                                    break;
+                                }
+                            }
+                        },
+                        Err(ref error) => { // TODO: communicate disconnect to main server
+                            print_error!(error);
+                            break;
+                        }
+                    }
                     debug!("Received {} bytes", n);
                 }
             }
         }
     }
 
+    fn handle_packet_buffer(&mut self, preceding: usize, len: usize) -> Result<()> {
+        let _packet = self
+            .buffer
+            .split_to(preceding + len)
+            .split_off(preceding)
+            .freeze();
+        // TODO: packet handling + plugin
+        Ok(())
+    }
+
     /// Reads a whole packet from the buffer and returns
     /// both the packet and the byte count with how many bytes it took to read the packet.
     ///
     /// (TODO: add compression and encryption mode!)
-    fn parse_frame(&self) -> Result<Option<(Bytes, usize)>> {
+    ///
+    /// Returns (preceding byte count, frame length)
+    fn parse_frame(&self) -> Result<Option<(usize, usize)>> {
         let mut buf = Cursor::new(&self.buffer[..]);
         let mut length_bytes: [u8; 3] = [0; 3];
         for i in 0..3 {
@@ -81,10 +106,10 @@ impl ClientConnection {
 
             if length_bytes[i] & 0b1000_0000 == 0 {
                 let mut length_buf = Cursor::new(&length_bytes[..]);
-                let length = length_buf.read_var_i32()? as usize;
-                trace!("Frame is {} bytes long", length);
-                buf.ensure_bytes_available(length)?;
-                return Ok(Some((buf.copy_to_bytes(length), length + i + 1)));
+                let frame_length = length_buf.read_var_i32()? as usize;
+                trace!("Frame is {} bytes long", frame_length);
+                buf.ensure_bytes_available(frame_length)?;
+                return Ok(Some((i + 1, frame_length)));
             }
         }
         Err(ErrorKind::InvalidPacketLength.into())
