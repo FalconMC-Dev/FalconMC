@@ -1,6 +1,7 @@
 //! Part of the Public API of FalconMC
 
 pub mod buffer;
+pub mod connection;
 pub mod packet;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
