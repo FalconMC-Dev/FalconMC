@@ -1,6 +1,8 @@
 use crate::errors::*;
 
 use bytes::BytesMut;
+use crossbeam::channel::Sender;
+use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use std::net::SocketAddr;
 use tokio::io::AsyncReadExt;
@@ -12,6 +14,7 @@ pub struct ClientConnection {
     addr: SocketAddr,
     // packet handling
     buffer: BytesMut,
+    server_tx: Sender<Box<McTask>>,
 }
 
 impl ClientConnection {
@@ -19,12 +22,14 @@ impl ClientConnection {
         shutdown_handle: ShutdownHandle,
         socket: TcpStream,
         addr: SocketAddr,
+        server_tx: Sender<Box<McTask>>,
     ) {
         let connection = ClientConnection {
             shutdown_handle,
             socket,
             addr,
             buffer: BytesMut::with_capacity(4096),
+            server_tx,
         };
 
         connection.start_packet_loop().await;
