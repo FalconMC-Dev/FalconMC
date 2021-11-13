@@ -2,7 +2,7 @@ use bytes::Buf;
 use uuid::Uuid;
 
 use crate::errors::*;
-use error_chain::bail;
+use error_chain::{bail, ensure};
 
 pub trait PacketBufferRead {
     /// Reads an [`i8`] from the underlying buffer.
@@ -163,9 +163,7 @@ pub trait ByteLimitCheck {
 
 impl<T: Buf> ByteLimitCheck for T {
     fn ensure_bytes_available(&self, amount: usize) -> Result<()> {
-        if self.remaining() < amount {
-            bail!(ErrorKind::NoMoreBytes);
-        }
+        ensure!(self.remaining() >= amount, ErrorKind::NoMoreBytes);
         Ok(())
     }
 }

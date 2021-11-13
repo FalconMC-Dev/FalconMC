@@ -1,10 +1,14 @@
 #![macro_use]
 
-use error_chain::error_chain;
-
 error_chain! {
     links {
         Core(::falcon_core::errors::Error, ::falcon_core::errors::ErrorKind);
+    }
+    errors {
+        InvalidPacketLength {
+            description("Incoming packet size was longer than 21 bits"),
+            display("Incoming packet size was longer than 21 bits!"),
+        }
     }
 }
 
