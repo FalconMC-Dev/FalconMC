@@ -1,18 +1,20 @@
-use crate::errors::*;
 use std::io::Cursor;
+use std::net::SocketAddr;
 
 use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
+use tokio::io::AsyncReadExt;
+use tokio::net::TcpStream;
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use falcon_protocol::UNKNOWN_PROTOCOL;
-use std::net::SocketAddr;
-use tokio::io::AsyncReadExt;
-use tokio::net::TcpStream;
-use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+
+use crate::errors::*;
 
 pub struct ClientConnection {
     shutdown_handle: ShutdownHandle,
@@ -101,17 +103,14 @@ impl ClientConnection {
             .freeze();
         let packet_id = packet.read_var_i32()?;
         debug!("Packet id = {}", packet_id);
-        match falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
+        if let None = falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
             packet_id,
             &mut packet,
             self,
-        ) {
-            Some(result) => result.map_err(|err| err.into()),
-            None => {
-                debug!("Unknown packet received, skipping!");
-                Ok(())
-            }
+        )? {
+            debug!("Unknown packet received, skipping!");
         }
+        Ok(())
     }
 
     /// Reads a whole packet from the buffer and returns
@@ -154,4 +153,6 @@ impl MinecraftConnection for ClientConnection {
     fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>> {
         &mut self.server_tx
     }
+
+    fn disconnect(&mut self, _reason: String) {} // TODO: change into ChatComponent
 }

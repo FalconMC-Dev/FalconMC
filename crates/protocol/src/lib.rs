@@ -38,5 +38,5 @@ pub trait ProtocolPlugin: Any + Send + Sync {
         packet_id: i32,
         buffer: &mut dyn PacketBufferRead,
         connection: &mut dyn MinecraftConnection,
-    ) -> Option<Result<()>>;
+    ) -> Result<Option<()>>;
 }

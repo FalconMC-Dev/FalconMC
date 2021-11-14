@@ -11,4 +11,6 @@ pub trait MinecraftConnection {
     fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState;
 
     fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>>;
+
+    fn disconnect(&mut self, reason: String); // TODO: change into ChatComponent
 }

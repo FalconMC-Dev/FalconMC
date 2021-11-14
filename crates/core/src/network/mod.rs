@@ -22,6 +22,10 @@ impl PacketHandlerState {
         self.protocol_id
     }
 
+    pub fn set_protocol_id(&mut self, protocol_id: i32) {
+        self.protocol_id = protocol_id;
+    }
+
     pub fn get_connection_state(&self) -> ConnectionState {
         self.connection_state
     }

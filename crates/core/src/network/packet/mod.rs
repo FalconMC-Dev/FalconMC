@@ -1,12 +1,10 @@
+pub use falcon_core_derive::{PacketDecode, PacketEncode};
+
 use crate::errors::*;
+use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
+use crate::network::connection::MinecraftConnection;
 
 mod packet_macros;
-
-use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
-use crate::network::PacketHandlerState;
-use crate::server::McTask;
-use crossbeam::channel::Sender;
-pub use falcon_core_derive::{PacketDecode, PacketEncode};
 
 /// Defines the ID of a packet.\
 /// All outgoing packets should implement this trait.
@@ -27,7 +25,7 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler {
     /// Executes packet logic.
-    fn handle_packet(&mut self, state: &mut PacketHandlerState, task_tx: &mut Sender<Box<McTask>>);
+    fn handle_packet(&mut self, connection: &mut dyn MinecraftConnection);
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;

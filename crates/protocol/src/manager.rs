@@ -86,21 +86,20 @@ impl ProtocolPluginManager {
         packet_id: i32,
         buffer: &mut dyn PacketBufferRead,
         connection: &mut dyn MinecraftConnection,
-    ) -> Option<Result<()>> {
+    ) -> Result<Option<()>> {
         let mut found = false;
         for (_, factory) in &self.plugins {
             trace!("Firing read_packet for {}", factory.name());
-            if let Some(result) = factory.process_packet(packet_id, buffer, connection) {
-                match result {
-                    Ok(_) => found = true,
-                    Err(error) => return Some(Err(error)),
-                }
+            match factory.process_packet(packet_id, buffer, connection) {
+                Ok(Some(_)) => found = true,
+                Err(error) => return Err(error),
+                _ => {}
             }
         }
         if found {
-            Some(Ok(()))
+            Ok(Some(()))
         } else {
-            None
+            Ok(None)
         }
     }
 
