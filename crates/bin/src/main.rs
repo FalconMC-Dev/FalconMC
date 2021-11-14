@@ -12,7 +12,7 @@ use falcon_core::ShutdownHandle;
 
 #[tokio::main]
 async fn main() {
-    log4rs::init_file("config/log4rs.yml", Default::default()).unwrap();
+    log4rs::init_file(falcon_core::LOG_CONFIG, Default::default()).unwrap();
     info!("Launching Falcon Server!");
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();

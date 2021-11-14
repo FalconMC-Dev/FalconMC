@@ -8,3 +8,5 @@ pub mod server;
 mod shutdown;
 
 pub use shutdown::ShutdownHandle;
+
+pub static LOG_CONFIG: &'static str = "./config/log4rs.yml";

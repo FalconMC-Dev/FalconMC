@@ -237,6 +237,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "falcon_default_protocol"
+version = "0.1.0"
+dependencies = [
+ "error-chain",
+ "falcon_core",
+ "falcon_protocol",
+ "log",
+ "log4rs",
+]
+
+[[package]]
 name = "falcon_protocol"
 version = "0.1.0"
 dependencies = [

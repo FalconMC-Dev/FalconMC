@@ -1,17 +1,21 @@
 #[macro_use]
-extern crate log;
-#[macro_use]
 extern crate error_chain;
+#[macro_use]
+extern crate log;
+
+use std::alloc::System;
+use std::any::Any;
+
+use errors::*;
+use falcon_core::network::buffer::PacketBufferRead;
+use falcon_core::network::connection::MinecraftConnection;
 
 pub mod errors;
 mod macros;
 pub mod manager;
 
-use falcon_core::network::buffer::PacketBufferRead;
-use falcon_core::network::connection::MinecraftConnection;
-use std::any::Any;
-
-use errors::*;
+#[global_allocator]
+static ALLOCATOR: System = System;
 
 pub static UNKNOWN_PROTOCOL: i32 = -1;
 
