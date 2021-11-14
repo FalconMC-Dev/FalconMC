@@ -3,14 +3,13 @@ extern crate log;
 #[macro_use]
 extern crate error_chain;
 
-mod macros;
 pub mod errors;
+mod macros;
 pub mod manager;
 
-use std::any::Any;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::PacketHandlerState;
+use std::any::Any;
 
 use errors::*;
 
@@ -33,7 +32,6 @@ pub trait ProtocolPlugin: Any + Send + Sync {
     fn process_packet(
         &self,
         packet_id: i32,
-        state: &mut PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,
         connection: &mut dyn MinecraftConnection,
     ) -> Option<Result<()>>;

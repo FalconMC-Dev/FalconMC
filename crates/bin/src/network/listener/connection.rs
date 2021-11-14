@@ -5,8 +5,10 @@ use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
+use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
+use falcon_protocol::UNKNOWN_PROTOCOL;
 use std::net::SocketAddr;
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpStream;
@@ -17,6 +19,7 @@ pub struct ClientConnection {
     socket: TcpStream,
     addr: SocketAddr,
     // packet handling
+    handler_state: PacketHandlerState,
     buffer: BytesMut,
     server_tx: Sender<Box<McTask>>,
     connection_sync: (
@@ -36,6 +39,7 @@ impl ClientConnection {
             shutdown_handle,
             socket,
             addr,
+            handler_state: PacketHandlerState::new(UNKNOWN_PROTOCOL),
             buffer: BytesMut::with_capacity(4096),
             server_tx,
             connection_sync: tokio::sync::mpsc::unbounded_channel(),
@@ -58,6 +62,7 @@ impl ClientConnection {
                         Ok(n) => n,
                         Err(error) => {
                             print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
+                            // TODO: proper disconnect handling
                             break;
                         }
                     };
@@ -68,34 +73,46 @@ impl ClientConnection {
                     }
 
                     // TODO: read packets
-                    match self.parse_frame() {
-                        Ok(packet) => {
-                            if let Some((preceding, len)) = packet {
-                                if let Err(ref error) = self.handle_packet_buffer(preceding, len) { // TODO: disconnect
-                                    print_error!(error);
-                                    break;
-                                }
-                            }
-                        },
-                        Err(ref error) => { // TODO: communicate disconnect to main server
-                            print_error!(error);
+                    match self.read_packets() {
+                        Err(ref e) => { // TODO: tell main server disconnect happened
+                            print_error!(e);
                             break;
                         }
+                        _ => {}
                     }
-                    debug!("Received {} bytes", n);
+                    debug!("Received {} bytes, internal buffer size: {}", n, self.buffer.remaining());
                 }
             }
         }
     }
 
+    fn read_packets(&mut self) -> Result<()> {
+        while let Some((preceding, len)) = self.parse_frame()? {
+            self.handle_packet_buffer(preceding, len)?;
+        }
+        Ok(())
+    }
+
     fn handle_packet_buffer(&mut self, preceding: usize, len: usize) -> Result<()> {
-        let _packet = self
+        let mut packet = self
             .buffer
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
         // TODO: packet handling + plugin
-        Ok(())
+        let packet_id = packet.read_var_i32()?;
+        debug!("Packet id = {}", packet_id);
+        match falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
+            packet_id,
+            &mut packet,
+            self,
+        ) {
+            Some(result) => result.map_err(|err| err.into()),
+            None => {
+                debug!("Unknown packet received, skipping!");
+                Ok(())
+            }
+        }
     }
 
     /// Reads a whole packet from the buffer and returns
@@ -126,4 +143,16 @@ impl ClientConnection {
     }
 }
 
-impl MinecraftConnection for ClientConnection {}
+impl MinecraftConnection for ClientConnection {
+    fn get_handler_state(&self) -> &PacketHandlerState {
+        &self.handler_state
+    }
+
+    fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState {
+        &mut self.handler_state
+    }
+
+    fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>> {
+        &mut self.server_tx
+    }
+}

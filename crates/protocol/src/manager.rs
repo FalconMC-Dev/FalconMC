@@ -6,7 +6,6 @@ use once_cell::sync::Lazy;
 
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::PacketHandlerState;
 
 use crate::errors::*;
 use crate::ProtocolPlugin;
@@ -35,12 +34,18 @@ impl ProtocolPluginManager {
         type PluginCreate = unsafe fn() -> *mut dyn ProtocolPlugin;
 
         let lib = Library::new(filename.as_ref()).chain_err(|| {
-            ErrorKind::LibraryLoadingError(filename.as_ref().to_os_string(), String::from("Unable to load plugin from disk!"))
+            ErrorKind::LibraryLoadingError(
+                filename.as_ref().to_os_string(),
+                String::from("Unable to load plugin from disk!"),
+            )
         })?;
         self.loaded_libraries.push(lib);
         let lib = self.loaded_libraries.last().unwrap();
         let constructor: Symbol<PluginCreate> = lib.get(b"_plugin_create").chain_err(|| {
-            ErrorKind::LibraryLoadingError(filename.as_ref().to_os_string(), String::from("The `_plugin_create` symbol wasn't found."))
+            ErrorKind::LibraryLoadingError(
+                filename.as_ref().to_os_string(),
+                String::from("The `_plugin_create` symbol wasn't found."),
+            )
         })?;
         let boxed_raw = constructor();
 
@@ -79,21 +84,24 @@ impl ProtocolPluginManager {
     pub fn process_packet(
         &self,
         packet_id: i32,
-        state: &mut PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,
         connection: &mut dyn MinecraftConnection,
     ) -> Option<Result<()>> {
         let mut found = false;
         for (_, factory) in &self.plugins {
             trace!("Firing read_packet for {}", factory.name());
-            if let Some(result) = factory.process_packet(packet_id, state, buffer, connection) {
+            if let Some(result) = factory.process_packet(packet_id, buffer, connection) {
                 match result {
                     Ok(_) => found = true,
                     Err(error) => return Some(Err(error)),
                 }
             }
         }
-        if found { Some(Ok(())) } else { None }
+        if found {
+            Some(Ok(()))
+        } else {
+            None
+        }
     }
 
     pub(crate) fn unload(&mut self) {
