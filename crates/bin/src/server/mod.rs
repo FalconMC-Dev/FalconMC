@@ -39,10 +39,7 @@ impl MainServer {
 
     fn start_server_logic(mut self) {
         debug!("Starting server logic!");
-        let rt = Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .unwrap();
+        let rt = Builder::new_current_thread().enable_all().build().unwrap();
 
         rt.block_on(async move {
             let mut interval = tokio::time::interval(Duration::from_millis(50));
