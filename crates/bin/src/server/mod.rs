@@ -1,7 +1,10 @@
 use crate::errors::*;
 use crossbeam::channel::Receiver;
-use falcon_core::server::McTask;
+use falcon_core::server::{McTask, MinecraftServer};
 use std::thread;
+use std::time::Duration;
+use tokio::runtime::Builder;
+use tokio::time::MissedTickBehavior;
 
 use crate::network::listener::NetworkListener;
 use falcon_core::ShutdownHandle;
@@ -35,6 +38,35 @@ impl MainServer {
     }
 
     fn start_server_logic(mut self) {
-        // TODO: ticking etc.
+        debug!("Starting server logic!");
+        let rt = Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+
+        rt.block_on(async move {
+            let mut interval = tokio::time::interval(Duration::from_millis(50));
+            interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+
+            loop {
+                self.tick();
+
+                tokio::select! {
+                    _ = interval.tick() => {}
+                    _ = self.shutdown_handle.wait_for_shutdown() => {
+                        debug!("Stopping server logic!");
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    fn tick(&mut self) {
+        while let Ok(task) = self.server_rx.try_recv() {
+            task(self);
+        }
     }
 }
+
+impl MinecraftServer for MainServer {}

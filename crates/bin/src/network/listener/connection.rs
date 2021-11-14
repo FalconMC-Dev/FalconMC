@@ -99,7 +99,6 @@ impl ClientConnection {
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
-        // TODO: packet handling + plugin
         let packet_id = packet.read_var_i32()?;
         debug!("Packet id = {}", packet_id);
         match falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
