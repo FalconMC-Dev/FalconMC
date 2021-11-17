@@ -42,7 +42,7 @@ impl ProtocolPlugin for DefaultProtocol {
 
         VersionMatcher::from(packet_id, handler_state, buffer)
             .map(|option| {
-                option.map(|mut packet| {
+                option.map(|packet| {
                     debug!(
                         "RECV: [{:?}: {}] {}",
                         connection.get_handler_state().get_connection_state(),

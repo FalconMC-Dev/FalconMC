@@ -24,7 +24,7 @@ pub struct HandshakePacket {
 }
 
 impl PacketHandler for HandshakePacket {
-    fn handle_packet(&mut self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
         match self.next_state {
             1 => connection
                 .get_handler_state_mut()
@@ -73,14 +73,14 @@ impl VersionMatcher {
 #[enum_dispatch]
 pub trait DispatchPacketHandler {
     /// Executes packet logic.
-    fn handle_packet(&mut self, connection: &mut dyn MinecraftConnection);
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection);
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;
 }
 
-impl<T: PacketHandler + ?Sized> DispatchPacketHandler for T {
-    fn handle_packet(&mut self, connection: &mut dyn MinecraftConnection) {
+impl<T: PacketHandler> DispatchPacketHandler for T {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
         self.handle_packet(connection);
     }
 

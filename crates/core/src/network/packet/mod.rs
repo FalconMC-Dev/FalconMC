@@ -6,12 +6,6 @@ use crate::network::connection::MinecraftConnection;
 
 mod packet_macros;
 
-/// Defines the ID of a packet.\
-/// All outgoing packets should implement this trait.
-pub trait PacketId {
-    fn get_packet_id(&self) -> i32;
-}
-
 /// Serializes a type to a network buffer.
 pub trait PacketEncode {
     fn to_buf(self, buf: &mut dyn PacketBufferWrite);
@@ -25,7 +19,7 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler {
     /// Executes packet logic.
-    fn handle_packet(&mut self, connection: &mut dyn MinecraftConnection);
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection);
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;

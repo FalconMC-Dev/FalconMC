@@ -3,11 +3,11 @@ use std::net::SocketAddr;
 
 use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
-use tokio::io::AsyncReadExt;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
+use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
@@ -22,8 +22,10 @@ pub struct ClientConnection {
     addr: SocketAddr,
     // packet handling
     handler_state: PacketHandlerState,
-    buffer: BytesMut,
+    out_buffer: BytesMut,
+    in_buffer: BytesMut,
     server_tx: Sender<Box<McTask>>,
+    output_sync: (UnboundedSender<BytesMut>, UnboundedReceiver<BytesMut>),
     connection_sync: (
         UnboundedSender<Box<ConnectionTask>>,
         UnboundedReceiver<Box<ConnectionTask>>,
@@ -42,8 +44,10 @@ impl ClientConnection {
             socket,
             addr,
             handler_state: PacketHandlerState::new(UNKNOWN_PROTOCOL),
-            buffer: BytesMut::with_capacity(4096),
+            out_buffer: BytesMut::with_capacity(4096),
+            in_buffer: BytesMut::with_capacity(4096),
             server_tx,
+            output_sync: tokio::sync::mpsc::unbounded_channel(),
             connection_sync: tokio::sync::mpsc::unbounded_channel(),
         };
 
@@ -59,7 +63,13 @@ impl ClientConnection {
                 Some(task) = self.connection_sync.1.recv() => {
                     task(&mut self);
                 }
-                length = self.socket.read_buf(&mut self.buffer) => {
+                Some(packet) = self.output_sync.1.recv() => {
+                    trace!("Outgoing length: {}", packet.len());
+                    if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
+                        print_error!(e);
+                    }
+                }
+                length = self.socket.read_buf(&mut self.in_buffer) => {
                     let n = match length {
                         Ok(n) => n,
                         Err(error) => {
@@ -69,12 +79,11 @@ impl ClientConnection {
                         }
                     };
                     if n == 0 {
-                        // TODO: fix handling here
+                        // TODO: fix disconnect handling here
                         // disconnect
                         break;
                     }
 
-                    // TODO: read packets
                     match self.read_packets() {
                         Err(ref e) => { // TODO: tell main server disconnect happened
                             print_error!(e);
@@ -82,7 +91,7 @@ impl ClientConnection {
                         }
                         _ => {}
                     }
-                    debug!("Received {} bytes, internal buffer size: {}", n, self.buffer.remaining());
+                    debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
                 }
             }
         }
@@ -97,7 +106,7 @@ impl ClientConnection {
 
     fn handle_packet_buffer(&mut self, preceding: usize, len: usize) -> Result<()> {
         let mut packet = self
-            .buffer
+            .in_buffer
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
@@ -120,7 +129,7 @@ impl ClientConnection {
     ///
     /// Returns (preceding byte count, frame length)
     fn parse_frame(&self) -> Result<Option<(usize, usize)>> {
-        let mut buf = Cursor::new(&self.buffer[..]);
+        let mut buf = Cursor::new(&self.in_buffer[..]);
         let mut length_bytes: [u8; 3] = [0; 3];
         for i in 0..3 {
             if buf.remaining() == 0 {
@@ -152,6 +161,27 @@ impl MinecraftConnection for ClientConnection {
 
     fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>> {
         &mut self.server_tx
+    }
+
+    fn send_packet(
+        &mut self,
+        packet_id: i32,
+        buffer_write: Box<dyn FnOnce(&mut dyn PacketBufferWrite)>,
+    ) {
+        trace!("Sending packet!!! :D");
+        self.out_buffer.write_var_i32(packet_id);
+        buffer_write(&mut self.out_buffer);
+        let temp_buf = self.out_buffer.split();
+        self.out_buffer.write_var_i32(temp_buf.len() as i32);
+        self.out_buffer.unsplit(temp_buf);
+        if let Err(ref e) = self
+            .output_sync
+            .0
+            .send(self.out_buffer.split())
+            .chain_err(|| "Logically impossible error happened :)")
+        {
+            print_error!(e);
+        }
     }
 
     fn disconnect(&mut self, _reason: String) {} // TODO: change into ChatComponent
