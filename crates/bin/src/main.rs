@@ -1,19 +1,30 @@
 #[macro_use]
-extern crate log;
-#[macro_use]
 extern crate error_chain;
+#[macro_use]
+extern crate log;
+
+use falcon_core::server::config::FalconConfig;
+use falcon_core::ShutdownHandle;
+
+use crate::errors::*;
+use crate::server::MainServer;
 
 mod errors;
 mod network;
 mod server;
 
-use crate::server::MainServer;
-use falcon_core::ShutdownHandle;
-
 #[tokio::main]
 async fn main() {
     log4rs::init_file(falcon_core::LOG_CONFIG, Default::default()).unwrap();
     info!("Launching Falcon Server!");
+
+    debug!("Loading config!");
+    if let Err(ref e) = FalconConfig::init_config("falcon.toml")
+        .chain_err(|| "The configuration file could not be loaded!")
+    {
+        print_error!(e);
+        return;
+    }
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
     if let Err(ref e) = MainServer::start_server(shutdown_handle.clone()) {
