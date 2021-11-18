@@ -7,6 +7,7 @@ use crossbeam::channel::Sender;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use tokio::net::TcpListener;
+use falcon_core::server::config::FalconConfig;
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
@@ -30,9 +31,9 @@ impl NetworkListener {
     }
 
     async fn start_listening(mut self) {
-        let listener = match TcpListener::bind(("127.0.0.1", 30000))
+        let listener = match TcpListener::bind(FalconConfig::global().server_socket_addrs())
             .await
-            .chain_err(|| "Could not bind to port 30000!")
+            .chain_err(|| "Could not bind to the address!")
         {
             Ok(listener) => listener,
             Err(ref error) => {
@@ -40,6 +41,7 @@ impl NetworkListener {
                 return self.shutdown_handle.send_shutdown();
             }
         };
+        info!("Network bound to {}", listener.local_addr().unwrap());
 
         loop {
             tokio::select! {

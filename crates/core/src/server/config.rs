@@ -1,6 +1,7 @@
 use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
+use tokio::net::ToSocketAddrs;
 
 static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 
@@ -44,5 +45,9 @@ impl FalconConfig {
     }
     pub fn allow_flight(&self) -> bool {
         self.allow_flight
+    }
+
+    pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ {
+        (self.server_ip(), self.server_port())
     }
 }
