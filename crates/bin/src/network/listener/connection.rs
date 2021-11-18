@@ -9,6 +9,7 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
+use falcon_core::network::packet::PacketEncode;
 use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
@@ -163,14 +164,10 @@ impl MinecraftConnection for ClientConnection {
         &mut self.server_tx
     }
 
-    fn send_packet(
-        &mut self,
-        packet_id: i32,
-        buffer_write: Box<dyn FnOnce(&mut dyn PacketBufferWrite)>,
-    ) {
+    fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode) {
         trace!("Sending packet!!! :D");
         self.out_buffer.write_var_i32(packet_id);
-        buffer_write(&mut self.out_buffer);
+        packet_out.to_buf(&mut self.out_buffer);
         let temp_buf = self.out_buffer.split();
         self.out_buffer.write_var_i32(temp_buf.len() as i32);
         self.out_buffer.unsplit(temp_buf);

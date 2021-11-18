@@ -27,7 +27,7 @@ pub trait PacketBufferWrite {
     fn write_f64(&mut self, value: f64);
 
     /// Writes a [`Uuid`] to the underlying buffer.
-    fn write_uuid(&mut self, uuid: Uuid);
+    fn write_uuid(&mut self, uuid: &Uuid);
 
     /// Writes a byte array to the underlying buffer.
     fn write_u8_array(&mut self, array: &[u8]);
@@ -104,7 +104,7 @@ impl<T: BufMut> PacketBufferWrite for T {
         self.put_f64(value);
     }
 
-    fn write_uuid(&mut self, uuid: Uuid) {
+    fn write_uuid(&mut self, uuid: &Uuid) {
         self.put_u128(uuid.as_u128());
     }
 

@@ -1,4 +1,5 @@
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
+use uuid::Uuid;
 
 use crate::errors::*;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
@@ -8,7 +9,7 @@ mod packet_macros;
 
 /// Serializes a type to a network buffer.
 pub trait PacketEncode {
-    fn to_buf(self, buf: &mut dyn PacketBufferWrite);
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite);
 }
 
 /// Deserializes a type from a network buffer.
@@ -34,4 +35,10 @@ impl_packet_primitive_self!(i64, write_i64, read_i64);
 impl_packet_primitive_self!(f32, write_f32, read_f32);
 impl_packet_primitive_self!(f64, write_f64, read_f64);
 impl_packet_primitive_self!(bool, write_bool, read_bool);
-impl_packet_primitive_self!(uuid::Uuid, write_uuid, read_uuid);
+impl_packet_decode_primitive_self!(::uuid::Uuid, read_uuid);
+
+impl PacketEncode for Uuid {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        buf.write_uuid(self)
+    }
+}

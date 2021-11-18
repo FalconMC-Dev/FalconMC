@@ -61,7 +61,7 @@ fn implement_encoder(item_struct: &mut ItemStruct) -> TokenStream {
 
     quote!(
         impl ::falcon_core::network::packet::PacketEncode for #struct_ident {
-            fn to_buf(self, buf: &mut dyn ::falcon_core::network::buffer::PacketBufferWrite) {
+            fn to_buf(&self, buf: &mut dyn ::falcon_core::network::buffer::PacketBufferWrite) {
                 #encoded_fields
             }
         }

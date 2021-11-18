@@ -4,10 +4,10 @@ mod connection;
 
 use connection::ClientConnection;
 use crossbeam::channel::Sender;
+use falcon_core::server::config::FalconConfig;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use tokio::net::TcpListener;
-use falcon_core::server::config::FalconConfig;
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
