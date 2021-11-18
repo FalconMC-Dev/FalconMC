@@ -1,0 +1,26 @@
+appenders:
+  stdout:
+    kind: console
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S.%3f %Z)(utc)} [{T}] {l:<5.5} - {t} : {m}{n}"
+
+  file:
+    kind: rolling_file
+    path: "logs/latest.log"
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S.%3f %Z)(utc)} [{T}] {l:<5.5} - {t} : {m}{n}"
+    policy:
+      kind: compound
+      trigger:
+        kind: size
+        limit: 50 mb
+      roller:
+        kind: fixed_window
+        pattern: "log/latest-{}.log.gz"
+        count: 4
+
+root:
+  level: trace
+  appenders:
+    - stdout
+    - file

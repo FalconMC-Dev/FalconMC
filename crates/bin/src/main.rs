@@ -19,7 +19,7 @@ async fn main() {
     info!("Launching Falcon Server!");
 
     debug!("Loading config!");
-    if let Err(ref e) = FalconConfig::init_config("falcon.toml")
+    if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")
         .chain_err(|| "The configuration file could not be loaded!")
     {
         print_error!(e);

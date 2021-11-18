@@ -1,0 +1,11 @@
+# Maximum amount of players, -1 indicates unlimited
+max_players = -1
+
+# Server port
+server_port = 30000
+
+# Server ip
+server_ip = '0.0.0.0'
+
+# Whether to enable flight or not
+allow_flight = false
