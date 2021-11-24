@@ -1,14 +1,24 @@
-use std::{env, fs};
-use std::collections::HashMap;
 use std::fmt::Write;
+use std::fs;
 use std::path::PathBuf;
 
 use convert_case::{Case, Casing};
 use linked_hash_map::LinkedHashMap;
 
-use crate::{BlockData, RawBlockData};
-use crate::properties::{display_enum_properties, PropertyType};
-use crate::raw::collect_properties;
+use crate::data::BlockData;
+use crate::properties::display_enum_properties;
+use crate::raw::{collect_properties, RawBlockData};
+
+mod data;
+mod raw;
+mod properties;
+#[cfg(test)]
+mod tests;
+
+fn main() {
+    generate_code();
+    print_properties();
+}
 
 fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
     let mut work_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -16,7 +26,6 @@ fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
     serde_json::from_str(&fs::read_to_string(work_dir).unwrap()).unwrap()
 }
 
-#[test]
 fn generate_code() {
     let blocks = get_data("blocks-1.17.1.json");
     let parsed_data: Vec<(String, BlockData)> = blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
@@ -43,7 +52,6 @@ fn generate_code() {
     fs::write(&path, output).unwrap();
 }
 
-#[test]
 fn print_properties() {
     let blocks = get_data("blocks-1.17.1.json");
     let sorted_props = collect_properties(&blocks);

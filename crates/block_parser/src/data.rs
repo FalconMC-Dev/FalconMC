@@ -1,17 +1,14 @@
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::Write;
+
 use convert_case::{Case, Casing};
+
 use crate::properties::PropertyType;
 use crate::raw::RawBlockData;
 
-mod raw;
-mod properties;
-#[cfg(test)]
-mod tests;
-
 #[derive(Debug)]
 pub struct BlockData {
-    base_id: i32,
-    properties: Option<BlockState>,
+    pub base_id: i32,
+    pub properties: Option<BlockState>,
 }
 
 impl BlockData {
@@ -95,11 +92,10 @@ pub struct BlockState {
 impl TryFrom<RawBlockData> for BlockState {
     type Error = ();
     fn try_from(mut raw: RawBlockData) -> Result<Self, Self::Error> {
-        let mut properties = raw.properties.ok_or(())?;
-        let mut properties: Vec<BlockProperty> = properties.drain().map(|entry| entry.into()).collect();
-        properties.sort_by(|x1, x2| x1.raw.cmp(&x2.raw));
+        let properties: Vec<BlockProperty> = raw.properties.ok_or(())?.into_iter().map(|entry| entry.into()).collect();
+        // properties.sort_by(|x1, x2| x1.raw.cmp(&x2.raw)); // should be unnecessary
         let raw_default = raw.states.drain(..).find(|x| x.default.is_some()).unwrap();
-        let default: Vec<RawPropertyValue> = raw_default.properties.unwrap().drain().map(|x| RawPropertyValue::new(avoid_type(x.0.to_case(Case::Snake)), x.1)).collect();
+        let default: Vec<RawPropertyValue> = raw_default.properties.unwrap().into_iter().map(|x| RawPropertyValue::new(avoid_type(x.0.to_case(Case::Snake)), x.1)).collect();
         Ok(BlockState {
             properties,
             default,

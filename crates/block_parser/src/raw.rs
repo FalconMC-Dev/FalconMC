@@ -1,17 +1,19 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
+
+use linked_hash_map::LinkedHashMap;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct RawBlockData {
-    pub properties: Option<HashMap<String, Vec<String>>>,
+    pub properties: Option<LinkedHashMap<String, Vec<String>>>,
     pub states: Vec<RawBlockState>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct RawBlockState {
-    pub properties: Option<HashMap<String, String>>,
+    pub properties: Option<LinkedHashMap<String, String>>,
     pub id: i32,
     pub default: Option<bool>,
 }
@@ -57,7 +59,7 @@ impl PartialEq<Self> for RawPropertyList {
 
 impl Eq for RawPropertyList {}
 
-pub fn collect_properties(data: &HashMap<String, RawBlockData>) -> Vec<RawPropertyList> {
+pub fn collect_properties(data: &LinkedHashMap<String, RawBlockData>) -> Vec<RawPropertyList> {
     let mut property_values = HashMap::new();
     for (_, entry) in data.iter() {
         if let Some(ref map) = entry.properties {
