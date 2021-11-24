@@ -1,5 +1,6 @@
 use std::fmt::Write;
-use std::fs;
+use std::{env, fs};
+use std::fs::read_dir;
 use std::path::PathBuf;
 
 use convert_case::{Case, Casing};
@@ -16,18 +17,41 @@ mod properties;
 mod tests;
 
 fn main() {
+    if let Some(arg) = env::args().skip(1).next() {
+        if arg == "props" {
+            print_properties();
+            return;
+        }
+    }
     generate_code();
-    print_properties();
+}
+
+fn find_data_files() -> Vec<(i32, String)> {
+    let files = read_dir(String::from(env!("CARGO_MANIFEST_DIR")) + "/raw_data").unwrap();
+    let mut output = Vec::new();
+    for file in files {
+        let file = file.unwrap();
+        let name = file.file_name().into_string().unwrap();
+        // patterns should be "blocks-***.json" with "***" being the data version
+        let (check, trimmed_front) = name.split_at(7);
+        if check != "blocks-" {
+            continue;
+        }
+        let trimmed = trimmed_front.split_at(trimmed_front.len() - 5).0;
+        output.push((trimmed.parse::<i32>().unwrap(), name));
+    }
+    output
 }
 
 fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
-    let mut work_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let mut work_dir = PathBuf::from(String::from(env!("CARGO_MANIFEST_DIR")) + "/raw_data");
     work_dir.push(filename);
     serde_json::from_str(&fs::read_to_string(work_dir).unwrap()).unwrap()
 }
 
 fn generate_code() {
-    let blocks = get_data("blocks-1.17.1.json");
+    let files = find_data_files();
+    let blocks = get_data(&files.get(0).unwrap().1);
     let parsed_data: Vec<(String, BlockData)> = blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
     let mut output = String::new();
     let mut structs = String::new();
@@ -53,7 +77,8 @@ fn generate_code() {
 }
 
 fn print_properties() {
-    let blocks = get_data("blocks-1.17.1.json");
+    let files = find_data_files();
+    let blocks = get_data(files.iter().max_by(|x1, x2| x1.1.cmp(&x2.1)).map(|x| &x.1).unwrap());
     let sorted_props = collect_properties(&blocks);
     println!("Found {} property values:", sorted_props.len());
     for prop in &sorted_props {
