@@ -67,7 +67,7 @@ impl BlockData {
                         write!(output, "{},\n", entry.value)?
                     }
                 },
-                PropertyType::Enum(enum_property) => write!(output, "{}::{},\n", enum_property.get_name(), entry.value.to_case(Case::Pascal))?,
+                PropertyType::Enum((target, _real)) => write!(output, "{}::{},\n", target.get_name(), entry.value.to_case(Case::Pascal))?,
             }
         }
         write!(output, "        }}\n    }}\n}}\n")
@@ -83,9 +83,23 @@ impl From<RawBlockData> for BlockData {
     }
 }
 
-#[derive(Debug)]
+impl BlockData {
+    pub fn safe_from(raw: RawBlockData) -> Option<Self> {
+        let base_id = raw.states.get(0).unwrap().id;
+        let properties = match BlockState::safe_from(raw) {
+            Ok(props) => props,
+            Err(_) => return None,
+        };
+        Some(BlockData {
+            base_id,
+            properties
+        })
+    }
+}
+
+#[derive(Debug, Eq)]
 pub struct BlockState {
-    properties: Vec<BlockProperty>,
+    pub properties: Vec<BlockProperty>,
     default: Vec<RawPropertyValue>,
 }
 
@@ -103,7 +117,31 @@ impl TryFrom<RawBlockData> for BlockState {
     }
 }
 
-#[derive(Debug)]
+impl PartialEq for BlockState {
+    fn eq(&self, other: &Self) -> bool {
+        self.properties.eq(&other.properties)
+    }
+}
+
+impl BlockState {
+    pub fn safe_from(mut raw: RawBlockData) -> Result<Option<Self>, ()> {
+        if raw.properties.is_none() {
+            return Ok(None);
+        }
+        let mut properties: Vec<BlockProperty> = Vec::new();
+        for entry in raw.properties.unwrap().into_iter() {
+            properties.push(BlockProperty::try_from(entry)?);
+        }
+        let raw_default = raw.states.drain(..).find(|x| x.default.is_some()).unwrap();
+        let default: Vec<RawPropertyValue> = raw_default.properties.unwrap().into_iter().map(|x| RawPropertyValue::new(avoid_type(x.0.to_case(Case::Snake)), x.1)).collect();
+        Ok(Some(BlockState {
+            properties,
+            default,
+        }))
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub struct BlockProperty {
     raw: String,
     pub name: String,
@@ -120,6 +158,19 @@ impl From<(String, Vec<String>)> for BlockProperty {
     }
 }
 
+impl BlockProperty {
+    pub fn try_from(raw: (String, Vec<String>)) -> Result<Self, ()> {
+        let raw_name = raw.0.clone();
+        let name = avoid_type(raw.0.to_case(Case::Snake));
+        let property_type = PropertyType::find(raw.0, raw.1).ok_or(())?;
+        Ok(BlockProperty {
+            raw: raw_name,
+            name,
+            property_type,
+        })
+    }
+}
+
 fn avoid_type(mut input: String) -> String {
     if input == "type" {
         input.push('d');
@@ -127,7 +178,7 @@ fn avoid_type(mut input: String) -> String {
     input
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct RawPropertyValue {
     name: String,
     value: String,

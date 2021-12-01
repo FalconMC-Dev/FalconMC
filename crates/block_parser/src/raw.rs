@@ -5,13 +5,13 @@ use std::fmt::{Debug, Formatter};
 use linked_hash_map::LinkedHashMap;
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct RawBlockData {
     pub properties: Option<LinkedHashMap<String, Vec<String>>>,
     pub states: Vec<RawBlockState>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct RawBlockState {
     pub properties: Option<LinkedHashMap<String, String>>,
     pub id: i32,
