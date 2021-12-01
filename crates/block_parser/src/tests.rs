@@ -1,14 +1,14 @@
-use std::{env, fs};
 use std::collections::HashMap;
 use std::fmt::Write;
 use std::path::PathBuf;
+use std::{env, fs};
 
 use convert_case::{Case, Casing};
 use linked_hash_map::LinkedHashMap;
 
-use crate::{BlockData, RawBlockData};
 use crate::properties::{display_enum_properties, PropertyType};
 use crate::raw::collect_properties;
+use crate::{BlockData, RawBlockData};
 
 fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
     let mut work_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -19,7 +19,8 @@ fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
 #[test]
 fn generate_code() {
     let blocks = get_data("blocks-1.17.1.json");
-    let parsed_data: Vec<(String, BlockData)> = blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
+    let parsed_data: Vec<(String, BlockData)> =
+        blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
     let mut output = String::new();
     let mut structs = String::new();
     write!(output, "#![allow(dead_code)]\n").unwrap();
@@ -56,7 +57,10 @@ fn print_properties() {
     for i in 0..sorted_props.len() {
         if sorted_props[..].iter().any(|x| {
             x != &sorted_props[i]
-                && !x.values.iter().any(|z| z == "true" || z.parse::<i8>().is_ok())
+                && !x
+                    .values
+                    .iter()
+                    .any(|z| z == "true" || z.parse::<i8>().is_ok())
                 && !sorted_props[i].values.iter().any(|z| z == "true")
                 && sorted_props[i].names.iter().any(|y| x.names.contains(y))
         }) {

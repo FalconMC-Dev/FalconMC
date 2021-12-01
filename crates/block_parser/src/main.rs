@@ -1,7 +1,7 @@
 use std::fmt::Write;
-use std::{env, fs};
 use std::fs::read_dir;
 use std::path::PathBuf;
+use std::{env, fs};
 
 use convert_case::{Case, Casing};
 use linked_hash_map::LinkedHashMap;
@@ -11,8 +11,8 @@ use crate::properties::{display_enum_properties, PropertyType};
 use crate::raw::{collect_properties, RawBlockData};
 
 mod data;
-mod raw;
 mod properties;
+mod raw;
 #[cfg(test)]
 mod tests;
 
@@ -57,7 +57,8 @@ fn generate_code() {
     let blocks = get_data(&files.get(0).unwrap().1);
 
     // base structure (highest data version)
-    let base_parsed_data: Vec<(String, BlockData)> = blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
+    let base_parsed_data: Vec<(String, BlockData)> =
+        blocks.into_iter().map(|x| (x.0, x.1.into())).collect();
     let mut output = String::new();
     let mut structs = String::new();
     write!(output, "#![allow(dead_code)]\n").unwrap();
@@ -88,52 +89,72 @@ fn generate_code() {
                 None => {
                     count += 1;
                     println!("Could not parse {:?}", name);
-                },
-                Some(data) => {
-                    match base_parsed_data.iter().find(|x| x.0.eq(&name)) {
-                        Some(matched) => {
-                            let mut found = true;
-                            if let Some(block_state) = &data.properties {
-                                if let Some(base_props) = matched.1.properties.as_ref() {
-                                    for prop in &block_state.properties {
-                                        if !base_props.properties.contains(&prop) {
-                                            found = false;
-                                            break;
-                                        }
-                                        if let PropertyType::Enum((target, real)) = &prop.property_type {
-                                            if real.as_ref().unwrap().fields.iter().enumerate().any(|(i, x)| target.fields.get(i) != Some(x)) {
-                                                if let Some(list) = enum_appendix.get_mut(&name) {
-                                                    list.push(prop.name.clone());
-                                                } else {
-                                                    enum_appendix.insert(name.clone(), vec![prop.name.clone()]);
-
-                                                }
+                }
+                Some(data) => match base_parsed_data.iter().find(|x| x.0.eq(&name)) {
+                    Some(matched) => {
+                        let mut found = true;
+                        if let Some(block_state) = &data.properties {
+                            if let Some(base_props) = matched.1.properties.as_ref() {
+                                for prop in &block_state.properties {
+                                    if !base_props.properties.contains(&prop) {
+                                        found = false;
+                                        break;
+                                    }
+                                    if let PropertyType::Enum((target, real)) = &prop.property_type
+                                    {
+                                        if real
+                                            .as_ref()
+                                            .unwrap()
+                                            .fields
+                                            .iter()
+                                            .enumerate()
+                                            .any(|(i, x)| target.fields.get(i) != Some(x))
+                                        {
+                                            if let Some(list) = enum_appendix.get_mut(&name) {
+                                                list.push(prop.name.clone());
+                                            } else {
+                                                enum_appendix
+                                                    .insert(name.clone(), vec![prop.name.clone()]);
                                             }
                                         }
                                     }
-                                } else {
-                                    found = false;
                                 }
-                            }
-                            if !found {
-                                count += 1;
-                                println!("Could not find matched properties for {} due to {:?} vs {:?}", name, matched.1.properties, data.properties);
                             } else {
-                                valid_blocks.insert(name, data);
+                                found = false;
                             }
-                        },
-                        None => {
+                        }
+                        if !found {
                             count += 1;
-                            println!("Could not match {}", name);
+                            println!(
+                                "Could not find matched properties for {} due to {:?} vs {:?}",
+                                name, matched.1.properties, data.properties
+                            );
+                        } else {
+                            valid_blocks.insert(name, data);
                         }
                     }
-                }
+                    None => {
+                        count += 1;
+                        println!("Could not match {}", name);
+                    }
+                },
             }
         }
         println!("{} were not matched for version {}", count, version);
-        println!("{}/{} successfully merged from version {}", valid_blocks.len(), raw_len, version);
+        println!(
+            "{}/{} successfully merged from version {}",
+            valid_blocks.len(),
+            raw_len,
+            version
+        );
 
-        print_block_to_id(&mut output, &base_parsed_data, &valid_blocks, &enum_appendix, *version);
+        print_block_to_id(
+            &mut output,
+            &base_parsed_data,
+            &valid_blocks,
+            &enum_appendix,
+            *version,
+        );
     }
     println!("Found {} enum appendix entries", enum_appendix.len());
     print_base_blocks_to_id(&mut output, &base_parsed_data, files.get(0).unwrap().0);
@@ -147,8 +168,19 @@ fn generate_code() {
     fs::write(&path, output).unwrap();
 }
 
-fn print_block_to_id<W: Write>(output: &mut W, base_blocks: &Vec<(String, BlockData)>, block_list: &LinkedHashMap<String, BlockData>, enum_appendix: &LinkedHashMap<String, Vec<String>>, version: i32) {
-    write!(output, "    pub fn get_global_id_{}(&self) -> Option<i32> {{\n", version).unwrap();
+fn print_block_to_id<W: Write>(
+    output: &mut W,
+    base_blocks: &Vec<(String, BlockData)>,
+    block_list: &LinkedHashMap<String, BlockData>,
+    enum_appendix: &LinkedHashMap<String, Vec<String>>,
+    version: i32,
+) {
+    write!(
+        output,
+        "    pub fn get_global_id_{}(&self) -> Option<i32> {{\n",
+        version
+    )
+    .unwrap();
     write!(output, "        match self {{\n").unwrap();
     for (name, data) in base_blocks {
         let matched_block = block_list.get(name);
@@ -160,76 +192,128 @@ fn print_block_to_id<W: Write>(output: &mut W, base_blocks: &Vec<(String, BlockD
                 } else {
                     write!(output, "            Blocks::{}(_) => None,\n", pascal_name).unwrap();
                 }
-            },
-            Some(block_data) => {
-                match &data.properties {
-                    None => write!(output, "            Blocks::{} => Some({}),\n", pascal_name, block_data.base_id).unwrap(),
-                    Some(_props) => {
-                        if let Some(properties) = &block_data.properties {
-                            write!(output, "            Blocks::{}(state) => {{\n", pascal_name).unwrap();
-                            let mut result = String::new();
-                            write!(result, "                Some({}", block_data.base_id).unwrap();
-                            let mut counter = 0;
-                            for (i, property) in properties.properties.iter().rev().enumerate() {
-                                if i > 0 {
-                                    write!(result, " + {} * ", i + 1).unwrap();
-                                } else {
-                                    write!(result, " + ").unwrap();
+            }
+            Some(block_data) => match &data.properties {
+                None => write!(
+                    output,
+                    "            Blocks::{} => Some({}),\n",
+                    pascal_name, block_data.base_id
+                )
+                .unwrap(),
+                Some(_props) => {
+                    if let Some(properties) = &block_data.properties {
+                        write!(output, "            Blocks::{}(state) => {{\n", pascal_name)
+                            .unwrap();
+                        let mut result = String::new();
+                        write!(result, "                Some({}", block_data.base_id).unwrap();
+                        let mut counter = 0;
+                        for (i, property) in properties.properties.iter().rev().enumerate() {
+                            if i > 0 {
+                                write!(result, " + {} * ", i + 1).unwrap();
+                            } else {
+                                write!(result, " + ").unwrap();
+                            }
+                            match &property.property_type {
+                                PropertyType::Bool => {
+                                    write!(result, "(!state.{}() as i32)", property.name).unwrap()
                                 }
-                                match &property.property_type {
-                                    PropertyType::Bool => write!(result, "(!state.{}() as i32)", property.name).unwrap(),
-                                    PropertyType::Int(_) => write!(result, "state.{}", property.name).unwrap(),
-                                    PropertyType::Enum((target, real)) => {
-                                        let real = real.clone().unwrap();
-                                        let mut changed_positions = false;
-                                        if let Some(properties) = enum_appendix.get(name) {
-                                            if properties.contains(&property.name) {
-                                                write!(output, "                let value{} = match state.{} {{\n", counter, property.name).unwrap();
-                                                for (index, real_prop) in real.fields.iter().enumerate() {
-                                                    write!(output, "                    {}::{} => {},\n", target.get_name(), real_prop.to_case(Case::Pascal), index).unwrap();
-                                                }
+                                PropertyType::Int(_) => {
+                                    write!(result, "state.{}", property.name).unwrap()
+                                }
+                                PropertyType::Enum((target, real)) => {
+                                    let real = real.clone().unwrap();
+                                    let mut changed_positions = false;
+                                    if let Some(properties) = enum_appendix.get(name) {
+                                        if properties.contains(&property.name) {
+                                            write!(
+                                                output,
+                                                "                let value{} = match state.{} {{\n",
+                                                counter, property.name
+                                            )
+                                            .unwrap();
+                                            for (index, real_prop) in real.fields.iter().enumerate()
+                                            {
+                                                write!(
+                                                    output,
+                                                    "                    {}::{} => {},\n",
+                                                    target.get_name(),
+                                                    real_prop.to_case(Case::Pascal),
+                                                    index
+                                                )
+                                                .unwrap();
                                             }
-                                            changed_positions = true;
                                         }
-                                        if target.fields.len() > real.fields.len() {
-                                            if changed_positions {
-                                                write!(output, "                    _ => return None,\n").unwrap();
-                                            } else {
-                                                write!(output, "                if state.{} > {}::{} {{\n", property.name, target.get_name(), real.fields.last().unwrap().to_case(Case::Pascal)).unwrap();
-                                                write!(output, "                    return None;\n").unwrap();
-                                                write!(output, "                }}\n").unwrap();
-                                            }
-                                        }
+                                        changed_positions = true;
+                                    }
+                                    if target.fields.len() > real.fields.len() {
                                         if changed_positions {
-                                            write!(output, "                }};\n").unwrap();
-                                            write!(result, "value{}", counter).unwrap();
-                                            counter += 1;
+                                            write!(
+                                                output,
+                                                "                    _ => return None,\n"
+                                            )
+                                            .unwrap();
                                         } else {
-                                            write!(result, "(state.{} as i32)", property.name).unwrap();
+                                            write!(
+                                                output,
+                                                "                if state.{} > {}::{} {{\n",
+                                                property.name,
+                                                target.get_name(),
+                                                real.fields.last().unwrap().to_case(Case::Pascal)
+                                            )
+                                            .unwrap();
+                                            write!(output, "                    return None;\n")
+                                                .unwrap();
+                                            write!(output, "                }}\n").unwrap();
                                         }
+                                    }
+                                    if changed_positions {
+                                        write!(output, "                }};\n").unwrap();
+                                        write!(result, "value{}", counter).unwrap();
+                                        counter += 1;
+                                    } else {
+                                        write!(result, "(state.{} as i32)", property.name).unwrap();
                                     }
                                 }
                             }
-                            write!(output, "{})\n            }}\n", result).unwrap();
-                        } else {
-                            write!(output, "            Blocks::{}(_) => Some({}),\n", pascal_name, block_data.base_id).unwrap()
                         }
+                        write!(output, "{})\n            }}\n", result).unwrap();
+                    } else {
+                        write!(
+                            output,
+                            "            Blocks::{}(_) => Some({}),\n",
+                            pascal_name, block_data.base_id
+                        )
+                        .unwrap()
                     }
                 }
-            }
+            },
         }
     }
     write!(output, "        }}\n").unwrap();
     write!(output, "    }}\n").unwrap();
 }
 
-fn print_base_blocks_to_id<W: Write>(output: &mut W, block_list: &Vec<(String, BlockData)>, version: i32) {
-    write!(output, "    pub fn get_global_id_{}(&self) -> i32 {{\n", version).unwrap();
+fn print_base_blocks_to_id<W: Write>(
+    output: &mut W,
+    block_list: &Vec<(String, BlockData)>,
+    version: i32,
+) {
+    write!(
+        output,
+        "    pub fn get_global_id_{}(&self) -> i32 {{\n",
+        version
+    )
+    .unwrap();
     write!(output, "        match self {{\n").unwrap();
     for (name, data) in block_list {
         let name = name.split_once(":").unwrap().1.to_case(Case::Pascal);
         match &data.properties {
-            None => write!(output, "            Blocks::{} => {},\n", name, data.base_id).unwrap(),
+            None => write!(
+                output,
+                "            Blocks::{} => {},\n",
+                name, data.base_id
+            )
+            .unwrap(),
             Some(props) => {
                 write!(output, "            Blocks::{}(state) => {{\n", name).unwrap();
                 write!(output, "                {}", data.base_id).unwrap();
@@ -240,9 +324,13 @@ fn print_base_blocks_to_id<W: Write>(output: &mut W, block_list: &Vec<(String, B
                         write!(output, " + ").unwrap();
                     }
                     match &property.property_type {
-                        PropertyType::Bool => write!(output, "(!state.{}() as i32)", property.name).unwrap(),
+                        PropertyType::Bool => {
+                            write!(output, "(!state.{}() as i32)", property.name).unwrap()
+                        }
                         PropertyType::Int(_) => write!(output, "state.{}", property.name).unwrap(),
-                        PropertyType::Enum(_) => write!(output, "(state.{} as i32)", property.name).unwrap(),
+                        PropertyType::Enum(_) => {
+                            write!(output, "(state.{} as i32)", property.name).unwrap()
+                        }
                     }
                 }
                 write!(output, "\n            }}\n").unwrap();
@@ -266,7 +354,10 @@ fn print_properties() {
     for i in 0..sorted_props.len() {
         if sorted_props[..].iter().any(|x| {
             x != &sorted_props[i]
-                && !x.values.iter().any(|z| z == "true" || z.parse::<i8>().is_ok())
+                && !x
+                    .values
+                    .iter()
+                    .any(|z| z == "true" || z.parse::<i8>().is_ok())
                 && !sorted_props[i].values.iter().any(|z| z == "true")
                 && sorted_props[i].names.iter().any(|y| x.names.contains(y))
         }) {

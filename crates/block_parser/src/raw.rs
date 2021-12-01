@@ -26,10 +26,7 @@ pub struct RawPropertyList {
 impl RawPropertyList {
     pub fn new(mut names: Vec<String>, values: Vec<String>) -> Self {
         names.sort();
-        RawPropertyList {
-            names,
-            values,
-        }
+        RawPropertyList { names, values }
     }
 }
 
