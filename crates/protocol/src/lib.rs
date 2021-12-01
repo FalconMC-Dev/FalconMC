@@ -19,16 +19,16 @@ static ALLOCATOR: System = System;
 
 pub static UNKNOWN_PROTOCOL: i32 = -1;
 
-pub trait ProtocolPlugin: Any + Send + Sync {
+pub trait FalconPlugin: Any + Send + Sync {
     fn name(&self) -> &'static str;
 
     fn on_protocol_load(&self) {}
 
     fn on_protocol_unload(&self) {}
 
-    /// Return the importance of this `ProtocolPlugin`'s packet querying, lower numbers are more important.
+    /// Returns the importance of this `FalconPlugin`'s packet querying, lower numbers are more important.
     ///
-    /// 0-1-2-3 are reserved for default implementations.
+    /// 0-1-2-3 are reserved for special implementations.
     fn get_priority(&self) -> i32 {
         4
     }

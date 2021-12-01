@@ -9,12 +9,12 @@
 macro_rules! declare_plugin {
     ($plugin_type:ty, $constructor:path) => {
         #[no_mangle]
-        pub extern "C" fn _plugin_create() -> *mut dyn $crate::ProtocolPlugin {
+        pub extern "C" fn _plugin_create() -> *mut dyn $crate::FalconPlugin {
             // make sure the constructor is the correct type.
             let constructor: fn() -> $plugin_type = $constructor;
 
             let object = constructor();
-            let boxed: Box<dyn $crate::ProtocolPlugin> = Box::new(object);
+            let boxed: Box<dyn $crate::FalconPlugin> = Box::new(object);
             Box::into_raw(boxed)
         }
     };

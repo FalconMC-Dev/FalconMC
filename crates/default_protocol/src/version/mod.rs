@@ -1,6 +1,7 @@
 use enum_dispatch::enum_dispatch;
 
-use falcon_core::errors::*;
+use crate::errors::*;
+
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::{PacketDecode, PacketHandler};

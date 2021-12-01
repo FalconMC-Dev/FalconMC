@@ -3,6 +3,7 @@
 error_chain! {
     links {
         Core(::falcon_core::errors::Error, ::falcon_core::errors::ErrorKind);
+        DefaultProtocol(::falcon_default_protocol::errors::Error, ::falcon_default_protocol::errors::ErrorKind);
     }
 
     errors {

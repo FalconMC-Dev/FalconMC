@@ -6,9 +6,10 @@ use once_cell::sync::Lazy;
 
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
+use falcon_default_protocol::DefaultProtocol;
 
 use crate::errors::*;
-use crate::ProtocolPlugin;
+use crate::FalconPlugin;
 
 pub static PROTOCOL_MANAGER: Lazy<ProtocolPluginManager> = Lazy::new(|| {
     let mut manager = ProtocolPluginManager::new();
@@ -17,7 +18,7 @@ pub static PROTOCOL_MANAGER: Lazy<ProtocolPluginManager> = Lazy::new(|| {
 });
 
 pub struct ProtocolPluginManager {
-    plugins: Vec<(i32, Box<dyn ProtocolPlugin>)>,
+    plugins: Vec<(i32, Box<dyn FalconPlugin>)>,
     loaded_libraries: Vec<Library>,
 }
 
@@ -31,12 +32,12 @@ impl ProtocolPluginManager {
 
     pub(crate) unsafe fn load_plugin<P: AsRef<OsStr>>(&mut self, filename: P) -> Result<()> {
         debug!("Loading plugin '{:?}'", filename.as_ref());
-        type PluginCreate = unsafe fn() -> *mut dyn ProtocolPlugin;
+        type PluginCreate = unsafe fn() -> *mut dyn FalconPlugin;
 
         let lib = Library::new(filename.as_ref()).chain_err(|| {
             ErrorKind::LibraryLoadingError(
                 filename.as_ref().to_os_string(),
-                String::from("Unable to load plugin from disk!"),
+                String::from("File was not recognized as plugin library!"),
             )
         })?;
         self.loaded_libraries.push(lib);
@@ -75,19 +76,25 @@ impl ProtocolPluginManager {
                     Err(ref error) => print_error!(error),
                 }
             }
-        } else {
-            warn!("No protocols are found, the application will be useless!");
         }
         self.plugins.sort_by_key(|(priority, _)| *priority);
+        info!("Successfully loaded {} plugins!", self.plugins.len());
     }
 
-    pub fn process_packet(
+    pub fn process_packet<R: PacketBufferRead, C: MinecraftConnection>(
         &self,
         packet_id: i32,
-        buffer: &mut dyn PacketBufferRead,
-        connection: &mut dyn MinecraftConnection,
+        buffer: &mut R,
+        connection: &mut C,
     ) -> Result<Option<()>> {
         let mut found = false;
+        // first evaluate default protocol
+        match DefaultProtocol::process_packet(packet_id, buffer, connection) {
+            Ok(Some(_)) => found = true,
+            Err(error) => return Err(error.into()),
+            _ => {}
+        }
+        // then propagate to plugins
         for (_, factory) in &self.plugins {
             trace!("Firing read_packet for {}", factory.name());
             match factory.process_packet(packet_id, buffer, connection) {
