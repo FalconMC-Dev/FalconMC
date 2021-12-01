@@ -8,6 +8,5 @@ target/
 *.DS_Store
 
 # run
-config/
 logs/
 protocols/
