@@ -1,4 +1,6 @@
 # FalconMC
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC?ref=badge_shield)
+
 
 ## Description
 FalconMC is an afk Minecraft server written in [Rust](https://rust-lang.org/) that aims to support all client versions ranging from 1.13 till 1.17.1. Its main priority is performance and the ability to effortlessly hold many players at once. Writing custom plugins is supported.
@@ -23,3 +25,6 @@ Licensed under either of
 -   MIT license (LICENSE-MIT or  [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT))
 
 at your option.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC?ref=badge_large)
