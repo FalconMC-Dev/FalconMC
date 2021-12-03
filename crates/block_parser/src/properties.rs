@@ -209,6 +209,16 @@ impl Display for EnumProperty {
         for field in &self.fields {
             write!(f, "    {},\n", field.to_case(Case::Pascal))?;
         }
-        write!(f, "}}\n")
+        write!(f, "}}\n")?;
+
+        write!(f, "impl FromStr for {} {{\n", self.name)?;
+        write!(f, "    type Err = ParseBlockError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {{
+        match s {{\n")?;
+        for property in &self.fields {
+            write!(f, "            \"{}\" => Ok({}::{}),\n", property, self.name, property.to_case(Case::Pascal))?;
+        }
+        write!(f, "            _ => Err(ParseBlockError::InvalidProperty),\n")?;
+        write!(f, "        }}\n    }}\n}}\n")
     }
 }

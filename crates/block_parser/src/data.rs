@@ -17,7 +17,7 @@ impl BlockData {
         // struct definition
         write!(
             output,
-            "#[derive(Clone, Copy, Debug, PartialEq, Eq)]\npub struct {} {{\n",
+            "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\npub struct {} {{\n",
             name
         )?;
         for property in &block_state.properties {

@@ -13,8 +13,6 @@ use crate::raw::{collect_properties, RawBlockData};
 mod data;
 mod properties;
 mod raw;
-#[cfg(test)]
-mod tests;
 
 fn main() {
     if let Some(arg) = env::args().skip(1).next() {
@@ -62,6 +60,8 @@ fn generate_code() {
     let mut output = String::new();
     let mut structs = String::new();
     write!(output, "#![allow(dead_code)]\n").unwrap();
+    write!(output, "use std::str::FromStr;\nuse ahash::AHashMap;\n").unwrap();
+    write!(output, "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\n").unwrap();
     write!(output, "pub enum Blocks {{\n").unwrap();
     for entry in &base_parsed_data {
         let pascal_name = entry.0.split_once(":").unwrap().1.to_case(Case::Pascal);
@@ -159,6 +159,8 @@ fn generate_code() {
     println!("Found {} enum appendix entries", enum_appendix.len());
     print_base_blocks_to_id(&mut output, &base_parsed_data, files.get(0).unwrap().0);
     write!(output, "}}\n").unwrap();
+
+    print_from_str(&mut output, &base_parsed_data);
 
     write!(output, "{}", structs).unwrap();
     display_enum_properties(&mut output);
@@ -339,6 +341,59 @@ fn print_base_blocks_to_id<W: Write>(
     }
     write!(output, "        }}\n").unwrap();
     write!(output, "    }}\n").unwrap();
+}
+
+fn print_from_str<W: Write>(output: &mut W, block_list: &Vec<(String, BlockData)>) {
+    write!(output, "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]").unwrap();
+    write!(output, "pub enum ParseBlockError {{\n").unwrap();
+    write!(output, "    UnknownBlock,\n    UnknownProperty,\n    InvalidProperty,\n    InvalidToken,\n").unwrap();
+    write!(output, "}}\n").unwrap();
+    write!(output, "impl From<std::str::ParseBoolError> for ParseBlockError {{
+    fn from(_: std::str::ParseBoolError) -> Self {{
+        ParseBlockError::InvalidProperty
+    }}
+}}\n").unwrap();
+    write!(output, "impl From<std::num::ParseIntError> for ParseBlockError {{
+    fn from(_: std::num::ParseIntError) -> Self {{
+        ParseBlockError::InvalidProperty
+    }}
+}}\n").unwrap();
+    write!(output, "impl FromStr for Blocks {{\n").unwrap();
+    write!(output, "    type Err = ParseBlockError;\n").unwrap();
+    write!(output, "    fn from_str(s: &str) -> Result<Self, Self::Err> {{\n").unwrap();
+    write!(output, "        let (_domain, stripped) = if s.contains(':') {{ s.split_once(':').unwrap() }} else {{ (\"\", s) }};\n").unwrap();
+    write!(output, "        let (name, stripped) = if let Some(i) = stripped.rfind(']') {{
+            let _ = stripped.find('[').ok_or(ParseBlockError::InvalidToken)?;
+            stripped.split_at(i).0.split_once('[').unwrap()
+        }} else {{
+            (stripped, \"\")
+        }};\n").unwrap();
+    write!(output, "        let props: AHashMap<&str, &str> = stripped.split(',')
+            .map(|x| x.split_once('=')).filter(|x| x.is_some()).map(|x| x.unwrap()).collect();\n").unwrap();
+    write!(output, "        Ok(match name {{\n").unwrap();
+    for (name, data) in block_list {
+        let clean_name = name.split_once(":").unwrap().1;
+        if let Some(properties) = &data.properties {
+            write!(output, "            \"{}\" => {{\n", clean_name).unwrap();
+            write!(output, "                let mut block_state = {}::default();\n", String::from(clean_name.to_case(Case::Pascal) + "State")).unwrap();
+            for property in &properties.properties {
+                write!(output, "                if let Some(prop) = props.get(\"{}\") {{\n", property.name).unwrap();
+                match &property.property_type {
+                    PropertyType::Bool => write!(output, "                    block_state.with_{}(bool::from_str(prop)?);\n", property.name).unwrap(),
+                    PropertyType::Int(_) => write!(output, "                    block_state.with_{}(i32::from_str(prop)?);\n", property.name).unwrap(),
+                    PropertyType::Enum((enum_prop, _)) => write!(output, "                    block_state.with_{}({}::from_str(prop)?);\n", property.name, enum_prop.get_name()).unwrap(),
+                }
+                write!(output, "                }}\n").unwrap();
+            }
+            write!(output, "                Blocks::{}(block_state)\n", clean_name.to_case(Case::Pascal)).unwrap();
+            write!(output, "            }}\n").unwrap();
+        } else {
+            write!(output, "            \"{}\" => Blocks::{},\n", clean_name, clean_name.to_case(Case::Pascal)).unwrap();
+        }
+    }
+    write!(output, "            _ => return Err(ParseBlockError::UnknownBlock),").unwrap();
+    write!(output, "        }})\n    }}\n").unwrap();
+    write!(output, "}}\n").unwrap();
 }
 
 fn print_properties() {
