@@ -26,5 +26,18 @@ error_chain! {
         StringTooLong {
             display("String was longer than expected!")
         }
+
+        InvalidSchematicVersion(version: i32) {
+            display("Found version {} instead of 1 or 2", version)
+        }
+        WrongDataVersion(version: i32, required: i32) {
+            display("Invalid data version received, should be {} instead of {}", version, required)
+        }
+        InvalidData {
+            display("Invalid data was found")
+        }
+        MissingData {
+            display("Could not find the right data describing the blocks")
+        }
     }
 }

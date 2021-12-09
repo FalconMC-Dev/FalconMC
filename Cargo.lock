@@ -25,6 +25,7 @@ checksum = "fcb51a0695d8f838b1ee009b3fbf66bda078cd64590202a864a8f3e8c4315c47"
 dependencies = [
  "getrandom",
  "once_cell",
+ "serde",
  "version_check",
 ]
 
@@ -77,6 +78,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
+name = "byteorder"
+version = "1.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
+
+[[package]]
 name = "bytes"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -87,6 +94,12 @@ name = "cc"
 version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79c2681d6594606957bbb8631c4b90a7fcaaa72cdb714743a437b156d6a7eedd"
+
+[[package]]
+name = "cesu8"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
 
 [[package]]
 name = "cfg-if"
@@ -318,6 +331,7 @@ dependencies = [
 name = "falcon_core"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "bytes",
  "confy",
  "crossbeam",
@@ -348,7 +362,6 @@ dependencies = [
  "enum_dispatch",
  "error-chain",
  "falcon_core",
- "falcon_protocol",
  "log",
  "log4rs",
 ]
@@ -359,9 +372,21 @@ version = "0.1.0"
 dependencies = [
  "error-chain",
  "falcon_core",
+ "falcon_default_protocol",
  "libloading",
  "log",
  "once_cell",
+]
+
+[[package]]
+name = "fastnbt"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15889a01b850d0a0942a8c1ee314bbd246fd4bcd7d07e6f20cbf5e1dd717f690"
+dependencies = [
+ "byteorder",
+ "cesu8",
+ "serde",
 ]
 
 [[package]]

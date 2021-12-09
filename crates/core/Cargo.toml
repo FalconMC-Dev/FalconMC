@@ -11,6 +11,8 @@ falcon_core_derive = { path = "../core_derive" }
 log = { version = "0.4", "features" = [ "release_max_level_info" ] }
 error-chain = "0.12"
 
+ahash = { version = "0.7", features = [ "serde" ] }
+fastnbt = "1.2"
 serde = { version = "1.0", features = [ "derive" ] }
 confy = "0.4"
 

@@ -23,3 +23,12 @@ pub fn get_var_i64_size(input: i64) -> usize {
     }
     10
 }
+
+pub fn as_u8_slice(v: &[i8]) -> &[u8] {
+    unsafe {
+        std::slice::from_raw_parts(
+            v.as_ptr() as *const u8,
+            v.len(),
+        )
+    }
+}
