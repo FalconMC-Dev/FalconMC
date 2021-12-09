@@ -348,6 +348,12 @@ fn print_from_str<W: Write>(output: &mut W, block_list: &Vec<(String, BlockData)
     write!(output, "pub enum ParseBlockError {{\n").unwrap();
     write!(output, "    UnknownBlock,\n    UnknownProperty,\n    InvalidProperty,\n    InvalidToken,\n").unwrap();
     write!(output, "}}\n").unwrap();
+    write!(output, "impl ::std::error::Error for ParseBlockError {{}}\n").unwrap();
+    write!(output, "impl ::std::fmt::Display for ParseBlockError {{
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {{
+        write!(f, \"{{:?}}\", self)
+    }}
+}}\n").unwrap();
     write!(output, "impl From<std::str::ParseBoolError> for ParseBlockError {{
     fn from(_: std::str::ParseBoolError) -> Self {{
         ParseBlockError::InvalidProperty
