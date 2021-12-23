@@ -9,6 +9,7 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
+use falcon_core::network::ConnectionState::Login;
 use falcon_core::network::packet::PacketEncode;
 use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
@@ -75,8 +76,8 @@ impl ClientConnection {
                         Ok(n) => n,
                         Err(error) => {
                             print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
-                            // TODO: proper disconnect handling
-                            break;
+                            self.disconnect(String::from("Error whilst receiving packet!"));
+                            1 // let's the loop run one more time, allowing for the disconnect to properly happen
                         }
                     };
                     if n == 0 {
@@ -118,6 +119,9 @@ impl ClientConnection {
             &mut packet,
             self,
         )? {
+            if self.handler_state.get_connection_state() == Login {
+                self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
+            }
             debug!("Unknown packet received, skipping!");
         }
         Ok(())
@@ -164,6 +168,10 @@ impl MinecraftConnection for ClientConnection {
         &mut self.server_tx
     }
 
+    fn get_connection_link(&mut self) -> UnboundedSender<Box<ConnectionTask>> {
+        self.connection_sync.0.clone()
+    }
+
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode) {
         trace!("Sending packet!!! :D");
         self.out_buffer.write_var_i32(packet_id);
@@ -181,5 +189,8 @@ impl MinecraftConnection for ClientConnection {
         }
     }
 
-    fn disconnect(&mut self, _reason: String) {} // TODO: change into ChatComponent
+    fn disconnect(&mut self, reason: String) { // TODO: change into ChatComponent
+        let packet = falcon_protocol::build_disconnect_packet(reason);
+        self.send_packet(0x00, &packet);
+    }
 }

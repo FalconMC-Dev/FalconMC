@@ -1,3 +1,5 @@
+use std::net::IpAddr;
+use std::str::FromStr;
 use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
@@ -9,7 +11,7 @@ static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 pub struct FalconConfig {
     max_players: i32,
     server_port: u16,
-    server_ip: String,
+    server_ip: IpAddr,
     allow_flight: bool,
 }
 
@@ -18,7 +20,7 @@ impl Default for FalconConfig {
         FalconConfig {
             max_players: -1,
             server_port: 30000,
-            server_ip: String::from("0.0.0.0"),
+            server_ip: IpAddr::from_str("0.0.0.0").unwrap(),
             allow_flight: false,
         }
     }
@@ -40,8 +42,8 @@ impl FalconConfig {
     pub fn server_port(&self) -> u16 {
         self.server_port
     }
-    pub fn server_ip(&self) -> &str {
-        &self.server_ip
+    pub fn server_ip(&self) -> IpAddr {
+        self.server_ip
     }
     pub fn allow_flight(&self) -> bool {
         self.allow_flight

@@ -4,6 +4,9 @@ pub mod buffer;
 pub mod connection;
 pub mod packet;
 
+pub const PROTOCOL_1_8_9: i32 = 47;
+pub const PROTOCOL_1_13_2: i32 = 404;
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct PacketHandlerState {
     protocol_id: i32,
