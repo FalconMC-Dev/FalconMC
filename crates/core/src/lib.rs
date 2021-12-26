@@ -8,6 +8,7 @@ pub mod network;
 pub mod world;
 pub mod schematic;
 pub mod server;
+pub mod player;
 
 mod shutdown;
 

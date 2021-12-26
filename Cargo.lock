@@ -232,6 +232,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-new"
+version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3418329ca0ad70234b9735dc4ceed10af4df60eff9c8e7b06cb5e520d92c3535"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "directories"
 version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -279,18 +290,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enum_dispatch"
-version = "0.3.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd53b3fde38a39a06b2e66dc282f3e86191e53bd04cc499929c15742beae3df8"
-dependencies = [
- "once_cell",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "error-chain"
 version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -304,14 +303,18 @@ dependencies = [
 name = "falcon_bin"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "bytes",
  "crossbeam",
  "error-chain",
  "falcon_core",
  "falcon_protocol",
+ "fastnbt",
+ "flate2",
  "log",
  "log4rs",
  "tokio",
+ "uuid",
 ]
 
 [[package]]
@@ -359,11 +362,12 @@ name = "falcon_default_protocol"
 version = "0.1.0"
 dependencies = [
  "crossbeam",
- "enum_dispatch",
+ "derive-new",
  "error-chain",
  "falcon_core",
  "log",
  "log4rs",
+ "uuid",
 ]
 
 [[package]]
@@ -554,6 +558,12 @@ dependencies = [
  "typemap",
  "winapi",
 ]
+
+[[package]]
+name = "md5"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "490cc448043f947bae3cbee9c203358d62dbee0db12107a74be5c30ccfd09771"
 
 [[package]]
 name = "memchr"
@@ -978,6 +988,9 @@ name = "uuid"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+dependencies = [
+ "md5",
+]
 
 [[package]]
 name = "version_check"

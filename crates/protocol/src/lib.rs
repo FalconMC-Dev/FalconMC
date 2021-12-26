@@ -9,6 +9,9 @@ use std::any::Any;
 use errors::*;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
+use falcon_default_protocol::DisconnectPacketLogin;
+
+pub use falcon_default_protocol::ProtocolSend;
 
 pub mod errors;
 mod macros;
@@ -39,4 +42,8 @@ pub trait FalconPlugin: Any + Send + Sync {
         buffer: &mut dyn PacketBufferRead,
         connection: &mut dyn MinecraftConnection,
     ) -> Result<Option<()>>;
+}
+
+pub fn build_disconnect_packet(reason: String) -> DisconnectPacketLogin {
+    DisconnectPacketLogin::with_reason(reason)
 }

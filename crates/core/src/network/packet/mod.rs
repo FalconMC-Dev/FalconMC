@@ -42,3 +42,19 @@ impl PacketEncode for Uuid {
         buf.write_uuid(self)
     }
 }
+
+impl<T: PacketEncode> PacketEncode for Vec<T> {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        for element in self {
+            element.to_buf(buf)
+        }
+    }
+}
+
+impl<T: PacketEncode> PacketEncode for Option<T> {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        if let Some(value) = self {
+            value.to_buf(buf);
+        }
+    }
+}

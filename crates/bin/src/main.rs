@@ -7,16 +7,19 @@ use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 
 use crate::errors::*;
+use crate::player::Player;
 use crate::server::MainServer;
 
 mod errors;
 mod network;
 mod server;
+mod player;
 
 #[tokio::main]
 async fn main() {
     log4rs::init_file(falcon_core::LOG_CONFIG, Default::default()).unwrap();
     info!("Launching Falcon Server!");
+    debug!("Player size: {}", std::mem::size_of::<Player>());
 
     debug!("Loading config!");
     if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")

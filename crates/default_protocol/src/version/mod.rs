@@ -1,18 +1,17 @@
-use enum_dispatch::enum_dispatch;
-
 use crate::errors::*;
 
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::{PacketDecode, PacketHandler};
-use falcon_core::network::{ConnectionState, PacketHandlerState};
-
-use crate::version::v1_8_9::login::{LoginPackets, LoginStartPacket};
-use crate::version::v1_8_9::PacketList;
+use falcon_core::network::{ConnectionState, PacketHandlerState, PROTOCOL_1_8_9, PROTOCOL_1_13_2};
+use falcon_core::player::MinecraftPlayer;
+use falcon_core::server::Difficulty;
+use falcon_core::world::chunks::Chunk;
+use crate::implement_packet_handler_enum;
 
 pub mod v1_8_9;
-
-const PROTOCOL_1_8_9: i32 = 47;
+pub mod v1_13;
+pub mod v1_13_2;
 
 #[derive(PacketDecode)]
 pub struct HandshakePacket {
@@ -45,14 +44,16 @@ impl PacketHandler for HandshakePacket {
     }
 }
 
-#[enum_dispatch(DispatchPacketHandler)]
 pub enum VersionMatcher {
     Handshake(HandshakePacket),
     V1_8_9(v1_8_9::PacketList),
+    V1_13_2(v1_13_2::PacketList),
 }
 
+implement_packet_handler_enum!(VersionMatcher, Handshake, V1_8_9, V1_13_2);
+
 impl VersionMatcher {
-    pub fn from(
+    pub fn from_buf(
         packet_id: i32,
         state: &PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,
@@ -63,29 +64,59 @@ impl VersionMatcher {
             )?)))
         } else {
             match state.get_protocol_id() {
-                47 => v1_8_9::PacketList::from(packet_id, state, buffer)
-                    .map(|l| l.map(|p| VersionMatcher::V1_8_9(p))),
+                PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_8_9(p))),
+                PROTOCOL_1_13_2 => v1_13_2::PacketList::from(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_13_2(p))),
                 _ => Ok(None),
             }
         }
     }
 }
 
-#[enum_dispatch]
-pub trait DispatchPacketHandler {
-    /// Executes packet logic.
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection);
+pub struct ProtocolSend;
 
-    /// Human-readable identifier of the packet type
-    fn get_name(&self) -> &'static str;
+impl ProtocolSend {
+    pub fn join_game(player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.join_game(player, difficulty, max_players, level_type, reduced_debug)?;
+        }
+        Ok(())
+    }
+
+    pub fn player_abilities(player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.player_abilities(player, flying_speed, fov_modifier)?;
+        }
+        Ok(())
+    }
+
+    pub fn send_chunk(player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.send_chunk(player, chunk)?;
+        }
+        Ok(())
+    }
+
+    pub fn player_position_and_look(player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.player_position_and_look(player, flags, teleport_id)?;
+        }
+        Ok(())
+    }
+
+    pub fn get_protocol_version(version: i32) -> Option<impl ProtocolVersioned> {
+        match version {
+            PROTOCOL_1_13_2 => Some(v1_13_2::PacketSend),
+            _ => None,
+        }
+    }
 }
 
-impl<T: PacketHandler> DispatchPacketHandler for T {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
-        self.handle_packet(connection);
-    }
+pub trait ProtocolVersioned {
+    fn join_game(&self, player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Result<()>;
 
-    fn get_name(&self) -> &'static str {
-        self.get_name()
-    }
+    fn player_abilities(&self, player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()>;
+
+    fn send_chunk(&self, player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()>;
+
+    fn player_position_and_look(&self, player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()>;
 }

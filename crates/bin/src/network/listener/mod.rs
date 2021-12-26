@@ -21,6 +21,7 @@ impl NetworkListener {
         server_tx: Sender<Box<McTask>>,
     ) {
         info!("Starting network listening...");
+        debug!("Connection size: {}", std::mem::size_of::<ClientConnection>());
 
         let network_listener = NetworkListener {
             shutdown_handle,

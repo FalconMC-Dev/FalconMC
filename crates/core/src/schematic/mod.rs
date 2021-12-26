@@ -21,9 +21,9 @@ pub struct SchematicVersionedRaw<'a> {
     version: i32,
     data_version: Option<i32>,
     // mutual data
-    width: u16,
-    height: u16,
-    length: u16,
+    width: i16,
+    height: i16,
+    length: i16,
     #[serde(borrow)]
     offset: Option<IntArray<'a>>,
     palette: AHashMap<Cow<'a, str>, i32>,
@@ -31,12 +31,12 @@ pub struct SchematicVersionedRaw<'a> {
 }
 
 pub struct SchematicData {
-    width: u16,
-    height: u16,
-    length: u16,
-    offset: [i32; 3],
-    palette: AHashMap<i32, Blocks>,
-    block_data: Vec<i32>,
+    pub width: u16,
+    pub height: u16,
+    pub length: u16,
+    pub offset: [i32; 3],
+    pub palette: AHashMap<i32, Blocks>,
+    pub block_data: Vec<i32>,
 }
 
 impl SchematicData {
@@ -56,7 +56,7 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData {
     type Error = Error;
 
     fn try_from(value: SchematicVersionedRaw<'a>) -> std::result::Result<Self, Self::Error> {
-        ensure!(value.version < 2 && value.version > 0, ErrorKind::InvalidSchematicVersion(value.version));
+        ensure!(value.version == 2, ErrorKind::InvalidSchematicVersion(value.version));
         match value.data_version {
             Some(content) => if content != REQUIRED_DATA_VERSION { bail!(ErrorKind::WrongDataVersion(content, REQUIRED_DATA_VERSION))},
             None => bail!(ErrorKind::MissingData),
@@ -90,6 +90,6 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData {
             }
         }
 
-        Ok(SchematicData::new(value.width, value.height, value.length, effective_offset, effective_palette, effective_block_data))
+        Ok(SchematicData::new(value.width as u16, value.height as u16, value.length as u16, effective_offset, effective_palette, effective_block_data))
     }
 }
