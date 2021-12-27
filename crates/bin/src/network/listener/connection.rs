@@ -147,8 +147,11 @@ impl ClientConnection {
                 let mut length_buf = Cursor::new(&length_bytes[..]);
                 let frame_length = length_buf.read_var_i32()? as usize;
                 trace!("Frame is {} bytes long", frame_length);
-                buf.ensure_bytes_available(frame_length)?;
-                return Ok(Some((i + 1, frame_length)));
+                return if let Ok(_) = buf.ensure_bytes_available(frame_length) {
+                    Ok(Some((i + 1, frame_length)))
+                } else {
+                    Ok(None)
+                }
             }
         }
         Err(ErrorKind::InvalidPacketLength.into())
