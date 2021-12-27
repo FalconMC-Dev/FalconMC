@@ -174,6 +174,20 @@ impl PropertyType {
         }
         None
     }
+
+    pub fn entry_count(&self) -> i32 {
+        match self {
+            PropertyType::Bool => 2,
+            PropertyType::Int(range) => (range.end - range.start) as i32,
+            PropertyType::Enum((target, real)) => {
+                if let Some(real) = real {
+                    real.fields.len() as i32
+                } else {
+                    target.fields.len() as i32
+                }
+            },
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

@@ -209,12 +209,16 @@ fn print_block_to_id<W: Write>(
                         let mut result = String::new();
                         write!(result, "                Some({}", block_data.base_id).unwrap();
                         let mut counter = 0;
+                        let mut factor = 1;
+                        let mut prev_count = 0;
                         for (i, property) in properties.properties.iter().rev().enumerate() {
                             if i > 0 {
-                                write!(result, " + {} * ", i + 1).unwrap();
+                                factor *= prev_count;
+                                write!(result, " + {} * ", factor).unwrap();
                             } else {
                                 write!(result, " + ").unwrap();
                             }
+                            prev_count = property.property_type.entry_count();
                             match &property.property_type {
                                 PropertyType::Bool => {
                                     write!(result, "(!state.{}() as i32)", property.name).unwrap()
@@ -319,12 +323,16 @@ fn print_base_blocks_to_id<W: Write>(
             Some(props) => {
                 write!(output, "            Blocks::{}(state) => {{\n", name).unwrap();
                 write!(output, "                {}", data.base_id).unwrap();
+                let mut factor = 1;
+                let mut prev_count = 0;
                 for (i, property) in props.properties.iter().rev().enumerate() {
                     if i > 0 {
-                        write!(output, " + {} * ", i + 1).unwrap();
+                        factor *= prev_count;
+                        write!(output, " + {} * ", factor).unwrap();
                     } else {
                         write!(output, " + ").unwrap();
                     }
+                    prev_count = property.property_type.entry_count();
                     match &property.property_type {
                         PropertyType::Bool => {
                             write!(output, "(!state.{}() as i32)", property.name).unwrap()
