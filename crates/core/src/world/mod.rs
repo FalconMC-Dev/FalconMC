@@ -12,16 +12,20 @@ pub mod blocks;
 
 #[derive(Debug)]
 pub struct World {
-    width: usize,
-    length: usize,
+    min_x: i32,
+    min_z: i32,
+    max_x: i32,
+    max_z: i32,
     chunks: AHashMap<ChunkPos, Chunk>,
 }
 
 impl World {
-    fn new(capacity: usize, width: usize, length: usize) -> Self {
+    fn new(capacity: usize, min_x: i32, min_z: i32, max_x: i32, max_z: i32) -> Self {
         World {
-            width,
-            length,
+            min_x,
+            min_z,
+            max_x,
+            max_z,
             chunks: AHashMap::with_capacity(capacity),
         }
     }
@@ -52,8 +56,21 @@ impl World {
 
     /// Currently it just sends all chunks known to the world
     /// for a more sophisticated implementation this could filter for chunks centered around the player
-    pub fn get_chunks_for_player(&self, _player: &dyn MinecraftPlayer) -> (impl Iterator<Item=&Chunk>, usize, usize) {
-        (self.chunks.values(), self.width, self.length)
+    pub fn send_chunks_for_player<C, A>(&self, player: &mut dyn MinecraftPlayer, chunk_fn: C, air_fn: A) -> Result<()>
+        where C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
+              A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+    {
+        for chunk in self.chunks.values() {
+            chunk_fn(player, chunk)?;
+        }
+        for i in self.min_x-1..=self.max_x {
+            for j in self.min_z-1..=self.max_z {
+                if !((i >= self.min_x && j >= self.min_z) && (i < self.max_x && j < self.max_z)) {
+                    air_fn(player, i, j)?;
+                }
+            }
+        }
+        Ok(())
     }
 }
 
@@ -61,19 +78,20 @@ impl TryFrom<SchematicData> for World {
     type Error = Error;
 
     fn try_from(schematic: SchematicData) -> std::result::Result<Self, Self::Error> {
+        debug!("Palette: {:?}", schematic.palette);
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;
-        let count_x = ((schematic.width - rest_x) / 16) as usize + 1;
-        let count_z = ((schematic.length - rest_z) / 16) as usize + 1;
+        let count_x = ((schematic.width - rest_x) / 16) as usize + if rest_x > 0 { 1 } else { 0 };
+        let count_z = ((schematic.length - rest_z) / 16) as usize + if rest_z > 0 { 1 } else { 0 };
 
-        let mut world = World::new(count_x * count_z, count_x, count_z);
-        for y in 0..schematic.height {
-            for z in 0..schematic.length {
-                for x in 0..schematic.width {
-                    let chunk_pos = ChunkPos::new((x / SECTION_WIDTH) as i32, (z / SECTION_LENGTH) as i32);
+        let mut world = World::new(count_x * count_z, 0, 0, count_x as i32, count_z as i32);
+        for y in 0..schematic.height as usize {
+            for z in 0..schematic.length as usize {
+                for x in 0..schematic.width as usize {
+                    let chunk_pos = ChunkPos::new((x / SECTION_WIDTH as usize) as i32, (z / SECTION_LENGTH as usize) as i32);
                     let chunk = world.get_chunk_mut(chunk_pos);
-                    let schematic_block = schematic.block_data[(x + z * schematic.width + y * schematic.width * schematic.length) as usize];
-                    chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or(Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
+                    let schematic_block = schematic.block_data[x + z * schematic.width as usize + y * schematic.width as usize * schematic.length as usize];
+                    chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or(Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
                 }
             }
         }

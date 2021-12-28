@@ -1068,64 +1068,64 @@ impl Blocks {
             Blocks::ChiseledSandstone => Some(247),
             Blocks::CutSandstone => Some(248),
             Blocks::NoteBlock(state) => {
-                Some(249 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(249 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(1049 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1049 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(1065 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1065 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1305 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1305 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1317 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1317 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1329 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1329 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1341),
             Blocks::Grass => Some(1342),
@@ -1136,10 +1136,10 @@ impl Blocks {
                 Some(1346 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1348 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1348 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1360 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1360 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1384),
             Blocks::OrangeWool => Some(1385),
@@ -1189,18 +1189,18 @@ impl Blocks {
                 Some(1436 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1440 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1440 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => Some(1952),
             Blocks::Spawner => Some(1953),
             Blocks::OakStairs(state) => {
-                Some(1954 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1954 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(2034 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(2034 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(2058 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(2058 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3354),
             Blocks::DeepslateDiamondOre => None,
@@ -1234,7 +1234,7 @@ impl Blocks {
                 Some(3541 + (!state.waterlogged() as i32) + 2 * state.rotation)
             }
             Blocks::OakDoor(state) => {
-                Some(3573 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3573 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3637 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -1243,7 +1243,7 @@ impl Blocks {
                 Some(3645 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3655 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3655 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3735 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -1264,13 +1264,13 @@ impl Blocks {
                 Some(3775 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::Lever(state) => {
-                Some(3783 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3783 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3807 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3809 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3809 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3873 + (!state.powered() as i32))
@@ -1301,7 +1301,7 @@ impl Blocks {
                 Some(3889 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3897 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3897 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3921 + state.layers)
@@ -1319,7 +1319,7 @@ impl Blocks {
                 Some(3964 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3966 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3966 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3998),
             Blocks::Netherrack => Some(3999),
@@ -1349,7 +1349,7 @@ impl Blocks {
                 Some(4024 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(4031 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(4031 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(4095),
             Blocks::OrangeStainedGlass => Some(4096),
@@ -1368,22 +1368,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(4109),
             Blocks::BlackStainedGlass => Some(4110),
             Blocks::OakTrapdoor(state) => {
-                Some(4111 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4111 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(4175 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4175 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(4239 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4239 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(4303 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4303 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(4367 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4367 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(4431 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4431 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(4495),
             Blocks::MossyStoneBricks => Some(4496),
@@ -1396,22 +1396,22 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(4503),
             Blocks::InfestedChiseledStoneBricks => Some(4504),
             Blocks::BrownMushroomBlock(state) => {
-                Some(4505 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4505 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4569 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4569 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4633 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4633 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4697 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4697 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(state) => {
                 Some(4729 + (!state.waterlogged() as i32) + 2 * (state.axis as i32))
             }
             Blocks::GlassPane(state) => {
-                Some(4735 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4735 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4767),
             Blocks::AttachedPumpkinStem(state) => {
@@ -1427,17 +1427,17 @@ impl Blocks {
                 Some(4784 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4792 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4792 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4824 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4824 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4856 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4856 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4936 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4936 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(5016 + (!state.snowy() as i32))
@@ -1445,17 +1445,17 @@ impl Blocks {
             Blocks::LilyPad => Some(5018),
             Blocks::NetherBricks => Some(5019),
             Blocks::NetherBrickFence(state) => {
-                Some(5020 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5020 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(5052 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5052 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(5132 + state.age)
             }
             Blocks::EnchantingTable => Some(5136),
             Blocks::BrewingStand(state) => {
-                Some(5137 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(5137 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(5145),
             Blocks::WaterCauldron(state) => {
@@ -1465,7 +1465,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(5149),
             Blocks::EndPortalFrame(state) => {
-                Some(5150 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(5150 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(5158),
             Blocks::DragonEgg => Some(5159),
@@ -1473,10 +1473,10 @@ impl Blocks {
                 Some(5160 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(5162 + (state.facing as i32) + 2 * state.age)
+                Some(5162 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(5174 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5174 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(5254),
             Blocks::DeepslateEmeraldOre => None,
@@ -1484,30 +1484,30 @@ impl Blocks {
                 Some(5255 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(5263 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(5263 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(5279 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(5279 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(5407),
             Blocks::SpruceStairs(state) => {
-                Some(5408 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5408 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(5488 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5488 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5568 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5568 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5648 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5648 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5660),
             Blocks::CobblestoneWall(state) => {
-                Some(5661 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(5661 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::MossyCobblestoneWall(state) => {
-                Some(5985 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(5985 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::FlowerPot => Some(6309),
             Blocks::PottedOakSapling => Some(6310),
@@ -1541,22 +1541,22 @@ impl Blocks {
                 Some(6342 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(6350 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6350 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(6374 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6374 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(6398 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6398 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(6422 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6422 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(6446 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6446 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(6470 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6470 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(6494 + state.rotation)
@@ -1604,7 +1604,7 @@ impl Blocks {
                 Some(6622 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(6626 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(6626 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(6650 + state.power)
@@ -1613,15 +1613,15 @@ impl Blocks {
                 Some(6666 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(6682 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(6682 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(6698 + state.power + 2 * (!state.inverted() as i32))
+                Some(6698 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(6730),
             Blocks::NetherQuartzOre => Some(6731),
             Blocks::Hopper(state) => {
-                Some(6732 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(6732 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(6742),
             Blocks::ChiseledQuartzBlock => Some(6743),
@@ -1629,10 +1629,10 @@ impl Blocks {
                 Some(6744 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(6747 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6747 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(6827 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(6827 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(6839 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -1654,76 +1654,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(6865),
             Blocks::BlackTerracotta => Some(6866),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(6867 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6867 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(6899 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6899 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(6931 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6931 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(6963 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6963 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(6995 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6995 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(7027 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7027 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(7059 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7059 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(7091 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7091 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(7123 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7123 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(7155 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7155 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(7187 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7187 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(7219 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7219 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(7251 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7251 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(7283 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7283 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(7315 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7315 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(7347 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7347 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(7379 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7379 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(7459 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7459 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(7539),
             Blocks::Barrier => Some(7540),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(7541 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7541 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(7605),
             Blocks::PrismarineBricks => Some(7606),
             Blocks::DarkPrismarine => Some(7607),
             Blocks::PrismarineStairs(state) => {
-                Some(7608 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7608 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(7688 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7688 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(7768 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7768 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(7848 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -1875,7 +1875,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(8222),
             Blocks::CutRedSandstone => Some(8223),
             Blocks::RedSandstoneStairs(state) => {
-                Some(8224 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8224 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(8304 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -1939,55 +1939,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(8420),
             Blocks::SmoothRedSandstone => Some(8421),
             Blocks::SpruceFenceGate(state) => {
-                Some(8422 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8422 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(8454 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8454 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(8486 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8486 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(8518 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8518 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(8550 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8550 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(8582 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8582 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(8614 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8614 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(8646 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8646 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(8678 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8678 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(8710 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8710 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(8742 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8742 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(8806 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8806 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(8870 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8870 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(8934 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8934 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(8998 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8998 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(9062 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(9068 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(9068 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(9132 + state.age)
@@ -1997,7 +1997,7 @@ impl Blocks {
                 Some(9139 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(9142 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9142 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(9222),
             Blocks::Beetroots(state) => {
@@ -2006,10 +2006,10 @@ impl Blocks {
             Blocks::DirtPath => Some(9227),
             Blocks::EndGateway => Some(9228),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(9229 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(9229 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(9241 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(9241 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(9253 + state.age)
@@ -2161,7 +2161,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(9500),
             Blocks::DriedKelpBlock => Some(9501),
             Blocks::TurtleEgg(state) => {
-                Some(9502 + state.hatch + 2 * state.eggs)
+                Some(9502 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(9514),
             Blocks::DeadBrainCoralBlock => Some(9515),
@@ -2272,7 +2272,7 @@ impl Blocks {
             }
             Blocks::BambooSapling => Some(9655),
             Blocks::Bamboo(state) => {
-                Some(9656 + state.stage + 2 * (state.leaves as i32) + 3 * state.age)
+                Some(9656 + state.stage + 2 * (state.leaves as i32) + 6 * state.age)
             }
             Blocks::PottedBamboo => Some(9668),
             Blocks::VoidAir => Some(9669),
@@ -2281,46 +2281,46 @@ impl Blocks {
                 Some(9671 + (!state.drag() as i32))
             }
             Blocks::PolishedGraniteStairs(state) => {
-                Some(9673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothRedSandstoneStairs(state) => {
-                Some(9753 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9753 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyStoneBrickStairs(state) => {
-                Some(9833 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9833 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedDioriteStairs(state) => {
-                Some(9913 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9913 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyCobblestoneStairs(state) => {
-                Some(9993 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9993 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBrickStairs(state) => {
-                Some(10073 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10073 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneStairs(state) => {
-                Some(10153 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10153 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothSandstoneStairs(state) => {
-                Some(10233 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10233 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothQuartzStairs(state) => {
-                Some(10313 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10313 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::GraniteStairs(state) => {
-                Some(10393 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10393 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::AndesiteStairs(state) => {
-                Some(10473 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10473 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::RedNetherBrickStairs(state) => {
-                Some(10553 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10553 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedAndesiteStairs(state) => {
-                Some(10633 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10633 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DioriteStairs(state) => {
-                Some(10713 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10713 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedGraniteSlab(state) => {
                 Some(10793 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -2362,43 +2362,43 @@ impl Blocks {
                 Some(10865 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
             }
             Blocks::BrickWall(state) => {
-                Some(10871 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(10871 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::PrismarineWall(state) => {
-                Some(11195 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11195 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::RedSandstoneWall(state) => {
-                Some(11519 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11519 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::MossyStoneBrickWall(state) => {
-                Some(11843 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11843 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::GraniteWall(state) => {
-                Some(12167 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12167 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::StoneBrickWall(state) => {
-                Some(12491 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12491 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::NetherBrickWall(state) => {
-                Some(12815 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12815 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::AndesiteWall(state) => {
-                Some(13139 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13139 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::RedNetherBrickWall(state) => {
-                Some(13463 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13463 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::SandstoneWall(state) => {
-                Some(13787 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13787 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::EndStoneBrickWall(state) => {
-                Some(14111 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(14111 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::DioriteWall(state) => {
-                Some(14435 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(14435 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::Scaffolding(state) => {
-                Some(14759 + (!state.waterlogged() as i32) + 2 * state.distance + 3 * (!state.bottom() as i32))
+                Some(14759 + (!state.waterlogged() as i32) + 2 * state.distance + 16 * (!state.bottom() as i32))
             }
             Blocks::Loom(state) => {
                 Some(14791 + (state.facing as i32))
@@ -2415,17 +2415,17 @@ impl Blocks {
             Blocks::CartographyTable => Some(14823),
             Blocks::FletchingTable => Some(14824),
             Blocks::Grindstone(state) => {
-                Some(14825 + (state.facing as i32) + 2 * (state.face as i32))
+                Some(14825 + (state.facing as i32) + 4 * (state.face as i32))
             }
             Blocks::Lectern(state) => {
-                Some(14837 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 3 * (state.facing as i32))
+                Some(14837 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 4 * (state.facing as i32))
             }
             Blocks::SmithingTable => Some(14853),
             Blocks::Stonecutter(state) => {
                 Some(14854 + (state.facing as i32))
             }
             Blocks::Bell(state) => {
-                Some(14858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.attachment as i32))
+                Some(14858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.attachment as i32))
             }
             Blocks::Lantern(state) => {
                 Some(14890 + (!state.waterlogged() as i32) + 2 * (!state.hanging() as i32))
@@ -2434,10 +2434,10 @@ impl Blocks {
                 Some(14894 + (!state.waterlogged() as i32) + 2 * (!state.hanging() as i32))
             }
             Blocks::Campfire(state) => {
-                Some(14898 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(14898 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SoulCampfire(state) => {
-                Some(14930 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(14930 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SweetBerryBush(state) => {
                 Some(14962 + state.age)
@@ -2498,40 +2498,40 @@ impl Blocks {
                 Some(15069 + (!state.powered() as i32))
             }
             Blocks::CrimsonFence(state) => {
-                Some(15071 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(15071 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::WarpedFence(state) => {
-                Some(15103 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(15103 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CrimsonTrapdoor(state) => {
-                Some(15135 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15135 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::WarpedTrapdoor(state) => {
-                Some(15199 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15199 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::CrimsonFenceGate(state) => {
-                Some(15263 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(15263 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::WarpedFenceGate(state) => {
-                Some(15295 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(15295 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::CrimsonStairs(state) => {
-                Some(15327 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15327 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::WarpedStairs(state) => {
-                Some(15407 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15407 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CrimsonButton(state) => {
-                Some(15487 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(15487 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::WarpedButton(state) => {
-                Some(15511 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(15511 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::CrimsonDoor(state) => {
-                Some(15535 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15535 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::WarpedDoor(state) => {
-                Some(15599 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15599 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::CrimsonSign(state) => {
                 Some(15663 + (!state.waterlogged() as i32) + 2 * state.rotation)
@@ -2558,10 +2558,10 @@ impl Blocks {
                 Some(15768 + state.power)
             }
             Blocks::BeeNest(state) => {
-                Some(15784 + state.honey_level + 2 * (state.facing as i32))
+                Some(15784 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::Beehive(state) => {
-                Some(15808 + state.honey_level + 2 * (state.facing as i32))
+                Some(15808 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::HoneyBlock => Some(15832),
             Blocks::HoneycombBlock => Some(15833),
@@ -2578,10 +2578,10 @@ impl Blocks {
             Blocks::Lodestone => Some(15846),
             Blocks::Blackstone => Some(15847),
             Blocks::BlackstoneStairs(state) => {
-                Some(15848 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15848 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BlackstoneWall(state) => {
-                Some(15928 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(15928 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::BlackstoneSlab(state) => {
                 Some(16252 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -2594,14 +2594,14 @@ impl Blocks {
                 Some(16262 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
             }
             Blocks::PolishedBlackstoneBrickStairs(state) => {
-                Some(16268 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(16268 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedBlackstoneBrickWall(state) => {
-                Some(16348 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(16348 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::GildedBlackstone => Some(16672),
             Blocks::PolishedBlackstoneStairs(state) => {
-                Some(16673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(16673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedBlackstoneSlab(state) => {
                 Some(16753 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -2610,10 +2610,10 @@ impl Blocks {
                 Some(16759 + (!state.powered() as i32))
             }
             Blocks::PolishedBlackstoneButton(state) => {
-                Some(16761 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(16761 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::PolishedBlackstoneWall(state) => {
-                Some(16785 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(16785 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::ChiseledNetherBricks => Some(17109),
             Blocks::CrackedNetherBricks => Some(17110),
@@ -2906,64 +2906,64 @@ impl Blocks {
             Blocks::ChiseledSandstone => Some(247),
             Blocks::CutSandstone => Some(248),
             Blocks::NoteBlock(state) => {
-                Some(249 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(249 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(1049 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1049 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(1065 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1065 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1305 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1305 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1317 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1317 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1329 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1329 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1341),
             Blocks::Grass => Some(1342),
@@ -2974,10 +2974,10 @@ impl Blocks {
                 Some(1346 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1348 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1348 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1360 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1360 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1384),
             Blocks::OrangeWool => Some(1385),
@@ -3027,18 +3027,18 @@ impl Blocks {
                 Some(1436 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1440 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1440 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => Some(1952),
             Blocks::Spawner => Some(1953),
             Blocks::OakStairs(state) => {
-                Some(1954 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1954 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(2034 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(2034 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(2058 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(2058 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3354),
             Blocks::DeepslateDiamondOre => None,
@@ -3072,7 +3072,7 @@ impl Blocks {
                 Some(3541 + (!state.waterlogged() as i32) + 2 * state.rotation)
             }
             Blocks::OakDoor(state) => {
-                Some(3573 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3573 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3637 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -3081,7 +3081,7 @@ impl Blocks {
                 Some(3645 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3655 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3655 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3735 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -3102,13 +3102,13 @@ impl Blocks {
                 Some(3775 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::Lever(state) => {
-                Some(3783 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3783 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3807 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3809 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3809 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3873 + (!state.powered() as i32))
@@ -3139,7 +3139,7 @@ impl Blocks {
                 Some(3889 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3897 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3897 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3921 + state.layers)
@@ -3157,7 +3157,7 @@ impl Blocks {
                 Some(3964 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3966 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3966 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3998),
             Blocks::Netherrack => Some(3999),
@@ -3187,7 +3187,7 @@ impl Blocks {
                 Some(4024 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(4031 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(4031 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(4095),
             Blocks::OrangeStainedGlass => Some(4096),
@@ -3206,22 +3206,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(4109),
             Blocks::BlackStainedGlass => Some(4110),
             Blocks::OakTrapdoor(state) => {
-                Some(4111 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4111 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(4175 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4175 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(4239 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4239 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(4303 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4303 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(4367 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4367 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(4431 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4431 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(4495),
             Blocks::MossyStoneBricks => Some(4496),
@@ -3234,22 +3234,22 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(4503),
             Blocks::InfestedChiseledStoneBricks => Some(4504),
             Blocks::BrownMushroomBlock(state) => {
-                Some(4505 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4505 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4569 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4569 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4633 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4633 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4697 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4697 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(state) => {
                 Some(4729 + (!state.waterlogged() as i32))
             }
             Blocks::GlassPane(state) => {
-                Some(4731 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4731 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4763),
             Blocks::AttachedPumpkinStem(state) => {
@@ -3265,17 +3265,17 @@ impl Blocks {
                 Some(4780 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4788 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4788 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4820 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4820 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4852 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4852 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4932 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4932 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(5012 + (!state.snowy() as i32))
@@ -3283,17 +3283,17 @@ impl Blocks {
             Blocks::LilyPad => Some(5014),
             Blocks::NetherBricks => Some(5015),
             Blocks::NetherBrickFence(state) => {
-                Some(5016 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5016 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(5048 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5048 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(5128 + state.age)
             }
             Blocks::EnchantingTable => Some(5132),
             Blocks::BrewingStand(state) => {
-                Some(5133 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(5133 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(5141),
             Blocks::WaterCauldron(state) => {
@@ -3303,7 +3303,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(5145),
             Blocks::EndPortalFrame(state) => {
-                Some(5146 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(5146 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(5154),
             Blocks::DragonEgg => Some(5155),
@@ -3311,10 +3311,10 @@ impl Blocks {
                 Some(5156 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(5158 + (state.facing as i32) + 2 * state.age)
+                Some(5158 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(5170 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5170 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(5250),
             Blocks::DeepslateEmeraldOre => None,
@@ -3322,30 +3322,30 @@ impl Blocks {
                 Some(5251 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(5259 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(5259 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(5275 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(5275 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(5403),
             Blocks::SpruceStairs(state) => {
-                Some(5404 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5404 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(5484 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5484 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5564 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5564 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5644 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5644 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5656),
             Blocks::CobblestoneWall(state) => {
-                Some(5657 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(5657 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::MossyCobblestoneWall(state) => {
-                Some(5981 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(5981 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::FlowerPot => Some(6305),
             Blocks::PottedOakSapling => Some(6306),
@@ -3379,22 +3379,22 @@ impl Blocks {
                 Some(6338 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(6346 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6346 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(6370 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6370 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(6394 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6394 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(6418 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6418 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(6442 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6442 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(6466 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(6466 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(6490 + state.rotation)
@@ -3442,7 +3442,7 @@ impl Blocks {
                 Some(6618 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(6622 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(6622 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(6646 + state.power)
@@ -3451,15 +3451,15 @@ impl Blocks {
                 Some(6662 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(6678 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(6678 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(6694 + state.power + 2 * (!state.inverted() as i32))
+                Some(6694 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(6726),
             Blocks::NetherQuartzOre => Some(6727),
             Blocks::Hopper(state) => {
-                Some(6728 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(6728 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(6738),
             Blocks::ChiseledQuartzBlock => Some(6739),
@@ -3467,10 +3467,10 @@ impl Blocks {
                 Some(6740 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(6743 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6743 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(6823 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(6823 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(6835 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -3492,76 +3492,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(6861),
             Blocks::BlackTerracotta => Some(6862),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(6863 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6863 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(6895 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6895 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(6927 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6927 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(6959 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6959 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(6991 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6991 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(7023 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7023 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(7055 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7055 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(7087 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7087 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(7119 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7119 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(7151 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7151 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(7183 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7183 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(7215 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7215 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(7247 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7247 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(7279 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7279 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(7311 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7311 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(7343 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7343 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(7375 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7375 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(7455 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7455 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(7535),
             Blocks::Barrier => Some(7536),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(7537 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7537 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(7601),
             Blocks::PrismarineBricks => Some(7602),
             Blocks::DarkPrismarine => Some(7603),
             Blocks::PrismarineStairs(state) => {
-                Some(7604 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7604 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(7764 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7764 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(7844 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -3713,7 +3713,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(8218),
             Blocks::CutRedSandstone => Some(8219),
             Blocks::RedSandstoneStairs(state) => {
-                Some(8220 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8220 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(8300 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -3777,55 +3777,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(8416),
             Blocks::SmoothRedSandstone => Some(8417),
             Blocks::SpruceFenceGate(state) => {
-                Some(8418 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8418 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(8450 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8450 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(8482 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8482 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(8514 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8514 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(8546 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8546 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(8578 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8578 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(8610 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8610 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(8642 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8642 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(8674 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8674 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(8706 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8706 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(8738 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8738 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(8802 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8802 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(8866 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8866 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(8930 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8930 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(8994 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8994 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(9058 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(9064 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(9064 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(9128 + state.age)
@@ -3835,7 +3835,7 @@ impl Blocks {
                 Some(9135 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(9138 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9138 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(9218),
             Blocks::Beetroots(state) => {
@@ -3844,10 +3844,10 @@ impl Blocks {
             Blocks::DirtPath => Some(9223),
             Blocks::EndGateway => Some(9224),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(9225 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(9225 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(9237 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(9237 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(9249 + state.age)
@@ -3999,7 +3999,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(9496),
             Blocks::DriedKelpBlock => Some(9497),
             Blocks::TurtleEgg(state) => {
-                Some(9498 + state.hatch + 2 * state.eggs)
+                Some(9498 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(9510),
             Blocks::DeadBrainCoralBlock => Some(9511),
@@ -4110,7 +4110,7 @@ impl Blocks {
             }
             Blocks::BambooSapling => Some(9651),
             Blocks::Bamboo(state) => {
-                Some(9652 + state.stage + 2 * (state.leaves as i32) + 3 * state.age)
+                Some(9652 + state.stage + 2 * (state.leaves as i32) + 6 * state.age)
             }
             Blocks::PottedBamboo => Some(9664),
             Blocks::VoidAir => Some(9665),
@@ -4119,46 +4119,46 @@ impl Blocks {
                 Some(9667 + (!state.drag() as i32))
             }
             Blocks::PolishedGraniteStairs(state) => {
-                Some(9669 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9669 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothRedSandstoneStairs(state) => {
-                Some(9749 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9749 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyStoneBrickStairs(state) => {
-                Some(9829 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9829 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedDioriteStairs(state) => {
-                Some(9909 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9909 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyCobblestoneStairs(state) => {
-                Some(9989 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9989 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBrickStairs(state) => {
-                Some(10069 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10069 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneStairs(state) => {
-                Some(10149 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10149 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothSandstoneStairs(state) => {
-                Some(10229 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10229 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothQuartzStairs(state) => {
-                Some(10309 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10309 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::GraniteStairs(state) => {
-                Some(10389 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10389 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::AndesiteStairs(state) => {
-                Some(10469 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10469 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::RedNetherBrickStairs(state) => {
-                Some(10549 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10549 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedAndesiteStairs(state) => {
-                Some(10629 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10629 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DioriteStairs(state) => {
-                Some(10709 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10709 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedGraniteSlab(state) => {
                 Some(10789 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -4200,43 +4200,43 @@ impl Blocks {
                 Some(10861 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
             }
             Blocks::BrickWall(state) => {
-                Some(10867 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(10867 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::PrismarineWall(state) => {
-                Some(11191 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11191 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::RedSandstoneWall(state) => {
-                Some(11515 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11515 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::MossyStoneBrickWall(state) => {
-                Some(11839 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(11839 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::GraniteWall(state) => {
-                Some(12163 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12163 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::StoneBrickWall(state) => {
-                Some(12487 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12487 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::NetherBrickWall(state) => {
-                Some(12811 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(12811 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::AndesiteWall(state) => {
-                Some(13135 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13135 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::RedNetherBrickWall(state) => {
-                Some(13459 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13459 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::SandstoneWall(state) => {
-                Some(13783 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(13783 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::EndStoneBrickWall(state) => {
-                Some(14107 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(14107 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::DioriteWall(state) => {
-                Some(14431 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(14431 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::Scaffolding(state) => {
-                Some(14755 + (!state.waterlogged() as i32) + 2 * state.distance + 3 * (!state.bottom() as i32))
+                Some(14755 + (!state.waterlogged() as i32) + 2 * state.distance + 16 * (!state.bottom() as i32))
             }
             Blocks::Loom(state) => {
                 Some(14787 + (state.facing as i32))
@@ -4253,17 +4253,17 @@ impl Blocks {
             Blocks::CartographyTable => Some(14819),
             Blocks::FletchingTable => Some(14820),
             Blocks::Grindstone(state) => {
-                Some(14821 + (state.facing as i32) + 2 * (state.face as i32))
+                Some(14821 + (state.facing as i32) + 4 * (state.face as i32))
             }
             Blocks::Lectern(state) => {
-                Some(14833 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 3 * (state.facing as i32))
+                Some(14833 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 4 * (state.facing as i32))
             }
             Blocks::SmithingTable => Some(14849),
             Blocks::Stonecutter(state) => {
                 Some(14850 + (state.facing as i32))
             }
             Blocks::Bell(state) => {
-                Some(14854 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.attachment as i32))
+                Some(14854 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.attachment as i32))
             }
             Blocks::Lantern(state) => {
                 Some(14886 + (!state.hanging() as i32))
@@ -4272,10 +4272,10 @@ impl Blocks {
                 Some(14888 + (!state.hanging() as i32))
             }
             Blocks::Campfire(state) => {
-                Some(14890 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(14890 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SoulCampfire(state) => {
-                Some(14922 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(14922 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SweetBerryBush(state) => {
                 Some(14954 + state.age)
@@ -4336,40 +4336,40 @@ impl Blocks {
                 Some(15061 + (!state.powered() as i32))
             }
             Blocks::CrimsonFence(state) => {
-                Some(15063 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(15063 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::WarpedFence(state) => {
-                Some(15095 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(15095 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CrimsonTrapdoor(state) => {
-                Some(15127 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15127 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::WarpedTrapdoor(state) => {
-                Some(15191 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15191 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::CrimsonFenceGate(state) => {
-                Some(15255 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(15255 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::WarpedFenceGate(state) => {
-                Some(15287 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(15287 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::CrimsonStairs(state) => {
-                Some(15319 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15319 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::WarpedStairs(state) => {
-                Some(15399 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15399 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CrimsonButton(state) => {
-                Some(15479 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(15479 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::WarpedButton(state) => {
-                Some(15503 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(15503 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::CrimsonDoor(state) => {
-                Some(15527 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15527 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::WarpedDoor(state) => {
-                Some(15591 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(15591 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::CrimsonSign(state) => {
                 Some(15655 + (!state.waterlogged() as i32) + 2 * state.rotation)
@@ -4396,10 +4396,10 @@ impl Blocks {
                 Some(15760 + state.power)
             }
             Blocks::BeeNest(state) => {
-                Some(15776 + state.honey_level + 2 * (state.facing as i32))
+                Some(15776 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::Beehive(state) => {
-                Some(15800 + state.honey_level + 2 * (state.facing as i32))
+                Some(15800 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::HoneyBlock => Some(15824),
             Blocks::HoneycombBlock => Some(15825),
@@ -4416,10 +4416,10 @@ impl Blocks {
             Blocks::Lodestone => Some(15838),
             Blocks::Blackstone => Some(15839),
             Blocks::BlackstoneStairs(state) => {
-                Some(15840 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(15840 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BlackstoneWall(state) => {
-                Some(15920 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(15920 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::BlackstoneSlab(state) => {
                 Some(16244 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -4432,14 +4432,14 @@ impl Blocks {
                 Some(16254 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
             }
             Blocks::PolishedBlackstoneBrickStairs(state) => {
-                Some(16260 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(16260 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedBlackstoneBrickWall(state) => {
-                Some(16340 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(16340 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::GildedBlackstone => Some(16664),
             Blocks::PolishedBlackstoneStairs(state) => {
-                Some(16665 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(16665 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedBlackstoneSlab(state) => {
                 Some(16745 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -4448,10 +4448,10 @@ impl Blocks {
                 Some(16751 + (!state.powered() as i32))
             }
             Blocks::PolishedBlackstoneButton(state) => {
-                Some(16753 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(16753 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::PolishedBlackstoneWall(state) => {
-                Some(16777 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32))
+                Some(16777 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32))
             }
             Blocks::ChiseledNetherBricks => Some(17101),
             Blocks::CrackedNetherBricks => Some(17102),
@@ -4744,64 +4744,64 @@ impl Blocks {
             Blocks::ChiseledSandstone => Some(246),
             Blocks::CutSandstone => Some(247),
             Blocks::NoteBlock(state) => {
-                Some(248 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(248 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(1048 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1048 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(1064 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1064 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(1080 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1080 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(1096 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1096 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(1112 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1112 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(1128 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1128 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(1144 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1144 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(1160 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1160 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(1176 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1176 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(1192 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1192 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(1208 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1208 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(1224 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1224 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(1240 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1240 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(1256 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1256 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(1272 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1272 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(1288 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1288 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1304 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1304 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1316 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1316 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1328 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1328 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1340),
             Blocks::Grass => Some(1341),
@@ -4812,10 +4812,10 @@ impl Blocks {
                 Some(1345 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1347 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1347 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1359 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1359 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1383),
             Blocks::OrangeWool => Some(1384),
@@ -4865,18 +4865,18 @@ impl Blocks {
                 Some(1435 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1439 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1439 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => None,
             Blocks::Spawner => Some(1951),
             Blocks::OakStairs(state) => {
-                Some(1952 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1952 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(2032 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(2032 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(2056 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(2056 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3352),
             Blocks::DeepslateDiamondOre => None,
@@ -4910,7 +4910,7 @@ impl Blocks {
                 Some(3539 + (!state.waterlogged() as i32) + 2 * state.rotation)
             }
             Blocks::OakDoor(state) => {
-                Some(3571 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3571 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3635 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -4919,7 +4919,7 @@ impl Blocks {
                 Some(3643 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3733 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -4940,13 +4940,13 @@ impl Blocks {
                 Some(3773 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::Lever(state) => {
-                Some(3781 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3781 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3805 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3807 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3807 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3871 + (!state.powered() as i32))
@@ -4977,7 +4977,7 @@ impl Blocks {
                 Some(3887 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3895 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3895 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3919 + state.layers)
@@ -4995,7 +4995,7 @@ impl Blocks {
                 Some(3962 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3964 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3964 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3996),
             Blocks::Netherrack => Some(3997),
@@ -5019,7 +5019,7 @@ impl Blocks {
                 Some(4010 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(4017 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(4017 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(4081),
             Blocks::OrangeStainedGlass => Some(4082),
@@ -5038,22 +5038,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(4095),
             Blocks::BlackStainedGlass => Some(4096),
             Blocks::OakTrapdoor(state) => {
-                Some(4097 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4097 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(4161 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4161 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(4225 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4225 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(4289 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4289 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(4353 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4353 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(4417 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4417 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(4481),
             Blocks::MossyStoneBricks => Some(4482),
@@ -5066,20 +5066,20 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(4489),
             Blocks::InfestedChiseledStoneBricks => Some(4490),
             Blocks::BrownMushroomBlock(state) => {
-                Some(4491 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4491 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4555 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4555 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4619 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4619 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4683 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4683 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(_) => None,
             Blocks::GlassPane(state) => {
-                Some(4715 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4715 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4747),
             Blocks::AttachedPumpkinStem(state) => {
@@ -5095,17 +5095,17 @@ impl Blocks {
                 Some(4764 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4772 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4772 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4804 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4804 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4836 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4836 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4916 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4916 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(4996 + (!state.snowy() as i32))
@@ -5113,17 +5113,17 @@ impl Blocks {
             Blocks::LilyPad => Some(4998),
             Blocks::NetherBricks => Some(4999),
             Blocks::NetherBrickFence(state) => {
-                Some(5000 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5000 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(5032 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5032 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(5112 + state.age)
             }
             Blocks::EnchantingTable => Some(5116),
             Blocks::BrewingStand(state) => {
-                Some(5117 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(5117 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(5125),
             Blocks::WaterCauldron(state) => {
@@ -5133,7 +5133,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(5129),
             Blocks::EndPortalFrame(state) => {
-                Some(5130 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(5130 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(5138),
             Blocks::DragonEgg => Some(5139),
@@ -5141,10 +5141,10 @@ impl Blocks {
                 Some(5140 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(5142 + (state.facing as i32) + 2 * state.age)
+                Some(5142 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(5154 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5154 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(5234),
             Blocks::DeepslateEmeraldOre => None,
@@ -5152,23 +5152,23 @@ impl Blocks {
                 Some(5235 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(5243 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(5243 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(5259 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(5259 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(5387),
             Blocks::SpruceStairs(state) => {
-                Some(5388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(5468 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5468 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5548 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5548 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5628 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5628 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5640),
             Blocks::CobblestoneWall(state) => {
@@ -5192,7 +5192,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5641 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5641 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyCobblestoneWall(state) => {
                 let value0 = match state.west {
@@ -5215,7 +5215,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5705 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5705 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::FlowerPot => Some(5769),
             Blocks::PottedOakSapling => Some(5770),
@@ -5249,22 +5249,22 @@ impl Blocks {
                 Some(5802 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(5810 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5810 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(5834 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5834 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(5858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(5882 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5882 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(5906 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5906 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(5930 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5930 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(5954 + state.rotation)
@@ -5312,7 +5312,7 @@ impl Blocks {
                 Some(6082 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(6086 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(6086 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(6110 + state.power)
@@ -5321,15 +5321,15 @@ impl Blocks {
                 Some(6126 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(6142 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(6142 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(6158 + state.power + 2 * (!state.inverted() as i32))
+                Some(6158 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(6190),
             Blocks::NetherQuartzOre => Some(6191),
             Blocks::Hopper(state) => {
-                Some(6192 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(6192 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(6202),
             Blocks::ChiseledQuartzBlock => Some(6203),
@@ -5337,10 +5337,10 @@ impl Blocks {
                 Some(6204 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(6207 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6207 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(6287 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(6287 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(6299 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -5362,76 +5362,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(6325),
             Blocks::BlackTerracotta => Some(6326),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(6327 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6327 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(6359 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6359 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(6391 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6391 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(6423 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6423 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(6455 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6455 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(6487 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6487 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(6519 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6519 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(6551 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6551 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(6583 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6583 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(6615 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6615 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(6647 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6647 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(6679 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6679 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(6711 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6711 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(6743 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6743 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(6775 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6775 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(6807 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6807 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(6839 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6839 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(6919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(6999),
             Blocks::Barrier => Some(7000),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(7001 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7001 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(7065),
             Blocks::PrismarineBricks => Some(7066),
             Blocks::DarkPrismarine => Some(7067),
             Blocks::PrismarineStairs(state) => {
-                Some(7068 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7068 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(7148 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7148 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(7228 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7228 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(7308 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -5583,7 +5583,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(7682),
             Blocks::CutRedSandstone => Some(7683),
             Blocks::RedSandstoneStairs(state) => {
-                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(7764 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -5647,55 +5647,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(7880),
             Blocks::SmoothRedSandstone => Some(7881),
             Blocks::SpruceFenceGate(state) => {
-                Some(7882 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7882 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(7914 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7914 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(7946 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7946 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(7978 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7978 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(8010 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8010 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(8042 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8042 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(8074 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8074 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(8106 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8106 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(8138 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8138 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(8170 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8170 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(8202 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8202 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(8266 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8266 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(8330 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8330 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(8394 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8394 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(8458 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8458 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(8522 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(8528 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(8528 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(8592 + state.age)
@@ -5705,7 +5705,7 @@ impl Blocks {
                 Some(8599 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(8602 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8602 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(8682),
             Blocks::Beetroots(state) => {
@@ -5714,10 +5714,10 @@ impl Blocks {
             Blocks::DirtPath => Some(8687),
             Blocks::EndGateway => Some(8688),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(8689 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8689 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(8701 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8701 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(8713 + state.age)
@@ -5869,7 +5869,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(8960),
             Blocks::DriedKelpBlock => Some(8961),
             Blocks::TurtleEgg(state) => {
-                Some(8962 + state.hatch + 2 * state.eggs)
+                Some(8962 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(8974),
             Blocks::DeadBrainCoralBlock => Some(8975),
@@ -5980,7 +5980,7 @@ impl Blocks {
             }
             Blocks::BambooSapling => Some(9115),
             Blocks::Bamboo(state) => {
-                Some(9116 + state.stage + 2 * (state.leaves as i32) + 3 * state.age)
+                Some(9116 + state.stage + 2 * (state.leaves as i32) + 6 * state.age)
             }
             Blocks::PottedBamboo => Some(9128),
             Blocks::VoidAir => Some(9129),
@@ -5989,46 +5989,46 @@ impl Blocks {
                 Some(9131 + (!state.drag() as i32))
             }
             Blocks::PolishedGraniteStairs(state) => {
-                Some(9133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothRedSandstoneStairs(state) => {
-                Some(9213 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9213 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyStoneBrickStairs(state) => {
-                Some(9293 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9293 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedDioriteStairs(state) => {
-                Some(9373 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9373 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyCobblestoneStairs(state) => {
-                Some(9453 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9453 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBrickStairs(state) => {
-                Some(9533 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9533 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneStairs(state) => {
-                Some(9613 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9613 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothSandstoneStairs(state) => {
-                Some(9693 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9693 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothQuartzStairs(state) => {
-                Some(9773 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9773 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::GraniteStairs(state) => {
-                Some(9853 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9853 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::AndesiteStairs(state) => {
-                Some(9933 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9933 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::RedNetherBrickStairs(state) => {
-                Some(10013 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10013 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedAndesiteStairs(state) => {
-                Some(10093 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10093 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DioriteStairs(state) => {
-                Some(10173 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10173 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedGraniteSlab(state) => {
                 Some(10253 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -6090,7 +6090,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10331 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10331 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::PrismarineWall(state) => {
                 let value0 = match state.west {
@@ -6113,7 +6113,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10395 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10395 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::RedSandstoneWall(state) => {
                 let value0 = match state.west {
@@ -6136,7 +6136,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10459 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10459 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyStoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -6159,7 +6159,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10523 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10523 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::GraniteWall(state) => {
                 let value0 = match state.west {
@@ -6182,7 +6182,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10587 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10587 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::StoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -6205,7 +6205,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10651 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10651 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::NetherBrickWall(state) => {
                 let value0 = match state.west {
@@ -6228,7 +6228,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10715 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10715 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::AndesiteWall(state) => {
                 let value0 = match state.west {
@@ -6251,7 +6251,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10779 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10779 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::RedNetherBrickWall(state) => {
                 let value0 = match state.west {
@@ -6274,7 +6274,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10843 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10843 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::SandstoneWall(state) => {
                 let value0 = match state.west {
@@ -6297,7 +6297,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10907 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10907 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::EndStoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -6320,7 +6320,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10971 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10971 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::DioriteWall(state) => {
                 let value0 = match state.west {
@@ -6343,10 +6343,10 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(11035 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(11035 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::Scaffolding(state) => {
-                Some(11099 + (!state.waterlogged() as i32) + 2 * state.distance + 3 * (!state.bottom() as i32))
+                Some(11099 + (!state.waterlogged() as i32) + 2 * state.distance + 16 * (!state.bottom() as i32))
             }
             Blocks::Loom(state) => {
                 Some(11131 + (state.facing as i32))
@@ -6363,24 +6363,24 @@ impl Blocks {
             Blocks::CartographyTable => Some(11163),
             Blocks::FletchingTable => Some(11164),
             Blocks::Grindstone(state) => {
-                Some(11165 + (state.facing as i32) + 2 * (state.face as i32))
+                Some(11165 + (state.facing as i32) + 4 * (state.face as i32))
             }
             Blocks::Lectern(state) => {
-                Some(11177 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 3 * (state.facing as i32))
+                Some(11177 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 4 * (state.facing as i32))
             }
             Blocks::SmithingTable => Some(11193),
             Blocks::Stonecutter(state) => {
                 Some(11194 + (state.facing as i32))
             }
             Blocks::Bell(state) => {
-                Some(11198 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.attachment as i32))
+                Some(11198 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.attachment as i32))
             }
             Blocks::Lantern(state) => {
                 Some(11230 + (!state.hanging() as i32))
             }
             Blocks::SoulLantern(_) => None,
             Blocks::Campfire(state) => {
-                Some(11232 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(11232 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SoulCampfire(_) => None,
             Blocks::SweetBerryBush(state) => {
@@ -6438,10 +6438,10 @@ impl Blocks {
             }
             Blocks::Target(_) => None,
             Blocks::BeeNest(state) => {
-                Some(11287 + state.honey_level + 2 * (state.facing as i32))
+                Some(11287 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::Beehive(state) => {
-                Some(11311 + state.honey_level + 2 * (state.facing as i32))
+                Some(11311 + state.honey_level + 6 * (state.facing as i32))
             }
             Blocks::HoneyBlock => Some(11335),
             Blocks::HoneycombBlock => Some(11336),
@@ -6762,64 +6762,64 @@ impl Blocks {
             Blocks::ChiseledSandstone => Some(246),
             Blocks::CutSandstone => Some(247),
             Blocks::NoteBlock(state) => {
-                Some(248 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(248 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(1048 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1048 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(1064 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1064 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(1080 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1080 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(1096 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1096 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(1112 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1112 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(1128 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1128 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(1144 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1144 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(1160 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1160 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(1176 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1176 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(1192 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1192 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(1208 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1208 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(1224 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1224 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(1240 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1240 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(1256 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1256 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(1272 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1272 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(1288 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(1288 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1304 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1304 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1316 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1316 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1328 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1328 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1340),
             Blocks::Grass => Some(1341),
@@ -6830,10 +6830,10 @@ impl Blocks {
                 Some(1345 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1347 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1347 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1359 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1359 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1383),
             Blocks::OrangeWool => Some(1384),
@@ -6883,18 +6883,18 @@ impl Blocks {
                 Some(1435 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1439 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1439 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => None,
             Blocks::Spawner => Some(1951),
             Blocks::OakStairs(state) => {
-                Some(1952 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1952 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(2032 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(2032 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(2056 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(2056 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3352),
             Blocks::DeepslateDiamondOre => None,
@@ -6928,7 +6928,7 @@ impl Blocks {
                 Some(3539 + (!state.waterlogged() as i32) + 2 * state.rotation)
             }
             Blocks::OakDoor(state) => {
-                Some(3571 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3571 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3635 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -6937,7 +6937,7 @@ impl Blocks {
                 Some(3643 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3733 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -6958,13 +6958,13 @@ impl Blocks {
                 Some(3773 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::Lever(state) => {
-                Some(3781 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3781 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3805 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3807 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3807 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3871 + (!state.powered() as i32))
@@ -6995,7 +6995,7 @@ impl Blocks {
                 Some(3887 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3895 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3895 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3919 + state.layers)
@@ -7013,7 +7013,7 @@ impl Blocks {
                 Some(3962 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3964 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3964 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3996),
             Blocks::Netherrack => Some(3997),
@@ -7037,7 +7037,7 @@ impl Blocks {
                 Some(4010 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(4017 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(4017 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(4081),
             Blocks::OrangeStainedGlass => Some(4082),
@@ -7056,22 +7056,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(4095),
             Blocks::BlackStainedGlass => Some(4096),
             Blocks::OakTrapdoor(state) => {
-                Some(4097 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4097 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(4161 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4161 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(4225 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4225 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(4289 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4289 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(4353 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4353 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(4417 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(4417 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(4481),
             Blocks::MossyStoneBricks => Some(4482),
@@ -7084,20 +7084,20 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(4489),
             Blocks::InfestedChiseledStoneBricks => Some(4490),
             Blocks::BrownMushroomBlock(state) => {
-                Some(4491 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4491 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4555 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4555 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4619 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4619 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4683 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4683 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(_) => None,
             Blocks::GlassPane(state) => {
-                Some(4715 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4715 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4747),
             Blocks::AttachedPumpkinStem(state) => {
@@ -7113,17 +7113,17 @@ impl Blocks {
                 Some(4764 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4772 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4772 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4804 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4804 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4836 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4836 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4916 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4916 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(4996 + (!state.snowy() as i32))
@@ -7131,17 +7131,17 @@ impl Blocks {
             Blocks::LilyPad => Some(4998),
             Blocks::NetherBricks => Some(4999),
             Blocks::NetherBrickFence(state) => {
-                Some(5000 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5000 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(5032 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5032 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(5112 + state.age)
             }
             Blocks::EnchantingTable => Some(5116),
             Blocks::BrewingStand(state) => {
-                Some(5117 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(5117 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(5125),
             Blocks::WaterCauldron(state) => {
@@ -7151,7 +7151,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(5129),
             Blocks::EndPortalFrame(state) => {
-                Some(5130 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(5130 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(5138),
             Blocks::DragonEgg => Some(5139),
@@ -7159,10 +7159,10 @@ impl Blocks {
                 Some(5140 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(5142 + (state.facing as i32) + 2 * state.age)
+                Some(5142 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(5154 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5154 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(5234),
             Blocks::DeepslateEmeraldOre => None,
@@ -7170,23 +7170,23 @@ impl Blocks {
                 Some(5235 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(5243 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(5243 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(5259 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(5259 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(5387),
             Blocks::SpruceStairs(state) => {
-                Some(5388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(5468 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5468 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5548 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5548 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5628 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5628 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5640),
             Blocks::CobblestoneWall(state) => {
@@ -7210,7 +7210,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5641 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5641 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyCobblestoneWall(state) => {
                 let value0 = match state.west {
@@ -7233,7 +7233,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5705 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5705 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::FlowerPot => Some(5769),
             Blocks::PottedOakSapling => Some(5770),
@@ -7267,22 +7267,22 @@ impl Blocks {
                 Some(5802 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(5810 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5810 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(5834 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5834 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(5858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5858 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(5882 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5882 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(5906 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5906 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(5930 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5930 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(5954 + state.rotation)
@@ -7330,7 +7330,7 @@ impl Blocks {
                 Some(6082 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(6086 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(6086 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(6110 + state.power)
@@ -7339,15 +7339,15 @@ impl Blocks {
                 Some(6126 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(6142 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(6142 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(6158 + state.power + 2 * (!state.inverted() as i32))
+                Some(6158 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(6190),
             Blocks::NetherQuartzOre => Some(6191),
             Blocks::Hopper(state) => {
-                Some(6192 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(6192 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(6202),
             Blocks::ChiseledQuartzBlock => Some(6203),
@@ -7355,10 +7355,10 @@ impl Blocks {
                 Some(6204 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(6207 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6207 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(6287 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(6287 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(6299 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -7380,76 +7380,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(6325),
             Blocks::BlackTerracotta => Some(6326),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(6327 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6327 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(6359 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6359 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(6391 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6391 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(6423 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6423 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(6455 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6455 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(6487 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6487 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(6519 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6519 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(6551 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6551 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(6583 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6583 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(6615 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6615 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(6647 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6647 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(6679 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6679 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(6711 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6711 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(6743 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6743 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(6775 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6775 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(6807 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6807 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(6839 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6839 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(6919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(6999),
             Blocks::Barrier => Some(7000),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(7001 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7001 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(7065),
             Blocks::PrismarineBricks => Some(7066),
             Blocks::DarkPrismarine => Some(7067),
             Blocks::PrismarineStairs(state) => {
-                Some(7068 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7068 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(7148 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7148 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(7228 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7228 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(7308 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -7601,7 +7601,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(7682),
             Blocks::CutRedSandstone => Some(7683),
             Blocks::RedSandstoneStairs(state) => {
-                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7684 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(7764 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -7665,55 +7665,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(7880),
             Blocks::SmoothRedSandstone => Some(7881),
             Blocks::SpruceFenceGate(state) => {
-                Some(7882 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7882 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(7914 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7914 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(7946 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7946 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(7978 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7978 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(8010 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(8010 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(8042 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8042 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(8074 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8074 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(8106 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8106 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(8138 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8138 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(8170 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(8170 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(8202 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8202 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(8266 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8266 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(8330 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8330 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(8394 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8394 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(8458 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(8458 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(8522 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(8528 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(8528 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(8592 + state.age)
@@ -7723,7 +7723,7 @@ impl Blocks {
                 Some(8599 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(8602 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8602 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(8682),
             Blocks::Beetroots(state) => {
@@ -7732,10 +7732,10 @@ impl Blocks {
             Blocks::DirtPath => Some(8687),
             Blocks::EndGateway => Some(8688),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(8689 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8689 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(8701 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8701 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(8713 + state.age)
@@ -7887,7 +7887,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(8960),
             Blocks::DriedKelpBlock => Some(8961),
             Blocks::TurtleEgg(state) => {
-                Some(8962 + state.hatch + 2 * state.eggs)
+                Some(8962 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(8974),
             Blocks::DeadBrainCoralBlock => Some(8975),
@@ -7998,7 +7998,7 @@ impl Blocks {
             }
             Blocks::BambooSapling => Some(9115),
             Blocks::Bamboo(state) => {
-                Some(9116 + state.stage + 2 * (state.leaves as i32) + 3 * state.age)
+                Some(9116 + state.stage + 2 * (state.leaves as i32) + 6 * state.age)
             }
             Blocks::PottedBamboo => Some(9128),
             Blocks::VoidAir => Some(9129),
@@ -8007,46 +8007,46 @@ impl Blocks {
                 Some(9131 + (!state.drag() as i32))
             }
             Blocks::PolishedGraniteStairs(state) => {
-                Some(9133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothRedSandstoneStairs(state) => {
-                Some(9213 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9213 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyStoneBrickStairs(state) => {
-                Some(9293 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9293 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedDioriteStairs(state) => {
-                Some(9373 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9373 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::MossyCobblestoneStairs(state) => {
-                Some(9453 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9453 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBrickStairs(state) => {
-                Some(9533 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9533 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneStairs(state) => {
-                Some(9613 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9613 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothSandstoneStairs(state) => {
-                Some(9693 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9693 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SmoothQuartzStairs(state) => {
-                Some(9773 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9773 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::GraniteStairs(state) => {
-                Some(9853 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9853 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::AndesiteStairs(state) => {
-                Some(9933 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(9933 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::RedNetherBrickStairs(state) => {
-                Some(10013 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10013 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedAndesiteStairs(state) => {
-                Some(10093 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10093 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DioriteStairs(state) => {
-                Some(10173 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(10173 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PolishedGraniteSlab(state) => {
                 Some(10253 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -8108,7 +8108,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10331 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10331 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::PrismarineWall(state) => {
                 let value0 = match state.west {
@@ -8131,7 +8131,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10395 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10395 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::RedSandstoneWall(state) => {
                 let value0 = match state.west {
@@ -8154,7 +8154,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10459 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10459 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyStoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -8177,7 +8177,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10523 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10523 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::GraniteWall(state) => {
                 let value0 = match state.west {
@@ -8200,7 +8200,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10587 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10587 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::StoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -8223,7 +8223,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10651 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10651 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::NetherBrickWall(state) => {
                 let value0 = match state.west {
@@ -8246,7 +8246,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10715 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10715 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::AndesiteWall(state) => {
                 let value0 = match state.west {
@@ -8269,7 +8269,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10779 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10779 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::RedNetherBrickWall(state) => {
                 let value0 = match state.west {
@@ -8292,7 +8292,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10843 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10843 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::SandstoneWall(state) => {
                 let value0 = match state.west {
@@ -8315,7 +8315,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10907 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10907 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::EndStoneBrickWall(state) => {
                 let value0 = match state.west {
@@ -8338,7 +8338,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(10971 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(10971 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::DioriteWall(state) => {
                 let value0 = match state.west {
@@ -8361,10 +8361,10 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(11035 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(11035 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::Scaffolding(state) => {
-                Some(11099 + (!state.waterlogged() as i32) + 2 * state.distance + 3 * (!state.bottom() as i32))
+                Some(11099 + (!state.waterlogged() as i32) + 2 * state.distance + 16 * (!state.bottom() as i32))
             }
             Blocks::Loom(state) => {
                 Some(11131 + (state.facing as i32))
@@ -8381,24 +8381,24 @@ impl Blocks {
             Blocks::CartographyTable => Some(11163),
             Blocks::FletchingTable => Some(11164),
             Blocks::Grindstone(state) => {
-                Some(11165 + (state.facing as i32) + 2 * (state.face as i32))
+                Some(11165 + (state.facing as i32) + 4 * (state.face as i32))
             }
             Blocks::Lectern(state) => {
-                Some(11177 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 3 * (state.facing as i32))
+                Some(11177 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 4 * (state.facing as i32))
             }
             Blocks::SmithingTable => Some(11193),
             Blocks::Stonecutter(state) => {
                 Some(11194 + (state.facing as i32))
             }
             Blocks::Bell(state) => {
-                Some(11198 + (state.facing as i32) + 2 * (state.attachment as i32))
+                Some(11198 + (state.facing as i32) + 4 * (state.attachment as i32))
             }
             Blocks::Lantern(state) => {
                 Some(11214 + (!state.hanging() as i32))
             }
             Blocks::SoulLantern(_) => None,
             Blocks::Campfire(state) => {
-                Some(11216 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32))
+                Some(11216 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SoulCampfire(_) => None,
             Blocks::SweetBerryBush(state) => {
@@ -8779,64 +8779,64 @@ impl Blocks {
                 if state.instrument > Instrument::Xylophone {
                     return None;
                 }
-                Some(248 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(248 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(748 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(748 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(764 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(764 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(780 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(780 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(796 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(796 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(812 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(812 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(828 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(828 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(844 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(844 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(860 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(860 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(876 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(876 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(892 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(892 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(908 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(908 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(924 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(924 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(940 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(940 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(956 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(956 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(972 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(972 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(988 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(988 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1004 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1004 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1016 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1016 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1028 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1028 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1040),
             Blocks::Grass => Some(1041),
@@ -8847,10 +8847,10 @@ impl Blocks {
                 Some(1045 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1047 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1047 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1059 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1059 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1083),
             Blocks::OrangeWool => Some(1084),
@@ -8900,18 +8900,18 @@ impl Blocks {
                 Some(1132 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1136 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1136 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => None,
             Blocks::Spawner => Some(1648),
             Blocks::OakStairs(state) => {
-                Some(1649 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1649 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(1729 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(1729 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(1753 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(1753 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3049),
             Blocks::DeepslateDiamondOre => None,
@@ -8935,7 +8935,7 @@ impl Blocks {
             Blocks::JungleSign(_) => None,
             Blocks::DarkOakSign(_) => None,
             Blocks::OakDoor(state) => {
-                Some(3108 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3108 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3172 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -8944,7 +8944,7 @@ impl Blocks {
                 Some(3180 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3190 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3190 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3270 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -8955,13 +8955,13 @@ impl Blocks {
             Blocks::JungleWallSign(_) => None,
             Blocks::DarkOakWallSign(_) => None,
             Blocks::Lever(state) => {
-                Some(3278 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3278 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3302 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3304 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3304 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3368 + (!state.powered() as i32))
@@ -8992,7 +8992,7 @@ impl Blocks {
                 Some(3384 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3392 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3392 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3416 + state.layers)
@@ -9010,7 +9010,7 @@ impl Blocks {
                 Some(3459 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3461 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3461 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3493),
             Blocks::Netherrack => Some(3494),
@@ -9034,7 +9034,7 @@ impl Blocks {
                 Some(3507 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(3514 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(3514 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(3578),
             Blocks::OrangeStainedGlass => Some(3579),
@@ -9053,22 +9053,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(3592),
             Blocks::BlackStainedGlass => Some(3593),
             Blocks::OakTrapdoor(state) => {
-                Some(3594 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3594 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(3658 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3658 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(3722 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3722 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(3786 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3786 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(3850 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3850 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(3914 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3914 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(3984),
             Blocks::MossyStoneBricks => Some(3985),
@@ -9081,20 +9081,20 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(3982),
             Blocks::InfestedChiseledStoneBricks => Some(3983),
             Blocks::BrownMushroomBlock(state) => {
-                Some(3988 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(3988 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4052 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4052 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4116 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4116 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4180 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4180 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(_) => None,
             Blocks::GlassPane(state) => {
-                Some(4212 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4212 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4244),
             Blocks::AttachedPumpkinStem(state) => {
@@ -9110,17 +9110,17 @@ impl Blocks {
                 Some(4261 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4269 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4269 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4301 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4301 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4333 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4333 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4413 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4413 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(4493 + (!state.snowy() as i32))
@@ -9128,17 +9128,17 @@ impl Blocks {
             Blocks::LilyPad => Some(4495),
             Blocks::NetherBricks => Some(4496),
             Blocks::NetherBrickFence(state) => {
-                Some(4497 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4497 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(4529 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4529 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(4609 + state.age)
             }
             Blocks::EnchantingTable => Some(4613),
             Blocks::BrewingStand(state) => {
-                Some(4614 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(4614 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(4622),
             Blocks::WaterCauldron(state) => {
@@ -9148,7 +9148,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(4626),
             Blocks::EndPortalFrame(state) => {
-                Some(4627 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(4627 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(4635),
             Blocks::DragonEgg => Some(4636),
@@ -9156,10 +9156,10 @@ impl Blocks {
                 Some(4637 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(4639 + (state.facing as i32) + 2 * state.age)
+                Some(4639 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(4651 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4651 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(4731),
             Blocks::DeepslateEmeraldOre => None,
@@ -9167,23 +9167,23 @@ impl Blocks {
                 Some(4732 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(4740 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(4740 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(4756 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(4756 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(4884),
             Blocks::SpruceStairs(state) => {
-                Some(4885 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4885 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(4965 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4965 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5045 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5045 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5125 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5125 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5137),
             Blocks::CobblestoneWall(state) => {
@@ -9207,7 +9207,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5138 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5138 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyCobblestoneWall(state) => {
                 let value0 = match state.west {
@@ -9230,7 +9230,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5202 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5202 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::FlowerPot => Some(5266),
             Blocks::PottedOakSapling => Some(5267),
@@ -9264,22 +9264,22 @@ impl Blocks {
                 Some(5296 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(5304 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5304 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(5328 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5328 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(5352 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5352 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(5376 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5376 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(5400 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5400 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(5424 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5424 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(5452 + state.rotation)
@@ -9327,7 +9327,7 @@ impl Blocks {
                 Some(5576 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(5580 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(5580 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(5604 + state.power)
@@ -9336,15 +9336,15 @@ impl Blocks {
                 Some(5620 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(5636 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(5636 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(5652 + state.power + 2 * (!state.inverted() as i32))
+                Some(5652 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(5684),
             Blocks::NetherQuartzOre => Some(5685),
             Blocks::Hopper(state) => {
-                Some(5686 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(5686 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(5696),
             Blocks::ChiseledQuartzBlock => Some(5697),
@@ -9352,10 +9352,10 @@ impl Blocks {
                 Some(5698 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(5701 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5701 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(5781 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(5781 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(5793 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -9377,76 +9377,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(5819),
             Blocks::BlackTerracotta => Some(5820),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(5821 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5821 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(5853 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5853 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(5885 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5885 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(5917 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5917 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(5949 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5949 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(5981 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5981 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(6013 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6013 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(6045 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6045 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(6077 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6077 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(6109 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6109 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(6141 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6141 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(6173 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6173 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(6205 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6205 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(6237 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6237 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(6269 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6269 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(6301 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6301 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(6333 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6333 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(6413 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6413 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(6493),
             Blocks::Barrier => Some(6494),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(6495 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(6495 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(6559),
             Blocks::PrismarineBricks => Some(6560),
             Blocks::DarkPrismarine => Some(6561),
             Blocks::PrismarineStairs(state) => {
-                Some(6562 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6562 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(6642 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6642 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(6722 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6722 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(6802 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -9598,7 +9598,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(7176),
             Blocks::CutRedSandstone => Some(7177),
             Blocks::RedSandstoneStairs(state) => {
-                Some(7178 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7178 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(7258 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -9656,55 +9656,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(7356),
             Blocks::SmoothRedSandstone => Some(7357),
             Blocks::SpruceFenceGate(state) => {
-                Some(7358 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7358 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(7390 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7390 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(7422 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7422 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(7454 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7454 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(7486 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7486 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(7518 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7518 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(7550 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7550 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(7582 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7582 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(7614 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7614 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(7646 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7646 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(7678 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7678 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(7742 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7742 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(7806 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7806 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(7870 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7870 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(7934 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7934 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(7998 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(8004 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(8004 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(8068 + state.age)
@@ -9714,7 +9714,7 @@ impl Blocks {
                 Some(8075 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(8078 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8078 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(8158),
             Blocks::Beetroots(state) => {
@@ -9723,10 +9723,10 @@ impl Blocks {
             Blocks::DirtPath => Some(8163),
             Blocks::EndGateway => Some(8164),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(8165 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8165 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(8177 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8177 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(8189 + state.age)
@@ -9878,7 +9878,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(8436),
             Blocks::DriedKelpBlock => Some(8437),
             Blocks::TurtleEgg(state) => {
-                Some(8438 + state.hatch + 2 * state.eggs)
+                Some(8438 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(8450),
             Blocks::DeadBrainCoralBlock => Some(8451),
@@ -10424,64 +10424,64 @@ impl Blocks {
                 if state.instrument > Instrument::Xylophone {
                     return None;
                 }
-                Some(248 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32))
+                Some(248 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32))
             }
             Blocks::WhiteBed(state) => {
-                Some(748 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(748 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::OrangeBed(state) => {
-                Some(764 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(764 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::MagentaBed(state) => {
-                Some(780 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(780 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightBlueBed(state) => {
-                Some(796 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(796 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::YellowBed(state) => {
-                Some(812 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(812 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LimeBed(state) => {
-                Some(828 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(828 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PinkBed(state) => {
-                Some(844 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(844 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GrayBed(state) => {
-                Some(860 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(860 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::LightGrayBed(state) => {
-                Some(876 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(876 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::CyanBed(state) => {
-                Some(892 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(892 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PurpleBed(state) => {
-                Some(908 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(908 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlueBed(state) => {
-                Some(924 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(924 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BrownBed(state) => {
-                Some(940 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(940 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::GreenBed(state) => {
-                Some(956 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(956 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::RedBed(state) => {
-                Some(972 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(972 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::BlackBed(state) => {
-                Some(988 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32))
+                Some(988 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32))
             }
             Blocks::PoweredRail(state) => {
-                Some(1004 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1004 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::DetectorRail(state) => {
-                Some(1016 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(1016 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::StickyPiston(state) => {
-                Some(1028 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1028 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::Cobweb => Some(1040),
             Blocks::Grass => Some(1041),
@@ -10492,10 +10492,10 @@ impl Blocks {
                 Some(1045 + (state.half as i32))
             }
             Blocks::Piston(state) => {
-                Some(1047 + (state.facing as i32) + 2 * (!state.extended() as i32))
+                Some(1047 + (state.facing as i32) + 6 * (!state.extended() as i32))
             }
             Blocks::PistonHead(state) => {
-                Some(1059 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32))
+                Some(1059 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32))
             }
             Blocks::WhiteWool => Some(1083),
             Blocks::OrangeWool => Some(1084),
@@ -10543,18 +10543,18 @@ impl Blocks {
                 Some(1131 + (state.facing as i32))
             }
             Blocks::Fire(state) => {
-                Some(1135 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age)
+                Some(1135 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age)
             }
             Blocks::SoulFire => None,
             Blocks::Spawner => Some(1647),
             Blocks::OakStairs(state) => {
-                Some(1648 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(1648 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Chest(state) => {
-                Some(1728 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(1728 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::RedstoneWire(state) => {
-                Some(1752 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32))
+                Some(1752 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32))
             }
             Blocks::DiamondOre => Some(3048),
             Blocks::DeepslateDiamondOre => None,
@@ -10578,7 +10578,7 @@ impl Blocks {
             Blocks::JungleSign(_) => None,
             Blocks::DarkOakSign(_) => None,
             Blocks::OakDoor(state) => {
-                Some(3107 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3107 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Ladder(state) => {
                 Some(3171 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -10587,7 +10587,7 @@ impl Blocks {
                 Some(3179 + (state.shape as i32))
             }
             Blocks::CobblestoneStairs(state) => {
-                Some(3189 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(3189 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakWallSign(state) => {
                 Some(3269 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
@@ -10598,13 +10598,13 @@ impl Blocks {
             Blocks::JungleWallSign(_) => None,
             Blocks::DarkOakWallSign(_) => None,
             Blocks::Lever(state) => {
-                Some(3277 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3277 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::StonePressurePlate(state) => {
                 Some(3301 + (!state.powered() as i32))
             }
             Blocks::IronDoor(state) => {
-                Some(3303 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3303 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::OakPressurePlate(state) => {
                 Some(3367 + (!state.powered() as i32))
@@ -10635,7 +10635,7 @@ impl Blocks {
                 Some(3383 + (!state.lit() as i32) + 2 * (state.facing as i32))
             }
             Blocks::StoneButton(state) => {
-                Some(3391 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(3391 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::Snow(state) => {
                 Some(3415 + state.layers)
@@ -10653,7 +10653,7 @@ impl Blocks {
                 Some(3458 + (!state.has_record() as i32))
             }
             Blocks::OakFence(state) => {
-                Some(3460 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(3460 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Pumpkin => Some(3492),
             Blocks::Netherrack => Some(3493),
@@ -10677,7 +10677,7 @@ impl Blocks {
                 Some(3506 + state.bites)
             }
             Blocks::Repeater(state) => {
-                Some(3513 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay)
+                Some(3513 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay)
             }
             Blocks::WhiteStainedGlass => Some(3577),
             Blocks::OrangeStainedGlass => Some(3578),
@@ -10696,22 +10696,22 @@ impl Blocks {
             Blocks::RedStainedGlass => Some(3591),
             Blocks::BlackStainedGlass => Some(3592),
             Blocks::OakTrapdoor(state) => {
-                Some(3593 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3593 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::SpruceTrapdoor(state) => {
-                Some(3657 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3657 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchTrapdoor(state) => {
-                Some(3721 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3721 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleTrapdoor(state) => {
-                Some(3785 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3785 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaTrapdoor(state) => {
-                Some(3849 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3849 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakTrapdoor(state) => {
-                Some(3913 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(3913 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::StoneBricks => Some(3983),
             Blocks::MossyStoneBricks => Some(3984),
@@ -10724,20 +10724,20 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => Some(3981),
             Blocks::InfestedChiseledStoneBricks => Some(3982),
             Blocks::BrownMushroomBlock(state) => {
-                Some(3987 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(3987 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::RedMushroomBlock(state) => {
-                Some(4051 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4051 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::MushroomStem(state) => {
-                Some(4115 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(4115 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::IronBars(state) => {
-                Some(4179 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4179 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Chain(_) => None,
             Blocks::GlassPane(state) => {
-                Some(4211 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4211 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::Melon => Some(4243),
             Blocks::AttachedPumpkinStem(state) => {
@@ -10753,17 +10753,17 @@ impl Blocks {
                 Some(4260 + state.age)
             }
             Blocks::Vine(state) => {
-                Some(4268 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4268 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GlowLichen(_) => None,
             Blocks::OakFenceGate(state) => {
-                Some(4300 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(4300 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BrickStairs(state) => {
-                Some(4332 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4332 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::StoneBrickStairs(state) => {
-                Some(4412 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4412 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::Mycelium(state) => {
                 Some(4492 + (!state.snowy() as i32))
@@ -10771,17 +10771,17 @@ impl Blocks {
             Blocks::LilyPad => Some(4494),
             Blocks::NetherBricks => Some(4495),
             Blocks::NetherBrickFence(state) => {
-                Some(4496 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(4496 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::NetherBrickStairs(state) => {
-                Some(4528 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4528 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::NetherWart(state) => {
                 Some(4608 + state.age)
             }
             Blocks::EnchantingTable => Some(4612),
             Blocks::BrewingStand(state) => {
-                Some(4613 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32))
+                Some(4613 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32))
             }
             Blocks::Cauldron => Some(4621),
             Blocks::WaterCauldron(state) => {
@@ -10791,7 +10791,7 @@ impl Blocks {
             Blocks::PowderSnowCauldron(_) => None,
             Blocks::EndPortal => Some(4625),
             Blocks::EndPortalFrame(state) => {
-                Some(4626 + (state.facing as i32) + 2 * (!state.eye() as i32))
+                Some(4626 + (state.facing as i32) + 4 * (!state.eye() as i32))
             }
             Blocks::EndStone => Some(4634),
             Blocks::DragonEgg => Some(4635),
@@ -10799,10 +10799,10 @@ impl Blocks {
                 Some(4636 + (!state.lit() as i32))
             }
             Blocks::Cocoa(state) => {
-                Some(4638 + (state.facing as i32) + 2 * state.age)
+                Some(4638 + (state.facing as i32) + 4 * state.age)
             }
             Blocks::SandstoneStairs(state) => {
-                Some(4650 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4650 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EmeraldOre => Some(4730),
             Blocks::DeepslateEmeraldOre => None,
@@ -10810,23 +10810,23 @@ impl Blocks {
                 Some(4731 + (!state.waterlogged() as i32) + 2 * (state.facing as i32))
             }
             Blocks::TripwireHook(state) => {
-                Some(4739 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32))
+                Some(4739 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32))
             }
             Blocks::Tripwire(state) => {
-                Some(4755 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32))
+                Some(4755 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32))
             }
             Blocks::EmeraldBlock => Some(4883),
             Blocks::SpruceStairs(state) => {
-                Some(4884 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4884 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::BirchStairs(state) => {
-                Some(4964 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(4964 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::JungleStairs(state) => {
-                Some(5044 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5044 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::CommandBlock(state) => {
-                Some(5124 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(5124 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::Beacon => Some(5136),
             Blocks::CobblestoneWall(state) => {
@@ -10850,7 +10850,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5137 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5137 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::MossyCobblestoneWall(state) => {
                 let value0 = match state.west {
@@ -10873,7 +10873,7 @@ impl Blocks {
                     WallType::None => 1,
                     _ => return None,
                 };
-                Some(5201 + value0 + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * value1 + 5 * value2 + 6 * value3)
+                Some(5201 + value0 + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * value1 + 16 * value2 + 32 * value3)
             }
             Blocks::FlowerPot => Some(5265),
             Blocks::PottedOakSapling => Some(5266),
@@ -10907,22 +10907,22 @@ impl Blocks {
                 Some(5295 + state.age)
             }
             Blocks::OakButton(state) => {
-                Some(5303 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5303 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SpruceButton(state) => {
-                Some(5327 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5327 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::BirchButton(state) => {
-                Some(5351 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5351 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::JungleButton(state) => {
-                Some(5375 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5375 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::AcaciaButton(state) => {
-                Some(5399 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5399 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::DarkOakButton(state) => {
-                Some(5423 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32))
+                Some(5423 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32))
             }
             Blocks::SkeletonSkull(state) => {
                 Some(5451 + state.rotation)
@@ -10970,7 +10970,7 @@ impl Blocks {
                 Some(5575 + (state.facing as i32))
             }
             Blocks::TrappedChest(state) => {
-                Some(5579 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32))
+                Some(5579 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32))
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 Some(5603 + state.power)
@@ -10979,15 +10979,15 @@ impl Blocks {
                 Some(5619 + state.power)
             }
             Blocks::Comparator(state) => {
-                Some(5635 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32))
+                Some(5635 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32))
             }
             Blocks::DaylightDetector(state) => {
-                Some(5651 + state.power + 2 * (!state.inverted() as i32))
+                Some(5651 + state.power + 16 * (!state.inverted() as i32))
             }
             Blocks::RedstoneBlock => Some(5683),
             Blocks::NetherQuartzOre => Some(5684),
             Blocks::Hopper(state) => {
-                Some(5685 + (state.facing as i32) + 2 * (!state.enabled() as i32))
+                Some(5685 + (state.facing as i32) + 5 * (!state.enabled() as i32))
             }
             Blocks::QuartzBlock => Some(5695),
             Blocks::ChiseledQuartzBlock => Some(5696),
@@ -10995,10 +10995,10 @@ impl Blocks {
                 Some(5697 + (state.axis as i32))
             }
             Blocks::QuartzStairs(state) => {
-                Some(5700 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(5700 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::ActivatorRail(state) => {
-                Some(5780 + (state.shape as i32) + 2 * (!state.powered() as i32))
+                Some(5780 + (state.shape as i32) + 6 * (!state.powered() as i32))
             }
             Blocks::Dropper(state) => {
                 Some(5792 + (!state.triggered() as i32) + 2 * (state.facing as i32))
@@ -11020,76 +11020,76 @@ impl Blocks {
             Blocks::RedTerracotta => Some(5818),
             Blocks::BlackTerracotta => Some(5819),
             Blocks::WhiteStainedGlassPane(state) => {
-                Some(5820 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5820 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                Some(5852 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5852 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                Some(5884 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5884 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                Some(5916 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5916 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::YellowStainedGlassPane(state) => {
-                Some(5948 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5948 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LimeStainedGlassPane(state) => {
-                Some(5980 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(5980 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PinkStainedGlassPane(state) => {
-                Some(6012 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6012 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GrayStainedGlassPane(state) => {
-                Some(6044 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6044 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                Some(6076 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6076 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::CyanStainedGlassPane(state) => {
-                Some(6108 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6108 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                Some(6140 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6140 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlueStainedGlassPane(state) => {
-                Some(6172 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6172 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BrownStainedGlassPane(state) => {
-                Some(6204 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6204 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::GreenStainedGlassPane(state) => {
-                Some(6236 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6236 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::RedStainedGlassPane(state) => {
-                Some(6268 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6268 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BlackStainedGlassPane(state) => {
-                Some(6300 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(6300 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaStairs(state) => {
-                Some(6332 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6332 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkOakStairs(state) => {
-                Some(6412 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6412 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::SlimeBlock => Some(6492),
             Blocks::Barrier => Some(6493),
             Blocks::Light(_) => None,
             Blocks::IronTrapdoor(state) => {
-                Some(6494 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(6494 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::Prismarine => Some(6558),
             Blocks::PrismarineBricks => Some(6559),
             Blocks::DarkPrismarine => Some(6560),
             Blocks::PrismarineStairs(state) => {
-                Some(6561 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6561 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineBrickStairs(state) => {
-                Some(6641 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6641 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::DarkPrismarineStairs(state) => {
-                Some(6721 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(6721 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::PrismarineSlab(state) => {
                 Some(6801 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -11241,7 +11241,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => Some(7175),
             Blocks::CutRedSandstone => Some(7176),
             Blocks::RedSandstoneStairs(state) => {
-                Some(7177 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(7177 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::OakSlab(state) => {
                 Some(7257 + (!state.waterlogged() as i32) + 2 * (state.typed as i32))
@@ -11299,55 +11299,55 @@ impl Blocks {
             Blocks::SmoothQuartz => Some(7355),
             Blocks::SmoothRedSandstone => Some(7356),
             Blocks::SpruceFenceGate(state) => {
-                Some(7357 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7357 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::BirchFenceGate(state) => {
-                Some(7389 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7389 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::JungleFenceGate(state) => {
-                Some(7421 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7421 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::AcaciaFenceGate(state) => {
-                Some(7453 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7453 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::DarkOakFenceGate(state) => {
-                Some(7485 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32))
+                Some(7485 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32))
             }
             Blocks::SpruceFence(state) => {
-                Some(7517 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7517 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::BirchFence(state) => {
-                Some(7549 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7549 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::JungleFence(state) => {
-                Some(7581 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7581 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::AcaciaFence(state) => {
-                Some(7613 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7613 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::DarkOakFence(state) => {
-                Some(7645 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32))
+                Some(7645 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32))
             }
             Blocks::SpruceDoor(state) => {
-                Some(7677 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7677 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::BirchDoor(state) => {
-                Some(7741 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7741 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::JungleDoor(state) => {
-                Some(7805 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7805 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::AcaciaDoor(state) => {
-                Some(7869 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7869 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::DarkOakDoor(state) => {
-                Some(7933 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32))
+                Some(7933 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32))
             }
             Blocks::EndRod(state) => {
                 Some(7997 + (state.facing as i32))
             }
             Blocks::ChorusPlant(state) => {
-                Some(8003 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32))
+                Some(8003 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32))
             }
             Blocks::ChorusFlower(state) => {
                 Some(8067 + state.age)
@@ -11357,7 +11357,7 @@ impl Blocks {
                 Some(8074 + (state.axis as i32))
             }
             Blocks::PurpurStairs(state) => {
-                Some(8077 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32))
+                Some(8077 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32))
             }
             Blocks::EndStoneBricks => Some(8157),
             Blocks::Beetroots(state) => {
@@ -11366,10 +11366,10 @@ impl Blocks {
             Blocks::DirtPath => Some(8162),
             Blocks::EndGateway => Some(8163),
             Blocks::RepeatingCommandBlock(state) => {
-                Some(8164 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8164 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::ChainCommandBlock(state) => {
-                Some(8176 + (state.facing as i32) + 2 * (!state.conditional() as i32))
+                Some(8176 + (state.facing as i32) + 6 * (!state.conditional() as i32))
             }
             Blocks::FrostedIce(state) => {
                 Some(8188 + state.age)
@@ -11521,7 +11521,7 @@ impl Blocks {
             Blocks::KelpPlant => Some(8435),
             Blocks::DriedKelpBlock => Some(8436),
             Blocks::TurtleEgg(state) => {
-                Some(8437 + state.hatch + 2 * state.eggs)
+                Some(8437 + state.hatch + 3 * state.eggs)
             }
             Blocks::DeadTubeCoralBlock => Some(8449),
             Blocks::DeadBrainCoralBlock => Some(8450),
@@ -12046,64 +12046,64 @@ impl Blocks {
             Blocks::ChiseledSandstone => 279,
             Blocks::CutSandstone => 280,
             Blocks::NoteBlock(state) => {
-                281 + (!state.powered() as i32) + 2 * state.note + 3 * (state.instrument as i32)
+                281 + (!state.powered() as i32) + 2 * state.note + 50 * (state.instrument as i32)
             }
             Blocks::WhiteBed(state) => {
-                1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1081 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::OrangeBed(state) => {
-                1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1097 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::MagentaBed(state) => {
-                1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1113 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::LightBlueBed(state) => {
-                1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1129 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::YellowBed(state) => {
-                1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1145 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::LimeBed(state) => {
-                1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1161 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::PinkBed(state) => {
-                1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1177 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::GrayBed(state) => {
-                1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1193 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::LightGrayBed(state) => {
-                1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1209 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::CyanBed(state) => {
-                1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1225 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::PurpleBed(state) => {
-                1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1241 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::BlueBed(state) => {
-                1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1257 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::BrownBed(state) => {
-                1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1273 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::GreenBed(state) => {
-                1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1289 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::RedBed(state) => {
-                1305 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1305 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::BlackBed(state) => {
-                1321 + (state.part as i32) + 2 * (!state.occupied() as i32) + 3 * (state.facing as i32)
+                1321 + (state.part as i32) + 2 * (!state.occupied() as i32) + 4 * (state.facing as i32)
             }
             Blocks::PoweredRail(state) => {
-                1337 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (!state.powered() as i32)
+                1337 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 12 * (!state.powered() as i32)
             }
             Blocks::DetectorRail(state) => {
-                1361 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (!state.powered() as i32)
+                1361 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 12 * (!state.powered() as i32)
             }
             Blocks::StickyPiston(state) => {
-                1385 + (state.facing as i32) + 2 * (!state.extended() as i32)
+                1385 + (state.facing as i32) + 6 * (!state.extended() as i32)
             }
             Blocks::Cobweb => 1397,
             Blocks::Grass => 1398,
@@ -12114,10 +12114,10 @@ impl Blocks {
                 1402 + (state.half as i32)
             }
             Blocks::Piston(state) => {
-                1404 + (state.facing as i32) + 2 * (!state.extended() as i32)
+                1404 + (state.facing as i32) + 6 * (!state.extended() as i32)
             }
             Blocks::PistonHead(state) => {
-                1416 + (state.typed as i32) + 2 * (!state.short() as i32) + 3 * (state.facing as i32)
+                1416 + (state.typed as i32) + 2 * (!state.short() as i32) + 4 * (state.facing as i32)
             }
             Blocks::WhiteWool => 1440,
             Blocks::OrangeWool => 1441,
@@ -12167,18 +12167,18 @@ impl Blocks {
                 1492 + (state.facing as i32)
             }
             Blocks::Fire(state) => {
-                1496 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * state.age
+                1496 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * state.age
             }
             Blocks::SoulFire => 2008,
             Blocks::Spawner => 2009,
             Blocks::OakStairs(state) => {
-                2010 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                2010 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::Chest(state) => {
-                2090 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32)
+                2090 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32)
             }
             Blocks::RedstoneWire(state) => {
-                2114 + (state.west as i32) + 2 * (state.south as i32) + 3 * state.power + 4 * (state.north as i32) + 5 * (state.east as i32)
+                2114 + (state.west as i32) + 3 * (state.south as i32) + 9 * state.power + 144 * (state.north as i32) + 432 * (state.east as i32)
             }
             Blocks::DiamondOre => 3410,
             Blocks::DeepslateDiamondOre => 3411,
@@ -12212,7 +12212,7 @@ impl Blocks {
                 3598 + (!state.waterlogged() as i32) + 2 * state.rotation
             }
             Blocks::OakDoor(state) => {
-                3630 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                3630 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::Ladder(state) => {
                 3694 + (!state.waterlogged() as i32) + 2 * (state.facing as i32)
@@ -12221,7 +12221,7 @@ impl Blocks {
                 3702 + (!state.waterlogged() as i32) + 2 * (state.shape as i32)
             }
             Blocks::CobblestoneStairs(state) => {
-                3722 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                3722 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::OakWallSign(state) => {
                 3802 + (!state.waterlogged() as i32) + 2 * (state.facing as i32)
@@ -12242,13 +12242,13 @@ impl Blocks {
                 3842 + (!state.waterlogged() as i32) + 2 * (state.facing as i32)
             }
             Blocks::Lever(state) => {
-                3850 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                3850 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::StonePressurePlate(state) => {
                 3874 + (!state.powered() as i32)
             }
             Blocks::IronDoor(state) => {
-                3876 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                3876 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::OakPressurePlate(state) => {
                 3940 + (!state.powered() as i32)
@@ -12281,7 +12281,7 @@ impl Blocks {
                 3958 + (!state.lit() as i32) + 2 * (state.facing as i32)
             }
             Blocks::StoneButton(state) => {
-                3966 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                3966 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::Snow(state) => {
                 3990 + state.layers
@@ -12299,7 +12299,7 @@ impl Blocks {
                 4033 + (!state.has_record() as i32)
             }
             Blocks::OakFence(state) => {
-                4035 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                4035 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::Pumpkin => 4067,
             Blocks::Netherrack => 4068,
@@ -12329,7 +12329,7 @@ impl Blocks {
                 4093 + state.bites
             }
             Blocks::Repeater(state) => {
-                4100 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 3 * (state.facing as i32) + 4 * state.delay
+                4100 + (!state.powered() as i32) + 2 * (!state.locked() as i32) + 4 * (state.facing as i32) + 16 * state.delay
             }
             Blocks::WhiteStainedGlass => 4164,
             Blocks::OrangeStainedGlass => 4165,
@@ -12348,22 +12348,22 @@ impl Blocks {
             Blocks::RedStainedGlass => 4178,
             Blocks::BlackStainedGlass => 4179,
             Blocks::OakTrapdoor(state) => {
-                4180 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4180 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::SpruceTrapdoor(state) => {
-                4244 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4244 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::BirchTrapdoor(state) => {
-                4308 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4308 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::JungleTrapdoor(state) => {
-                4372 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4372 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::AcaciaTrapdoor(state) => {
-                4436 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4436 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::DarkOakTrapdoor(state) => {
-                4500 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                4500 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::StoneBricks => 4564,
             Blocks::MossyStoneBricks => 4565,
@@ -12376,22 +12376,22 @@ impl Blocks {
             Blocks::InfestedCrackedStoneBricks => 4572,
             Blocks::InfestedChiseledStoneBricks => 4573,
             Blocks::BrownMushroomBlock(state) => {
-                4574 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32)
+                4574 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32)
             }
             Blocks::RedMushroomBlock(state) => {
-                4638 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32)
+                4638 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32)
             }
             Blocks::MushroomStem(state) => {
-                4702 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32)
+                4702 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32)
             }
             Blocks::IronBars(state) => {
-                4766 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                4766 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::Chain(state) => {
                 4798 + (!state.waterlogged() as i32) + 2 * (state.axis as i32)
             }
             Blocks::GlassPane(state) => {
-                4804 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                4804 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::Melon => 4836,
             Blocks::AttachedPumpkinStem(state) => {
@@ -12407,19 +12407,19 @@ impl Blocks {
                 4853 + state.age
             }
             Blocks::Vine(state) => {
-                4861 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                4861 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::GlowLichen(state) => {
-                4893 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (!state.south() as i32) + 5 * (!state.north() as i32) + 6 * (!state.east() as i32) + 7 * (!state.down() as i32)
+                4893 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.up() as i32) + 8 * (!state.south() as i32) + 16 * (!state.north() as i32) + 32 * (!state.east() as i32) + 64 * (!state.down() as i32)
             }
             Blocks::OakFenceGate(state) => {
-                5021 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                5021 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::BrickStairs(state) => {
-                5053 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5053 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::StoneBrickStairs(state) => {
-                5133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5133 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::Mycelium(state) => {
                 5213 + (!state.snowy() as i32)
@@ -12427,17 +12427,17 @@ impl Blocks {
             Blocks::LilyPad => 5215,
             Blocks::NetherBricks => 5216,
             Blocks::NetherBrickFence(state) => {
-                5217 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                5217 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::NetherBrickStairs(state) => {
-                5249 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5249 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::NetherWart(state) => {
                 5329 + state.age
             }
             Blocks::EnchantingTable => 5333,
             Blocks::BrewingStand(state) => {
-                5334 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 3 * (!state.has_bottle_0() as i32)
+                5334 + (!state.has_bottle_2() as i32) + 2 * (!state.has_bottle_1() as i32) + 4 * (!state.has_bottle_0() as i32)
             }
             Blocks::Cauldron => 5342,
             Blocks::WaterCauldron(state) => {
@@ -12449,7 +12449,7 @@ impl Blocks {
             }
             Blocks::EndPortal => 5350,
             Blocks::EndPortalFrame(state) => {
-                5351 + (state.facing as i32) + 2 * (!state.eye() as i32)
+                5351 + (state.facing as i32) + 4 * (!state.eye() as i32)
             }
             Blocks::EndStone => 5359,
             Blocks::DragonEgg => 5360,
@@ -12457,10 +12457,10 @@ impl Blocks {
                 5361 + (!state.lit() as i32)
             }
             Blocks::Cocoa(state) => {
-                5363 + (state.facing as i32) + 2 * state.age
+                5363 + (state.facing as i32) + 4 * state.age
             }
             Blocks::SandstoneStairs(state) => {
-                5375 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5375 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::EmeraldOre => 5455,
             Blocks::DeepslateEmeraldOre => 5456,
@@ -12468,30 +12468,30 @@ impl Blocks {
                 5457 + (!state.waterlogged() as i32) + 2 * (state.facing as i32)
             }
             Blocks::TripwireHook(state) => {
-                5465 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (!state.attached() as i32)
+                5465 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (!state.attached() as i32)
             }
             Blocks::Tripwire(state) => {
-                5481 + (!state.west() as i32) + 2 * (!state.south() as i32) + 3 * (!state.powered() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.disarmed() as i32) + 7 * (!state.attached() as i32)
+                5481 + (!state.west() as i32) + 2 * (!state.south() as i32) + 4 * (!state.powered() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.disarmed() as i32) + 64 * (!state.attached() as i32)
             }
             Blocks::EmeraldBlock => 5609,
             Blocks::SpruceStairs(state) => {
-                5610 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5610 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::BirchStairs(state) => {
-                5690 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5690 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::JungleStairs(state) => {
-                5770 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                5770 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::CommandBlock(state) => {
-                5850 + (state.facing as i32) + 2 * (!state.conditional() as i32)
+                5850 + (state.facing as i32) + 6 * (!state.conditional() as i32)
             }
             Blocks::Beacon => 5862,
             Blocks::CobblestoneWall(state) => {
-                5863 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                5863 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::MossyCobblestoneWall(state) => {
-                6187 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                6187 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::FlowerPot => 6511,
             Blocks::PottedOakSapling => 6512,
@@ -12525,22 +12525,22 @@ impl Blocks {
                 6544 + state.age
             }
             Blocks::OakButton(state) => {
-                6552 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6552 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::SpruceButton(state) => {
-                6576 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6576 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::BirchButton(state) => {
-                6600 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6600 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::JungleButton(state) => {
-                6624 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6624 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::AcaciaButton(state) => {
-                6648 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6648 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::DarkOakButton(state) => {
-                6672 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                6672 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::SkeletonSkull(state) => {
                 6696 + state.rotation
@@ -12588,7 +12588,7 @@ impl Blocks {
                 6824 + (state.facing as i32)
             }
             Blocks::TrappedChest(state) => {
-                6828 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 3 * (state.facing as i32)
+                6828 + (!state.waterlogged() as i32) + 2 * (state.typed as i32) + 6 * (state.facing as i32)
             }
             Blocks::LightWeightedPressurePlate(state) => {
                 6852 + state.power
@@ -12597,15 +12597,15 @@ impl Blocks {
                 6868 + state.power
             }
             Blocks::Comparator(state) => {
-                6884 + (!state.powered() as i32) + 2 * (state.mode as i32) + 3 * (state.facing as i32)
+                6884 + (!state.powered() as i32) + 2 * (state.mode as i32) + 4 * (state.facing as i32)
             }
             Blocks::DaylightDetector(state) => {
-                6900 + state.power + 2 * (!state.inverted() as i32)
+                6900 + state.power + 16 * (!state.inverted() as i32)
             }
             Blocks::RedstoneBlock => 6932,
             Blocks::NetherQuartzOre => 6933,
             Blocks::Hopper(state) => {
-                6934 + (state.facing as i32) + 2 * (!state.enabled() as i32)
+                6934 + (state.facing as i32) + 5 * (!state.enabled() as i32)
             }
             Blocks::QuartzBlock => 6944,
             Blocks::ChiseledQuartzBlock => 6945,
@@ -12613,10 +12613,10 @@ impl Blocks {
                 6946 + (state.axis as i32)
             }
             Blocks::QuartzStairs(state) => {
-                6949 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                6949 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::ActivatorRail(state) => {
-                7029 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (!state.powered() as i32)
+                7029 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 12 * (!state.powered() as i32)
             }
             Blocks::Dropper(state) => {
                 7053 + (!state.triggered() as i32) + 2 * (state.facing as i32)
@@ -12638,58 +12638,58 @@ impl Blocks {
             Blocks::RedTerracotta => 7079,
             Blocks::BlackTerracotta => 7080,
             Blocks::WhiteStainedGlassPane(state) => {
-                7081 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7081 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::OrangeStainedGlassPane(state) => {
-                7113 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7113 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::MagentaStainedGlassPane(state) => {
-                7145 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7145 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::LightBlueStainedGlassPane(state) => {
-                7177 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7177 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::YellowStainedGlassPane(state) => {
-                7209 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7209 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::LimeStainedGlassPane(state) => {
-                7241 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7241 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::PinkStainedGlassPane(state) => {
-                7273 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7273 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::GrayStainedGlassPane(state) => {
-                7305 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7305 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::LightGrayStainedGlassPane(state) => {
-                7337 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7337 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::CyanStainedGlassPane(state) => {
-                7369 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7369 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::PurpleStainedGlassPane(state) => {
-                7401 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7401 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::BlueStainedGlassPane(state) => {
-                7433 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7433 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::BrownStainedGlassPane(state) => {
-                7465 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7465 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::GreenStainedGlassPane(state) => {
-                7497 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7497 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::RedStainedGlassPane(state) => {
-                7529 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7529 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::BlackStainedGlassPane(state) => {
-                7561 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                7561 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::AcaciaStairs(state) => {
-                7593 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                7593 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::DarkOakStairs(state) => {
-                7673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                7673 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::SlimeBlock => 7753,
             Blocks::Barrier => 7754,
@@ -12697,19 +12697,19 @@ impl Blocks {
                 7755 + (!state.waterlogged() as i32) + 2 * state.level
             }
             Blocks::IronTrapdoor(state) => {
-                7787 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                7787 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::Prismarine => 7851,
             Blocks::PrismarineBricks => 7852,
             Blocks::DarkPrismarine => 7853,
             Blocks::PrismarineStairs(state) => {
-                7854 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                7854 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PrismarineBrickStairs(state) => {
-                7934 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                7934 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::DarkPrismarineStairs(state) => {
-                8014 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                8014 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PrismarineSlab(state) => {
                 8094 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -12861,7 +12861,7 @@ impl Blocks {
             Blocks::ChiseledRedSandstone => 8468,
             Blocks::CutRedSandstone => 8469,
             Blocks::RedSandstoneStairs(state) => {
-                8470 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                8470 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::OakSlab(state) => {
                 8550 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -12925,55 +12925,55 @@ impl Blocks {
             Blocks::SmoothQuartz => 8666,
             Blocks::SmoothRedSandstone => 8667,
             Blocks::SpruceFenceGate(state) => {
-                8668 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                8668 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::BirchFenceGate(state) => {
-                8700 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                8700 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::JungleFenceGate(state) => {
-                8732 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                8732 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::AcaciaFenceGate(state) => {
-                8764 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                8764 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::DarkOakFenceGate(state) => {
-                8796 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                8796 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::SpruceFence(state) => {
-                8828 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                8828 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::BirchFence(state) => {
-                8860 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                8860 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::JungleFence(state) => {
-                8892 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                8892 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::AcaciaFence(state) => {
-                8924 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                8924 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::DarkOakFence(state) => {
-                8956 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                8956 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::SpruceDoor(state) => {
-                8988 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                8988 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::BirchDoor(state) => {
-                9052 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                9052 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::JungleDoor(state) => {
-                9116 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                9116 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::AcaciaDoor(state) => {
-                9180 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                9180 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::DarkOakDoor(state) => {
-                9244 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                9244 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::EndRod(state) => {
                 9308 + (state.facing as i32)
             }
             Blocks::ChorusPlant(state) => {
-                9314 + (!state.west() as i32) + 2 * (!state.up() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32) + 6 * (!state.down() as i32)
+                9314 + (!state.west() as i32) + 2 * (!state.up() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32) + 32 * (!state.down() as i32)
             }
             Blocks::ChorusFlower(state) => {
                 9378 + state.age
@@ -12983,7 +12983,7 @@ impl Blocks {
                 9385 + (state.axis as i32)
             }
             Blocks::PurpurStairs(state) => {
-                9388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                9388 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::EndStoneBricks => 9468,
             Blocks::Beetroots(state) => {
@@ -12992,10 +12992,10 @@ impl Blocks {
             Blocks::DirtPath => 9473,
             Blocks::EndGateway => 9474,
             Blocks::RepeatingCommandBlock(state) => {
-                9475 + (state.facing as i32) + 2 * (!state.conditional() as i32)
+                9475 + (state.facing as i32) + 6 * (!state.conditional() as i32)
             }
             Blocks::ChainCommandBlock(state) => {
-                9487 + (state.facing as i32) + 2 * (!state.conditional() as i32)
+                9487 + (state.facing as i32) + 6 * (!state.conditional() as i32)
             }
             Blocks::FrostedIce(state) => {
                 9499 + state.age
@@ -13147,7 +13147,7 @@ impl Blocks {
             Blocks::KelpPlant => 9746,
             Blocks::DriedKelpBlock => 9747,
             Blocks::TurtleEgg(state) => {
-                9748 + state.hatch + 2 * state.eggs
+                9748 + state.hatch + 3 * state.eggs
             }
             Blocks::DeadTubeCoralBlock => 9760,
             Blocks::DeadBrainCoralBlock => 9761,
@@ -13258,7 +13258,7 @@ impl Blocks {
             }
             Blocks::BambooSapling => 9901,
             Blocks::Bamboo(state) => {
-                9902 + state.stage + 2 * (state.leaves as i32) + 3 * state.age
+                9902 + state.stage + 2 * (state.leaves as i32) + 6 * state.age
             }
             Blocks::PottedBamboo => 9914,
             Blocks::VoidAir => 9915,
@@ -13267,46 +13267,46 @@ impl Blocks {
                 9917 + (!state.drag() as i32)
             }
             Blocks::PolishedGraniteStairs(state) => {
-                9919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                9919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::SmoothRedSandstoneStairs(state) => {
-                9999 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                9999 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::MossyStoneBrickStairs(state) => {
-                10079 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10079 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedDioriteStairs(state) => {
-                10159 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10159 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::MossyCobblestoneStairs(state) => {
-                10239 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10239 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::EndStoneBrickStairs(state) => {
-                10319 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10319 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::StoneStairs(state) => {
-                10399 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10399 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::SmoothSandstoneStairs(state) => {
-                10479 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10479 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::SmoothQuartzStairs(state) => {
-                10559 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10559 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::GraniteStairs(state) => {
-                10639 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10639 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::AndesiteStairs(state) => {
-                10719 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10719 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::RedNetherBrickStairs(state) => {
-                10799 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10799 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedAndesiteStairs(state) => {
-                10879 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10879 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::DioriteStairs(state) => {
-                10959 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                10959 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedGraniteSlab(state) => {
                 11039 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -13348,43 +13348,43 @@ impl Blocks {
                 11111 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::BrickWall(state) => {
-                11117 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                11117 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::PrismarineWall(state) => {
-                11441 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                11441 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::RedSandstoneWall(state) => {
-                11765 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                11765 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::MossyStoneBrickWall(state) => {
-                12089 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                12089 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::GraniteWall(state) => {
-                12413 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                12413 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::StoneBrickWall(state) => {
-                12737 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                12737 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::NetherBrickWall(state) => {
-                13061 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                13061 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::AndesiteWall(state) => {
-                13385 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                13385 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::RedNetherBrickWall(state) => {
-                13709 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                13709 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::SandstoneWall(state) => {
-                14033 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                14033 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::EndStoneBrickWall(state) => {
-                14357 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                14357 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::DioriteWall(state) => {
-                14681 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                14681 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::Scaffolding(state) => {
-                15005 + (!state.waterlogged() as i32) + 2 * state.distance + 3 * (!state.bottom() as i32)
+                15005 + (!state.waterlogged() as i32) + 2 * state.distance + 16 * (!state.bottom() as i32)
             }
             Blocks::Loom(state) => {
                 15037 + (state.facing as i32)
@@ -13401,17 +13401,17 @@ impl Blocks {
             Blocks::CartographyTable => 15069,
             Blocks::FletchingTable => 15070,
             Blocks::Grindstone(state) => {
-                15071 + (state.facing as i32) + 2 * (state.face as i32)
+                15071 + (state.facing as i32) + 4 * (state.face as i32)
             }
             Blocks::Lectern(state) => {
-                15083 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 3 * (state.facing as i32)
+                15083 + (!state.powered() as i32) + 2 * (!state.has_book() as i32) + 4 * (state.facing as i32)
             }
             Blocks::SmithingTable => 15099,
             Blocks::Stonecutter(state) => {
                 15100 + (state.facing as i32)
             }
             Blocks::Bell(state) => {
-                15104 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.attachment as i32)
+                15104 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.attachment as i32)
             }
             Blocks::Lantern(state) => {
                 15136 + (!state.waterlogged() as i32) + 2 * (!state.hanging() as i32)
@@ -13420,10 +13420,10 @@ impl Blocks {
                 15140 + (!state.waterlogged() as i32) + 2 * (!state.hanging() as i32)
             }
             Blocks::Campfire(state) => {
-                15144 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32)
+                15144 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32)
             }
             Blocks::SoulCampfire(state) => {
-                15176 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 3 * (!state.lit() as i32) + 4 * (state.facing as i32)
+                15176 + (!state.waterlogged() as i32) + 2 * (!state.signal_fire() as i32) + 4 * (!state.lit() as i32) + 8 * (state.facing as i32)
             }
             Blocks::SweetBerryBush(state) => {
                 15208 + state.age
@@ -13484,40 +13484,40 @@ impl Blocks {
                 15315 + (!state.powered() as i32)
             }
             Blocks::CrimsonFence(state) => {
-                15317 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                15317 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::WarpedFence(state) => {
-                15349 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.south() as i32) + 4 * (!state.north() as i32) + 5 * (!state.east() as i32)
+                15349 + (!state.west() as i32) + 2 * (!state.waterlogged() as i32) + 4 * (!state.south() as i32) + 8 * (!state.north() as i32) + 16 * (!state.east() as i32)
             }
             Blocks::CrimsonTrapdoor(state) => {
-                15381 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                15381 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::WarpedTrapdoor(state) => {
-                15445 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (!state.open() as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                15445 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (!state.open() as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::CrimsonFenceGate(state) => {
-                15509 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                15509 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::WarpedFenceGate(state) => {
-                15541 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (!state.in_wall() as i32) + 4 * (state.facing as i32)
+                15541 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (!state.in_wall() as i32) + 8 * (state.facing as i32)
             }
             Blocks::CrimsonStairs(state) => {
-                15573 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                15573 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WarpedStairs(state) => {
-                15653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                15653 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::CrimsonButton(state) => {
-                15733 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                15733 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::WarpedButton(state) => {
-                15757 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                15757 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::CrimsonDoor(state) => {
-                15781 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                15781 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::WarpedDoor(state) => {
-                15845 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 3 * (state.hinge as i32) + 4 * (state.half as i32) + 5 * (state.facing as i32)
+                15845 + (!state.powered() as i32) + 2 * (!state.open() as i32) + 4 * (state.hinge as i32) + 8 * (state.half as i32) + 16 * (state.facing as i32)
             }
             Blocks::CrimsonSign(state) => {
                 15909 + (!state.waterlogged() as i32) + 2 * state.rotation
@@ -13544,10 +13544,10 @@ impl Blocks {
                 16014 + state.power
             }
             Blocks::BeeNest(state) => {
-                16030 + state.honey_level + 2 * (state.facing as i32)
+                16030 + state.honey_level + 6 * (state.facing as i32)
             }
             Blocks::Beehive(state) => {
-                16054 + state.honey_level + 2 * (state.facing as i32)
+                16054 + state.honey_level + 6 * (state.facing as i32)
             }
             Blocks::HoneyBlock => 16078,
             Blocks::HoneycombBlock => 16079,
@@ -13564,10 +13564,10 @@ impl Blocks {
             Blocks::Lodestone => 16092,
             Blocks::Blackstone => 16093,
             Blocks::BlackstoneStairs(state) => {
-                16094 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                16094 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::BlackstoneWall(state) => {
-                16174 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                16174 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::BlackstoneSlab(state) => {
                 16498 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -13580,14 +13580,14 @@ impl Blocks {
                 16508 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::PolishedBlackstoneBrickStairs(state) => {
-                16514 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                16514 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedBlackstoneBrickWall(state) => {
-                16594 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                16594 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::GildedBlackstone => 16918,
             Blocks::PolishedBlackstoneStairs(state) => {
-                16919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                16919 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedBlackstoneSlab(state) => {
                 16999 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -13596,64 +13596,64 @@ impl Blocks {
                 17005 + (!state.powered() as i32)
             }
             Blocks::PolishedBlackstoneButton(state) => {
-                17007 + (!state.powered() as i32) + 2 * (state.facing as i32) + 3 * (state.face as i32)
+                17007 + (!state.powered() as i32) + 2 * (state.facing as i32) + 8 * (state.face as i32)
             }
             Blocks::PolishedBlackstoneWall(state) => {
-                17031 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                17031 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::ChiseledNetherBricks => 17355,
             Blocks::CrackedNetherBricks => 17356,
             Blocks::QuartzBricks => 17357,
             Blocks::Candle(state) => {
-                17358 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17358 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::WhiteCandle(state) => {
-                17374 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17374 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::OrangeCandle(state) => {
-                17390 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17390 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::MagentaCandle(state) => {
-                17406 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17406 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::LightBlueCandle(state) => {
-                17422 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17422 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::YellowCandle(state) => {
-                17438 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17438 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::LimeCandle(state) => {
-                17454 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17454 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::PinkCandle(state) => {
-                17470 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17470 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::GrayCandle(state) => {
-                17486 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17486 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::LightGrayCandle(state) => {
-                17502 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17502 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::CyanCandle(state) => {
-                17518 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17518 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::PurpleCandle(state) => {
-                17534 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17534 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::BlueCandle(state) => {
-                17550 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17550 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::BrownCandle(state) => {
-                17566 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17566 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::GreenCandle(state) => {
-                17582 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17582 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::RedCandle(state) => {
-                17598 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17598 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::BlackCandle(state) => {
-                17614 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 3 * state.candles
+                17614 + (!state.waterlogged() as i32) + 2 * (!state.lit() as i32) + 4 * state.candles
             }
             Blocks::CandleCake(state) => {
                 17630 + (!state.lit() as i32)
@@ -13725,7 +13725,7 @@ impl Blocks {
             Blocks::TintedGlass => 17716,
             Blocks::PowderSnow => 17717,
             Blocks::SculkSensor(state) => {
-                17718 + (!state.waterlogged() as i32) + 2 * (state.sculk_sensor_phase as i32) + 3 * state.power
+                17718 + (!state.waterlogged() as i32) + 2 * (state.sculk_sensor_phase as i32) + 6 * state.power
             }
             Blocks::OxidizedCopper => 17814,
             Blocks::WeatheredCopper => 17815,
@@ -13738,16 +13738,16 @@ impl Blocks {
             Blocks::ExposedCutCopper => 17822,
             Blocks::CutCopper => 17823,
             Blocks::OxidizedCutCopperStairs(state) => {
-                17824 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                17824 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WeatheredCutCopperStairs(state) => {
-                17904 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                17904 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::ExposedCutCopperStairs(state) => {
-                17984 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                17984 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::CutCopperStairs(state) => {
-                18064 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18064 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::OxidizedCutCopperSlab(state) => {
                 18144 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -13770,16 +13770,16 @@ impl Blocks {
             Blocks::WaxedExposedCutCopper => 18174,
             Blocks::WaxedCutCopper => 18175,
             Blocks::WaxedOxidizedCutCopperStairs(state) => {
-                18176 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18176 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WaxedWeatheredCutCopperStairs(state) => {
-                18256 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18256 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WaxedExposedCutCopperStairs(state) => {
-                18336 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18336 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WaxedCutCopperStairs(state) => {
-                18416 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18416 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::WaxedOxidizedCutCopperSlab(state) => {
                 18496 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
@@ -13794,10 +13794,10 @@ impl Blocks {
                 18514 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::LightningRod(state) => {
-                18520 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 3 * (state.facing as i32)
+                18520 + (!state.waterlogged() as i32) + 2 * (!state.powered() as i32) + 4 * (state.facing as i32)
             }
             Blocks::PointedDripstone(state) => {
-                18544 + (!state.waterlogged() as i32) + 2 * (state.vertical_direction as i32) + 3 * (state.thickness as i32)
+                18544 + (!state.waterlogged() as i32) + 2 * (state.vertical_direction as i32) + 4 * (state.thickness as i32)
             }
             Blocks::DripstoneBlock => 18564,
             Blocks::CaveVines(state) => {
@@ -13812,13 +13812,13 @@ impl Blocks {
             Blocks::MossCarpet => 18622,
             Blocks::MossBlock => 18623,
             Blocks::BigDripleaf(state) => {
-                18624 + (!state.waterlogged() as i32) + 2 * (state.tilt as i32) + 3 * (state.facing as i32)
+                18624 + (!state.waterlogged() as i32) + 2 * (state.tilt as i32) + 8 * (state.facing as i32)
             }
             Blocks::BigDripleafStem(state) => {
                 18656 + (!state.waterlogged() as i32) + 2 * (state.facing as i32)
             }
             Blocks::SmallDripleaf(state) => {
-                18664 + (!state.waterlogged() as i32) + 2 * (state.half as i32) + 3 * (state.facing as i32)
+                18664 + (!state.waterlogged() as i32) + 2 * (state.half as i32) + 4 * (state.facing as i32)
             }
             Blocks::HangingRoots(state) => {
                 18680 + (!state.waterlogged() as i32)
@@ -13829,43 +13829,43 @@ impl Blocks {
             }
             Blocks::CobbledDeepslate => 18686,
             Blocks::CobbledDeepslateStairs(state) => {
-                18687 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                18687 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::CobbledDeepslateSlab(state) => {
                 18767 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::CobbledDeepslateWall(state) => {
-                18773 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                18773 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::PolishedDeepslate => 19097,
             Blocks::PolishedDeepslateStairs(state) => {
-                19098 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                19098 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::PolishedDeepslateSlab(state) => {
                 19178 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::PolishedDeepslateWall(state) => {
-                19184 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                19184 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::DeepslateTiles => 19508,
             Blocks::DeepslateTileStairs(state) => {
-                19509 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                19509 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::DeepslateTileSlab(state) => {
                 19589 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::DeepslateTileWall(state) => {
-                19595 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                19595 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::DeepslateBricks => 19919,
             Blocks::DeepslateBrickStairs(state) => {
-                19920 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 3 * (state.half as i32) + 4 * (state.facing as i32)
+                19920 + (!state.waterlogged() as i32) + 2 * (state.shape as i32) + 10 * (state.half as i32) + 20 * (state.facing as i32)
             }
             Blocks::DeepslateBrickSlab(state) => {
                 20000 + (!state.waterlogged() as i32) + 2 * (state.typed as i32)
             }
             Blocks::DeepslateBrickWall(state) => {
-                20006 + (state.west as i32) + 2 * (!state.waterlogged() as i32) + 3 * (!state.up() as i32) + 4 * (state.south as i32) + 5 * (state.north as i32) + 6 * (state.east as i32)
+                20006 + (state.west as i32) + 3 * (!state.waterlogged() as i32) + 6 * (!state.up() as i32) + 12 * (state.south as i32) + 36 * (state.north as i32) + 108 * (state.east as i32)
             }
             Blocks::ChiseledDeepslate => 20330,
             Blocks::CrackedDeepslateBricks => 20331,

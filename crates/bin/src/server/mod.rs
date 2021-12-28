@@ -18,6 +18,7 @@ use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::server::{Difficulty, McTask, MinecraftServer};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
+use falcon_core::world::chunks::Chunk;
 use falcon_core::world::World;
 use falcon_protocol::ProtocolSend;
 
@@ -100,6 +101,14 @@ impl MainServer {
 }
 
 impl MinecraftServer for MainServer {
+    fn get_player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer> {
+        self.players.get(&uuid).map(|player| player as &dyn MinecraftPlayer)
+    }
+
+    fn get_player_mut(&mut self, uuid: Uuid) -> Option<&mut dyn MinecraftPlayer> {
+        self.players.get_mut(&uuid).map(|player| player as &mut dyn MinecraftPlayer)
+    }
+
     fn player_join(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: UnboundedSender<Box<ConnectionTask>>) {
         debug!("{} Joined the game!", username);
         let player = Player::new(username, uuid, self.entity_id_count, protocol_version, client_connection);
@@ -115,15 +124,32 @@ impl MinecraftServer for MainServer {
             player.disconnect(format!("Error whilst sending packet: {}", error));
         }
 
-        let (chunks, _width, _length) = self.world.get_chunks_for_player(player);
-        for chunk in chunks {
-            if let Err(error) = ProtocolSend::send_chunk(player, chunk) {
-                player.disconnect(format!("Error whilst sending packet: {}", error));
-            }
+        let chunk_fn = {
+            |player: &mut dyn MinecraftPlayer, chunk: &Chunk| ProtocolSend::send_chunk(player, chunk).chain_err(|| "Error sending chunk")
+        };
+        let chunk_air_fn = {
+            |player: &mut dyn MinecraftPlayer, x: i32, z: i32| ProtocolSend::send_air_chunk(player, x, z).chain_err(|| "Error sending chunk")
+        };
+        if let Err(error) = self.world.send_chunks_for_player(player, chunk_fn, chunk_air_fn) {
+            player.disconnect(format!("Error whilst sendinng packet: {}", error));
         }
 
         if let Err(error) = ProtocolSend::player_position_and_look(player, 0, 1) {
             player.disconnect(format!("Error whilst sending packet: {}", error));
+        }
+    }
+
+    /// Signals through the update of the player's position and look
+    fn player_position_and_look(&mut self, uuid: Uuid, x: f64, y: f64, z: f64, yaw: f32, pitch: f32, _on_ground: bool) {
+        // TODO: fire event
+        if let Some(player) = self.get_player_mut(uuid) {
+            let position = player.get_position_mut();
+            position.set_x(x);
+            position.set_y(y);
+            position.set_z(z);
+            let look_angles = player.get_look_angles_mut();
+            look_angles.set_yaw(yaw);
+            look_angles.set_pitch(pitch);
         }
     }
 }

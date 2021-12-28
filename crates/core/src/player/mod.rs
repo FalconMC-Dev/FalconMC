@@ -22,11 +22,11 @@ pub trait MinecraftPlayer {
 
     fn get_position(&self) -> &Position;
 
-    fn get_position_copy(&self) -> Position;
+    fn get_position_mut(&mut self) -> &mut Position;
 
     fn get_look_angles(&self) -> &LookAngles;
 
-    fn get_look_angles_copy(&self) -> LookAngles;
+    fn get_look_angles_mut(&mut self) -> &mut LookAngles;
 
     /// connection methods
     fn get_protocol_version(&self) -> i32;
@@ -50,6 +50,17 @@ pub struct PlayerAbilityFlags {
     flying: bool,
     allow_flying: bool,
     instant_break: bool,
+}
+
+impl PlayerAbilityFlags {
+    pub fn new(invulnerable: bool, flying: bool, allow_flying: bool, instant_break: bool) -> Self {
+        PlayerAbilityFlags {
+            invulnerable,
+            flying,
+            allow_flying,
+            instant_break
+        }
+    }
 }
 
 impl PacketEncode for PlayerAbilityFlags {

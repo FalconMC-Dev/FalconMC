@@ -12,7 +12,7 @@ pub enum LoginPackets {
 implement_packet_handler_enum!(LoginPackets, LoginStart);
 
 impl LoginPackets {
-    pub fn from(packet_id: i32, buffer: &mut dyn PacketBufferRead) -> Result<Option<LoginPackets>> {
+    pub fn from_buf(packet_id: i32, buffer: &mut dyn PacketBufferRead) -> Result<Option<LoginPackets>> {
         match packet_id {
             0x00 => Ok(Some(LoginPackets::LoginStart(LoginStartPacket::from_buf(
                 buffer,

@@ -42,6 +42,7 @@ impl PacketHandler for LoginStartPacket {
             },
         );
         connection.get_handler_state_mut().set_connection_state(ConnectionState::Play);
+        connection.get_handler_state_mut().set_player_uuid(player_uuid);
         let server_task = {
             let name = self.name.clone();
             let version = connection.get_handler_state().get_protocol_id();

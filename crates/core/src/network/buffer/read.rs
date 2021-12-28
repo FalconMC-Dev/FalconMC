@@ -97,6 +97,8 @@ pub trait PacketBufferRead {
 
     // TODO: add block_pos struct
     //fn read_block_pos(&mut self) -> Result<BlockPos>;
+
+    fn remaining_bytes(&self) -> usize;
 }
 
 impl<T: Buf> PacketBufferRead for T {
@@ -153,6 +155,10 @@ impl<T: Buf> PacketBufferRead for T {
         let mut result = Vec::with_capacity(length);
         result.extend(self.copy_to_bytes(length));
         Ok(result)
+    }
+
+    fn remaining_bytes(&self) -> usize {
+        self.remaining()
     }
 }
 

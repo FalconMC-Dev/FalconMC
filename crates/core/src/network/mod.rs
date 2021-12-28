@@ -1,5 +1,7 @@
 //! Part of the Public API of FalconMC
 
+use uuid::Uuid;
+
 pub mod buffer;
 pub mod connection;
 pub mod packet;
@@ -9,6 +11,7 @@ pub const PROTOCOL_1_13_2: i32 = 404;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct PacketHandlerState {
+    uuid: Option<Uuid>,
     protocol_id: i32,
     connection_state: ConnectionState,
 }
@@ -16,9 +19,18 @@ pub struct PacketHandlerState {
 impl PacketHandlerState {
     pub fn new(protocol_id: i32) -> PacketHandlerState {
         PacketHandlerState {
+            uuid: None,
             protocol_id,
             connection_state: ConnectionState::Handshake,
         }
+    }
+
+    pub fn get_player_uuid(&self) -> Option<Uuid> {
+        self.uuid
+    }
+
+    pub fn set_player_uuid(&mut self, uuid: Uuid) {
+        self.uuid = Some(uuid);
     }
 
     pub fn get_protocol_id(&self) -> i32 {

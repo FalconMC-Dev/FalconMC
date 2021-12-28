@@ -75,7 +75,7 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData {
             effective_palette.insert(index, Blocks::from_str(state.as_ref()).chain_err(|| "Invalid BlockState")?);
         }
 
-        let mut effective_block_data = Vec::with_capacity((value.width * value.height * value.length) as usize);
+        let mut effective_block_data = Vec::with_capacity(value.width as usize * value.height as usize * value.length as usize);
         let mut data_cursor = Cursor::new(as_u8_slice(block_data.as_slice()));
         let mut stop = false;
         while !stop {

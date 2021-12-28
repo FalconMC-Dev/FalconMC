@@ -9,14 +9,17 @@ use crate::implement_packet_handler_enum;
 use crate::version::ProtocolVersioned;
 use crate::version::v1_13::play::{ChunkDataPacket, JoinGamePacket, PlayerAbilitiesPacket, PlayerPositionAndLookPacket};
 use crate::version::v1_13_2::login::LoginPackets;
+use crate::version::v1_13_2::play::PlayPackets;
 
 pub mod login;
+pub mod play;
 
 pub enum PacketList {
     Login(LoginPackets),
+    Play(PlayPackets),
 }
 
-implement_packet_handler_enum!(PacketList, Login);
+implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
     pub fn from(
@@ -26,7 +29,10 @@ impl PacketList {
     ) -> Result<Option<PacketList>> {
         match state.get_connection_state() {
             ConnectionState::Login => {
-                LoginPackets::from(packet_id, buffer).map(|l| l.map(|p| PacketList::Login(p)))
+                LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Login(p)))
+            }
+            ConnectionState::Play => {
+                PlayPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Play(p)))
             }
             _ => Ok(None),
         }
@@ -60,9 +66,16 @@ impl ProtocolVersioned for PacketSend {
         })).map_err(|_| Error::from("Could not send chunk data"))
     }
 
+    fn send_air_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
+        player.get_client_connection().send(Box::new(move |conn| {
+            let packet = ChunkDataPacket::empty(chunk_x, chunk_z);
+            conn.send_packet(0x22, &packet);
+        })).map_err(|_| Error::from("Could not send air chunk data"))
+    }
+
     fn player_position_and_look(&self, player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()> {
-        let pos = player.get_position_copy();
-        let look = player.get_look_angles_copy();
+        let pos = *player.get_position();
+        let look = *player.get_look_angles();
         let packet = PlayerPositionAndLookPacket::new(pos.get_x(), pos.get_y(), pos.get_z(), look.get_yaw(), look.get_pitch(), flags, teleport_id);
         player.get_client_connection().send(Box::new(move |conn| {
             let packet_out = packet;

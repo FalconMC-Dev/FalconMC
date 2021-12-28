@@ -79,6 +79,15 @@ impl ChunkDataPacket {
             chunk_sections,
         }
     }
+
+    pub fn empty(chunk_x: i32, chunk_z: i32) -> Self {
+        ChunkDataPacket {
+            chunk_x,
+            chunk_z,
+            bit_mask: 0,
+            chunk_sections: vec![],
+        }
+    }
 }
 
 impl PacketEncode for ChunkDataPacket {
@@ -176,18 +185,25 @@ impl ChunkSectionData {
         } else {
             let mut palette_missing = 0;
             let mut palette: Vec<i32> = {
-                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| b.get_global_id_1631()).collect();
+                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| {
+                    debug!("Block: {:?}", b);
+                    b.get_global_id_1631()
+                }).collect();
                 let mut i = 0;
                 while i < section_palette.len() - palette_missing {
                     if let None = section_palette[i] {
-                        palette_missing += 1;
                         section_palette.remove(i);
                         section_palette.push(Some((i + palette_missing) as i32));
+                        palette_missing += 1;
                     } else {
                         i += 1;
                     }
                 }
-                section_palette.iter().map(|b| b.unwrap()).collect()
+                debug!("Palette start!");
+                section_palette.iter().map(|b| {
+                    debug!("Entry: {}", b.unwrap());
+                    b.unwrap()
+                }).collect()
             };
 
             let long_count: u32 = (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS;
@@ -195,14 +211,14 @@ impl ChunkSectionData {
             let mut current_long = 0u64;
             let mut offset = 0;
             let mut pos = 0;
-            for element in chunk_section.get_block_data().iter().enumerate().map(|(i, x)| {
+            for element in chunk_section.get_block_data().iter().map(|x| {
                 let palette_len = palette.len();
-                if palette[palette_len-palette_missing..palette_len].contains(&(i as i32)) {
+                if palette[palette_len-palette_missing..palette_len].contains(&(*x as i32)) {
                     0
                 } else {
                     let mut res = *x;
                     for j in &palette[palette_len-palette_missing..palette_len] {
-                        if *x > (*j as u16) {
+                        if *x > *j as u16 {
                             res -= 1
                         }
                     }

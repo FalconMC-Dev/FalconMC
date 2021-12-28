@@ -96,6 +96,13 @@ impl ProtocolSend {
         Ok(())
     }
 
+    pub fn send_air_chunk(player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.send_air_chunk(player, chunk_x, chunk_z)?;
+        }
+        Ok(())
+    }
+
     pub fn player_position_and_look(player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()> {
         if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
             protocol.player_position_and_look(player, flags, teleport_id)?;
@@ -117,6 +124,8 @@ pub trait ProtocolVersioned {
     fn player_abilities(&self, player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()>;
 
     fn send_chunk(&self, player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()>;
+
+    fn send_air_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()>;
 
     fn player_position_and_look(&self, player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()>;
 }

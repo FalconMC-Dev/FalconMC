@@ -20,12 +20,14 @@ use crate::errors::*;
 
 pub struct ClientConnection {
     shutdown_handle: ShutdownHandle,
+    // connection data
     socket: TcpStream,
     addr: SocketAddr,
     // packet handling
     handler_state: PacketHandlerState,
     out_buffer: BytesMut,
     in_buffer: BytesMut,
+    // synchronization
     server_tx: Sender<Box<McTask>>,
     output_sync: (UnboundedSender<BytesMut>, UnboundedReceiver<BytesMut>),
     connection_sync: (

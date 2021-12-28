@@ -27,9 +27,9 @@ impl Player {
             username,
             uuid,
             eid,
-            game_mode: GameMode::Survival,
+            game_mode: GameMode::Creative,
             dimension: 0,
-            ability_flags: Default::default(),
+            ability_flags: PlayerAbilityFlags::new(false, true, true, true),
             position: Default::default(),
             look_angles: Default::default(),
             protocol_version,
@@ -67,16 +67,16 @@ impl MinecraftPlayer for Player {
         &self.position
     }
 
-    fn get_position_copy(&self) -> Position {
-        self.position
+    fn get_position_mut(&mut self) -> &mut Position {
+        &mut self.position
     }
 
     fn get_look_angles(&self) -> &LookAngles {
         &self.look_angles
     }
 
-    fn get_look_angles_copy(&self) -> LookAngles {
-        self.look_angles
+    fn get_look_angles_mut(&mut self) -> &mut LookAngles {
+        &mut self.look_angles
     }
 
     fn get_protocol_version(&self) -> i32 {
