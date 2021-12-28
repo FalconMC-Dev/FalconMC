@@ -23,5 +23,5 @@ ahash = "0.7"
 uuid = "0.8"
 
 crossbeam = "0.8"
-tokio = { version = "1", features = [ "full" ] }
+tokio = { version = "1.15", features = [ "full" ] }
 bytes = { version = "1", features = [ "std" ] }
