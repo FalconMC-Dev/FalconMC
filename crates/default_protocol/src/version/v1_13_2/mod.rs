@@ -7,6 +7,7 @@ use falcon_core::server::Difficulty;
 use falcon_core::world::chunks::Chunk;
 use crate::implement_packet_handler_enum;
 use crate::version::ProtocolVersioned;
+use crate::version::v1_12_2::play::KeepAlivePacket;
 use crate::version::v1_13::play::{ChunkDataPacket, JoinGamePacket, PlayerAbilitiesPacket, PlayerPositionAndLookPacket};
 use crate::version::v1_13_2::login::LoginPackets;
 use crate::version::v1_13_2::play::PlayPackets;
@@ -27,7 +28,7 @@ impl PacketList {
         state: &PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,
     ) -> Result<Option<PacketList>> {
-        match state.get_connection_state() {
+        match state.connection_state() {
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Login(p)))
             }
@@ -81,5 +82,14 @@ impl ProtocolVersioned for PacketSend {
             let packet_out = packet;
             conn.send_packet(0x32, &packet_out);
         })).map_err(|_| Error::from("Could not send player position and look packet"))
+    }
+
+    fn keep_alive(&self, player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()> {
+        player.get_client_connection().send(Box::new(move |conn| {
+            //let elapsed = elapsed;
+            let packet_out = KeepAlivePacket::new(elapsed as i64);
+            conn.get_handler_state_mut().set_last_keep_alive(elapsed);
+            conn.send_packet(0x21, &packet_out);
+        })).map_err(|_| Error::from("Could not send Keep Alive packet"))
     }
 }

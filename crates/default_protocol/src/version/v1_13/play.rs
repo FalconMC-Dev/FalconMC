@@ -185,10 +185,7 @@ impl ChunkSectionData {
         } else {
             let mut palette_missing = 0;
             let mut palette: Vec<i32> = {
-                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| {
-                    debug!("Block: {:?}", b);
-                    b.get_global_id_1631()
-                }).collect();
+                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| b.get_global_id_1631()).collect();
                 let mut i = 0;
                 while i < section_palette.len() - palette_missing {
                     if let None = section_palette[i] {
@@ -199,11 +196,7 @@ impl ChunkSectionData {
                         i += 1;
                     }
                 }
-                debug!("Palette start!");
-                section_palette.iter().map(|b| {
-                    debug!("Entry: {}", b.unwrap());
-                    b.unwrap()
-                }).collect()
+                section_palette.iter().map(|b| b.unwrap()).collect()
             };
 
             let long_count: u32 = (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS;

@@ -18,5 +18,7 @@ pub trait MinecraftConnection {
 
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode);
 
+    fn reset_keep_alive(&mut self);
+
     fn disconnect(&mut self, reason: String); // TODO: change into ChatComponent
 }

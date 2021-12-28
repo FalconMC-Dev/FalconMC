@@ -17,6 +17,8 @@ pub trait MinecraftServer {
 
     fn player_join(&mut self, username: String, uuid: Uuid, protocol_version: i32, client_connection: UnboundedSender<Box<ConnectionTask>>);
 
+    fn player_leave(&mut self, uuid: Uuid);
+
     fn player_position_and_look(&mut self, uuid: Uuid, x: f64, y: f64, z: f64, yaw: f32, pitch: f32, on_ground: bool);
 }
 

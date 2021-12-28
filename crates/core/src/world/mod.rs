@@ -78,7 +78,6 @@ impl TryFrom<SchematicData> for World {
     type Error = Error;
 
     fn try_from(schematic: SchematicData) -> std::result::Result<Self, Self::Error> {
-        debug!("Palette: {:?}", schematic.palette);
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;
         let count_x = ((schematic.width - rest_x) / 16) as usize + if rest_x > 0 { 1 } else { 0 };
@@ -95,8 +94,7 @@ impl TryFrom<SchematicData> for World {
                 }
             }
         }
-
-        debug!("Chunks: {:?}", world.chunks.keys());
+        debug!("Loaded {} chunks...", world.chunks.len());
         Ok(world)
     }
 }

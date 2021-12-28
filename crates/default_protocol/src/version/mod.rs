@@ -10,6 +10,7 @@ use falcon_core::world::chunks::Chunk;
 use crate::implement_packet_handler_enum;
 
 pub mod v1_8_9;
+pub mod v1_12_2;
 pub mod v1_13;
 pub mod v1_13_2;
 
@@ -58,12 +59,12 @@ impl VersionMatcher {
         state: &PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,
     ) -> Result<Option<VersionMatcher>> {
-        if state.get_connection_state() == ConnectionState::Handshake {
+        if state.connection_state() == ConnectionState::Handshake {
             Ok(Some(VersionMatcher::Handshake(HandshakePacket::from_buf(
                 buffer,
             )?)))
         } else {
-            match state.get_protocol_id() {
+            match state.protocol_id() {
                 PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_8_9(p))),
                 PROTOCOL_1_13_2 => v1_13_2::PacketList::from(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_13_2(p))),
                 _ => Ok(None),
@@ -110,6 +111,13 @@ impl ProtocolSend {
         Ok(())
     }
 
+    pub fn keep_alive(player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.keep_alive(player, elapsed)?;
+        }
+        Ok(())
+    }
+
     pub fn get_protocol_version(version: i32) -> Option<impl ProtocolVersioned> {
         match version {
             PROTOCOL_1_13_2 => Some(v1_13_2::PacketSend),
@@ -128,4 +136,6 @@ pub trait ProtocolVersioned {
     fn send_air_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()>;
 
     fn player_position_and_look(&self, player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()>;
+
+    fn keep_alive(&self, player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()>;
 }

@@ -19,7 +19,7 @@ implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
     pub fn from_buf(packet_id: i32, state: &PacketHandlerState, buffer: &mut dyn PacketBufferRead) -> Result<Option<PacketList>> {
-        match state.get_connection_state() {
+        match state.connection_state() {
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Login(p)))
             }

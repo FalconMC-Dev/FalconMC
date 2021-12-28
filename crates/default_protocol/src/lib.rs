@@ -32,14 +32,14 @@ impl DefaultProtocol {
         trace!(
             "Packet ID: {:#04X}, state: {:?}",
             packet_id,
-            handler_state.get_connection_state()
+            handler_state.connection_state()
         );
 
         VersionMatcher::from_buf(packet_id, handler_state, buffer).map(|option| {
             option.map(|packet| {
                 trace!(
                     "RECV: [{:?}: {:#04X}] {}",
-                    connection.get_handler_state().get_connection_state(),
+                    connection.get_handler_state().connection_state(),
                     packet_id,
                     packet.get_name()
                 );

@@ -1,8 +1,14 @@
+use std::time::Instant;
+
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
+
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
 use falcon_core::player::GameMode;
+use falcon_protocol::ProtocolSend;
+
+use crate::errors::*;
 
 #[derive(Debug)]
 pub struct Player {
@@ -17,6 +23,7 @@ pub struct Player {
     position: Position,
     look_angles: LookAngles,
     // connection data
+    time: Instant,
     protocol_version: i32,
     connection: UnboundedSender<Box<ConnectionTask>>,
 }
@@ -32,9 +39,19 @@ impl Player {
             ability_flags: PlayerAbilityFlags::new(false, true, true, true),
             position: Default::default(),
             look_angles: Default::default(),
+            time: Instant::now(),
             protocol_version,
             connection,
         }
+    }
+
+    pub fn send_keep_alive(&mut self) -> Result<()> {
+        debug!("Keep alive sent!");
+        let elapsed = self.time.elapsed();
+        if let Err(error) = ProtocolSend::keep_alive(self, elapsed.as_secs()) {
+            bail!("Could not send keep alive - disconnecting! For: {}, due to: {}", &self.username, error);
+        }
+        Ok(())
     }
 }
 

@@ -1,17 +1,19 @@
 use std::io::Cursor;
 use std::net::SocketAddr;
+use std::time::Duration;
 
 use bytes::{Buf, BytesMut};
 use crossbeam::channel::Sender;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+use tokio::time::{Interval, interval, MissedTickBehavior};
 
+use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::network::ConnectionState::Login;
 use falcon_core::network::packet::PacketEncode;
-use falcon_core::network::PacketHandlerState;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use falcon_protocol::UNKNOWN_PROTOCOL;
@@ -28,6 +30,7 @@ pub struct ClientConnection {
     out_buffer: BytesMut,
     in_buffer: BytesMut,
     // synchronization
+    time_out: Interval,
     server_tx: Sender<Box<McTask>>,
     output_sync: (UnboundedSender<BytesMut>, UnboundedReceiver<BytesMut>),
     connection_sync: (
@@ -43,6 +46,9 @@ impl ClientConnection {
         addr: SocketAddr,
         server_tx: Sender<Box<McTask>>,
     ) {
+        let mut time_out = interval(Duration::from_secs(30));
+        time_out.set_missed_tick_behavior(MissedTickBehavior::Delay);
+        time_out.tick().await;
         let connection = ClientConnection {
             shutdown_handle,
             socket,
@@ -50,6 +56,7 @@ impl ClientConnection {
             handler_state: PacketHandlerState::new(UNKNOWN_PROTOCOL),
             out_buffer: BytesMut::with_capacity(4096),
             in_buffer: BytesMut::with_capacity(4096),
+            time_out,
             server_tx,
             output_sync: tokio::sync::mpsc::unbounded_channel(),
             connection_sync: tokio::sync::mpsc::unbounded_channel(),
@@ -64,6 +71,9 @@ impl ClientConnection {
                 _ = self.shutdown_handle.wait_for_shutdown() => {
                     break;
                 }
+                _ = self.time_out.tick() => {
+                    self.disconnect(String::from("Did not receive Keep alive packet!"));
+                }
                 Some(task) = self.connection_sync.1.recv() => {
                     task(&mut self);
                 }
@@ -72,30 +82,44 @@ impl ClientConnection {
                     if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
                         print_error!(e);
                     }
-                }
-                length = self.socket.read_buf(&mut self.in_buffer) => {
-                    let n = match length {
-                        Ok(n) => n,
-                        Err(error) => {
-                            print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
-                            self.disconnect(String::from("Error whilst receiving packet!"));
-                            1 // let's the loop run one more time, allowing for the disconnect to properly happen
+                    while let Ok(packet) = self.output_sync.1.try_recv() {
+                        trace!("Outgoing length: {}", packet.len());
+                        if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
+                            print_error!(e);
                         }
-                    };
-                    if n == 0 {
-                        // TODO: fix disconnect handling here
-                        // disconnect
+                    }
+                    if self.handler_state.connection_state() == ConnectionState::Disconnected {
+                        if let Some(uuid) = self.handler_state.player_uuid() {
+                            if let Err(ref e) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).chain_err(|| "Could not make server lose player, keep alive should clean up!") {
+                                print_error!(e);
+                            }
+                        }
                         break;
                     }
-
-                    match self.read_packets() {
-                        Err(ref e) => { // TODO: tell main server disconnect happened
-                            print_error!(e);
-                            break;
+                }
+                length = self.socket.read_buf(&mut self.in_buffer) => {
+                    if self.handler_state.connection_state() != ConnectionState::Disconnected {
+                        let n = match length {
+                            Ok(n) => n,
+                            Err(error) => {
+                                print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
+                                self.disconnect(String::from("Error whilst receiving packet!"));
+                                1 // let's the loop run one more time, allowing for the disconnect to properly happen
+                            }
+                        };
+                        if n == 0 {
+                            self.disconnect(String::from("End of Stream detected!"));
                         }
-                        _ => {}
+
+                        match self.read_packets() {
+                            Err(ref e) => { // TODO: tell main server disconnect happened
+                                print_error!(e);
+                                break;
+                            }
+                            _ => {}
+                        }
+                        debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
                     }
-                    debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
                 }
             }
         }
@@ -121,7 +145,7 @@ impl ClientConnection {
             &mut packet,
             self,
         )? {
-            if self.handler_state.get_connection_state() == Login {
+            if self.handler_state.connection_state() == Login {
                 self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
             }
             debug!("Unknown packet received, skipping!");
@@ -178,6 +202,10 @@ impl MinecraftConnection for ClientConnection {
     }
 
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode) {
+        if self.handler_state.connection_state() == ConnectionState::Disconnected {
+            return;
+        }
+
         trace!("Sending packet!!! :D");
         self.out_buffer.write_var_i32(packet_id);
         packet_out.to_buf(&mut self.out_buffer);
@@ -194,8 +222,13 @@ impl MinecraftConnection for ClientConnection {
         }
     }
 
+    fn reset_keep_alive(&mut self) {
+        self.time_out.reset();
+    }
+
     fn disconnect(&mut self, reason: String) { // TODO: change into ChatComponent
         let packet = falcon_protocol::build_disconnect_packet(reason);
         self.send_packet(0x00, &packet);
+        self.handler_state.set_connection_state(ConnectionState::Disconnected);
     }
 }

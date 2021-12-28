@@ -36,7 +36,7 @@ pub struct PlayerPositionPacket {
 impl PacketHandler for PlayerPositionPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
         let server_task = {
-            let uuid = connection.get_handler_state().get_player_uuid().expect("Should be impossible to receive this packet without a uuid");
+            let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
                 let packet = self;
                 let player = server.get_player(uuid);
@@ -73,7 +73,7 @@ pub struct PlayerPositionAndLookPacket {
 impl PacketHandler for PlayerPositionAndLookPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
         let server_task = {
-            let uuid = connection.get_handler_state().get_player_uuid().expect("Should be impossible to receive this packet without a uuid");
+            let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
                 let packet = self;
                 server.player_position_and_look(uuid, packet.x, packet.y, packet.z, packet.yaw, packet.pitch, packet.on_ground);
@@ -99,7 +99,7 @@ pub struct PlayerLookPacket {
 impl PacketHandler for PlayerLookPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
         let server_task = {
-            let uuid = connection.get_handler_state().get_player_uuid().expect("Should be impossible to receive this packet without a uuid");
+            let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
                 let packet = self;
                 let player = server.get_player(uuid);

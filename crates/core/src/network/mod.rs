@@ -12,6 +12,7 @@ pub const PROTOCOL_1_13_2: i32 = 404;
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct PacketHandlerState {
     uuid: Option<Uuid>,
+    last_keep_alive: u64,
     protocol_id: i32,
     connection_state: ConnectionState,
 }
@@ -20,12 +21,13 @@ impl PacketHandlerState {
     pub fn new(protocol_id: i32) -> PacketHandlerState {
         PacketHandlerState {
             uuid: None,
+            last_keep_alive: 0,
             protocol_id,
             connection_state: ConnectionState::Handshake,
         }
     }
 
-    pub fn get_player_uuid(&self) -> Option<Uuid> {
+    pub fn player_uuid(&self) -> Option<Uuid> {
         self.uuid
     }
 
@@ -33,7 +35,15 @@ impl PacketHandlerState {
         self.uuid = Some(uuid);
     }
 
-    pub fn get_protocol_id(&self) -> i32 {
+    pub fn last_keep_alive(&self) -> u64 {
+        self.last_keep_alive
+    }
+
+    pub fn set_last_keep_alive(&mut self, last_keep_alive: u64) {
+        self.last_keep_alive = last_keep_alive;
+    }
+
+    pub fn protocol_id(&self) -> i32 {
         self.protocol_id
     }
 
@@ -41,7 +51,7 @@ impl PacketHandlerState {
         self.protocol_id = protocol_id;
     }
 
-    pub fn get_connection_state(&self) -> ConnectionState {
+    pub fn connection_state(&self) -> ConnectionState {
         self.connection_state
     }
 
