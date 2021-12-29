@@ -7,7 +7,8 @@
 FalconMC is an afk Minecraft server written in [Rust](https://rust-lang.org/) that aims to support all client versions ranging from 1.13 till 1.17.1 (1.8-12.2 coming soon). Its main priority is performance and the ability to effortlessly hold many players at once. Writing custom plugins is supported.
 
 #### Upcoming features
-Check out our [Trello board](https://trello.com/b/0vSzpAUA/falcon-mc) to see the project's progress!
+Check out our [Trello board](https://trello.com/b/0vSzpAUA/falcon-mc) to see the project's progress!  
+Also make sure to join us on [Discord](https://discord.com/invite/HC82fwYXW5)!
 
 
 ## Documentation
