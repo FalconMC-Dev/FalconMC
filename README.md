@@ -1,5 +1,6 @@
 # FalconMC
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC?ref=badge_shield)
+ [![Join on discord!](https://shields.io/discord/925832475912065024)](https://discord.com/invite/HC82fwYXW5)
 
 
 ## Description
