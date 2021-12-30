@@ -1,4 +1,5 @@
 use std::time::Instant;
+use tokio::sync::mpsc::error::SendError;
 
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
@@ -107,9 +108,7 @@ impl MinecraftPlayer for Player {
                 conn.disconnect(reason);
             })
         };
-        if let Err(error) = self.connection.send(task) {
-            error!("Could not disconnect player, some witchcraft must be happening here ({})!", error);
-        }
+        self.connection.send(task);
     }
 
     fn get_client_connection(&mut self) -> &mut UnboundedSender<Box<ConnectionTask>> {

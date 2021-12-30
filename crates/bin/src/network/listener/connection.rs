@@ -80,20 +80,19 @@ impl ClientConnection {
                 Some(packet) = self.output_sync.1.recv() => {
                     trace!("Outgoing length: {}", packet.len());
                     if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
-                        print_error!(e);
+                        // print_error!(e);
+                        self.handler_state.set_connection_state(ConnectionState::Disconnected);
+                        break;
                     }
                     while let Ok(packet) = self.output_sync.1.try_recv() {
                         trace!("Outgoing length: {}", packet.len());
                         if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
-                            print_error!(e);
+                            // print_error!(e);
+                            self.handler_state.set_connection_state(ConnectionState::Disconnected);
+                            break;
                         }
                     }
                     if self.handler_state.connection_state() == ConnectionState::Disconnected {
-                        if let Some(uuid) = self.handler_state.player_uuid() {
-                            if let Err(ref e) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).chain_err(|| "Could not make server lose player, keep alive should clean up!") {
-                                print_error!(e);
-                            }
-                        }
                         break;
                     }
                 }
@@ -102,25 +101,27 @@ impl ClientConnection {
                         let n = match length {
                             Ok(n) => n,
                             Err(error) => {
-                                print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving packet!"))));
-                                self.disconnect(String::from("Error whilst receiving packet!"));
+                                // print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving data!"))));
+                                self.disconnect(String::from("Error whilst receiving data!"));
                                 1 // let's the loop run one more time, allowing for the disconnect to properly happen
                             }
                         };
                         if n == 0 {
-                            self.disconnect(String::from("End of Stream detected!"));
-                        }
-
-                        match self.read_packets() {
-                            Err(ref e) => { // TODO: tell main server disconnect happened
-                                print_error!(e);
-                                break;
+                            break;
+                        } else {
+                            if let Err(ref e) = self.read_packets() {
+                                self.disconnect(String::from("Error while reading packet"))
+                            } else {
+                                debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
                             }
-                            _ => {}
                         }
-                        debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
                     }
                 }
+            }
+        }
+        if let Some(uuid) = self.handler_state.player_uuid() {
+            if let Err(ref e) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).chain_err(|| "Could not make server lose player, keep alive should clean up!") {
+                print_error!(e);
             }
         }
     }
