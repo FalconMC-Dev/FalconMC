@@ -1,7 +1,7 @@
 extern crate self as falcon_core;
 
 #[macro_use]
-extern crate log;
+extern crate tracing;
 
 pub mod errors;
 pub mod network;

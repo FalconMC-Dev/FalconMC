@@ -341,10 +341,10 @@ dependencies = [
  "error-chain",
  "falcon_core_derive",
  "fastnbt",
- "log",
  "once_cell",
  "serde",
  "tokio",
+ "tracing",
  "uuid",
 ]
 
