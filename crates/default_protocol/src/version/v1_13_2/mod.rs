@@ -23,7 +23,7 @@ pub enum PacketList {
 implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
-    pub fn from(
+    pub fn from_buf(
         packet_id: i32,
         state: &PacketHandlerState,
         buffer: &mut dyn PacketBufferRead,

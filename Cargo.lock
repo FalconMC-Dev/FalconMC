@@ -365,8 +365,8 @@ dependencies = [
  "derive-new",
  "error-chain",
  "falcon_core",
- "log",
  "log4rs",
+ "tracing",
  "uuid",
 ]
 

@@ -53,7 +53,7 @@ impl ProtocolPluginManager {
         let boxed_raw = constructor();
 
         let plugin = Box::from_raw(boxed_raw);
-        debug!(name = plugin.name(), "Loaded plugin!");
+        debug!(name = plugin.name(), "Plugin loaded!");
         plugin.on_protocol_load();
         self.plugins.push((plugin.get_priority(), plugin));
         Ok(())

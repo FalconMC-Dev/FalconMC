@@ -46,7 +46,7 @@ impl PacketHandler for PlayerPositionPacket {
                         let pitch = player.get_look_angles().get_pitch();
                         server.player_position_and_look(uuid, packet.x, packet.y, packet.z, yaw, pitch, packet.on_ground);
                     }
-                    None => error!("We received a packet from a player that is not to be found on the server!"),
+                    None => error!("We received a packet from a player that is not existing in the world!"),
                 }
             })
         };

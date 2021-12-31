@@ -66,7 +66,7 @@ impl VersionMatcher {
         } else {
             match state.protocol_id() {
                 PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_8_9(p))),
-                PROTOCOL_1_13_2 => v1_13_2::PacketList::from(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_13_2(p))),
+                PROTOCOL_1_13_2 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(|p| VersionMatcher::V1_13_2(p))),
                 _ => Ok(None),
             }
         }

@@ -32,7 +32,7 @@ pub struct LoginStartPacket {
 
 impl PacketHandler for LoginStartPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
-        debug!("Login start: {}", self.name);
+        debug!(player_name = %self.name);
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, self.name.as_bytes());
         connection.send_packet(
             2,

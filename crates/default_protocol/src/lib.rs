@@ -1,19 +1,18 @@
 #[macro_use]
+extern crate derive_new;
+#[macro_use]
 extern crate error_chain;
 #[macro_use]
-extern crate log;
-#[macro_use]
-extern crate derive_new;
+extern crate tracing;
 
+use errors::*;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::PacketEncode;
+use falcon_core::network::packet::PacketHandler;
+pub use version::ProtocolSend;
 
 use crate::version::VersionMatcher;
-use errors::*;
-use falcon_core::network::packet::PacketHandler;
-
-pub use version::ProtocolSend;
 
 pub mod errors;
 pub mod version;
@@ -29,20 +28,13 @@ impl DefaultProtocol {
         connection: &mut C,
     ) -> Result<Option<()>> {
         let handler_state = connection.get_handler_state();
-        trace!(
-            "Packet ID: {:#04X}, state: {:?}",
-            packet_id,
-            handler_state.connection_state()
-        );
+        let span = info_span!("default_process_packet", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
+        let _enter = span.enter();
 
         VersionMatcher::from_buf(packet_id, handler_state, buffer).map(|option| {
             option.map(|packet| {
-                trace!(
-                    "RECV: [{:?}: {:#04X}] {}",
-                    connection.get_handler_state().connection_state(),
-                    packet_id,
-                    packet.get_name()
-                );
+                let packet_span = info_span!("handle_packet", name = packet.get_name());
+                let _enter2 = packet_span.enter();
                 packet.handle_packet(connection);
             })
         })
