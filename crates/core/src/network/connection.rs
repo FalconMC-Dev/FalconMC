@@ -1,3 +1,4 @@
+use std::net::SocketAddr;
 use crossbeam::channel::Sender;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -8,6 +9,8 @@ use crate::server::McTask;
 pub type ConnectionTask = dyn FnOnce(&mut dyn MinecraftConnection) -> () + Send + Sync;
 
 pub trait MinecraftConnection {
+    fn get_address(&self) -> &SocketAddr;
+
     fn get_handler_state(&self) -> &PacketHandlerState;
 
     fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState;

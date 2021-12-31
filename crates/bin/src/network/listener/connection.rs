@@ -186,6 +186,10 @@ impl ClientConnection {
 }
 
 impl MinecraftConnection for ClientConnection {
+    fn get_address(&self) -> &SocketAddr {
+        &self.addr
+    }
+
     fn get_handler_state(&self) -> &PacketHandlerState {
         &self.handler_state
     }

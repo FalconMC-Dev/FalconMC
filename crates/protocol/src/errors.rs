@@ -18,13 +18,13 @@ error_chain! {
 macro_rules! print_error {
     ($err:expr) => {{
         let e: &$crate::errors::Error = $err;
-        ::log::error!("error: {}", e);
+        ::tracing::error!("error: {}", e);
         for e in e.iter().skip(1) {
-            ::log::error!("caused by: {}", e);
+            ::tracing::error!("caused by: {}", e);
         }
 
         if let Some(backtrace) = e.backtrace() {
-            ::log::error!("backtrace: {:?}", backtrace);
+            ::tracing::error!("backtrace: {:?}", backtrace);
         }
     }};
 }

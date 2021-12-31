@@ -1,4 +1,5 @@
 use std::ffi::OsStr;
+use std::fmt::Debug;
 use std::fs;
 
 use libloading::{Library, Symbol};
@@ -30,8 +31,9 @@ impl ProtocolPluginManager {
         }
     }
 
-    pub(crate) unsafe fn load_plugin<P: AsRef<OsStr>>(&mut self, filename: P) -> Result<()> {
-        debug!("Loading plugin '{:?}'", filename.as_ref());
+    #[tracing::instrument(skip(self))]
+    pub(crate) unsafe fn load_plugin<P: AsRef<OsStr> + Debug>(&mut self, filename: P) -> Result<()> {
+        debug!("Loading plugin...");
         type PluginCreate = unsafe fn() -> *mut dyn FalconPlugin;
 
         let lib = Library::new(filename.as_ref()).chain_err(|| {
@@ -51,12 +53,13 @@ impl ProtocolPluginManager {
         let boxed_raw = constructor();
 
         let plugin = Box::from_raw(boxed_raw);
-        debug!("Loaded plugin: {}", plugin.name());
+        debug!(name = plugin.name(), "Loaded plugin!");
         plugin.on_protocol_load();
         self.plugins.push((plugin.get_priority(), plugin));
         Ok(())
     }
 
+    #[tracing::instrument(skip(self))]
     pub(crate) fn load_plugins(&mut self) {
         if let Ok(paths) = fs::read_dir("./protocols/") {
             for path in paths {
@@ -78,9 +81,10 @@ impl ProtocolPluginManager {
             }
         }
         self.plugins.sort_by_key(|(priority, _)| *priority);
-        info!("Successfully loaded {} plugins!", self.plugins.len());
+        info!(len = self.plugins.len(), "Loaded all plugins!");
     }
 
+    #[tracing::instrument(skip(self, buffer, connection), fields(address = %connection.get_address()))]
     pub fn process_packet<R: PacketBufferRead, C: MinecraftConnection>(
         &self,
         packet_id: i32,
@@ -96,7 +100,7 @@ impl ProtocolPluginManager {
         }
         // then propagate to plugins
         for (_, factory) in &self.plugins {
-            trace!("Firing read_packet for {}", factory.name());
+            trace!(plugin_name = factory.name(), "Firing process_packet()!");
             match factory.process_packet(packet_id, buffer, connection) {
                 Ok(Some(_)) => found = true,
                 Err(error) => return Err(error),
@@ -110,11 +114,12 @@ impl ProtocolPluginManager {
         }
     }
 
+    #[tracing::instrument(skip(self))]
     pub(crate) fn unload(&mut self) {
         debug!("Unloading plugins!");
 
         for (_, plugin) in self.plugins.drain(..) {
-            trace!("Firing on_plugin_unload for {:?}", plugin.name());
+            trace!(plugin_name = plugin.name(), "Firing on_plugin_unload()!");
             plugin.on_protocol_unload();
         }
 
