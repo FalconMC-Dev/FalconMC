@@ -1,5 +1,4 @@
 use std::time::Instant;
-use tokio::sync::mpsc::error::SendError;
 
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
@@ -46,6 +45,7 @@ impl Player {
         }
     }
 
+    #[tracing::instrument(skip(self))]
     pub fn send_keep_alive(&mut self) -> Result<()> {
         debug!("Keep alive sent!");
         let elapsed = self.time.elapsed();

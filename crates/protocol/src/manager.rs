@@ -84,7 +84,7 @@ impl ProtocolPluginManager {
         info!(len = self.plugins.len(), "Loaded all plugins!");
     }
 
-    #[tracing::instrument(skip(self, buffer, connection), fields(address = %connection.get_address()))]
+    #[tracing::instrument(skip(self, buffer, connection))]
     pub fn process_packet<R: PacketBufferRead, C: MinecraftConnection>(
         &self,
         packet_id: i32,

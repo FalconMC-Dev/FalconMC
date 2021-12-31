@@ -71,6 +71,7 @@ impl MainServer {
         Ok(())
     }
 
+    #[tracing::instrument(skip(self))]
     fn start_server_logic(mut self) {
         debug!("Starting server logic!");
         let rt = Builder::new_current_thread().enable_all().build().unwrap();
@@ -98,12 +99,14 @@ impl MainServer {
         });
     }
 
+    #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
     fn tick(&mut self) {
         while let Ok(task) = self.server_rx.try_recv() {
             task(self);
         }
     }
 
+    #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
     fn keep_alive(&mut self) {
         self.players.retain(|_, player| player.send_keep_alive().is_ok());
     }
@@ -120,12 +123,11 @@ impl MinecraftServer for MainServer {
 
     fn player_join(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: UnboundedSender<Box<ConnectionTask>>) {
         if self.players.contains_key(&uuid) {
-            error!("Player already exists! {}: {}", &username, uuid);
+            error!(%uuid, %username, "Duplicate player joining");
         }
-        info!("{} Joined the game!", username);
+        info!(name = %username, "Player joined the game!");
         let player = Player::new(username, uuid, self.entity_id_count, protocol_version, client_connection);
         self.entity_id_count += 1;
-        trace!("New player: {:?}", player);
 
         self.players.insert(uuid, player);
         let player = self.players.get_mut(&uuid).expect("Should always get the player we just put in");
@@ -152,7 +154,10 @@ impl MinecraftServer for MainServer {
     }
 
     fn player_leave(&mut self, uuid: Uuid) {
-        self.players.remove(&uuid);
+        let player = self.players.remove(&uuid);
+        if let Some(player) = player {
+            info!(%uuid, name = player.get_username(), "Player disconnected!");
+        }
     }
 
     /// Signals through the update of the player's position and look

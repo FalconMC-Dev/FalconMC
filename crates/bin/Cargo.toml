@@ -13,8 +13,10 @@ path = "src/main.rs"
 falcon_core = { path = "../core" }
 falcon_protocol = { path = "../protocol" }
 
-log = { version = "0.4", "features" = [ "release_max_level_info" ] }
-log4rs = { version = "1.0", features = [ "gzip", "background_rotation" ] }
+tracing = { version = "0.1" }
+tracing-futures = "0.2"
+tracing-subscriber = { version = "0.3", features = [ "env-filter" ] }
+tracing-appender = "0.2"
 error-chain = "0.12"
 
 flate2 = "1.0"

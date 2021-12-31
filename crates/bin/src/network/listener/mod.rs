@@ -31,6 +31,7 @@ impl NetworkListener {
         network_listener.start_listening().await;
     }
 
+    #[tracing::instrument(skip(self))]
     async fn start_listening(mut self) {
         let listener = match TcpListener::bind(FalconConfig::global().server_socket_addrs())
             .await
@@ -52,7 +53,7 @@ impl NetworkListener {
                 connection = listener.accept() => {
                     match connection {
                         Ok((socket, addr)) => {
-                            debug!("Accepted connection at {}", &addr);
+                            debug!(address = %addr, "Accepted connection");
                             tokio::spawn(ClientConnection::process_socket(self.shutdown_handle.clone(), socket, addr, self.server_tx.clone()));
                         },
                         Err(e) => {

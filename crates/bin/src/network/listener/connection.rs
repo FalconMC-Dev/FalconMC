@@ -65,6 +65,7 @@ impl ClientConnection {
         connection.start_packet_loop().await;
     }
 
+    #[tracing::instrument(skip(self), fields(address = %self.addr))]
     async fn start_packet_loop(mut self) {
         loop {
             tokio::select! {
@@ -75,17 +76,21 @@ impl ClientConnection {
                     self.disconnect(String::from("Did not receive Keep alive packet!"));
                 }
                 Some(task) = self.connection_sync.1.recv() => {
+                    let span = trace_span!("connection_task", state = %self.handler_state);
+                    let _enter = span.enter();
                     task(&mut self);
                 }
                 Some(packet) = self.output_sync.1.recv() => {
-                    trace!("Outgoing length: {}", packet.len());
+                    let span = trace_span!("outgoing_data", state = %self.handler_state);
+                    let _enter = span.enter();
+                    trace!(length = packet.len(), "Outgoing data");
                     if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
                         // print_error!(e);
                         self.handler_state.set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
                     while let Ok(packet) = self.output_sync.1.try_recv() {
-                        trace!("Outgoing length: {}", packet.len());
+                        trace!(length = packet.len(), "Outgoing data");
                         if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
                             // print_error!(e);
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
@@ -97,6 +102,8 @@ impl ClientConnection {
                     }
                 }
                 length = self.socket.read_buf(&mut self.in_buffer) => {
+                    let span = trace_span!("incoming_data", state = %self.handler_state);
+                    let _enter = span.enter();
                     if self.handler_state.connection_state() != ConnectionState::Disconnected {
                         let n = match length {
                             Ok(n) => n,
@@ -107,12 +114,13 @@ impl ClientConnection {
                             }
                         };
                         if n == 0 {
+                            info!("Connection lost!");
                             break;
                         } else {
                             if let Err(ref e) = self.read_packets() {
                                 self.disconnect(String::from("Error while reading packet"))
                             } else {
-                                debug!("Received {} bytes, internal buffer size: {}", n, self.in_buffer.remaining());
+                                trace!(received = n, previous = self.in_buffer.remaining(), "Received bytes!");
                             }
                         }
                     }
@@ -133,23 +141,22 @@ impl ClientConnection {
         Ok(())
     }
 
+    #[tracing::instrument(skip(self, preceding))]
     fn handle_packet_buffer(&mut self, preceding: usize, len: usize) -> Result<()> {
         let mut packet = self
             .in_buffer
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
-        let packet_id = packet.read_var_i32()?;
-        debug!("Packet id = {}", packet_id);
         if let None = falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
-            packet_id,
+            packet.read_var_i32()?,
             &mut packet,
             self,
         )? {
             if self.handler_state.connection_state() == Login {
                 self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
             }
-            debug!("Unknown packet received, skipping!");
+            trace!("Unknown packet received, skipping!");
         }
         Ok(())
     }
@@ -160,6 +167,7 @@ impl ClientConnection {
     /// (TODO: add compression and encryption mode!)
     ///
     /// Returns (preceding byte count, frame length)
+    #[tracing::instrument(skip_all)]
     fn parse_frame(&self) -> Result<Option<(usize, usize)>> {
         let mut buf = Cursor::new(&self.in_buffer[..]);
         let mut length_bytes: [u8; 3] = [0; 3];
@@ -173,7 +181,7 @@ impl ClientConnection {
             if length_bytes[i] & 0b1000_0000 == 0 {
                 let mut length_buf = Cursor::new(&length_bytes[..]);
                 let frame_length = length_buf.read_var_i32()? as usize;
-                trace!("Frame is {} bytes long", frame_length);
+                trace!(length = frame_length);
                 return if let Ok(_) = buf.ensure_bytes_available(frame_length) {
                     Ok(Some((i + 1, frame_length)))
                 } else {
@@ -211,7 +219,6 @@ impl MinecraftConnection for ClientConnection {
             return;
         }
 
-        trace!("Sending packet!!! :D");
         self.out_buffer.write_var_i32(packet_id);
         packet_out.to_buf(&mut self.out_buffer);
         let temp_buf = self.out_buffer.split();

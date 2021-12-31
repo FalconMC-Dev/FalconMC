@@ -1,5 +1,6 @@
 //! Part of the Public API of FalconMC
 
+use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 pub mod buffer;
@@ -15,6 +16,12 @@ pub struct PacketHandlerState {
     last_keep_alive: u64,
     protocol_id: i32,
     connection_state: ConnectionState,
+}
+
+impl Display for PacketHandlerState {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}|{}", self.connection_state, self.protocol_id)
+    }
 }
 
 impl PacketHandlerState {

@@ -28,12 +28,12 @@ impl DefaultProtocol {
         connection: &mut C,
     ) -> Result<Option<()>> {
         let handler_state = connection.get_handler_state();
-        let span = info_span!("default_process_packet", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
+        let span = trace_span!("default_process_packet", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
         let _enter = span.enter();
 
         VersionMatcher::from_buf(packet_id, handler_state, buffer).map(|option| {
             option.map(|packet| {
-                let packet_span = info_span!("handle_packet", name = packet.get_name());
+                let packet_span = trace_span!("handle_packet", name = packet.get_name());
                 let _enter2 = packet_span.enter();
                 packet.handle_packet(connection);
             })
