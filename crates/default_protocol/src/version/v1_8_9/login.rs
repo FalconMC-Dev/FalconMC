@@ -51,7 +51,7 @@ impl PacketHandler for LoginStartPacket {
                 server.player_join(name, player_uuid, version, channel);
             })
         };
-        if let Err(error) = connection.get_server_link_mut().try_send(server_task) {
+        if let Err(error) = connection.get_server_link_mut().send(server_task) {
             error!("Could not join player to server due to {}!", error);
         }
     }

@@ -1,5 +1,4 @@
 use std::net::SocketAddr;
-use crossbeam::channel::Sender;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::network::packet::PacketEncode;
@@ -15,7 +14,7 @@ pub trait MinecraftConnection {
 
     fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState;
 
-    fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>>;
+    fn get_server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>>;
 
     fn get_connection_link(&mut self) -> UnboundedSender<Box<ConnectionTask>>;
 

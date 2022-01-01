@@ -3,11 +3,10 @@ use std::thread;
 use std::time::Duration;
 
 use ahash::AHashMap;
-use crossbeam::channel::Receiver;
 use fastnbt::de::from_bytes;
 use flate2::read::GzDecoder;
 use tokio::runtime::Builder;
-use tokio::sync::mpsc::UnboundedSender;
+use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tokio::time::MissedTickBehavior;
 use uuid::Uuid;
 
@@ -25,11 +24,16 @@ use falcon_protocol::ProtocolSend;
 use crate::errors::*;
 use crate::network::listener::NetworkListener;
 use crate::player::Player;
+use crate::server::console::ConsoleListener;
+
+pub mod console;
 
 pub struct MainServer {
     // threads
     shutdown_handle: ShutdownHandle,
-    server_rx: Receiver<Box<McTask>>,
+    should_stop: bool,
+    console_rx: UnboundedReceiver<String>,
+    server_rx: UnboundedReceiver<Box<McTask>>,
     // players
     entity_id_count: i32,
     players: AHashMap<Uuid, Player>,
@@ -49,9 +53,12 @@ impl MainServer {
         let world = World::try_from(SchematicData::try_from(schematic).chain_err(|| "Invalid schematic, this server cannot use this schematic currently!")?)?;
         info!("Loaded world");
 
-        let (server_tx, server_rx) = crossbeam::channel::unbounded();
+        let console_rx = ConsoleListener::start_console(shutdown_handle.clone())?;
+        let (server_tx, server_rx) = unbounded_channel();
         let server = MainServer {
             shutdown_handle,
+            should_stop: false,
+            console_rx,
             server_rx,
             entity_id_count: 0,
             players: AHashMap::new(),
@@ -82,7 +89,7 @@ impl MainServer {
             let mut keep_alive_interval = tokio::time::interval(Duration::from_secs(12));
             keep_alive_interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
 
-            loop {
+            while !self.should_stop {
                 tokio::select! {
                     _ = tick_interval.tick() => {
                         self.tick();
@@ -91,11 +98,11 @@ impl MainServer {
                         self.keep_alive();
                     }
                     _ = self.shutdown_handle.wait_for_shutdown() => {
-                        debug!("Stopping server logic!");
                         break;
                     }
                 }
             }
+            debug!("Stopping server logic!");
         });
     }
 
@@ -103,6 +110,16 @@ impl MainServer {
     fn tick(&mut self) {
         while let Ok(task) = self.server_rx.try_recv() {
             task(self);
+        }
+        while let Ok(command) = self.console_rx.try_recv() {
+            info!(cmd = %command.trim(), "Console command execution");
+            // TODO: better commands
+            if command.trim() == "stop" {
+                info!("Shutting down server! (Stop command executed)");
+                self.should_stop = true;
+                self.shutdown_handle.send_shutdown();
+                return;
+            }
         }
     }
 

@@ -3,22 +3,22 @@ use crate::errors::*;
 mod connection;
 
 use connection::ClientConnection;
-use crossbeam::channel::Sender;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use tokio::net::TcpListener;
+use tokio::sync::mpsc::UnboundedSender;
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
     /// Used to clone for every client handler per connection
-    server_tx: Sender<Box<McTask>>,
+    server_tx: UnboundedSender<Box<McTask>>,
 }
 
 impl NetworkListener {
     pub async fn start_network_listening(
         shutdown_handle: ShutdownHandle,
-        server_tx: Sender<Box<McTask>>,
+        server_tx: UnboundedSender<Box<McTask>>,
     ) {
         info!("Starting network listening...");
         debug!("Connection size: {}", std::mem::size_of::<ClientConnection>());

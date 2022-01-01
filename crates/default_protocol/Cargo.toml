@@ -14,5 +14,3 @@ error-chain = "0.12"
 
 uuid = { version = "0.8", features = [ "v3" ] }
 derive-new = "0.5"
-
-crossbeam = "0.8"

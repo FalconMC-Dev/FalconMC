@@ -3,7 +3,6 @@ use std::net::SocketAddr;
 use std::time::Duration;
 
 use bytes::{Buf, BytesMut};
-use crossbeam::channel::Sender;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
@@ -31,7 +30,7 @@ pub struct ClientConnection {
     in_buffer: BytesMut,
     // synchronization
     time_out: Interval,
-    server_tx: Sender<Box<McTask>>,
+    server_tx: UnboundedSender<Box<McTask>>,
     output_sync: (UnboundedSender<BytesMut>, UnboundedReceiver<BytesMut>),
     connection_sync: (
         UnboundedSender<Box<ConnectionTask>>,
@@ -44,7 +43,7 @@ impl ClientConnection {
         shutdown_handle: ShutdownHandle,
         socket: TcpStream,
         addr: SocketAddr,
-        server_tx: Sender<Box<McTask>>,
+        server_tx: UnboundedSender<Box<McTask>>,
     ) {
         let mut time_out = interval(Duration::from_secs(30));
         time_out.set_missed_tick_behavior(MissedTickBehavior::Delay);
@@ -128,8 +127,8 @@ impl ClientConnection {
             }
         }
         if let Some(uuid) = self.handler_state.player_uuid() {
-            if let Err(ref e) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).chain_err(|| "Could not make server lose player, keep alive should clean up!") {
-                print_error!(e);
+            if let Err(_) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))) {
+                error!(%uuid, "Could not make server lose player, keep alive should clean up!");
             }
         }
     }
@@ -206,7 +205,7 @@ impl MinecraftConnection for ClientConnection {
         &mut self.handler_state
     }
 
-    fn get_server_link_mut(&mut self) -> &mut Sender<Box<McTask>> {
+    fn get_server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>> {
         &mut self.server_tx
     }
 
