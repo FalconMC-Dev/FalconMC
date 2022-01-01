@@ -77,7 +77,7 @@ impl World {
 impl TryFrom<SchematicData> for World {
     type Error = Error;
 
-    #[tracing::instrument(skip_all)]
+    #[tracing::instrument(name = "world_loading", skip_all)]
     fn try_from(schematic: SchematicData) -> std::result::Result<Self, Self::Error> {
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;

@@ -65,7 +65,7 @@ impl ClientConnection {
         connection.start_packet_loop().await;
     }
 
-    #[tracing::instrument(skip(self), fields(address = %self.addr))]
+    #[tracing::instrument(name = "client", skip(self), fields(address = %self.addr))]
     async fn start_packet_loop(mut self) {
         loop {
             tokio::select! {
@@ -141,7 +141,7 @@ impl ClientConnection {
         Ok(())
     }
 
-    #[tracing::instrument(skip(self, preceding))]
+    #[tracing::instrument(name = "read_packet", skip(self, preceding))]
     fn handle_packet_buffer(&mut self, preceding: usize, len: usize) -> Result<()> {
         let mut packet = self
             .in_buffer

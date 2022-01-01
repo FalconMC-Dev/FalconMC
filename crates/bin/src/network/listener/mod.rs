@@ -31,7 +31,7 @@ impl NetworkListener {
         network_listener.start_listening().await;
     }
 
-    #[tracing::instrument(skip(self))]
+    #[tracing::instrument(name = "network", skip(self))]
     async fn start_listening(mut self) {
         let listener = match TcpListener::bind(FalconConfig::global().server_socket_addrs())
             .await

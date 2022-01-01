@@ -3,8 +3,12 @@ extern crate error_chain;
 #[macro_use]
 extern crate tracing;
 
-use tracing::Level;
-use tracing_subscriber::EnvFilter;
+use std::fs::OpenOptions;
+use tracing::metadata::LevelFilter;
+use tracing_subscriber::Layer;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 
@@ -19,12 +23,20 @@ mod player;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt()
-        .with_thread_names(true)
-        .with_ansi(false)
-        .with_target(false)
-        .with_max_level(Level::INFO)
-        .with_env_filter(EnvFilter::from_default_env())
+    let log_file = OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open("./logs/debug.log").unwrap();
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer()
+            .with_target(false)
+            .with_writer(std::io::stdout)
+            .with_filter(LevelFilter::INFO))
+        .with(tracing_subscriber::fmt::layer()
+            .with_target(false)
+            .with_ansi(false)
+            .with_writer(log_file)
+            .with_filter(LevelFilter::DEBUG))
         .init();
 
     info!("Launching Falcon Server!");
