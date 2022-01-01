@@ -84,14 +84,14 @@ impl ClientConnection {
                     let span = trace_span!("outgoing_data", state = %self.handler_state);
                     let _enter = span.enter();
                     trace!(length = packet.len(), "Outgoing data");
-                    if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
+                    if let Err(_) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
                         // print_error!(e);
                         self.handler_state.set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
                     while let Ok(packet) = self.output_sync.1.try_recv() {
                         trace!(length = packet.len(), "Outgoing data");
-                        if let Err(ref e) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
+                        if let Err(_) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
                             // print_error!(e);
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
@@ -107,7 +107,7 @@ impl ClientConnection {
                     if self.handler_state.connection_state() != ConnectionState::Disconnected {
                         let n = match length {
                             Ok(n) => n,
-                            Err(error) => {
+                            Err(_) => {
                                 // print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving data!"))));
                                 self.disconnect(String::from("Error whilst receiving data!"));
                                 1 // let's the loop run one more time, allowing for the disconnect to properly happen
@@ -117,7 +117,7 @@ impl ClientConnection {
                             info!("Connection lost!");
                             break;
                         } else {
-                            if let Err(ref e) = self.read_packets() {
+                            if let Err(_) = self.read_packets() {
                                 self.disconnect(String::from("Error while reading packet"))
                             } else {
                                 trace!(received = n, previous = self.in_buffer.remaining(), "Received bytes!");

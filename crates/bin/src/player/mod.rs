@@ -1,5 +1,6 @@
 use std::time::Instant;
 
+use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
@@ -105,10 +106,10 @@ impl MinecraftPlayer for Player {
         let task = {
             // TODO: Using login packet here, this is incorrect
             Box::new(move |conn: &mut dyn MinecraftConnection| {
-                conn.disconnect(reason);
+                conn.disconnect(reason)
             })
         };
-        self.connection.send(task);
+        self.connection.send(task).ignore();
     }
 
     fn get_client_connection(&mut self) -> &mut UnboundedSender<Box<ConnectionTask>> {

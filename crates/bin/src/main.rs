@@ -3,7 +3,9 @@ extern crate error_chain;
 #[macro_use]
 extern crate tracing;
 
-use std::fs::OpenOptions;
+use std::fs::{File, OpenOptions};
+use std::io::ErrorKind::NotFound;
+use std::path::Path;
 use tracing::metadata::LevelFilter;
 use tracing_subscriber::Layer;
 use tracing_subscriber::layer::SubscriberExt;
@@ -23,10 +25,7 @@ mod player;
 
 #[tokio::main]
 async fn main() {
-    let log_file = OpenOptions::new()
-        .append(true)
-        .create(true)
-        .open("./logs/debug.log").unwrap();
+    let log_file = load_log_file().unwrap();
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer()
             .with_target(false)
@@ -67,4 +66,18 @@ async fn main() {
     std::mem::drop(shutdown_handle);
     let _ = finished_rx.recv().await;
     info!("Falcon Server has shut down!");
+}
+
+fn load_log_file() -> std::io::Result<File> {
+    let path = Path::new("./logs/debug.log");
+    match OpenOptions::new().append(true).create(true).open("./logs/debug.log") {
+        Ok(log_file) => Ok(log_file),
+        Err(ref e) if e.kind() == NotFound => {
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            OpenOptions::new().append(true).create(true).open("./logs/debug.log")
+        }
+        Err(e) => Err(e),
+    }
 }
