@@ -29,7 +29,7 @@ impl ShutdownHandle {
     /// Creates a new `ShutdownHandle` instance and returns a `Receiver` along with it.
     ///
     /// This `Receiver` receives a message when all instances related to this handle are dropped.\
-    /// Idiomatically, this `Receiver` should be used in the main loop to wait before quitting.
+    /// Idiomatically, this `Receiver` should be used in the main loop to wait before exiting.
     ///
     /// # Examples
     ///
@@ -99,6 +99,18 @@ impl ShutdownHandle {
     /// Waits asynchronously for this handle to receive a shutdown signal before returning.
     pub async fn wait_for_shutdown(&mut self) -> Result<(), broadcast::error::RecvError> {
         self.signal_receiver.recv().await
+    }
+
+    /// Consumes self and returns a channel that can be used to trigger a shutdown.
+    ///
+    /// This is useful for threads that are dependent on the main thread but cannot terminate on their own.\
+    /// This can also be used to pass on a bare trigger for shutdown by cloning self first and then calling this function.
+    ///
+    /// # Note
+    /// This shutdown handler will be dropped and won't signal a process complete anymore.\
+    /// There is also no way to receive a shutdown signal either (unless you clone this first).
+    pub fn into_signal_sender(self) -> broadcast::Sender<()> {
+        self.signal_sender.clone()
     }
 }
 
