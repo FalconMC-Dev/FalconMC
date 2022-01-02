@@ -120,11 +120,9 @@ impl PropertyType {
 
         let property = EnumProperty::new(name.to_case(Case::Pascal), values);
         let list = PROPERTIES.lock().unwrap();
-        if list
+        if !list
             .borrow()
-            .iter()
-            .find(|x| x.fields.eq(&property.fields) || x.name.eq(&property.name))
-            .is_none()
+            .iter().any(|x| x.fields.eq(&property.fields) || x.name.eq(&property.name))
         {
             list.borrow_mut().push(property.clone());
             return PropertyType::Enum((property, None));
@@ -215,24 +213,24 @@ impl EnumProperty {
 
 impl Display for EnumProperty {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
+        writeln!(
             f,
-            "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\npub enum {} {{\n",
+            "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\npub enum {} {{",
             self.name
         )?;
         for field in &self.fields {
-            write!(f, "    {},\n", field.to_case(Case::Pascal))?;
+            writeln!(f, "    {},", field.to_case(Case::Pascal))?;
         }
-        write!(f, "}}\n")?;
+        writeln!(f, "}}")?;
 
-        write!(f, "impl FromStr for {} {{\n", self.name)?;
-        write!(f, "    type Err = ParseBlockError;
+        writeln!(f, "impl FromStr for {} {{", self.name)?;
+        writeln!(f, "    type Err = ParseBlockError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {{
-        match s {{\n")?;
+        match s {{")?;
         for property in &self.fields {
-            write!(f, "            \"{}\" => Ok({}::{}),\n", property, self.name, property.to_case(Case::Pascal))?;
+            writeln!(f, "            \"{}\" => Ok({}::{}),", property, self.name, property.to_case(Case::Pascal))?;
         }
-        write!(f, "            _ => Err(ParseBlockError::InvalidProperty),\n")?;
-        write!(f, "        }}\n    }}\n}}\n")
+        writeln!(f, "            _ => Err(ParseBlockError::InvalidProperty),")?;
+        writeln!(f, "        }}\n    }}\n}}")
     }
 }

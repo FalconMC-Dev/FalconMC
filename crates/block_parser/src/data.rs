@@ -12,80 +12,80 @@ pub struct BlockData {
 }
 
 impl BlockData {
-    pub fn write_struct_def<W: Write>(&self, output: &mut W, name: &String) -> std::fmt::Result {
+    pub fn write_struct_def<W: Write>(&self, output: &mut W, name: &str) -> std::fmt::Result {
         let block_state = self.properties.as_ref().unwrap();
         // struct definition
-        write!(
+        writeln!(
             output,
-            "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\npub struct {} {{\n",
+            "#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]\npub struct {} {{",
             name
         )?;
         for property in &block_state.properties {
-            write!(
+            writeln!(
                 output,
-                "    {}: {},\n",
+                "    {}: {},",
                 property.name, property.property_type
             )?;
         }
-        write!(output, "}}\n")?;
+        writeln!(output, "}}")?;
         // getters and setters
-        write!(output, "impl {} {{\n", name)?;
+        writeln!(output, "impl {} {{", name)?;
         for property in &block_state.properties {
             if let PropertyType::Int(ref range) = property.property_type {
-                write!(output, "    /// This is a value between {} and {} (both ends inclusive).\\Developers should be careful to respect these bounds as no checking is done at runtime!!!\n", range.start, range.end - 1)?;
+                writeln!(output, "    /// This is a value between {} and {} (both ends inclusive).\\Developers should be careful to respect these bounds as no checking is done at runtime!!!", range.start, range.end - 1)?;
             }
-            write!(
+            writeln!(
                 output,
-                "    pub fn with_{}(&mut self, {}: {}) -> &mut Self {{\n",
+                "    pub fn with_{}(&mut self, {}: {}) -> &mut Self {{",
                 property.name, property.name, property.property_type
             )?;
             if let PropertyType::Int(ref range) = property.property_type {
                 if range.start != 0 {
-                    write!(
+                    writeln!(
                         output,
-                        "        self.{} = {} - {};\n",
+                        "        self.{} = {} - {};",
                         property.name, property.name, range.start
                     )?;
                 } else {
-                    write!(
+                    writeln!(
                         output,
-                        "        self.{} = {};\n",
+                        "        self.{} = {};",
                         property.name, property.name
                     )?;
                 }
             } else {
-                write!(
+                writeln!(
                     output,
-                    "        self.{} = {};\n",
+                    "        self.{} = {};",
                     property.name, property.name
                 )?;
             }
-            write!(output, "        self\n")?;
-            write!(output, "    }}\n")?;
-            write!(
+            writeln!(output, "        self")?;
+            writeln!(output, "    }}")?;
+            writeln!(
                 output,
-                "    pub fn {}(&self) -> {} {{\n",
+                "    pub fn {}(&self) -> {} {{",
                 property.name, property.property_type
             )?;
             if let PropertyType::Int(ref range) = property.property_type {
                 if range.start != 0 {
-                    write!(output, "        self.{} + {}\n", property.name, range.start)?;
+                    writeln!(output, "        self.{} + {}", property.name, range.start)?;
                 } else {
-                    write!(output, "        self.{}\n", property.name)?;
+                    writeln!(output, "        self.{}", property.name)?;
                 }
             } else {
-                write!(output, "        self.{}\n", property.name)?;
+                writeln!(output, "        self.{}", property.name)?;
             }
-            write!(output, "    }}\n")?;
+            writeln!(output, "    }}")?;
         }
-        write!(output, "}}\n")?;
+        writeln!(output, "}}")?;
         // default implementation
-        write!(
+        writeln!(
             output,
-            "impl Default for {} {{\n    fn default() -> Self {{\n",
+            "impl Default for {} {{\n    fn default() -> Self {{",
             name
         )?;
-        write!(output, "        {} {{\n", name)?;
+        writeln!(output, "        {} {{", name)?;
         for entry in &block_state.default {
             let property = block_state
                 .properties
@@ -94,24 +94,24 @@ impl BlockData {
                 .unwrap();
             write!(output, "            {}: ", property.name)?;
             match &property.property_type {
-                PropertyType::Bool => write!(output, "{},\n", entry.value)?,
+                PropertyType::Bool => writeln!(output, "{},", entry.value)?,
                 PropertyType::Int(range) => {
                     if range.start != 0 {
                         let value = entry.value.parse::<u8>().unwrap() - range.start;
-                        write!(output, "{},\n", value)?
+                        writeln!(output, "{},", value)?
                     } else {
-                        write!(output, "{},\n", entry.value)?
+                        writeln!(output, "{},", entry.value)?
                     }
                 }
-                PropertyType::Enum((target, _real)) => write!(
+                PropertyType::Enum((target, _real)) => writeln!(
                     output,
-                    "{}::{},\n",
+                    "{}::{},",
                     target.get_name(),
                     entry.value.to_case(Case::Pascal)
                 )?,
             }
         }
-        write!(output, "        }}\n    }}\n}}\n")
+        writeln!(output, "        }}\n    }}\n}}")
     }
 }
 
@@ -119,7 +119,7 @@ impl From<RawBlockData> for BlockData {
     fn from(raw: RawBlockData) -> Self {
         BlockData {
             base_id: raw.states.get(0).unwrap().id,
-            properties: raw.try_into().map_or(None, |x| Some(x)),
+            properties: raw.try_into().ok(),
         }
     }
 }

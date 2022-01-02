@@ -62,8 +62,7 @@ pub fn collect_properties(data: &LinkedHashMap<String, RawBlockData>) -> Vec<Raw
         if let Some(ref map) = entry.properties {
             for (name, values) in map.iter() {
                 if !property_values.contains_key(values) {
-                    let mut list = Vec::new();
-                    list.push(name.clone());
+                    let list = vec![name.clone()];
                     property_values.insert(values.clone(), list);
                 } else {
                     let value = property_values.get_mut(values).unwrap();

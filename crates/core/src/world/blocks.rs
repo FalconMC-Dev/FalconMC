@@ -13882,7 +13882,8 @@ impl Blocks {
         }
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]pub enum ParseBlockError {
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ParseBlockError {
     UnknownBlock,
     UnknownProperty,
     InvalidProperty,
