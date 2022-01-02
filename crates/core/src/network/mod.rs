@@ -1,6 +1,7 @@
 //! Part of the Public API of FalconMC
 
 use std::fmt::{Display, Formatter};
+
 use uuid::Uuid;
 
 pub mod buffer;

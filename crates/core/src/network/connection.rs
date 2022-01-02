@@ -16,7 +16,7 @@ pub trait MinecraftConnection {
 
     fn get_server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>>;
 
-    fn get_connection_link(&mut self) -> UnboundedSender<Box<ConnectionTask>>;
+    fn get_connection_link(&self) -> UnboundedSender<Box<ConnectionTask>>;
 
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode);
 

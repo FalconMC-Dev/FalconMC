@@ -209,7 +209,7 @@ impl MinecraftConnection for ClientConnection {
         &mut self.server_tx
     }
 
-    fn get_connection_link(&mut self) -> UnboundedSender<Box<ConnectionTask>> {
+    fn get_connection_link(&self) -> UnboundedSender<Box<ConnectionTask>> {
         self.connection_sync.0.clone()
     }
 
