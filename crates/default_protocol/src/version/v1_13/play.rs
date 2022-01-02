@@ -67,10 +67,8 @@ impl ChunkDataPacket {
         let chunk_pos = chunk.get_position();
         let bit_mask = chunk.get_bit_mask();
         let mut chunk_sections = Vec::with_capacity(chunk.get_bit_mask().count_ones() as usize);
-        for section in chunk.get_chunk_sections() {
-            if let Some(section) = section {
-                chunk_sections.push(ChunkSectionData::from_section(section));
-            }
+        for section in chunk.get_chunk_sections().iter().flatten() {
+            chunk_sections.push(ChunkSectionData::from_section(section));
         }
         ChunkDataPacket {
             chunk_x: chunk_pos.x,
@@ -159,7 +157,7 @@ impl ChunkSectionData {
             let mut current_long = 0u64;
             let mut offset = 0;
             let mut pos = 0;
-            for element in chunk_section.get_block_data().iter().map(|x| palette[*x as usize].get_global_id_1631().unwrap_or(Blocks::Air.get_global_id_1631().unwrap())) {
+            for element in chunk_section.get_block_data().iter().map(|x| palette[*x as usize].get_global_id_1631().unwrap_or_else(|| Blocks::Air.get_global_id_1631().unwrap())) {
                 let bit_shift = pos * MAX_BITS_PER_BLOCK + offset;
                 if bit_shift < (i64::BITS - MAX_BITS_PER_BLOCK as u32) as u8 {
                     current_long |= (element as u64) << bit_shift;
@@ -188,7 +186,7 @@ impl ChunkSectionData {
                 let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| b.get_global_id_1631()).collect();
                 let mut i = 0;
                 while i < section_palette.len() - palette_missing {
-                    if let None = section_palette[i] {
+                    if section_palette[i].is_none() {
                         section_palette.remove(i);
                         section_palette.push(Some((i + palette_missing) as i32));
                         palette_missing += 1;

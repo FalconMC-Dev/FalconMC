@@ -383,7 +383,7 @@ fn print_from_str<W: Write>(output: &mut W, block_list: &Vec<(String, BlockData)
             (stripped, \"\")
         }};\n").unwrap();
     write!(output, "        let props: AHashMap<&str, &str> = stripped.split(',')
-            .map(|x| x.split_once('=')).filter(|x| x.is_some()).map(|x| x.unwrap()).collect();\n").unwrap();
+            .map(|x| x.split_once('=')).flatten().collect();\n").unwrap();
     write!(output, "        Ok(match name {{\n").unwrap();
     for (name, data) in block_list {
         let clean_name = name.split_once(":").unwrap().1;

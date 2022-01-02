@@ -30,10 +30,10 @@ impl PacketList {
     ) -> Result<Option<PacketList>> {
         match state.connection_state() {
             ConnectionState::Login => {
-                LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Login(p)))
+                LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Login))
             }
             ConnectionState::Play => {
-                PlayPackets::from_buf(packet_id, buffer).map(|l| l.map(|p| PacketList::Play(p)))
+                PlayPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Play))
             }
             _ => Ok(None),
         }

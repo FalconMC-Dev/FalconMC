@@ -38,7 +38,7 @@ pub trait PacketBufferWrite {
     }
 
     /// Writes a [`String`] to the underlying buffer.
-    fn write_string(&mut self, string: &String) {
+    fn write_string(&mut self, string: &str) {
         self.write_var_i32(string.len() as i32);
         self.write_u8_array(string.as_bytes());
     }

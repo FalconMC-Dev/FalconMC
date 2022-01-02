@@ -44,7 +44,7 @@ impl PacketHandler for LoginStartPacket {
         connection.get_handler_state_mut().set_connection_state(ConnectionState::Play);
         connection.get_handler_state_mut().set_player_uuid(player_uuid);
         let server_task = {
-            let name = self.name.clone();
+            let name = self.name;
             let version = connection.get_handler_state().protocol_id();
             let channel = connection.get_connection_link();
             Box::new(move |server: &mut dyn MinecraftServer| {

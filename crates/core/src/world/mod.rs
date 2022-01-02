@@ -36,7 +36,7 @@ impl World {
 
     fn get_chunk_or_create(&mut self, pos: ChunkPos) -> &Chunk {
         if self.chunks.contains_key(&pos) {
-            self.chunks.get(&pos).expect(&format!("Hashmap just said there was a chunk for this key {:?}", pos))
+            self.chunks.get(&pos).unwrap_or_else(|| panic!("Hashmap just said there was a chunk for this key {:?}", pos))
         } else {
             let chunk = Chunk::empty(pos);
             self.chunks.insert(pos, chunk);
@@ -46,7 +46,7 @@ impl World {
 
     fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
         if self.chunks.contains_key(&pos) {
-            self.chunks.get_mut(&pos).expect(&format!("Hashmap just said there was a chunk for this key {:?}", pos))
+            self.chunks.get_mut(&pos).unwrap_or_else(|| panic!("Hashmap just said there was a chunk for this key {:?}", pos))
         } else {
             let chunk = Chunk::empty(pos);
             self.chunks.insert(pos, chunk);
@@ -91,7 +91,7 @@ impl TryFrom<SchematicData> for World {
                     let chunk_pos = ChunkPos::new((x / SECTION_WIDTH as usize) as i32, (z / SECTION_LENGTH as usize) as i32);
                     let chunk = world.get_chunk_mut(chunk_pos);
                     let schematic_block = schematic.block_data[x + z * schematic.width as usize + y * schematic.width as usize * schematic.length as usize];
-                    chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or(Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
+                    chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or_else(|| Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
                 }
             }
         }

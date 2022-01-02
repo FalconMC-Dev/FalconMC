@@ -8,7 +8,7 @@ use crate::player::MinecraftPlayer;
 
 pub mod config;
 
-pub type McTask = dyn FnOnce(&mut dyn MinecraftServer) -> () + Send + Sync;
+pub type McTask = dyn FnOnce(&mut dyn MinecraftServer) + Send + Sync;
 
 pub trait MinecraftServer {
     fn get_player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer>;

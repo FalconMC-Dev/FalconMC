@@ -54,7 +54,7 @@ pub fn derive_packet_decode(item: TokenStream1) -> TokenStream1 {
 fn implement_encoder(item_struct: &mut ItemStruct) -> TokenStream {
     let struct_ident = &item_struct.ident;
 
-    let encoded_fields = match parse_fields(&item_struct.fields, |f| encode_field(f)) {
+    let encoded_fields = match parse_fields(&item_struct.fields, encode_field) {
         Ok(tokens) => tokens,
         Err(error) => return error,
     };
@@ -71,7 +71,7 @@ fn implement_encoder(item_struct: &mut ItemStruct) -> TokenStream {
 fn implement_decoder(item_struct: &mut ItemStruct) -> TokenStream {
     let struct_ident = &item_struct.ident;
 
-    let decoded_fields = match parse_fields(&item_struct.fields, |f| decode_field(f)) {
+    let decoded_fields = match parse_fields(&item_struct.fields, decode_field) {
         Ok(tokens) => tokens,
         Err(error) => return error,
     };
@@ -248,7 +248,7 @@ fn parse_fields<F: Fn(&Field) -> Result<TokenStream, TokenStream>>(
     let mut output = quote!();
 
     if let Fields::Named(ref fields) = fields {
-        let operations = fields.named.iter().map(|f| func(f));
+        let operations = fields.named.iter().map(func);
         for operation in operations {
             match operation {
                 Err(err) => return Err(err),

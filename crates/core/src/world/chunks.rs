@@ -29,13 +29,11 @@ impl Chunk {
                 self.sections[section_y as usize] = None;
                 self.bitmask ^= 1 << section_y;
             }
-        } else {
-            if block_state != Blocks::Air {
-                let mut section = ChunkSection::empty();
-                section.set_block_at(x, y - (section_y * SECTION_HEIGHT), z, block_state);
-                self.sections[section_y as usize] = Some(section);
-                self.bitmask ^= 1 << section_y;
-            }
+        } else if block_state != Blocks::Air {
+            let mut section = ChunkSection::empty();
+            section.set_block_at(x, y - (section_y * SECTION_HEIGHT), z, block_state);
+            self.sections[section_y as usize] = Some(section);
+            self.bitmask ^= 1 << section_y;
         }
     }
 

@@ -5,7 +5,7 @@ use crate::network::packet::PacketEncode;
 use crate::network::PacketHandlerState;
 use crate::server::McTask;
 
-pub type ConnectionTask = dyn FnOnce(&mut dyn MinecraftConnection) -> () + Send + Sync;
+pub type ConnectionTask = dyn FnOnce(&mut dyn MinecraftConnection) + Send + Sync;
 
 pub trait MinecraftConnection {
     fn get_address(&self) -> &SocketAddr;

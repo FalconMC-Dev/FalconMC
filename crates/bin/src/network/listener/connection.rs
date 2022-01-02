@@ -83,15 +83,13 @@ impl ClientConnection {
                     let span = trace_span!("outgoing_data", state = %self.handler_state);
                     let _enter = span.enter();
                     trace!(length = packet.len(), "Outgoing data");
-                    if let Err(_) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
-                        // print_error!(e);
+                    if self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet").is_err() {
                         self.handler_state.set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
                     while let Ok(packet) = self.output_sync.1.try_recv() {
                         trace!(length = packet.len(), "Outgoing data");
-                        if let Err(_) = self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet") {
-                            // print_error!(e);
+                        if self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet").is_err() {
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
                         }
@@ -115,19 +113,17 @@ impl ClientConnection {
                         if n == 0 {
                             info!("Connection lost!");
                             break;
+                        } else if self.read_packets().is_err() {
+                            self.disconnect(String::from("Error while reading packet"))
                         } else {
-                            if let Err(_) = self.read_packets() {
-                                self.disconnect(String::from("Error while reading packet"))
-                            } else {
-                                trace!(received = n, previous = self.in_buffer.remaining(), "Received bytes!");
-                            }
+                            trace!(received = n, previous = self.in_buffer.remaining(), "Received bytes!");
                         }
                     }
                 }
             }
         }
         if let Some(uuid) = self.handler_state.player_uuid() {
-            if let Err(_) = self.server_tx.send(Box::new(move |server| server.player_leave(uuid))) {
+            if self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).is_err() {
                 error!(%uuid, "Could not make server lose player, keep alive should clean up!");
             }
         }
@@ -147,11 +143,11 @@ impl ClientConnection {
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
-        if let None = falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
+        if falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
             packet.read_var_i32()?,
             &mut packet,
             self,
-        )? {
+        )?.is_none() {
             if self.handler_state.connection_state() == Login {
                 self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
             }
@@ -181,7 +177,7 @@ impl ClientConnection {
                 let mut length_buf = Cursor::new(&length_bytes[..]);
                 let frame_length = length_buf.read_var_i32()? as usize;
                 trace!(length = frame_length);
-                return if let Ok(_) = buf.ensure_bytes_available(frame_length) {
+                return if buf.ensure_bytes_available(frame_length).is_ok() {
                     Ok(Some((i + 1, frame_length)))
                 } else {
                     Ok(None)

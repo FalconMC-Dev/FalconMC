@@ -18,6 +18,7 @@ pub static PROTOCOL_MANAGER: Lazy<ProtocolPluginManager> = Lazy::new(|| {
     manager
 });
 
+#[derive(Default)]
 pub struct ProtocolPluginManager {
     plugins: Vec<(i32, Box<dyn FalconPlugin>)>,
     loaded_libraries: Vec<Library>,
@@ -25,10 +26,7 @@ pub struct ProtocolPluginManager {
 
 impl ProtocolPluginManager {
     pub fn new() -> ProtocolPluginManager {
-        ProtocolPluginManager {
-            plugins: vec![],
-            loaded_libraries: vec![],
-        }
+        Default::default()
     }
 
     #[tracing::instrument(skip(self))]

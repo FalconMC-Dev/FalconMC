@@ -21,7 +21,7 @@ macro_rules! impl_packet_decode_primitive_self {
     ( $type:ty, $fun:ident ) => {
         impl $crate::network::packet::PacketDecode for $type {
             fn from_buf(buf: &mut dyn $crate::network::buffer::PacketBufferRead) -> Result<Self> {
-                Ok(buf.$fun()?)
+                buf.$fun()
             }
         }
     };

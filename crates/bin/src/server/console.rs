@@ -41,7 +41,7 @@ impl ConsoleListener {
                 break;
             } else {
                 trace!(input = %buffer, "Sending console input!");
-                if let Err(_) = self.console_sender.send(buffer) {
+                if self.console_sender.send(buffer).is_err() {
                     break;
                 };
             }

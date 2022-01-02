@@ -13915,7 +13915,7 @@ impl FromStr for Blocks {
             (stripped, "")
         };
         let props: AHashMap<&str, &str> = stripped.split(',')
-            .map(|x| x.split_once('=')).filter(|x| x.is_some()).map(|x| x.unwrap()).collect();
+            .map(|x| x.split_once('=')).flatten().collect();
         Ok(match name {
             "air" => Blocks::Air,
             "stone" => Blocks::Stone,

@@ -67,16 +67,16 @@ impl PacketEncode for PlayerAbilityFlags {
     fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
         let mut byte = 0u8;
         if self.invulnerable {
-            byte = byte | 1;
+            byte |= 1;
         }
         if self.flying {
-            byte = byte | 1 << 1;
+            byte |= 1 << 1;
         }
         if self.allow_flying {
-            byte = byte | 1 << 2;
+            byte |= 1 << 2;
         }
         if self.instant_break {
-            byte = byte | 1 << 3;
+            byte |= 1 << 3;
         }
         buf.write_u8(byte);
     }

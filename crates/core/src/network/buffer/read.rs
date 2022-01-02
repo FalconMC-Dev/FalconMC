@@ -71,7 +71,7 @@ pub trait PacketBufferRead {
                 bail!(ErrorKind::VarI32TooLong);
             }
             let byte = self.read_u8()?;
-            result |= ((byte & 0b0111_1111) as i32) << i * 7;
+            result |= ((byte & 0b0111_1111) as i32) << (i * 7);
             if byte & 0b1000_0000 == 0 {
                 break;
             }
@@ -87,7 +87,7 @@ pub trait PacketBufferRead {
                 bail!(ErrorKind::VarI64TooLong);
             }
             let byte = self.read_u8()?;
-            result |= ((byte & 0b0111_1111) as i64) << i * 7;
+            result |= ((byte & 0b0111_1111) as i64) << (i * 7);
             if byte & 0b1000_0000 == 0 {
                 break;
             }
