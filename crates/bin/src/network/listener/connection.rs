@@ -112,6 +112,7 @@ impl ClientConnection {
                         };
                         if n == 0 {
                             info!("Connection lost!");
+                            self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
                         } else if self.read_packets().is_err() {
                             self.disconnect(String::from("Error while reading packet"))
@@ -122,9 +123,11 @@ impl ClientConnection {
                 }
             }
         }
-        if let Some(uuid) = self.handler_state.player_uuid() {
-            if self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).is_err() {
-                error!(%uuid, "Could not make server lose player, keep alive should clean up!");
+        if self.handler_state.connection_state() == ConnectionState::Disconnected {
+            if let Some(uuid) = self.handler_state.player_uuid() {
+                if self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).is_err() {
+                    warn!(%uuid, "Could not make server lose player, keep alive should clean up!");
+                }
             }
         }
     }
