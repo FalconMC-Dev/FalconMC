@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+falcon_default_protocol_derive = { path = "../default_protocol_derive" }
 falcon_core = { path = "../core" }
 
 tracing = { version = "0.1" }

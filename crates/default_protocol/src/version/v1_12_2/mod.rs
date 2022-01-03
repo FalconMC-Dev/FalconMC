@@ -1,1 +1,3 @@
-pub mod play;
+mod play;
+
+pub use play::KeepAlivePacket;

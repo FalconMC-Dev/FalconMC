@@ -10,6 +10,7 @@ use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::PacketEncode;
 use falcon_core::network::packet::PacketHandler;
+pub use falcon_default_protocol_derive::PacketEnum;
 pub use version::ProtocolSend;
 
 use crate::version::VersionMatcher;

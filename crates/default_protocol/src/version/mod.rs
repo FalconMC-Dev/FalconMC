@@ -1,12 +1,12 @@
-use crate::errors::*;
-
+use falcon_core::network::*;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::{PacketDecode, PacketHandler};
-use falcon_core::network::{ConnectionState, PacketHandlerState, PROTOCOL_1_8_9, PROTOCOL_1_13_2};
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::server::Difficulty;
 use falcon_core::world::chunks::Chunk;
+
+use crate::errors::*;
 use crate::implement_packet_handler_enum;
 
 pub mod v1_8_9;
@@ -48,10 +48,11 @@ impl PacketHandler for HandshakePacket {
 pub enum VersionMatcher {
     Handshake(HandshakePacket),
     V1_8_9(v1_8_9::PacketList),
+    V1_13(v1_13::PacketList),
     V1_13_2(v1_13_2::PacketList),
 }
 
-implement_packet_handler_enum!(VersionMatcher, Handshake, V1_8_9, V1_13_2);
+implement_packet_handler_enum!(VersionMatcher, Handshake, V1_8_9, V1_13, V1_13_2);
 
 impl VersionMatcher {
     pub fn from_buf(
@@ -66,6 +67,7 @@ impl VersionMatcher {
         } else {
             match state.protocol_id() {
                 PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_8_9)),
+                PROTOCOL_1_13 => v1_13::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13)),
                 PROTOCOL_1_13_2 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13_2)),
                 _ => Ok(None),
             }
@@ -120,7 +122,7 @@ impl ProtocolSend {
 
     pub fn get_protocol_version(version: i32) -> Option<impl ProtocolVersioned> {
         match version {
-            PROTOCOL_1_13_2 => Some(v1_13_2::PacketSend),
+            PROTOCOL_1_13_2 => Some(v1_13_2::send::PacketSend),
             _ => None,
         }
     }

@@ -1,14 +1,15 @@
-use crate::errors::*;
-
-use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::{ConnectionState, PacketHandlerState};
+use falcon_core::network::buffer::PacketBufferRead;
+use falcon_default_protocol_derive::PacketEnum;
+
+use crate::errors::*;
 use crate::implement_packet_handler_enum;
 
-use crate::version::v1_8_9::login::LoginPackets;
-use crate::version::v1_8_9::play::PlayPackets;
+pub use self::login::LoginStartPacket;
+pub use self::play::{PlayerLookPacket, PlayerPositionAndLookPacket as PlayerPositionAndLookPacketIn, PlayerPositionPacket};
 
-pub mod login;
-pub mod play;
+mod login;
+mod play;
 
 pub enum PacketList {
     Login(LoginPackets),
@@ -30,3 +31,23 @@ impl PacketList {
         }
     }
 }
+
+#[derive(PacketEnum)]
+pub enum LoginPackets {
+    #[falcon_packet(id = 0x00)]
+    LoginStart(LoginStartPacket),
+}
+
+implement_packet_handler_enum!(LoginPackets, LoginStart);
+
+#[derive(PacketEnum)]
+pub enum PlayPackets {
+    #[falcon_packet(id = 0x04)]
+    PlayerPosition(PlayerPositionPacket),
+    #[falcon_packet(id = 0x05)]
+    PlayerPositionAndLook(PlayerPositionAndLookPacketIn),
+    #[falcon_packet(id = 0x06)]
+    PlayerLook(PlayerLookPacket),
+}
+
+implement_packet_handler_enum!(PlayPackets, PlayerPosition, PlayerPositionAndLook, PlayerLook);

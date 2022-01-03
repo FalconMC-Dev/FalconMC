@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+#![allow(clippy::derivable_impls)]
 use std::str::FromStr;
 use ahash::AHashMap;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

@@ -1,0 +1,15 @@
+[package]
+name = "falcon_default_protocol_derive"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+darling = "0.13"
+syn = { version = "1.0", features = [ "full" ] }
+quote = "1.0"
+proc-macro2 = "1.0"
