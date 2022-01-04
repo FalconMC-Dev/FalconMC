@@ -3,7 +3,6 @@ use std::net::SocketAddr;
 use std::time::Duration;
 
 use bytes::{Buf, BytesMut};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{Interval, interval, MissedTickBehavior};
@@ -31,7 +30,6 @@ pub struct ClientConnection {
     // synchronization
     time_out: Interval,
     server_tx: UnboundedSender<Box<McTask>>,
-    output_sync: (UnboundedSender<BytesMut>, UnboundedReceiver<BytesMut>),
     connection_sync: (
         UnboundedSender<Box<ConnectionTask>>,
         UnboundedReceiver<Box<ConnectionTask>>,
@@ -57,7 +55,6 @@ impl ClientConnection {
             in_buffer: BytesMut::with_capacity(4096),
             time_out,
             server_tx,
-            output_sync: tokio::sync::mpsc::unbounded_channel(),
             connection_sync: tokio::sync::mpsc::unbounded_channel(),
         };
 
@@ -74,22 +71,53 @@ impl ClientConnection {
                 _ = self.time_out.tick() => {
                     self.disconnect(String::from("Did not receive Keep alive packet!"));
                 }
-                Some(task) = self.connection_sync.1.recv() => {
-                    let span = trace_span!("connection_task", state = %self.handler_state);
+                readable = self.socket.readable(), if self.handler_state.connection_state() != ConnectionState::Disconnected => {
+                    let span = trace_span!("incoming_data", state = %self.handler_state);
                     let _enter = span.enter();
-                    task(&mut self);
-                }
-                Some(packet) = self.output_sync.1.recv() => {
-                    let span = trace_span!("outgoing_data", state = %self.handler_state);
-                    let _enter = span.enter();
-                    trace!(length = packet.len(), "Outgoing data");
-                    if self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet").is_err() {
+                    if let Err(e) = readable {
+                        error!("Error on read: {}", e);
                         self.handler_state.set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
-                    while let Ok(packet) = self.output_sync.1.try_recv() {
-                        trace!(length = packet.len(), "Outgoing data");
-                        if self.socket.write_all(packet.as_ref()).await.chain_err(|| "Error whilst sending packet").is_err() {
+                    match self.socket.try_read_buf(&mut self.in_buffer) {
+                        Ok(0) => {
+                            info!("Connection lost!");
+                            self.handler_state.set_connection_state(ConnectionState::Disconnected);
+                            break;
+                        }
+                        Ok(n) => {
+                            trace!(length = n, "Data received!");
+                            if self.read_packets().is_err() {
+                                self.disconnect(String::from("Error while reading packet"));
+                            }
+                        }
+                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                            continue;
+                        }
+                        Err(e) => {
+                            error!("Unexpected error ocurred on read: {}", e);
+                            self.disconnect(format!("Unexpected error ocurred on read: {}", e));
+                        }
+                    }
+                }
+                writable = self.socket.writable(), if !self.out_buffer.is_empty() => {
+                    let span = trace_span!("outgoing_data", state = %self.handler_state);
+                    let _enter = span.enter();
+                    if let Err(e) = writable {
+                        error!("Error on write: {}", e);
+                        self.handler_state.set_connection_state(ConnectionState::Disconnected);
+                        break;
+                    }
+                    match self.socket.try_write(&self.out_buffer) {
+                        Ok(n) => {
+                            trace!(length = n, "Outgoing data");
+                            self.out_buffer.advance(n);
+                        }
+                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                            continue;
+                        }
+                        Err(e) => {
+                            error!("Unexpected error ocurred on write: {}", e);
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
                         }
@@ -98,28 +126,10 @@ impl ClientConnection {
                         break;
                     }
                 }
-                length = self.socket.read_buf(&mut self.in_buffer) => {
-                    let span = trace_span!("incoming_data", state = %self.handler_state);
+                Some(task) = self.connection_sync.1.recv() => {
+                    let span = trace_span!("connection_task", state = %self.handler_state);
                     let _enter = span.enter();
-                    if self.handler_state.connection_state() != ConnectionState::Disconnected {
-                        let n = match length {
-                            Ok(n) => n,
-                            Err(_) => {
-                                // print_error!(arbitrary_error!(error, ErrorKind::Msg(String::from("Error whilst receiving data!"))));
-                                self.disconnect(String::from("Error whilst receiving data!"));
-                                1 // let's the loop run one more time, allowing for the disconnect to properly happen
-                            }
-                        };
-                        if n == 0 {
-                            info!("Connection lost!");
-                            self.handler_state.set_connection_state(ConnectionState::Disconnected);
-                            break;
-                        } else if self.read_packets().is_err() {
-                            self.disconnect(String::from("Error while reading packet"))
-                        } else {
-                            trace!(received = n, previous = self.in_buffer.remaining(), "Received bytes!");
-                        }
-                    }
+                    task(&mut self);
                 }
             }
         }
@@ -216,20 +226,12 @@ impl MinecraftConnection for ClientConnection {
         if self.handler_state.connection_state() == ConnectionState::Disconnected {
             return;
         }
-
+        let old_len = self.out_buffer.len();
         self.out_buffer.write_var_i32(packet_id);
         packet_out.to_buf(&mut self.out_buffer);
-        let temp_buf = self.out_buffer.split();
+        let temp_buf = self.out_buffer.split_off(old_len);
         self.out_buffer.write_var_i32(temp_buf.len() as i32);
         self.out_buffer.unsplit(temp_buf);
-        if let Err(ref e) = self
-            .output_sync
-            .0
-            .send(self.out_buffer.split())
-            .chain_err(|| "Logically impossible error happened :)")
-        {
-            print_error!(e);
-        }
     }
 
     fn reset_keep_alive(&mut self) {

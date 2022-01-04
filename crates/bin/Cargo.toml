@@ -13,7 +13,7 @@ path = "src/main.rs"
 falcon_core = { path = "../core" }
 falcon_protocol = { path = "../protocol" }
 
-tracing = { version = "0.1", features = [ "release_max_level_debug" ] }
+tracing = { version = "0.1" }
 tracing-futures = "0.2"
 tracing-subscriber = { version = "0.3", features = [ "local-time" ] }
 tracing-appender = "0.2"
