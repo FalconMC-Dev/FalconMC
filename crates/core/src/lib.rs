@@ -1,6 +1,8 @@
 extern crate self as falcon_core;
 
 #[macro_use]
+extern crate derive_new;
+#[macro_use]
 extern crate tracing;
 
 pub mod errors;

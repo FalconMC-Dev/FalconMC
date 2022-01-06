@@ -3,6 +3,8 @@
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
+use serde::Serialize;
+
 use crate::network::connection::ConnectionTask;
 use crate::player::MinecraftPlayer;
 
@@ -11,6 +13,8 @@ pub mod config;
 pub type McTask = dyn FnOnce(&mut dyn MinecraftServer) + Send + Sync;
 
 pub trait MinecraftServer {
+    fn online_player_count(&self) -> i32;
+
     fn get_player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer>;
 
     fn get_player_mut(&mut self, uuid: Uuid) -> Option<&mut dyn MinecraftPlayer>;
@@ -28,4 +32,10 @@ pub enum Difficulty {
     Easy,
     Normal,
     Hard
+}
+
+#[derive(Debug, Serialize, new)]
+pub struct ServerVersion {
+    pub name: String,
+    pub protocol: i32,
 }

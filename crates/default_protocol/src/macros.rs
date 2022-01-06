@@ -2,7 +2,7 @@
 macro_rules! implement_packet_handler_enum {
     ($name:ident, $( $variant:tt ),+) => {
         impl ::falcon_core::network::packet::PacketHandler for $name {
-            fn handle_packet(self, connection: &mut dyn ::falcon_core::network::connection::MinecraftConnection) {
+            fn handle_packet(self, connection: &mut dyn ::falcon_core::network::connection::MinecraftConnection) -> ::falcon_core::network::packet::PacketHandlerResult {
                 match self {
                     $(
                         $name::$variant(inner) => inner.handle_packet(connection)

@@ -2,7 +2,7 @@ use uuid::Uuid;
 
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::ConnectionState;
-use falcon_core::network::packet::{PacketEncode, PacketDecode, PacketHandler};
+use falcon_core::network::packet::{PacketEncode, PacketDecode, PacketHandler, PacketHandlerResult, PacketHandlerError};
 use falcon_core::server::MinecraftServer;
 
 #[derive(PacketDecode)]
@@ -11,7 +11,7 @@ pub struct LoginStartPacket {
 }
 
 impl PacketHandler for LoginStartPacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         debug!(player_name = %self.name);
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, self.name.as_bytes());
         // TODO: more idiomatic code pls
@@ -32,9 +32,7 @@ impl PacketHandler for LoginStartPacket {
                 server.player_join(name, player_uuid, version, channel);
             })
         };
-        if let Err(error) = connection.get_server_link_mut().send(server_task) {
-            error!("Could not join player to server due to {}!", error);
-        }
+        connection.get_server_link_mut().send(server_task).map_err(|_| PacketHandlerError::ServerThreadSendError)
     }
 
     fn get_name(&self) -> &'static str {

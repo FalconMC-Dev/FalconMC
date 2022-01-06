@@ -1,7 +1,7 @@
 use falcon_core::network::*;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketHandler};
+use falcon_core::network::packet::{PacketDecode, PacketHandler, PacketHandlerResult};
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::server::Difficulty;
 use falcon_core::world::chunks::Chunk;
@@ -25,7 +25,7 @@ pub struct HandshakePacket {
 }
 
 impl PacketHandler for HandshakePacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         match self.next_state {
             1 => connection
                 .get_handler_state_mut()
@@ -38,6 +38,7 @@ impl PacketHandler for HandshakePacket {
         connection
             .get_handler_state_mut()
             .set_protocol_id(self.version);
+        Ok(())
     }
 
     fn get_name(&self) -> &'static str {
@@ -120,9 +121,10 @@ impl ProtocolSend {
         Ok(())
     }
 
-    pub fn get_protocol_version(version: i32) -> Option<impl ProtocolVersioned> {
+    pub fn get_protocol_version<'a>(version: i32) -> Option<&'a dyn ProtocolVersioned> {
         match version {
-            PROTOCOL_1_13_2 => Some(v1_13_2::send::PacketSend),
+            PROTOCOL_1_13 => Some(&v1_13::PacketSend),
+            PROTOCOL_1_13_2 => Some(&v1_13_2::PacketSend),
             _ => None,
         }
     }

@@ -5,18 +5,19 @@ use falcon_default_protocol_derive::PacketEnum;
 use crate::errors::*;
 use crate::implement_packet_handler_enum;
 
-pub use super::v1_8_9::{LoginStartPacket, PlayerPositionPacket, PlayerPositionAndLookPacketIn, PlayerLookPacket};
+pub use super::v1_8_9::{StatusRequestPacket, ServerPingPacket, LoginStartPacket, PlayerPositionPacket, PlayerPositionAndLookPacketIn, PlayerLookPacket};
 pub use super::v1_12_2::KeepAlivePacket;
 pub use super::v1_13::{JoinGamePacket, PlayerAbilitiesPacket, ChunkDataPacket, PlayerPositionAndLookPacketOut};
+pub use send::PacketSend;
 
-pub mod send;
+mod send;
 
 pub enum PacketList {
+    Status(StatusPackets),
     Login(LoginPackets),
     Play(PlayPackets),
 }
-
-implement_packet_handler_enum!(PacketList, Login, Play);
+implement_packet_handler_enum!(PacketList, Status, Login, Play);
 
 impl PacketList {
     pub fn from_buf(
@@ -25,6 +26,9 @@ impl PacketList {
         buffer: &mut dyn PacketBufferRead,
     ) -> Result<Option<PacketList>> {
         match state.connection_state() {
+            ConnectionState::Status => {
+                StatusPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Status))
+            }
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Login))
             }
@@ -37,11 +41,19 @@ impl PacketList {
 }
 
 #[derive(PacketEnum)]
+pub enum StatusPackets {
+    #[falcon_packet(id = 0x00)]
+    Request(StatusRequestPacket),
+    #[falcon_packet(id = 0x01)]
+    Ping(ServerPingPacket),
+}
+implement_packet_handler_enum!(StatusPackets, Request, Ping);
+
+#[derive(PacketEnum)]
 pub enum LoginPackets {
     #[falcon_packet(id = 0x00)]
     LoginStart(LoginStartPacket),
 }
-
 implement_packet_handler_enum!(LoginPackets, LoginStart);
 
 #[derive(PacketEnum)]
@@ -55,5 +67,4 @@ pub enum PlayPackets {
     #[falcon_packet(id = 0x12)]
     PlayerLook(PlayerLookPacket),
 }
-
 implement_packet_handler_enum!(PlayPackets, KeepAlive, PlayerPosition, PlayerPositionAndLook, PlayerLook);

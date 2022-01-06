@@ -36,7 +36,9 @@ impl DefaultProtocol {
             option.map(|packet| {
                 let packet_span = trace_span!("handle_packet", name = packet.get_name());
                 let _enter2 = packet_span.enter();
-                packet.handle_packet(connection);
+                if let Err(e) = packet.handle_packet(connection) {
+                    error!(error = %e, "error on handle packet (default-protocol)");
+                }
             })
         })
     }

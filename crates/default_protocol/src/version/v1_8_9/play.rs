@@ -1,5 +1,5 @@
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketHandler};
+use falcon_core::network::packet::{PacketDecode, PacketHandler, PacketHandlerError, PacketHandlerResult};
 use falcon_core::server::MinecraftServer;
 
 #[derive(PacketDecode)]
@@ -11,7 +11,7 @@ pub struct PlayerPositionPacket {
 }
 
 impl PacketHandler for PlayerPositionPacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         let server_task = {
             let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
@@ -27,9 +27,7 @@ impl PacketHandler for PlayerPositionPacket {
                 }
             })
         };
-        if let Err(error) = connection.get_server_link_mut().send(server_task) {
-            error!("Could not send server task when received player position update! {}", error);
-        }
+        connection.get_server_link_mut().send(server_task).map_err(|_| PacketHandlerError::ServerThreadSendError)
     }
 
     fn get_name(&self) -> &'static str {
@@ -48,7 +46,7 @@ pub struct PlayerPositionAndLookPacket {
 }
 
 impl PacketHandler for PlayerPositionAndLookPacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         let server_task = {
             let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
@@ -56,9 +54,7 @@ impl PacketHandler for PlayerPositionAndLookPacket {
                 server.player_position_and_look(uuid, packet.x, packet.y, packet.z, packet.yaw, packet.pitch, packet.on_ground);
             })
         };
-        if let Err(error) = connection.get_server_link_mut().send(server_task) {
-            error!("Could not send server task when received player position and look update! {}", error);
-        }
+        connection.get_server_link_mut().send(server_task).map_err(|_| PacketHandlerError::ServerThreadSendError)
     }
 
     fn get_name(&self) -> &'static str {
@@ -74,7 +70,7 @@ pub struct PlayerLookPacket {
 }
 
 impl PacketHandler for PlayerLookPacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         let server_task = {
             let uuid = connection.get_handler_state().player_uuid().expect("Should be impossible to receive this packet without a uuid");
             Box::new(move |server: &mut dyn MinecraftServer| {
@@ -91,9 +87,7 @@ impl PacketHandler for PlayerLookPacket {
                 }
             })
         };
-        if let Err(error) = connection.get_server_link_mut().send(server_task) {
-            error!("Could not send server task when received player position update! {}", error);
-        }
+        connection.get_server_link_mut().send(server_task).map_err(|_| PacketHandlerError::ServerThreadSendError)
     }
 
     fn get_name(&self) -> &'static str {

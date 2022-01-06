@@ -335,6 +335,7 @@ dependencies = [
  "ahash",
  "bytes",
  "confy",
+ "derive-new",
  "error-chain",
  "falcon_core_derive",
  "fastnbt",
@@ -362,7 +363,10 @@ dependencies = [
  "error-chain",
  "falcon_core",
  "falcon_default_protocol_derive",
+ "ignore-result",
  "log4rs",
+ "serde",
+ "serde_json",
  "tracing",
  "uuid",
 ]

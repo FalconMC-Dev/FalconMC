@@ -1,5 +1,5 @@
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler};
+use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerResult};
 
 #[derive(PacketEncode, PacketDecode, new)]
 pub struct KeepAlivePacket {
@@ -7,12 +7,13 @@ pub struct KeepAlivePacket {
 }
 
 impl PacketHandler for KeepAlivePacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         if connection.get_handler_state().last_keep_alive() != self.id as u64 {
             connection.disconnect(String::from("Received invalid Keep Alive id!"));
         } else {
             connection.reset_keep_alive();
         }
+        Ok(())
     }
 
     fn get_name(&self) -> &'static str {

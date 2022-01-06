@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use uuid::Uuid;
 
@@ -20,11 +21,28 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection);
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;
 }
+
+pub type PacketHandlerResult = std::result::Result<(), PacketHandlerError>;
+
+#[derive(Clone, Copy, Debug)]
+pub enum PacketHandlerError {
+    ServerThreadSendError
+}
+
+impl Display for PacketHandlerError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PacketHandlerError::ServerThreadSendError => write!(f, "could not send task to server thread"),
+        }
+    }
+}
+
+impl std::error::Error for PacketHandlerError {}
 
 impl_packet_primitive_self!(u8, write_u8, read_u8);
 impl_packet_primitive_self!(i8, write_i8, read_i8);

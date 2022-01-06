@@ -10,7 +10,7 @@ use tokio::time::{Interval, interval, MissedTickBehavior};
 use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
-use falcon_core::network::ConnectionState::Login;
+use falcon_core::network::ConnectionState::{Login, Status};
 use falcon_core::network::packet::PacketEncode;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
@@ -81,7 +81,7 @@ impl ClientConnection {
                     }
                     match self.socket.try_read_buf(&mut self.in_buffer) {
                         Ok(0) => {
-                            info!("Connection lost!");
+                            trace!("Connection lost!");
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
                         }
@@ -95,7 +95,9 @@ impl ClientConnection {
                             continue;
                         }
                         Err(e) => {
-                            error!("Unexpected error ocurred on read: {}", e);
+                            if self.handler_state.connection_state() == ConnectionState::Play {
+                                error!("Unexpected error ocurred on read: {}", e);
+                            }
                             self.disconnect(format!("Unexpected error ocurred on read: {}", e));
                         }
                     }
@@ -117,12 +119,14 @@ impl ClientConnection {
                             continue;
                         }
                         Err(e) => {
-                            error!("Unexpected error ocurred on write: {}", e);
+                            if self.handler_state.connection_state() == ConnectionState::Play {
+                                error!("Unexpected error ocurred on write: {}", e);
+                            }
                             self.handler_state.set_connection_state(ConnectionState::Disconnected);
                             break;
                         }
                     }
-                    if self.handler_state.connection_state() == ConnectionState::Disconnected {
+                    if self.out_buffer.is_empty() && self.handler_state.connection_state() == ConnectionState::Disconnected {
                         break;
                     }
                 }
@@ -161,7 +165,7 @@ impl ClientConnection {
             &mut packet,
             self,
         )?.is_none() {
-            if self.handler_state.connection_state() == Login {
+            if self.handler_state.connection_state() == Login || self.handler_state.connection_state() == Status {
                 self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
             }
             trace!("Unknown packet received, skipping!");

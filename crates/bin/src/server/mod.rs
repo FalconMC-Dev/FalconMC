@@ -130,6 +130,10 @@ impl MainServer {
 }
 
 impl MinecraftServer for MainServer {
+    fn online_player_count(&self) -> i32 {
+        self.players.len() as i32
+    }
+
     fn get_player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer> {
         self.players.get(&uuid).map(|player| player as &dyn MinecraftPlayer)
     }
