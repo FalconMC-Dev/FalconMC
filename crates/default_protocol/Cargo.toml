@@ -10,7 +10,6 @@ falcon_default_protocol_derive = { path = "../default_protocol_derive" }
 falcon_core = { path = "../core" }
 
 tracing = { version = "0.1" }
-log4rs = { version = "1.0", features = [ "gzip", "background_rotation" ] }
 error-chain = "0.12"
 
 uuid = { version = "0.8", features = [ "v3" ] }
