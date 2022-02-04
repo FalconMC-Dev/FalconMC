@@ -87,7 +87,8 @@ impl ClientConnection {
                         }
                         Ok(n) => {
                             trace!(length = n, "Data received!");
-                            if self.read_packets().is_err() {
+                            if let Err(e) = self.read_packets() {
+                                debug!("Read error: {}", e);
                                 self.disconnect(String::from("Error while reading packet"));
                             }
                         }
