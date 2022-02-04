@@ -9,8 +9,8 @@ edition = "2021"
 falcon_core = { path = "../core" }
 falcon_default_protocol = { path = "../default_protocol" }
 
-tracing = { version = "0.1" }
-error-chain = "0.12"
+tracing = "0.1.30"
+error-chain = "0.12.4"
 
-libloading = "0.7"
-once_cell = "1.8"
+libloading = "0.7.3"
+once_cell = "1.9.0"

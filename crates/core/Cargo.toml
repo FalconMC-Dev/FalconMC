@@ -8,18 +8,18 @@ edition = "2021"
 [dependencies]
 falcon_core_derive = { path = "../core_derive" }
 
-tracing = { version = "0.1" }
-error-chain = "0.12"
+tracing = "0.1.30"
+error-chain = "0.12.4"
 
-ahash = { version = "0.7", features = [ "serde" ] }
-fastnbt = "1.2"
-serde = { version = "1.0", features = [ "derive" ] }
-confy = "0.4"
+ahash = { version = "0.7.6", features = [ "serde" ] }
+fastnbt = "1.3.0"
+serde = { version = "1.0.136", features = [ "derive" ] }
+confy = "0.4.0"
 
-derive-new = "0.5"
+derive-new = "0.5.9"
 
-once_cell = "1.8"
-uuid = "0.8"
-bytes = "1.1"
+once_cell = "1.9.0"
+uuid = "0.8.2"
+bytes = "1.1.0"
 
-tokio = { version = "1.15", features = [ "sync" ] }
+tokio = { version = "1.16.1", features = [ "sync" ] }
