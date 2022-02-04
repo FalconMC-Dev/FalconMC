@@ -1,7 +1,7 @@
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use crate::BlockData;
+use crate::util::data::BlockData;
 
 pub struct BlockList {
     version: i32,

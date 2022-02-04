@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use crate::EnumPropertyBase;
+use properties::EnumPropertyBase;
 use crate::util::properties::EnumProperty;
 
 pub mod data;

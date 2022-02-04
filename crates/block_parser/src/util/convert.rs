@@ -1,7 +1,7 @@
 use convert_case::{Case, Casing};
-use crate::{BlockData, RawBlockData};
+use crate::util::raw::RawBlockData;
 use crate::util::avoid_type;
-use crate::util::data::{BlockProperty, BlockState};
+use crate::util::data::{BlockData, BlockProperty, BlockState};
 use crate::util::properties::{EnumProperty, EnumPropertyBase, PropertyType};
 
 pub fn into_block_data(raw_data: &RawBlockData, property_base: &mut EnumPropertyBase, default_version: bool) -> BlockData {

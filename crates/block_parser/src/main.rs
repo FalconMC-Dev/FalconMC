@@ -7,9 +7,12 @@ use ahash::AHashMap;
 use linked_hash_map::LinkedHashMap;
 use proc_macro2::TokenStream;
 use quote::quote;
-use falcon_block_parser::{find_data_files, get_data, load_block_lists};
-use falcon_block_parser::util::generate_block_parse_error;
-use falcon_block_parser::util::raw::RawBlockData;
+use functionality::{find_data_files, get_data, load_block_lists};
+use util::generate_block_parse_error;
+use util::raw::RawBlockData;
+
+pub mod util;
+pub mod functionality;
 
 fn main() {
     if let Some(arg) = env::args().nth(1) {

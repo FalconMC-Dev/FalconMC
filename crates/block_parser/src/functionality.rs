@@ -6,12 +6,9 @@ use linked_hash_map::LinkedHashMap;
 
 use crate::util::convert::into_block_data;
 use crate::util::create_default_property_base;
-use crate::util::data::BlockData;
 use crate::util::processing::BlockList;
 use crate::util::properties::EnumPropertyBase;
 use crate::util::raw::RawBlockData;
-
-pub mod util;
 
 pub fn load_block_lists() -> (Vec<BlockList>, EnumPropertyBase) {
     let mut data_files: Vec<(i32, LinkedHashMap<String, RawBlockData>)> = find_data_files().iter()
