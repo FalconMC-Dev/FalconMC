@@ -83,7 +83,7 @@ impl PacketHandler for PlayerLookPacket {
                         let z = player.get_position().get_z();
                         server.player_position_and_look(uuid, x, y, z, packet.yaw, packet.pitch, packet.on_ground);
                     }
-                    None => error!("We received a packet from a player that is not to be found on the server!"),
+                    None => error!("We received a packet from a player that is not found on the server!"),
                 }
             })
         };

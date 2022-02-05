@@ -4,6 +4,7 @@ use falcon_core::player::{GameMode, PlayerAbilityFlags};
 use falcon_core::server::Difficulty;
 use falcon_core::world::blocks::Blocks;
 use falcon_core::world::chunks::{Chunk, ChunkSection, SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
+use crate::version::v1_13::util::build_compacted_data_array;
 
 #[derive(PacketEncode)]
 pub struct JoinGamePacket {
@@ -63,12 +64,12 @@ pub struct ChunkDataPacket {
 }
 
 impl ChunkDataPacket {
-    pub fn from_chunk(chunk: &Chunk) -> Self {
+    pub fn from_chunk(chunk: &Chunk, block_to_id_fun: fn(&Blocks) -> Option<i32>) -> Self {
         let chunk_pos = chunk.get_position();
         let bit_mask = chunk.get_bit_mask();
         let mut chunk_sections = Vec::with_capacity(chunk.get_bit_mask().count_ones() as usize);
         for section in chunk.get_chunk_sections().iter().flatten() {
-            chunk_sections.push(ChunkSectionData::from_section(section));
+            chunk_sections.push(ChunkSectionData::from_section(section, block_to_id_fun));
         }
         ChunkDataPacket {
             chunk_x: chunk_pos.x,
@@ -114,11 +115,12 @@ const LIGHT_COUNT: usize = ((SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH) / 
 const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
 const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
+/// Lighting is maximum everwhere, TODO: improve lighting in future versions
 pub struct ChunkSectionData {
     bits_per_block: u8,
     palette: Option<Vec<i32>>,
     block_data: Vec<u64>,
-    // light is always the same
+    // light is always the same (for now)
 }
 
 impl ChunkSectionData {
@@ -129,16 +131,16 @@ impl ChunkSectionData {
             size += palette.iter().map(|x| get_var_i32_size(*x)).sum::<usize>();
         }
         size += get_var_i32_size(self.block_data.len() as i32);
-        size += self.block_data.len() * 8;
+        size += self.block_data.len() * std::mem::size_of::<u64>();
         size += LIGHT_COUNT;
         size += LIGHT_COUNT; // we only have the overworld for now
         size as i32
     }
 
-    pub fn from_section(chunk_section: &ChunkSection) -> Self {
+    pub fn from_section(chunk_section: &ChunkSection, block_to_id_fun: fn(&Blocks) -> Option<i32>) -> Self {
         let bits_per_block = {
             let actual = usize::BITS - (chunk_section.get_palette().iter()
-                .map(|block| block.get_global_id_1631())
+                .map(|block| block_to_id_fun(block))
                 .filter(|o| o.is_some())
                 .count() - 1).leading_zeros();
             if actual < 4 {
@@ -152,28 +154,8 @@ impl ChunkSectionData {
 
         if bits_per_block > 8 {
             let palette = chunk_section.get_palette();
-            const LONG_COUNT: u32 = (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * MAX_BITS_PER_BLOCK as u16) as u32 / i64::BITS;
-            let mut block_data = Vec::with_capacity(LONG_COUNT as usize);
-            let mut current_long = 0u64;
-            let mut offset = 0;
-            let mut pos = 0;
-            for element in chunk_section.get_block_data().iter().map(|x| palette[*x as usize].get_global_id_1631().unwrap_or_else(|| Blocks::Air.get_global_id_1631().unwrap())) {
-                let bit_shift = pos * MAX_BITS_PER_BLOCK + offset;
-                if bit_shift < (i64::BITS - MAX_BITS_PER_BLOCK as u32) as u8 {
-                    current_long |= (element as u64) << bit_shift;
-                    pos += 1;
-                } else {
-                    offset = bit_shift - (i64::BITS - MAX_BITS_PER_BLOCK as u32) as u8;
-                    current_long |= (element as u64) << bit_shift;
-                    block_data.push(current_long);
-                    current_long = 0u64;
-                    if offset != 0 {
-                        let diff = MAX_BITS_PER_BLOCK - offset;
-                        current_long |= (element as u64) >> diff;
-                    }
-                    pos = 0;
-                }
-            }
+            let blocks = chunk_section.get_block_data().iter().map(|x| block_to_id_fun(&palette[*x as usize]).unwrap_or_else(|| block_to_id_fun(&Blocks::Air).unwrap()));
+            let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
 
             ChunkSectionData {
                 bits_per_block: MAX_BITS_PER_BLOCK,
@@ -183,7 +165,7 @@ impl ChunkSectionData {
         } else {
             let mut palette_missing = 0;
             let mut palette: Vec<i32> = {
-                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| b.get_global_id_1631()).collect();
+                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| block_to_id_fun(b)).collect();
                 let mut i = 0;
                 while i < section_palette.len() - palette_missing {
                     if section_palette[i].is_none() {
@@ -196,13 +178,7 @@ impl ChunkSectionData {
                 }
                 section_palette.iter().map(|b| b.unwrap()).collect()
             };
-
-            let long_count: u32 = (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS;
-            let mut block_data = Vec::with_capacity(long_count as usize);
-            let mut current_long = 0u64;
-            let mut offset = 0;
-            let mut pos = 0;
-            for element in chunk_section.get_block_data().iter().map(|x| {
+            let blocks = chunk_section.get_block_data().iter().map(|x| {
                 let palette_len = palette.len();
                 if palette[palette_len-palette_missing..palette_len].contains(&(*x as i32)) {
                     0
@@ -213,25 +189,10 @@ impl ChunkSectionData {
                             res -= 1
                         }
                     }
-                    res
+                    res as i32
                 }
-            }) {
-                let bit_shift = pos * bits_per_block + offset;
-                if bit_shift < (i64::BITS - bits_per_block as u32) as u8 {
-                    current_long |= (element as u64) << bit_shift;
-                    pos += 1;
-                } else {
-                    offset = bit_shift - (i64::BITS - bits_per_block as u32) as u8;
-                    current_long |= (element as u64) << bit_shift;
-                    block_data.push(current_long);
-                    current_long = 0u64;
-                    if offset != 0 {
-                        let diff = bits_per_block - offset;
-                        current_long |= (element as u64) >> diff;
-                    }
-                    pos = 0;
-                }
-            }
+            });
+            let block_data = build_compacted_data_array(bits_per_block, blocks);
             palette.drain(palette.len() - palette_missing..palette.len());
 
             ChunkSectionData {

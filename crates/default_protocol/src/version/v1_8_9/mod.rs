@@ -5,28 +5,22 @@ use falcon_default_protocol_derive::PacketEnum;
 use crate::errors::*;
 use crate::implement_packet_handler_enum;
 
-pub use self::status::{StatusRequestPacket, StatusResponsePacket, ClientPingPacket, ServerPingPacket};
-pub use self::login::LoginStartPacket;
-pub use self::play::{PlayerLookPacket, PlayerPositionAndLookPacket as PlayerPositionAndLookPacketIn, PlayerPositionPacket};
+use login::LoginStartPacket;
+use play::{PlayerLookPacket, PlayerPositionAndLookPacket, PlayerPositionPacket};
 
-mod login;
-mod play;
-mod status;
+pub mod login;
+pub mod play;
 mod util;
 
 pub enum PacketList {
-    Status(StatusPackets),
     Login(LoginPackets),
     Play(PlayPackets),
 }
-implement_packet_handler_enum!(PacketList, Status, Login, Play);
+implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
     pub fn from_buf(packet_id: i32, state: &PacketHandlerState, buffer: &mut dyn PacketBufferRead) -> Result<Option<PacketList>> {
         match state.connection_state() {
-            ConnectionState::Status => {
-                StatusPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Status))
-            }
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Login))
             }
@@ -37,15 +31,6 @@ impl PacketList {
         }
     }
 }
-
-#[derive(PacketEnum)]
-pub enum StatusPackets {
-    #[falcon_packet(id = 0x00)]
-    Request(StatusRequestPacket),
-    #[falcon_packet(id = 0x01)]
-    Ping(ServerPingPacket),
-}
-implement_packet_handler_enum!(StatusPackets, Request, Ping);
 
 #[derive(PacketEnum)]
 pub enum LoginPackets {
@@ -59,7 +44,7 @@ pub enum PlayPackets {
     #[falcon_packet(id = 0x04)]
     PlayerPosition(PlayerPositionPacket),
     #[falcon_packet(id = 0x05)]
-    PlayerPositionAndLook(PlayerPositionAndLookPacketIn),
+    PlayerPositionAndLook(PlayerPositionAndLookPacket),
     #[falcon_packet(id = 0x06)]
     PlayerLook(PlayerLookPacket),
 }

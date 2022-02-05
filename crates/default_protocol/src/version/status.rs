@@ -1,12 +1,25 @@
+use crate::errors::*;
 use ignore_result::Ignore;
-use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult};
-
 use serde::Serialize;
+
 use falcon_core::network::buffer::PacketBufferRead;
+use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::ConnectionState;
-use falcon_core::server::config::FalconConfig;
+use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult};
 use falcon_core::server::{MinecraftServer, ServerVersion};
+use falcon_core::server::config::FalconConfig;
+use falcon_default_protocol_derive::PacketEnum;
+
+use crate::implement_packet_handler_enum;
+
+#[derive(PacketEnum)]
+pub enum StatusPackets {
+    #[falcon_packet(id = 0x00)]
+    Request(StatusRequestPacket),
+    #[falcon_packet(id = 0x01)]
+    Ping(ServerPingPacket),
+}
+implement_packet_handler_enum!(StatusPackets, Request, Ping);
 
 pub struct StatusRequestPacket;
 impl PacketDecode for StatusRequestPacket {
