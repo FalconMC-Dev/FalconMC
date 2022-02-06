@@ -70,7 +70,7 @@ impl VersionMatcher {
             _ => match state.protocol_id() {
                 // PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_8_9)),
                 PROTOCOL_1_13 => v1_13::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13)),
-                PROTOCOL_1_13_2 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13_2)),
+                PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13_2)),
                 _ => Ok(None),
             }
         }
@@ -125,7 +125,7 @@ impl ProtocolSend {
     pub fn get_protocol_version<'a>(version: i32) -> Option<&'a dyn ProtocolVersioned> {
         match version {
             PROTOCOL_1_13 => Some(&v1_13::PacketSend),
-            PROTOCOL_1_13_2 => Some(&v1_13_2::PacketSend),
+            PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => Some(&v1_13_2::PacketSend),
             _ => None,
         }
     }

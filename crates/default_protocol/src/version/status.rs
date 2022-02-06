@@ -29,7 +29,7 @@ impl PacketDecode for StatusRequestPacket {
 impl PacketHandler for StatusRequestPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         let connection_link = connection.get_connection_link();
-        // TODO: send status to unsupported versions too (see connection.rs for auto-disconnect when `Status` packet is unknown)
+        // TODO: send only supported version (currently it just mirrors the version of the client)
         let version = ServerVersion::new(String::from("1.13-1.17.1"), connection.get_handler_state().protocol_id());
         let server_task = {
             let description = String::from("§eFalcon server§r§b!!!");

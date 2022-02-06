@@ -154,7 +154,7 @@ impl ChunkSectionData {
 
         if bits_per_block > 8 {
             let palette = chunk_section.get_palette();
-            let blocks = chunk_section.get_block_data().iter().map(|x| block_to_id_fun(&palette[*x as usize]).unwrap_or_else(|| block_to_id_fun(&Blocks::Air).unwrap()));
+            let blocks = chunk_section.get_block_data().iter().map(|x| block_to_id_fun(&palette[*x as usize]).unwrap_or_else(|| block_to_id_fun(&Blocks::Air).unwrap()) as u64);
             let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
 
             ChunkSectionData {
@@ -189,7 +189,7 @@ impl ChunkSectionData {
                             res -= 1
                         }
                     }
-                    res as i32
+                    res as u64
                 }
             });
             let block_data = build_compacted_data_array(bits_per_block, blocks);
