@@ -139,10 +139,7 @@ impl ChunkSectionData {
 
     pub fn from_section(chunk_section: &ChunkSection, block_to_id_fun: fn(&Blocks) -> Option<i32>) -> Self {
         let bits_per_block = {
-            let actual = usize::BITS - (chunk_section.get_palette().iter()
-                .map(|block| block_to_id_fun(block))
-                .filter(|o| o.is_some())
-                .count() - 1).leading_zeros();
+            let actual = chunk_section.get_palette().calculate_bits_per_entry(block_to_id_fun);
             if actual < 4 {
                 4u8
             } else if actual < 9 {
@@ -152,54 +149,19 @@ impl ChunkSectionData {
             }
         };
 
-        if bits_per_block > 8 {
-            let palette = chunk_section.get_palette();
-            let blocks = chunk_section.get_block_data().iter().map(|x| block_to_id_fun(&palette[*x as usize]).unwrap_or_else(|| block_to_id_fun(&Blocks::Air).unwrap()) as u64);
+        let (block_data, palette) = if bits_per_block > 8 {
+            let blocks = chunk_section.get_palette().build_direct_palette(chunk_section.get_block_data().iter().cloned(), block_to_id_fun, Blocks::Air);
             let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
-
-            ChunkSectionData {
-                bits_per_block: MAX_BITS_PER_BLOCK,
-                palette: None,
-                block_data,
-            }
+            (block_data, None)
         } else {
-            let mut palette_missing = 0;
-            let mut palette: Vec<i32> = {
-                let mut section_palette: Vec<Option<i32>> = chunk_section.get_palette().iter().map(|b| block_to_id_fun(b)).collect();
-                let mut i = 0;
-                while i < section_palette.len() - palette_missing {
-                    if section_palette[i].is_none() {
-                        section_palette.remove(i);
-                        section_palette.push(Some((i + palette_missing) as i32));
-                        palette_missing += 1;
-                    } else {
-                        i += 1;
-                    }
-                }
-                section_palette.iter().map(|b| b.unwrap()).collect()
-            };
-            let blocks = chunk_section.get_block_data().iter().map(|x| {
-                let palette_len = palette.len();
-                if palette[palette_len-palette_missing..palette_len].contains(&(*x as i32)) {
-                    0
-                } else {
-                    let mut res = *x;
-                    for j in &palette[palette_len-palette_missing..palette_len] {
-                        if *x > *j as u16 {
-                            res -= 1
-                        }
-                    }
-                    res as u64
-                }
-            });
+            let (blocks, palette) = chunk_section.get_palette().build_indirect_palette(chunk_section.get_block_data().iter().cloned(), block_to_id_fun, Blocks::Air);
             let block_data = build_compacted_data_array(bits_per_block, blocks);
-            palette.drain(palette.len() - palette_missing..palette.len());
-
-            ChunkSectionData {
-                bits_per_block,
-                palette: Some(palette),
-                block_data
-            }
+            (block_data, Some(palette))
+        };
+        ChunkSectionData {
+            bits_per_block,
+            palette,
+            block_data,
         }
     }
 }

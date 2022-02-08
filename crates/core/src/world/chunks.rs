@@ -1,4 +1,5 @@
 use crate::world::blocks::Blocks;
+use crate::world::palette::Palette;
 
 pub const SECTIONS_NUM: u16 = 16;
 pub const SECTION_WIDTH: u16 = 16;
@@ -53,7 +54,7 @@ impl Chunk {
 #[derive(Clone, Debug)]
 pub struct ChunkSection {
     block_count: u16,
-    palette: Vec<Blocks>,
+    palette: Palette<Blocks>,
     blocks: Vec<u16>,
 }
 
@@ -61,7 +62,7 @@ impl ChunkSection {
     pub fn empty() -> Self {
         ChunkSection {
             block_count: 0,
-            palette: vec![Blocks::Air],
+            palette: Palette::new(vec![Blocks::Air]),
             blocks: vec![0u16; (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH) as usize],
         }
     }
@@ -71,21 +72,21 @@ impl ChunkSection {
         if block_state == Blocks::Air && old_value != 0 {
             self.block_count -= 1;
             if !self.blocks.contains(&old_value) {
-                self.palette.swap_remove(old_value as usize);
+                let last = self.palette.remove(old_value as usize) as u16;
                 for value in self.blocks.iter_mut() {
-                    if *value > old_value {
-                        *value -= 1;
+                    if *value == last {
+                        *value = old_value;
                     }
                 }
             }
         } else if block_state != Blocks::Air && old_value == 0 {
             self.block_count += 1;
         }
-        if let Some(index) = self.palette.iter().enumerate().find(|(_, block)| *block == &block_state).map(|(i, _)| i) {
+        if let Some(index) = self.palette.get_index(&block_state) {
             self.blocks[(x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize] = index as u16;
         } else {
-            self.palette.push(block_state);
-            self.blocks[(x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize] = (self.palette.len() - 1) as u16;
+            let index = self.palette.push(block_state);
+            self.blocks[(x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize] = index as u16;
         }
     }
 
@@ -93,7 +94,7 @@ impl ChunkSection {
         self.block_count
     }
 
-    pub fn get_palette(&self) -> &Vec<Blocks> {
+    pub fn get_palette(&self) -> &Palette<Blocks> {
         &self.palette
     }
 

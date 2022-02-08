@@ -9,6 +9,7 @@ use crate::world::chunks::{Chunk, ChunkPos, SECTION_WIDTH};
 
 pub mod chunks;
 pub mod blocks;
+pub mod palette;
 
 #[derive(Debug)]
 pub struct World {
