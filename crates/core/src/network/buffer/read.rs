@@ -57,12 +57,6 @@ pub trait PacketBufferRead {
         Ok(result)
     }
 
-    // TODO: add chat struct
-    //fn read_chat(&mut self) -> Result<Chat>;
-
-    // TODO: add identifier struct
-    //fn read_identifier(&mut self) -> Result<Identifier>;
-
     /// Reads an [`i32`] in [var-int](https://wiki.vg/Protocol#VarInt_and_VarLong) format from the underlying buffer.
     fn read_var_i32(&mut self) -> Result<i32> {
         let mut result: i32 = 0;
@@ -94,9 +88,6 @@ pub trait PacketBufferRead {
         }
         Ok(result)
     }
-
-    // TODO: add block_pos struct
-    //fn read_block_pos(&mut self) -> Result<BlockPos>;
 
     fn remaining_bytes(&self) -> usize;
 }

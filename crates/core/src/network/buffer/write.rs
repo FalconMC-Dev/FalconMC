@@ -43,12 +43,6 @@ pub trait PacketBufferWrite {
         self.write_u8_array(string.as_bytes());
     }
 
-    // TODO: add chat struct
-    //fn write_chat(&mut self, value: Chat);
-
-    // TODO: add identifier struct
-    //fn write_identifier(&mut self, value: Identifier);
-
     /// Writes an [`i32`] in [var-int](https://wiki.vg/Protocol#VarInt_and_VarLong) format to the underlying buffer.
     fn write_var_i32(&mut self, mut value: i32) {
         while value & -128i32 != 0 {
@@ -66,9 +60,6 @@ pub trait PacketBufferWrite {
         }
         self.write_u8(value as u8);
     }
-
-    // TODO: add block_pos struct
-    //fn read_block_pos(&mut self) -> Result<BlockPos>;
 }
 
 impl<T: BufMut> PacketBufferWrite for T {
