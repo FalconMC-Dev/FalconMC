@@ -25,6 +25,7 @@ mod player;
 
 #[tokio::main]
 async fn main() {
+    // TODO: Link config to logging level
     let log_file = load_log_file().unwrap();
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer()

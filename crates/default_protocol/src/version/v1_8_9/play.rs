@@ -1,5 +1,7 @@
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketHandler, PacketHandlerError, PacketHandlerResult};
+use falcon_core::network::packet::{
+    PacketDecode, PacketHandler, PacketHandlerError, PacketHandlerResult,
+};
 use falcon_core::server::MinecraftServer;
 
 #[derive(PacketDecode)]

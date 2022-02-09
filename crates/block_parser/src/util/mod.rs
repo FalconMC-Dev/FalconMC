@@ -1,13 +1,13 @@
-use proc_macro2::TokenStream;
-use quote::quote;
-use properties::EnumPropertyBase;
 use crate::util::properties::EnumProperty;
+use proc_macro2::TokenStream;
+use properties::EnumPropertyBase;
+use quote::quote;
 
+pub mod convert;
 pub mod data;
+pub mod processing;
 pub mod properties;
 pub mod raw;
-pub mod convert;
-pub mod processing;
 
 pub fn create_default_property_base() -> EnumPropertyBase {
     EnumPropertyBase::new(vec![
@@ -65,7 +65,8 @@ pub fn create_default_property_base() -> EnumPropertyBase {
         EnumProperty::new("PistonType", vec!["normal", "sticky"]),
         EnumProperty::new("RedstoneType", vec!["up", "side", "none"]),
         EnumProperty::new("SlabType", vec!["top", "bottom", "double"]),
-        EnumProperty::new("WallType", vec!["none", "low", "tall"])])
+        EnumProperty::new("WallType", vec!["none", "low", "tall"]),
+    ])
 }
 
 pub fn generate_block_parse_error() -> TokenStream {

@@ -1,10 +1,12 @@
+use crate::version::v1_13::util::build_compacted_data_array;
 use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
 use falcon_core::network::packet::PacketEncode;
 use falcon_core::player::{GameMode, PlayerAbilityFlags};
 use falcon_core::server::Difficulty;
 use falcon_core::world::blocks::Blocks;
-use falcon_core::world::chunks::{Chunk, ChunkSection, SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
-use crate::version::v1_13::util::build_compacted_data_array;
+use falcon_core::world::chunks::{
+    Chunk, ChunkSection, SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH,
+};
 
 #[derive(PacketEncode)]
 pub struct JoinGamePacket {
@@ -19,7 +21,15 @@ pub struct JoinGamePacket {
 }
 
 impl JoinGamePacket {
-    pub fn new(entity_id: i32, game_mode: GameMode, dimension: i32, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Self {
+    pub fn new(
+        entity_id: i32,
+        game_mode: GameMode,
+        dimension: i32,
+        difficulty: Difficulty,
+        max_players: u8,
+        level_type: String,
+        reduced_debug: bool,
+    ) -> Self {
         JoinGamePacket {
             entity_id,
             game_mode: game_mode as u8,
@@ -27,7 +37,7 @@ impl JoinGamePacket {
             difficulty: difficulty as u8,
             max_players,
             level_type,
-            reduced_debug
+            reduced_debug,
         }
     }
 }

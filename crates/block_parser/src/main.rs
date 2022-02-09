@@ -1,18 +1,18 @@
+use ahash::AHashMap;
+use std::cmp::Ordering;
 use std::fmt::{Debug, Formatter};
 use std::path::PathBuf;
 use std::{env, fs};
-use std::cmp::Ordering;
-use ahash::AHashMap;
 
+use functionality::{find_data_files, get_data, load_block_lists};
 use linked_hash_map::LinkedHashMap;
 use proc_macro2::TokenStream;
 use quote::quote;
-use functionality::{find_data_files, get_data, load_block_lists};
 use util::generate_block_parse_error;
 use util::raw::RawBlockData;
 
-pub mod util;
 pub mod functionality;
+pub mod util;
 
 fn main() {
     if let Some(arg) = env::args().nth(1) {
@@ -35,30 +35,33 @@ fn generate_code() {
     let struct_definitions = latest.generate_struct_definitions();
     let error_definition = generate_block_parse_error();
     let str_to_block_function = latest.generate_from_str_impl();
-    let convert_to_id_functions: Vec<TokenStream> = versions.iter().enumerate()
+    let convert_to_id_functions: Vec<TokenStream> = versions
+        .iter()
+        .enumerate()
         .map(|(i, version)| {
             if i > 0 {
                 version.generate_block_to_id_definition(Some(&latest))
             } else {
                 version.generate_block_to_id_definition(None)
             }
-        }).collect();
+        })
+        .collect();
 
     let block_file_code = quote!(
-            #![allow(clippy::derivable_impls)]
-            #block_enum_definition
+        #![allow(clippy::derivable_impls)]
+        #block_enum_definition
 
-            impl Blocks {
-                #(#convert_to_id_functions)*
-            }
+        impl Blocks {
+            #(#convert_to_id_functions)*
+        }
 
-            #struct_definitions
+        #struct_definitions
 
-            #error_definition
-            #str_to_block_function
+        #error_definition
+        #str_to_block_function
 
-            #type_enum_definitions
-        );
+        #type_enum_definitions
+    );
 
     let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     path.push("blocks-new.rs");

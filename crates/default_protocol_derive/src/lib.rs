@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate quote;
 
-use proc_macro::{TokenStream as TokenStream2};
-use darling::{Error, FromVariant, FromMeta, FromField};
 use darling::ast::Fields;
 use darling::util::SpannedValue;
+use darling::{Error, FromField, FromMeta, FromVariant};
+use proc_macro::TokenStream as TokenStream2;
 use proc_macro2::Ident;
-use syn::{parse_macro_input, ItemEnum, Attribute, Type};
+use syn::{parse_macro_input, Attribute, ItemEnum, Type};
 
 #[derive(Debug, FromMeta)]
 struct PacketEnumAttr {
@@ -31,11 +31,16 @@ pub fn derive_packet_enum(input: TokenStream2) -> TokenStream2 {
 
     let ident = &item_enum.ident;
 
-    let variants: Result<Vec<SpannedValue<PacketEnumVariant>>, Error> = item_enum.variants.iter()
-        .map(SpannedValue::from_variant).collect();
+    let variants: Result<Vec<SpannedValue<PacketEnumVariant>>, Error> = item_enum
+        .variants
+        .iter()
+        .map(SpannedValue::from_variant)
+        .collect();
     let variants = match variants {
         Ok(v) => v,
-        Err(e) => { return TokenStream2::from(e.write_errors()); }
+        Err(e) => {
+            return TokenStream2::from(e.write_errors());
+        }
     };
 
     let mut packet_ids: Vec<i32> = Vec::new();
@@ -43,7 +48,13 @@ pub fn derive_packet_enum(input: TokenStream2) -> TokenStream2 {
     for variant in variants.iter() {
         let attr = match variant.attrs.get(0) {
             Some(attr) => attr,
-            None => return TokenStream2::from(darling::Error::custom("All variants should expose a Packet Id").with_span(variant).write_errors()),
+            None => {
+                return TokenStream2::from(
+                    darling::Error::custom("All variants should expose a Packet Id")
+                        .with_span(variant)
+                        .write_errors(),
+                )
+            }
         };
         let meta = match attr.parse_meta() {
             Ok(v) => v,
@@ -57,19 +68,38 @@ pub fn derive_packet_enum(input: TokenStream2) -> TokenStream2 {
 
         let field_ty = match variant.fields.fields.get(0) {
             Some(v) => v,
-            None => return TokenStream2::from(darling::Error::custom("All varaints should contain a type!").with_span(variant).write_errors()),
+            None => {
+                return TokenStream2::from(
+                    darling::Error::custom("All varaints should contain a type!")
+                        .with_span(variant)
+                        .write_errors(),
+                )
+            }
         };
         let ty = match &field_ty.ty {
             Type::Path(v) => match v.path.get_ident() {
                 Some(v) => v,
-                None => return TokenStream2::from(darling::Error::custom("We cannot parse segmented paths (yet), please import these").with_span(&field_ty.ty).write_errors()),
+                None => {
+                    return TokenStream2::from(
+                        darling::Error::custom(
+                            "We cannot parse segmented paths (yet), please import these",
+                        )
+                        .with_span(&field_ty.ty)
+                        .write_errors(),
+                    )
+                }
             },
-            _ => return TokenStream2::from(darling::Error::custom("Unexpected type for variant").with_span(&field_ty.ty).write_errors()),
+            _ => {
+                return TokenStream2::from(
+                    darling::Error::custom("Unexpected type for variant")
+                        .with_span(&field_ty.ty)
+                        .write_errors(),
+                )
+            }
         };
         variant_types.push(ty.clone());
     }
-    let variant_idents: Vec<Ident> = item_enum.variants.iter()
-        .map(|v| v.ident.clone()).collect();
+    let variant_idents: Vec<Ident> = item_enum.variants.iter().map(|v| v.ident.clone()).collect();
 
     quote! (
         impl #ident {

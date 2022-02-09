@@ -4,10 +4,12 @@ use serde::Serialize;
 
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
+use falcon_core::network::packet::{
+    PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult,
+};
 use falcon_core::network::ConnectionState;
-use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult};
-use falcon_core::server::{MinecraftServer, ServerVersion};
 use falcon_core::server::config::FalconConfig;
+use falcon_core::server::{MinecraftServer, ServerVersion};
 use falcon_default_protocol_derive::PacketEnum;
 
 use crate::implement_packet_handler_enum;
@@ -67,7 +69,9 @@ pub struct ServerPingPacket {
 impl PacketHandler for ServerPingPacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         connection.send_packet(0x01, &ClientPingPacket::new(self.payload));
-        connection.get_handler_state_mut().set_connection_state(ConnectionState::Disconnected);
+        connection
+            .get_handler_state_mut()
+            .set_connection_state(ConnectionState::Disconnected);
         Ok(())
     }
 

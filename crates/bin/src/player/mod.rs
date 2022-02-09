@@ -5,8 +5,8 @@ use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
-use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
 use falcon_core::player::GameMode;
+use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
 use falcon_protocol::ProtocolSend;
 
 use crate::errors::*;
@@ -30,7 +30,15 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(username: String, uuid: Uuid, eid: i32, spawn_pos: Position, spawn_look: LookAngles, protocol_version: i32, connection: UnboundedSender<Box<ConnectionTask>>) -> Self {
+    pub fn new(
+        username: String,
+        uuid: Uuid,
+        eid: i32,
+        spawn_pos: Position,
+        spawn_look: LookAngles,
+        protocol_version: i32,
+        connection: UnboundedSender<Box<ConnectionTask>>,
+    ) -> Self {
         Player {
             username,
             uuid,
@@ -105,9 +113,7 @@ impl MinecraftPlayer for Player {
     fn disconnect(&mut self, reason: String) {
         let task = {
             // TODO: Using login packet here, this is incorrect
-            Box::new(move |conn: &mut dyn MinecraftConnection| {
-                conn.disconnect(reason)
-            })
+            Box::new(move |conn: &mut dyn MinecraftConnection| conn.disconnect(reason))
         };
         self.connection.send(task).ignore();
     }

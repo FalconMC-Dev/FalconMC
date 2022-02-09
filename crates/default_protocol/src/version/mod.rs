@@ -1,7 +1,7 @@
-use falcon_core::network::*;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::{PacketDecode, PacketHandler, PacketHandlerResult};
+use falcon_core::network::*;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::server::Difficulty;
 use falcon_core::world::chunks::Chunk;
@@ -14,6 +14,7 @@ pub mod v1_8_9;
 pub mod v1_12_2;
 pub mod v1_13;
 pub mod v1_13_2;
+
 pub mod status;
 
 #[derive(PacketDecode)]
@@ -132,15 +133,37 @@ impl ProtocolSend {
 }
 
 pub trait ProtocolVersioned {
-    fn join_game(&self, player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Result<()>;
+    fn join_game(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        difficulty: Difficulty,
+        max_players: u8,
+        level_type: String,
+        reduced_debug: bool,
+    ) -> Result<()>;
 
-    fn player_abilities(&self, player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()>;
+    fn player_abilities(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        flying_speed: f32,
+        fov_modifier: f32,
+    ) -> Result<()>;
 
     fn send_chunk(&self, player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()>;
 
-    fn send_air_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()>;
+    fn send_air_chunk(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        chunk_x: i32,
+        chunk_z: i32,
+    ) -> Result<()>;
 
-    fn player_position_and_look(&self, player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()>;
+    fn player_position_and_look(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        flags: u8,
+        teleport_id: i32,
+    ) -> Result<()>;
 
     fn keep_alive(&self, player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()>;
 }

@@ -61,7 +61,7 @@ impl PlayerAbilityFlags {
             invulnerable,
             flying,
             allow_flying,
-            instant_break
+            instant_break,
         }
     }
 }
@@ -94,11 +94,7 @@ pub struct Position {
 
 impl Position {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Position {
-            x,
-            y,
-            z
-        }
+        Position { x, y, z }
     }
 
     pub fn get_x(&self) -> f64 {
@@ -134,10 +130,7 @@ pub struct LookAngles {
 
 impl LookAngles {
     pub fn new(yaw: f32, pitch: f32) -> Self {
-        LookAngles {
-            yaw,
-            pitch
-        }
+        LookAngles { yaw, pitch }
     }
 
     pub fn get_yaw(&self) -> f32 {
@@ -156,4 +149,3 @@ impl LookAngles {
         self.pitch = pitch;
     }
 }
-

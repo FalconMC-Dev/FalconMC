@@ -121,9 +121,6 @@ pub struct ChunkPos {
 
 impl ChunkPos {
     pub fn new(x: i32, z: i32) -> Self {
-        ChunkPos {
-            x,
-            z
-        }
+        ChunkPos { x, z }
     }
 }

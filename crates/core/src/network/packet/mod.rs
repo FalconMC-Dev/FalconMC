@@ -1,5 +1,5 @@
-use std::fmt::{Display, Formatter};
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
+use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 use crate::errors::*;
@@ -31,13 +31,15 @@ pub type PacketHandlerResult = std::result::Result<(), PacketHandlerError>;
 
 #[derive(Clone, Copy, Debug)]
 pub enum PacketHandlerError {
-    ServerThreadSendError
+    ServerThreadSendError,
 }
 
 impl Display for PacketHandlerError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PacketHandlerError::ServerThreadSendError => write!(f, "could not send task to server thread"),
+            PacketHandlerError::ServerThreadSendError => {
+                write!(f, "could not send task to server thread")
+            }
         }
     }
 }

@@ -1,10 +1,10 @@
-use std::net::IpAddr;
-use std::str::FromStr;
+use crate::player::{LookAngles, Position};
 use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
+use std::net::IpAddr;
+use std::str::FromStr;
 use tokio::net::ToSocketAddrs;
-use crate::player::{LookAngles, Position};
 
 static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 

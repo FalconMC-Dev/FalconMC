@@ -1,5 +1,7 @@
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerResult};
+use falcon_core::network::packet::{
+    PacketDecode, PacketEncode, PacketHandler, PacketHandlerResult,
+};
 
 #[derive(PacketEncode, PacketDecode, new)]
 pub struct KeepAlivePacket {

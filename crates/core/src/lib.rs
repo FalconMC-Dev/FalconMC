@@ -7,10 +7,10 @@ extern crate tracing;
 
 pub mod errors;
 pub mod network;
-pub mod world;
+pub mod player;
 pub mod schematic;
 pub mod server;
-pub mod player;
+pub mod world;
 
 mod shutdown;
 

@@ -1,14 +1,14 @@
 use crate::errors::*;
 
-use ahash::AHashMap;
-use falcon_core::player::MinecraftPlayer;
-use falcon_core::world::chunks::SECTION_LENGTH;
 use crate::player::Position;
 use crate::schematic::SchematicData;
 use crate::world::chunks::{Chunk, ChunkPos, SECTION_WIDTH};
+use ahash::AHashMap;
+use falcon_core::player::MinecraftPlayer;
+use falcon_core::world::chunks::SECTION_LENGTH;
 
-pub mod chunks;
 pub mod blocks;
+pub mod chunks;
 pub mod palette;
 
 #[derive(Debug)]
@@ -36,36 +36,30 @@ impl World {
     }
 
     fn get_chunk_or_create(&mut self, pos: ChunkPos) -> &Chunk {
-        if self.chunks.contains_key(&pos) {
-            self.chunks.get(&pos).unwrap_or_else(|| panic!("Hashmap just said there was a chunk for this key {:?}", pos))
-        } else {
-            let chunk = Chunk::empty(pos);
-            self.chunks.insert(pos, chunk);
-            self.chunks.get(&pos).expect("We should always get the chunk back we just put in the map")
-        }
+        self.get_chunk_mut(pos)
     }
 
     fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
-        if self.chunks.contains_key(&pos) {
-            self.chunks.get_mut(&pos).unwrap_or_else(|| panic!("Hashmap just said there was a chunk for this key {:?}", pos))
-        } else {
-            let chunk = Chunk::empty(pos);
-            self.chunks.insert(pos, chunk);
-            self.chunks.get_mut(&pos).expect("We should always get the chunk back we just put in the map")
-        }
+        self.chunks.entry(pos).or_insert(Chunk::empty(pos))
     }
 
     /// Currently it just sends all chunks known to the world
     /// for a more sophisticated implementation this could filter for chunks centered around the player
-    pub fn send_chunks_for_player<C, A>(&self, player: &mut dyn MinecraftPlayer, chunk_fn: C, air_fn: A) -> Result<()>
-        where C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
-              A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+    pub fn send_chunks_for_player<C, A>(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        chunk_fn: C,
+        air_fn: A,
+    ) -> Result<()>
+    where
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
     {
         for chunk in self.chunks.values() {
             chunk_fn(player, chunk)?;
         }
-        for i in self.min_x-1..=self.max_x {
-            for j in self.min_z-1..=self.max_z {
+        for i in self.min_x - 1..=self.max_x {
+            for j in self.min_z - 1..=self.max_z {
                 if !((i >= self.min_x && j >= self.min_z) && (i < self.max_x && j < self.max_z)) {
                     air_fn(player, i, j)?;
                 }
@@ -89,7 +83,10 @@ impl TryFrom<SchematicData> for World {
         for y in 0..schematic.height as usize {
             for z in 0..schematic.length as usize {
                 for x in 0..schematic.width as usize {
-                    let chunk_pos = ChunkPos::new((x / SECTION_WIDTH as usize) as i32, (z / SECTION_LENGTH as usize) as i32);
+                    let chunk_pos = ChunkPos::new(
+                        (x / SECTION_WIDTH as usize) as i32,
+                        (z / SECTION_LENGTH as usize) as i32,
+                    );
                     let chunk = world.get_chunk_mut(chunk_pos);
                     let schematic_block = schematic.block_data[x + z * schematic.width as usize + y * schematic.width as usize * schematic.length as usize];
                     chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or_else(|| Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
@@ -110,11 +107,7 @@ pub struct BlockPosition {
 
 impl BlockPosition {
     pub fn new(x: i32, y: i32, z: i32) -> Self {
-        BlockPosition {
-            x,
-            y,
-            z
-        }
+        BlockPosition { x, y, z }
     }
 
     pub fn get_x(&self) -> i32 {
@@ -144,14 +137,10 @@ impl BlockPosition {
 
 impl From<Position> for BlockPosition {
     fn from(pos: Position) -> Self {
-        BlockPosition::new(pos.get_x().floor() as i32, pos.get_y().floor() as i32, pos.get_z().floor() as i32)
+        BlockPosition::new(
+            pos.get_x().floor() as i32,
+            pos.get_y().floor() as i32,
+            pos.get_z().floor() as i32,
+        )
     }
 }
-
-
-
-
-
-
-
-

@@ -1,8 +1,10 @@
 use uuid::Uuid;
 
 use falcon_core::network::connection::MinecraftConnection;
+use falcon_core::network::packet::{
+    PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult,
+};
 use falcon_core::network::ConnectionState;
-use falcon_core::network::packet::{PacketEncode, PacketDecode, PacketHandler, PacketHandlerResult, PacketHandlerError};
 use falcon_core::server::MinecraftServer;
 
 #[derive(PacketDecode)]
@@ -22,8 +24,12 @@ impl PacketHandler for LoginStartPacket {
                 username: self.name.clone(),
             },
         );
-        connection.get_handler_state_mut().set_connection_state(ConnectionState::Play);
-        connection.get_handler_state_mut().set_player_uuid(player_uuid);
+        connection
+            .get_handler_state_mut()
+            .set_connection_state(ConnectionState::Play);
+        connection
+            .get_handler_state_mut()
+            .set_player_uuid(player_uuid);
         let server_task = {
             let name = self.name;
             let version = connection.get_handler_state().protocol_id();
@@ -32,7 +38,10 @@ impl PacketHandler for LoginStartPacket {
                 server.player_join(name, player_uuid, version, channel);
             })
         };
-        connection.get_server_link_mut().send(server_task).map_err(|_| PacketHandlerError::ServerThreadSendError)
+        connection
+            .get_server_link_mut()
+            .send(server_task)
+            .map_err(|_| PacketHandlerError::ServerThreadSendError)
     }
 
     fn get_name(&self) -> &'static str {

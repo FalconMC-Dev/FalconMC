@@ -16,8 +16,8 @@ pub use version::ProtocolSend;
 use crate::version::VersionMatcher;
 
 pub mod errors;
-pub mod version;
 pub(crate) mod macros;
+pub mod version;
 
 #[derive(Debug, Default)]
 pub struct DefaultProtocol;
@@ -52,8 +52,6 @@ pub struct DisconnectPacketLogin {
 
 impl DisconnectPacketLogin {
     pub fn with_reason(reason: String) -> Self {
-        DisconnectPacketLogin {
-            reason,
-        }
+        DisconnectPacketLogin { reason }
     }
 }

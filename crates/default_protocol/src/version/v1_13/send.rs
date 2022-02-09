@@ -7,7 +7,9 @@ use crate::errors::*;
 use crate::version::ProtocolVersioned;
 use super::util::easy_send;
 
-use super::play::{JoinGamePacket, PlayerAbilitiesPacket, ChunkDataPacket, PlayerPositionAndLookPacket};
+use super::play::{
+    ChunkDataPacket, JoinGamePacket, PlayerAbilitiesPacket, PlayerPositionAndLookPacket,
+};
 use crate::version::v1_12_2::play::KeepAlivePacket;
 
 pub struct PacketSend;

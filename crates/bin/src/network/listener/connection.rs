@@ -5,13 +5,13 @@ use std::time::Duration;
 use bytes::{Buf, BytesMut};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
-use tokio::time::{Interval, interval, MissedTickBehavior};
+use tokio::time::{interval, Interval, MissedTickBehavior};
 
-use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
-use falcon_core::network::ConnectionState::{Login, Status};
 use falcon_core::network::packet::PacketEncode;
+use falcon_core::network::ConnectionState::{Login, Status};
+use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use falcon_protocol::UNKNOWN_PROTOCOL;
@@ -161,12 +161,13 @@ impl ClientConnection {
             .split_to(preceding + len)
             .split_off(preceding)
             .freeze();
-        if falcon_protocol::manager::PROTOCOL_MANAGER.process_packet(
-            packet.read_var_i32()?,
-            &mut packet,
-            self,
-        )?.is_none() {
-            if self.handler_state.connection_state() == Login || self.handler_state.connection_state() == Status {
+        if falcon_protocol::manager::PROTOCOL_MANAGER
+            .process_packet(packet.read_var_i32()?, &mut packet, self)?
+            .is_none()
+        {
+            if self.handler_state.connection_state() == Login
+                || self.handler_state.connection_state() == Status
+            {
                 self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
             }
             trace!("Unknown packet received, skipping!");
@@ -199,7 +200,7 @@ impl ClientConnection {
                     Ok(Some((i + 1, frame_length)))
                 } else {
                     Ok(None)
-                }
+                };
             }
         }
         Err(ErrorKind::InvalidPacketLength.into())

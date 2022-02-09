@@ -9,7 +9,10 @@ pub struct RawBlockData {
 
 impl RawBlockData {
     pub fn base_id(&self) -> i32 {
-        self.states.get(0).expect("Block without base id -> should be impossible!").id()
+        self.states
+            .get(0)
+            .expect("Block without base id -> should be impossible!")
+            .id()
     }
 
     pub fn base_state(&self) -> &RawBlockState {

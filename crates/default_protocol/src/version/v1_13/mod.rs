@@ -1,19 +1,19 @@
-use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::network::buffer::PacketBufferRead;
+use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_default_protocol_derive::PacketEnum;
 
 use crate::errors::*;
 use crate::implement_packet_handler_enum;
 
-use super::v1_8_9::login::{LoginStartPacket};
-use super::v1_8_9::play::{PlayerPositionPacket, PlayerPositionAndLookPacket, PlayerLookPacket};
 use super::v1_12_2::play::KeepAlivePacket;
+use super::v1_8_9::login::LoginStartPacket;
+use super::v1_8_9::play::{PlayerLookPacket, PlayerPositionAndLookPacket, PlayerPositionPacket};
 
 pub use send::PacketSend;
 
+pub mod play;
 mod send;
 pub mod util;
-pub mod play;
 
 pub enum PacketList {
     Login(LoginPackets),
@@ -22,7 +22,11 @@ pub enum PacketList {
 implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
-    pub fn from_buf(packet_id: i32, state: &PacketHandlerState, buffer: &mut dyn PacketBufferRead) -> Result<Option<PacketList>> {
+    pub fn from_buf(
+        packet_id: i32,
+        state: &PacketHandlerState,
+        buffer: &mut dyn PacketBufferRead,
+    ) -> Result<Option<PacketList>> {
         match state.connection_state() {
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Login))
@@ -30,7 +34,7 @@ impl PacketList {
             ConnectionState::Play => {
                 PlayPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Play))
             }
-            _ => Ok(None)
+            _ => Ok(None),
         }
     }
 }

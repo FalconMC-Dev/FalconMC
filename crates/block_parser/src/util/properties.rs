@@ -1,7 +1,7 @@
-use std::ops::Range;
 use convert_case::{Case, Casing};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
+use std::ops::Range;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PropertyType {
@@ -128,8 +128,11 @@ impl EnumProperty {
 
     pub fn generate_enum_definition(&self) -> TokenStream {
         let enum_name = format_ident!("{}", self.name);
-        let enum_fields: Vec<Ident> = self.fields.iter()
-            .map(|field| format_ident!("{}", field.to_case(Case::Pascal))).collect();
+        let enum_fields: Vec<Ident> = self
+            .fields
+            .iter()
+            .map(|field| format_ident!("{}", field.to_case(Case::Pascal)))
+            .collect();
         quote!(
             #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
             pub enum #enum_name {
@@ -140,11 +143,14 @@ impl EnumProperty {
 
     pub fn generate_from_str_impl(&self) -> TokenStream {
         let enum_name = format_ident!("{}", self.name);
-        let enum_values: Vec<TokenStream> = self.fields.iter()
+        let enum_values: Vec<TokenStream> = self
+            .fields
+            .iter()
             .map(|field| {
                 let value_name = format_ident!("{}", field.to_case(Case::Pascal));
                 quote!(#field => Ok(#enum_name::#value_name))
-            }).collect();
+            })
+            .collect();
         quote!(
             impl std::str::FromStr for #enum_name {
                 type Err = ParseBlockError;
@@ -159,16 +165,26 @@ impl EnumProperty {
         )
     }
 
-    pub fn generate_calculation_part(&self, parameter: &Ident, property_name: &Ident, counter: &mut usize, pre_calculations: &mut Vec<TokenStream>) -> TokenStream {
+    pub fn generate_calculation_part(
+        &self,
+        parameter: &Ident,
+        property_name: &Ident,
+        counter: &mut usize,
+        pre_calculations: &mut Vec<TokenStream>,
+    ) -> TokenStream {
         match &self.default_order {
             Some(_) => {
-                let field_branches: Vec<TokenStream> = self.fields.iter().enumerate()
+                let field_branches: Vec<TokenStream> = self
+                    .fields
+                    .iter()
+                    .enumerate()
                     .map(|(i, field)| {
                         let enum_type = format_ident!("{}", self.name);
                         let variant_name = format_ident!("{}", field.to_case(Case::Pascal));
                         let number_ident = syn::Index::from(i);
                         quote!(#enum_type::#variant_name => #number_ident)
-                    }).collect();
+                    })
+                    .collect();
                 let variable_name = format_ident!("temp_var_local{}", *counter);
                 pre_calculations.push(quote!(
                     let #variable_name = match #parameter.#property_name {
@@ -197,11 +213,15 @@ impl EnumPropertyBase {
     }
 
     pub fn find_property(&self, name: &str, values: &Vec<String>) -> Option<&EnumProperty> {
-        self.property_set.iter().find(|prop| prop.name.eq(name) || prop.fields.eq(values))
+        self.property_set
+            .iter()
+            .find(|prop| prop.name.eq(name) || prop.fields.eq(values))
     }
 
     pub fn find_fields(&self, values: &Vec<String>) -> Option<&EnumProperty> {
-        self.property_set.iter().find(|prop| values.iter().all(|x| prop.fields.contains(x)))
+        self.property_set
+            .iter()
+            .find(|prop| values.iter().all(|x| prop.fields.contains(x)))
     }
 
     pub fn add(&mut self, property: EnumProperty) -> EnumProperty {

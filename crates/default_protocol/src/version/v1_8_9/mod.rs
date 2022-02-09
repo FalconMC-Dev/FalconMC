@@ -1,5 +1,5 @@
-use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::network::buffer::PacketBufferRead;
+use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_default_protocol_derive::PacketEnum;
 
 use crate::errors::*;
@@ -19,7 +19,11 @@ pub enum PacketList {
 implement_packet_handler_enum!(PacketList, Login, Play);
 
 impl PacketList {
-    pub fn from_buf(packet_id: i32, state: &PacketHandlerState, buffer: &mut dyn PacketBufferRead) -> Result<Option<PacketList>> {
+    pub fn from_buf(
+        packet_id: i32,
+        state: &PacketHandlerState,
+        buffer: &mut dyn PacketBufferRead,
+    ) -> Result<Option<PacketList>> {
         match state.connection_state() {
             ConnectionState::Login => {
                 LoginPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Login))
@@ -27,7 +31,7 @@ impl PacketList {
             ConnectionState::Play => {
                 PlayPackets::from_buf(packet_id, buffer).map(|l| l.map(PacketList::Play))
             }
-            _ => Ok(None)
+            _ => Ok(None),
         }
     }
 }
@@ -48,4 +52,9 @@ pub enum PlayPackets {
     #[falcon_packet(id = 0x06)]
     PlayerLook(PlayerLookPacket),
 }
-implement_packet_handler_enum!(PlayPackets, PlayerPosition, PlayerPositionAndLook, PlayerLook);
+implement_packet_handler_enum!(
+    PlayPackets,
+    PlayerPosition,
+    PlayerPositionAndLook,
+    PlayerLook
+);

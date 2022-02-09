@@ -17,7 +17,7 @@ impl ConsoleListener {
     pub fn start_console(shutdown_handle: ShutdownHandle) -> Result<UnboundedReceiver<String>> {
         info!("Starting console thread!");
         let (console_tx, console_rx) = unbounded_channel();
-        
+
         let console = ConsoleListener {
             shutdown_handle: shutdown_handle.into_signal_sender(),
             console_sender: console_tx,
@@ -35,7 +35,10 @@ impl ConsoleListener {
         loop {
             let mut buffer = String::new();
             let stdin = std::io::stdin();
-            if let Err(ref e) = stdin.read_line(&mut buffer).chain_err(|| "Could not read from stdin!") {
+            if let Err(ref e) = stdin
+                .read_line(&mut buffer)
+                .chain_err(|| "Could not read from stdin!")
+            {
                 print_error!(e);
                 self.shutdown_handle.send(()).ignore();
                 break;

@@ -11,14 +11,34 @@ use crate::util::properties::EnumPropertyBase;
 use crate::util::raw::RawBlockData;
 
 pub fn load_block_lists() -> (Vec<BlockList>, EnumPropertyBase) {
-    let mut data_files: Vec<(i32, LinkedHashMap<String, RawBlockData>)> = find_data_files().iter()
-        .map(|(version, filename)| (*version, get_data(filename))).collect();
+    let mut data_files: Vec<(i32, LinkedHashMap<String, RawBlockData>)> = find_data_files()
+        .iter()
+        .map(|(version, filename)| (*version, get_data(filename)))
+        .collect();
 
     let mut property_base_set = create_default_property_base();
 
-    (data_files.drain(..).enumerate().map(|(i, (data_version, raw_data))| {
-        BlockList::new(data_version, raw_data.iter().map(|(name, raw)| (name.clone(), into_block_data(raw, &mut property_base_set, i == 0))).collect())
-    }).collect(), property_base_set)
+    (
+        data_files
+            .drain(..)
+            .enumerate()
+            .map(|(i, (data_version, raw_data))| {
+                BlockList::new(
+                    data_version,
+                    raw_data
+                        .iter()
+                        .map(|(name, raw)| {
+                            (
+                                name.clone(),
+                                into_block_data(raw, &mut property_base_set, i == 0),
+                            )
+                        })
+                        .collect(),
+                )
+            })
+            .collect(),
+        property_base_set,
+    )
 }
 
 pub fn find_data_files() -> Vec<(i32, String)> {
@@ -43,6 +63,3 @@ pub fn get_data(filename: &str) -> LinkedHashMap<String, RawBlockData> {
     work_dir.push(filename);
     serde_json::from_str(&fs::read_to_string(work_dir).unwrap()).unwrap()
 }
-
-
-

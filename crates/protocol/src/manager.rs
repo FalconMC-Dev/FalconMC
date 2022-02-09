@@ -30,7 +30,10 @@ impl ProtocolPluginManager {
     }
 
     #[tracing::instrument(skip(self))]
-    pub(crate) unsafe fn load_plugin<P: AsRef<OsStr> + Debug>(&mut self, filename: P) -> Result<()> {
+    pub(crate) unsafe fn load_plugin<P: AsRef<OsStr> + Debug>(
+        &mut self,
+        filename: P,
+    ) -> Result<()> {
         debug!("Loading plugin...");
         type PluginCreate = unsafe fn() -> *mut dyn FalconPlugin;
 

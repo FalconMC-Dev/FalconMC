@@ -1,6 +1,6 @@
+use crate::util::properties::PropertyType;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
-use crate::util::properties::PropertyType;
 
 #[derive(Debug)]
 pub struct BlockData {
@@ -63,7 +63,12 @@ impl BlockData {
             let part = match &property.kind {
                 PropertyType::Bool => quote!((!#parameter.#prop_name() as i32)),
                 PropertyType::Int(_) => quote!(#parameter.#prop_name),
-                PropertyType::Enum(enum_property) => enum_property.generate_calculation_part(parameter, &prop_name, &mut counter, &mut pre_calculations),
+                PropertyType::Enum(enum_property) => enum_property.generate_calculation_part(
+                    parameter,
+                    &prop_name,
+                    &mut counter,
+                    &mut pre_calculations,
+                ),
             };
             if i > 0 {
                 factor *= prev_count;
@@ -81,7 +86,9 @@ impl BlockData {
     }
 
     pub fn generate_from_str(&self, state_ident: &Ident, props_ident: &Ident) -> TokenStream {
-        let tokens: Vec<TokenStream> = self.properties.iter()
+        let tokens: Vec<TokenStream> = self
+            .properties
+            .iter()
             .map(|block_property| {
                 let prop_name = block_property.name();
                 let function_ident = format_ident!("with_{}", prop_name);
@@ -91,7 +98,8 @@ impl BlockData {
                         #state_ident.#function_ident(#prop_type::from_str(prop)?);
                     }
                 )
-            }).collect();
+            })
+            .collect();
         quote!(
             #(#tokens)*
         )
@@ -113,14 +121,15 @@ pub struct BlockState {
 
 impl BlockState {
     pub fn new(fields: Vec<(BlockProperty, String)>) -> Self {
-        BlockState {
-            fields,
-        }
+        BlockState { fields }
     }
 
     pub fn generate_default_impl(&self, struct_name: &Ident) -> TokenStream {
-        let field_default: Vec<TokenStream> = self.fields.iter()
-            .map(|(property, raw_value)| property.generate_field_default(raw_value)).collect();
+        let field_default: Vec<TokenStream> = self
+            .fields
+            .iter()
+            .map(|(property, raw_value)| property.generate_field_default(raw_value))
+            .collect();
         quote!(
             impl Default for #struct_name {
                 fn default() -> Self {
@@ -142,10 +151,7 @@ pub struct BlockProperty {
 
 impl BlockProperty {
     pub fn new(name: String, kind: PropertyType) -> Self {
-        BlockProperty {
-            name,
-            kind
-        }
+        BlockProperty { name, kind }
     }
 
     pub fn name(&self) -> &str {
