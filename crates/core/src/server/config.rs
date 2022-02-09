@@ -4,6 +4,7 @@ use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 use tokio::net::ToSocketAddrs;
+use crate::player::{LookAngles, Position};
 
 static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 
@@ -13,6 +14,8 @@ pub struct FalconConfig {
     server_port: u16,
     server_ip: IpAddr,
     allow_flight: bool,
+    spawn_position: Position,
+    spawn_look: LookAngles,
 }
 
 impl Default for FalconConfig {
@@ -22,6 +25,8 @@ impl Default for FalconConfig {
             server_port: 30000,
             server_ip: IpAddr::from_str("0.0.0.0").unwrap(),
             allow_flight: false,
+            spawn_position: Default::default(),
+            spawn_look: Default::default(),
         }
     }
 }
@@ -47,6 +52,14 @@ impl FalconConfig {
     }
     pub fn allow_flight(&self) -> bool {
         self.allow_flight
+    }
+
+    pub fn spawn_pos(&self) -> Position {
+        self.spawn_position
+    }
+
+    pub fn spawn_look(&self) -> LookAngles {
+        self.spawn_look
     }
 
     pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ {

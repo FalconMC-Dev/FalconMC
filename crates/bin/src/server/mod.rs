@@ -147,7 +147,8 @@ impl MinecraftServer for MainServer {
             error!(%uuid, %username, "Duplicate player joining");
         }
         info!(name = %username, "Player joined the game!");
-        let player = Player::new(username, uuid, self.entity_id_count, protocol_version, client_connection);
+        let (spawn_pos, spawn_look) = (FalconConfig::global().spawn_pos(), FalconConfig::global().spawn_look());
+        let player = Player::new(username, uuid, self.entity_id_count, spawn_pos, spawn_look, protocol_version, client_connection);
         self.entity_id_count += 1;
 
         self.players.insert(uuid, player);

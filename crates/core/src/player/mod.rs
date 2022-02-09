@@ -1,5 +1,8 @@
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
+
+use serde::{Deserialize, Serialize};
+
 use crate::network::buffer::PacketBufferWrite;
 
 use crate::network::connection::ConnectionTask;
@@ -82,7 +85,7 @@ impl PacketEncode for PlayerAbilityFlags {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Position {
     x: f64,
     y: f64,
@@ -123,7 +126,7 @@ impl Position {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct LookAngles {
     yaw: f32,
     pitch: f32,

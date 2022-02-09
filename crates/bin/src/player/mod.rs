@@ -30,7 +30,7 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(username: String, uuid: Uuid, eid: i32, protocol_version: i32, connection: UnboundedSender<Box<ConnectionTask>>) -> Self {
+    pub fn new(username: String, uuid: Uuid, eid: i32, spawn_pos: Position, spawn_look: LookAngles, protocol_version: i32, connection: UnboundedSender<Box<ConnectionTask>>) -> Self {
         Player {
             username,
             uuid,
@@ -38,8 +38,8 @@ impl Player {
             game_mode: GameMode::Creative,
             dimension: 0,
             ability_flags: PlayerAbilityFlags::new(false, true, true, true),
-            position: Default::default(),
-            look_angles: Default::default(),
+            position: spawn_pos,
+            look_angles: spawn_look,
             time: Instant::now(),
             protocol_version,
             connection,
