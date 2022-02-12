@@ -23,6 +23,7 @@ pub struct Player {
     ability_flags: PlayerAbilityFlags,
     position: Position,
     look_angles: LookAngles,
+    view_distance: u8,
     // connection data
     time: Instant,
     protocol_version: i32,
@@ -48,6 +49,7 @@ impl Player {
             ability_flags: PlayerAbilityFlags::new(false, true, true, true),
             position: spawn_pos,
             look_angles: spawn_look,
+            view_distance: 5,
             time: Instant::now(),
             protocol_version,
             connection,
@@ -104,6 +106,14 @@ impl MinecraftPlayer for Player {
 
     fn get_look_angles_mut(&mut self) -> &mut LookAngles {
         &mut self.look_angles
+    }
+
+    fn get_view_distance(&self) -> u8 {
+        self.view_distance
+    }
+
+    fn set_view_distance(&mut self, distance: u8) {
+        self.view_distance = distance;
     }
 
     fn get_protocol_version(&self) -> i32 {

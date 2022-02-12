@@ -10,6 +10,7 @@ use super::v1_8_9::login::LoginStartPacket;
 use super::v1_8_9::play::{PlayerLookPacket, PlayerPositionAndLookPacket, PlayerPositionPacket};
 
 pub use send::PacketSend;
+use crate::version::v1_13::play::ClientSettingsPacket;
 
 pub mod play;
 mod send;
@@ -48,6 +49,8 @@ implement_packet_handler_enum!(LoginPackets, LoginStart);
 
 #[derive(PacketEnum)]
 pub enum PlayPackets {
+    #[falcon_packet(id = 0x04)]
+    ClientSettings(ClientSettingsPacket),
     #[falcon_packet(id = 0x0E)]
     KeepAlive(KeepAlivePacket),
     #[falcon_packet(id = 0x10)]
@@ -57,5 +60,5 @@ pub enum PlayPackets {
     #[falcon_packet(id = 0x12)]
     PlayerLook(PlayerLookPacket),
 }
-implement_packet_handler_enum!(PlayPackets, KeepAlive, PlayerPosition, PlayerPositionAndLook, PlayerLook);
+implement_packet_handler_enum!(PlayPackets, ClientSettings, KeepAlive, PlayerPosition, PlayerPositionAndLook, PlayerLook);
 

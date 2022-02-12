@@ -25,11 +25,21 @@ pub trait MinecraftPlayer {
 
     fn get_position(&self) -> &Position;
 
+    /// This function should only be used to internally update the player's position
+    /// as a result of an incoming packet, this does not update the position
+    /// on the client-side!!!
     fn get_position_mut(&mut self) -> &mut Position;
 
     fn get_look_angles(&self) -> &LookAngles;
 
+    /// This function should only be used to internally update the player's look angles
+    /// as a result of an incoming packet, this does not update the angles
+    /// on the client-side!!!
     fn get_look_angles_mut(&mut self) -> &mut LookAngles;
+
+    fn get_view_distance(&self) -> u8;
+
+    fn set_view_distance(&mut self, distance: u8);
 
     /// connection methods
     fn get_protocol_version(&self) -> i32;

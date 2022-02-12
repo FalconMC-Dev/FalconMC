@@ -1,12 +1,46 @@
 use crate::version::v1_13::util::build_compacted_data_array;
 use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
-use falcon_core::network::packet::PacketEncode;
+use falcon_core::network::connection::MinecraftConnection;
+use falcon_core::network::packet::{PacketDecode, PacketEncode, PacketHandler, PacketHandlerError, PacketHandlerResult};
 use falcon_core::player::{GameMode, PlayerAbilityFlags};
 use falcon_core::server::Difficulty;
 use falcon_core::world::blocks::Blocks;
 use falcon_core::world::chunks::{
     Chunk, ChunkSection, SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH,
 };
+
+#[derive(PacketDecode)]
+pub struct ClientSettingsPacket {
+    #[max_length(16)]
+    _locale: String,
+    view_distance: u8,
+    #[var_int]
+    _chat_mode: i32,
+    _chat_colors: bool,
+    _skin_parts: u8,
+    #[var_int]
+    _main_hand: i32,
+}
+
+impl PacketHandler for ClientSettingsPacket {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
+        match connection.get_handler_state().player_uuid() {
+            Some(uuid) => {
+                return connection.get_server_link_mut().send(Box::new(move |server| {
+                    if let Some(player) = server.get_player_mut(uuid) {
+                        player.set_view_distance(self.view_distance);
+                    }
+                })).map_err(|_| PacketHandlerError::ServerThreadSendError);
+            }
+            None => connection.disconnect(String::from("Login seemed not successful!"))
+        }
+        Ok(())
+    }
+
+    fn get_name(&self) -> &'static str {
+        "Client Settings (1.13)"
+    }
+}
 
 #[derive(PacketEncode)]
 pub struct JoinGamePacket {
