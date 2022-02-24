@@ -1,6 +1,5 @@
 # FalconMC
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC?ref=badge_shield)
- [![Join on discord!](https://shields.io/discord/925832475912065024)](https://discord.com/invite/HC82fwYXW5)
+[![Join on discord!](https://shields.io/discord/925832475912065024)](https://discord.com/invite/HC82fwYXW5)
 
 
 ## Description
@@ -22,15 +21,8 @@ Please feel free to help out in any way possible, the [wiki](https://github.com/
 - [Issues](https://github.com/GrizzlT/FalconMC/issues)
 - [Pull requests](https://github.com/GrizzlT/FalconMC/pulls)
 
-Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as below, without any additional terms or conditions.
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the GNU AGPL v3.0 license, shall be licensed as below, without any additional terms or conditions.
 
 ## License
-Licensed under either of
+Licensed under the `GNU Affero General Public License v3.0` - (LICENSE or https://choosealicense.com/licenses/agpl-3.0/)
 
--   Apache License, Version 2.0, (LICENSE-APACHE or  [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0))
--   MIT license (LICENSE-MIT or  [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT))
-
-at your option.
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGrizzlT%2FFalconMC?ref=badge_large)
