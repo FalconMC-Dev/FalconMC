@@ -10,7 +10,6 @@ use play::{PlayerLookPacket, PlayerPositionAndLookPacket, PlayerPositionPacket};
 
 pub mod login;
 pub mod play;
-mod util;
 
 pub enum PacketList {
     Login(LoginPackets),

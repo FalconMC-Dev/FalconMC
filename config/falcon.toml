@@ -10,6 +10,9 @@ server_ip = '0.0.0.0'
 # Whether to enable flight or not
 allow_flight = false
 
+# Maximum amount of chunks to send
+max_view_distance = 10
+
 # where the player will spawn
 [spawn_position]
 x = 16.5

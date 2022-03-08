@@ -27,9 +27,7 @@ impl PacketHandler for ClientSettingsPacket {
         match connection.get_handler_state().player_uuid() {
             Some(uuid) => {
                 return connection.get_server_link_mut().send(Box::new(move |server| {
-                    if let Some(player) = server.get_player_mut(uuid) {
-                        player.set_view_distance(self.view_distance);
-                    }
+                    server.player_update_view_distance(uuid, self.view_distance);
                 })).map_err(|_| PacketHandlerError::ServerThreadSendError);
             }
             None => connection.disconnect(String::from("Login seemed not successful!"))
@@ -93,6 +91,12 @@ pub struct PlayerPositionAndLookPacket {
     flags: u8,
     #[var_int]
     teleport_id: i32,
+}
+
+#[derive(PacketEncode, new)]
+pub struct UnloadChunkPacket {
+    chunk_x: i32,
+    chunk_z: i32,
 }
 
 pub const MAX_BITS_PER_BLOCK: u8 = 14;

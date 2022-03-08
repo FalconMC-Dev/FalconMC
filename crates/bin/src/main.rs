@@ -30,12 +30,12 @@ async fn main() {
     tracing_subscriber::registry()
         .with(tracing_subscriber::fmt::layer()
             .with_target(false)
-            .with_writer(std::io::stdout)
-            .with_filter(LevelFilter::INFO))
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(false)
             .with_ansi(false)
             .with_writer(log_file)
+            .with_filter(LevelFilter::DEBUG))
+        .with(tracing_subscriber::fmt::layer()
+            .with_target(false)
+            .with_writer(std::io::stdout)
             .with_filter(LevelFilter::DEBUG))
         .init();
 

@@ -130,6 +130,20 @@ impl Position {
     pub fn set_z(&mut self, z: f64) {
         self.z = z;
     }
+
+    /// A chunk is 16 wide to this function, this is hardcoded
+    pub fn get_chunk_x(&self) -> i32 {
+        (self.x as i32) >> 4
+    }
+
+    /// A chunk is 16 long to this function, this is hardcoded
+    pub fn get_chunk_z(&self) -> i32 {
+        (self.z as i32) >> 4
+    }
+
+    pub fn get_chunk_coords(&self) -> (i32, i32) {
+        (self.get_chunk_x(), self.get_chunk_z())
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]

@@ -99,8 +99,13 @@ fn encode_field(field: &Field) -> Result<TokenStream, TokenStream> {
         return Ok(quote!());
     }
     let mut special = None;
-    if let Some(tokens) = search_for_var_int(field, name, ty, ty_path, true)? {
+    if let Some(tokens) = search_for_nbt(field, name, ty, true)? {
         special = Some(tokens);
+    }
+    if let Some(tokens) = search_for_var_int(field, name, ty, ty_path, true)? {
+        if special.is_none() {
+            special = Some(tokens);
+        }
     }
     if let Some(tokens) = search_for_string(field, name, ty, ty_path, true)? {
         if special.is_none() {
@@ -127,8 +132,13 @@ fn decode_field(field: &Field) -> Result<TokenStream, TokenStream> {
     }
 
     let mut special = None;
-    if let Some(tokens) = search_for_var_int(field, name, ty, ty_path, false)? {
+    if let Some(tokens) = search_for_nbt(field, name, ty, false)? {
         special = Some(tokens);
+    }
+    if let Some(tokens) = search_for_var_int(field, name, ty, ty_path, false)? {
+        if special.is_none() {
+            special = Some(tokens);
+        }
     }
     if let Some(tokens) = search_for_string(field, name, ty, ty_path, false)? {
         if special.is_none() {
@@ -155,6 +165,39 @@ fn search_for_skip(field: &Field) -> Result<bool, TokenStream> {
             Err(err) => Err(err.to_compile_error()),
         },
         None => Ok(false),
+    }
+}
+
+fn search_for_nbt<T: ToTokens + Sized>(
+    field: &Field,
+    name: &Option<T>,
+    ty: &Type,
+    is_encode: bool
+) -> Result<Option<TokenStream>, TokenStream> {
+    match field.attrs.iter().find(|a| a.path.is_ident("nbt")) {
+        Some(attr) => match attr.parse_meta() {
+            Ok(meta) => match meta {
+                syn::Meta::Path(_) => {}
+                _ => {
+                    return Err(Error::new(
+                        meta.span(),
+                        "Unexpected argument(s) for `nbt` attribute!",
+                    )
+                    .to_compile_error())
+                }
+            },
+            Err(err) => return Err(err.to_compile_error()),
+        },
+        None => return Ok(None),
+    };
+
+    // TODO: add to documentation that nbt needs to be good nbt and serializable
+    if is_encode {
+        Ok(Some(quote!(
+            buf.write_u8_array(&::fastnbt::ser::to_bytes(&self.#name).unwrap());
+        )))
+    } else {
+        Err(Error::new(ty.span(), "We cannot serialize NBT data (yet)").to_compile_error())
     }
 }
 

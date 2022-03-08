@@ -10,3 +10,9 @@ target/
 # run
 logs/
 protocols/
+*.schem
+*.png
+
+# valgrind
+dh_view/
+dhat.out.*

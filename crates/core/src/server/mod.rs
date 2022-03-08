@@ -39,6 +39,8 @@ pub trait MinecraftServer {
         pitch: f32,
         on_ground: bool,
     );
+
+    fn player_update_view_distance(&mut self, uuid: Uuid, view_distance: u8);
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

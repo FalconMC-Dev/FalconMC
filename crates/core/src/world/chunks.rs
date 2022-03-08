@@ -90,6 +90,9 @@ impl ChunkSection {
         }
     }
 
+    /// This is the block-count internal to `FalconMC`. Depending on the version
+    /// this count will not be correct due to missing blocks. Do not depend on this number when working
+    /// on networking synchronization!!
     pub fn get_block_count(&self) -> u16 {
         self.block_count
     }

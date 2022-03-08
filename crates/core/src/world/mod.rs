@@ -1,13 +1,17 @@
 use crate::errors::*;
 
+use crate::network::buffer::read_var_i32_from_iter;
 use crate::player::Position;
 use crate::schematic::SchematicData;
+use crate::world::blocks::Blocks;
 use crate::world::chunks::{Chunk, ChunkPos, SECTION_WIDTH};
 use ahash::AHashMap;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::world::chunks::SECTION_LENGTH;
+use itertools::Itertools;
 
 pub mod blocks;
+pub mod block_util;
 pub mod chunks;
 pub mod palette;
 
@@ -32,19 +36,17 @@ impl World {
     }
 
     fn get_chunk(&self, pos: ChunkPos) -> Option<&Chunk> {
+        if pos.x > self.max_x || pos.x < self.min_x || pos.z > self.max_z || pos.z < self.min_z {
+            return None;
+        }
         self.chunks.get(&pos)
-    }
-
-    fn get_chunk_or_create(&mut self, pos: ChunkPos) -> &Chunk {
-        self.get_chunk_mut(pos)
     }
 
     fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
         self.chunks.entry(pos).or_insert(Chunk::empty(pos))
     }
 
-    /// Currently it just sends all chunks known to the world
-    /// for a more sophisticated implementation this could filter for chunks centered around the player
+    /// Initialize terrain when player spawns
     pub fn send_chunks_for_player<C, A>(
         &self,
         player: &mut dyn MinecraftPlayer,
@@ -55,13 +57,91 @@ impl World {
         C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
         A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
     {
-        for chunk in self.chunks.values() {
-            chunk_fn(player, chunk)?;
+        let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
+        let view_distance = player.get_view_distance();
+
+        for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
+            for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
+                match self.get_chunk(ChunkPos::new(x, z)) {
+                    None => air_fn(player, x, z)?,
+                    Some(chunk) => chunk_fn(player, chunk)?,
+                }
+            }
         }
-        for i in self.min_x - 1..=self.max_x {
-            for j in self.min_z - 1..=self.max_z {
-                if !((i >= self.min_x && j >= self.min_z) && (i < self.max_x && j < self.max_z)) {
-                    air_fn(player, i, j)?;
+        Ok(())
+    }
+
+    pub fn update_player_pos<C, A, U>(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        old_chunk_x: i32,
+        old_chunk_z: i32,
+        chunk_x: i32,
+        chunk_z: i32,
+        chunk_fn: C,
+        air_fn: A,
+        unload_fn: U,
+    ) -> Result<()>
+    where
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+    {
+        let view_distance = player.get_view_distance();
+        // unload old chunks
+        for x in old_chunk_x - view_distance as i32..=old_chunk_x + view_distance as i32 {
+            for z in old_chunk_z - view_distance as i32..=old_chunk_z + view_distance as i32 {
+                if (chunk_x - x).abs() > view_distance as i32 || (chunk_z - z).abs() > view_distance as i32 {
+                    unload_fn(player, x, z)?;
+                }
+            }
+        }
+        // load new chunks
+        for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
+            for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
+                if (old_chunk_x - x).abs() > view_distance as i32 || (old_chunk_z - z).abs() > view_distance as i32 {
+                    match self.get_chunk(ChunkPos::new(x, z)) {
+                        None => air_fn(player, x, z)?,
+                        Some(chunk) => chunk_fn(player, chunk)?,
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    pub fn update_view_distance<C, A, U>(
+        &self,
+        player: &mut dyn MinecraftPlayer,
+        view_distance: u8,
+        chunk_fn: C,
+        air_fn: A,
+        unload_fn: U
+    ) -> Result<()>
+    where
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+    {
+        let old_view_distance = player.get_view_distance();
+        let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
+        if old_view_distance < view_distance {
+            for x in -(view_distance as i8)..=view_distance as i8 {
+                for z in -(view_distance as i8)..=view_distance as i8 {
+                    if x.abs() as u8 > old_view_distance || z.abs() as u8 > old_view_distance {
+                        match self.get_chunk(ChunkPos::new(chunk_x + x as i32, chunk_z + z as i32)) {
+                            None => air_fn(player, chunk_x + x as i32, chunk_z + z as i32)?,
+                            Some(chunk) => chunk_fn(player, chunk)?,
+                        }
+                    }
+                }
+            }
+        } else if old_view_distance > view_distance {
+            for x in -(old_view_distance as i8)..=old_view_distance as i8 {
+                for z in -(old_view_distance as i8)..=old_view_distance as i8 {
+                    if x.abs() as u8 > view_distance || z.abs() as u8 > view_distance {
+                        unload_fn(player, chunk_x + x as i32, chunk_z + z as i32)?;
+                    }
                 }
             }
         }
@@ -69,27 +149,43 @@ impl World {
     }
 }
 
-impl TryFrom<SchematicData> for World {
+impl<'a> TryFrom<SchematicData<'a>> for World {
     type Error = Error;
 
     #[tracing::instrument(name = "world_loading", skip_all)]
-    fn try_from(schematic: SchematicData) -> std::result::Result<Self, Self::Error> {
+    fn try_from(schematic: SchematicData<'a>) -> std::result::Result<Self, Self::Error> {
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;
         let count_x = ((schematic.width - rest_x) / 16) as usize + if rest_x > 0 { 1 } else { 0 };
         let count_z = ((schematic.length - rest_z) / 16) as usize + if rest_z > 0 { 1 } else { 0 };
+        debug!(x = count_x, z = count_z, "World size");
+
+        let air_value = schematic.palette
+            .iter()
+            .find(|(_, value)| *value == &Blocks::Air)
+            .map(|(index, _)| *index);
+        let mut schematic_blocks = schematic.block_data
+            .iter()
+            .map(|b| b as u8)
+            .batching(|iter| read_var_i32_from_iter(iter));
 
         let mut world = World::new(count_x * count_z, 0, 0, count_x as i32, count_z as i32);
         for y in 0..schematic.height as usize {
             for z in 0..schematic.length as usize {
                 for x in 0..schematic.width as usize {
-                    let chunk_pos = ChunkPos::new(
-                        (x / SECTION_WIDTH as usize) as i32,
-                        (z / SECTION_LENGTH as usize) as i32,
-                    );
-                    let chunk = world.get_chunk_mut(chunk_pos);
-                    let schematic_block = schematic.block_data[x + z * schematic.width as usize + y * schematic.width as usize * schematic.length as usize];
-                    chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, *schematic.palette.get(&schematic_block).ok_or_else(|| Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?);
+                    let schematic_block = schematic_blocks.next().ok_or_else(|| Error::from("Invalid world data, fewer blocks than size given!!"))?;
+                    match air_value {
+                        Some(value) if value == schematic_block => {}
+                        _ => {
+                            let chunk_pos = ChunkPos::new(
+                                (x / SECTION_WIDTH as usize) as i32,
+                                (z / SECTION_LENGTH as usize) as i32,
+                            );
+                            let palette_entry = *schematic.palette.get(&schematic_block).ok_or_else(|| Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?;
+                            let chunk = world.get_chunk_mut(chunk_pos);
+                            chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, palette_entry);
+                        }
+                    }
                 }
             }
         }

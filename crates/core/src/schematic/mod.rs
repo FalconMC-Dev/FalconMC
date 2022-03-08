@@ -1,15 +1,12 @@
 use std::borrow::Cow;
-use std::io::Cursor;
 use std::str::FromStr;
 
 use ahash::AHashMap;
 use error_chain::{bail, ensure};
-use fastnbt::borrow::IntArray;
-use fastnbt::ByteArray;
+use fastnbt::borrow::{ByteArray, IntArray};
 use serde::Deserialize;
 
 use crate::errors::*;
-use crate::network::buffer::{as_u8_slice, PacketBufferRead};
 use crate::world::blocks::Blocks;
 
 pub const REQUIRED_DATA_VERSION: i32 = 2730;
@@ -27,26 +24,27 @@ pub struct SchematicVersionedRaw<'a> {
     #[serde(borrow)]
     offset: Option<IntArray<'a>>,
     palette: AHashMap<Cow<'a, str>, i32>,
-    block_data: Option<ByteArray>,
+    #[serde(borrow)]
+    block_data: Option<ByteArray<'a>>,
 }
 
-pub struct SchematicData {
+pub struct SchematicData<'a> {
     pub width: u16,
     pub height: u16,
     pub length: u16,
     pub offset: [i32; 3],
     pub palette: AHashMap<i32, Blocks>,
-    pub block_data: Vec<i32>,
+    pub block_data: ByteArray<'a>,
 }
 
-impl SchematicData {
+impl<'a> SchematicData<'a> {
     pub fn new(
         width: u16,
         height: u16,
         length: u16,
         offset: [i32; 3],
         palette: AHashMap<i32, Blocks>,
-        block_data: Vec<i32>,
+        block_data: ByteArray<'a>,
     ) -> Self {
         SchematicData {
             width,
@@ -59,7 +57,7 @@ impl SchematicData {
     }
 }
 
-impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData {
+impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
     type Error = Error;
 
     fn try_from(value: SchematicVersionedRaw<'a>) -> std::result::Result<Self, Self::Error> {
@@ -95,28 +93,13 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData {
             );
         }
 
-        let mut effective_block_data = Vec::with_capacity(
-            value.width as usize * value.height as usize * value.length as usize,
-        );
-        let mut data_cursor = Cursor::new(as_u8_slice(block_data.as_slice()));
-        let mut stop = false;
-        while !stop {
-            match data_cursor.read_var_i32() {
-                Ok(int) => effective_block_data.push(int),
-                Err(err) => match err.kind() {
-                    ErrorKind::NoMoreBytes => stop = true,
-                    _ => return Err(err),
-                },
-            }
-        }
-
         Ok(SchematicData::new(
             value.width as u16,
             value.height as u16,
             value.length as u16,
             effective_offset,
             effective_palette,
-            effective_block_data,
+            block_data,
         ))
     }
 }

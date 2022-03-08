@@ -178,8 +178,6 @@ impl ClientConnection {
     /// Reads a whole packet from the buffer and returns
     /// both the packet and the byte count with how many bytes it took to read the packet.
     ///
-    /// (TODO: add compression and encryption mode!)
-    ///
     /// Returns (preceding byte count, frame length)
     #[tracing::instrument(skip_all)]
     fn parse_frame(&self) -> Result<Option<(usize, usize)>> {

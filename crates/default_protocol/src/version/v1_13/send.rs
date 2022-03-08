@@ -11,11 +11,12 @@ use super::play::{
     ChunkDataPacket, JoinGamePacket, PlayerAbilitiesPacket, PlayerPositionAndLookPacket,
 };
 use crate::version::v1_12_2::play::KeepAlivePacket;
+use crate::version::v1_13::play::UnloadChunkPacket;
 
 pub struct PacketSend;
 
 impl ProtocolVersioned for PacketSend {
-    fn join_game(&self, player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Result<()> {
+    fn join_game(&self, player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, _view_distance: i32, reduced_debug: bool) -> Result<()> {
         let packet = JoinGamePacket::new(player.get_entity_id(), player.get_game_mode(), player.get_dimension(), difficulty, max_players, level_type, reduced_debug);
         easy_send(player.get_client_connection(), 0x25, packet)
             .map_err(|_| Error::from("Could not send join game packet"))
@@ -25,6 +26,12 @@ impl ProtocolVersioned for PacketSend {
         let packet = PlayerAbilitiesPacket::new(player.get_ability_flags(), flying_speed, fov_modifier);
         easy_send(player.get_client_connection(), 0x2E, packet)
             .map_err(|_| Error::from("Could not send player abilities packet"))
+    }
+
+    fn unload_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
+        let packet = UnloadChunkPacket::new(chunk_x, chunk_z);
+        easy_send(player.get_client_connection(), 0x1F, packet)
+            .map_err(|_| Error::from("Could not send unload chunk packet"))
     }
 
     fn send_chunk(&self, player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()> {
@@ -50,7 +57,6 @@ impl ProtocolVersioned for PacketSend {
 
     fn keep_alive(&self, player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()> {
         player.get_client_connection().send(Box::new(move |conn| {
-            //let elapsed = elapsed;
             let packet_out = KeepAlivePacket::new(elapsed as i64);
             conn.get_handler_state_mut().set_last_keep_alive(elapsed);
             conn.send_packet(0x21, &packet_out);

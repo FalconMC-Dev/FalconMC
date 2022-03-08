@@ -12,14 +12,15 @@ tracing = "0.1.30"
 error-chain = "0.12.4"
 
 ahash = { version = "0.7.6", features = [ "serde" ] }
-fastnbt = "1.3.0"
+fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serializer" }
 serde = { version = "1.0.136", features = [ "derive" ] }
 confy = "0.4.0"
 
 derive-new = "0.5.9"
+itertools = "0.10.3"
 
 once_cell = "1.9.0"
 uuid = "0.8.2"
 bytes = "1.1.0"
 
-tokio = { version = "1.16.1", features = [ "sync" ] }
+tokio = { version = "1.17.0", features = [ "sync" ] }

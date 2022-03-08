@@ -14,6 +14,7 @@ pub struct FalconConfig {
     server_port: u16,
     server_ip: IpAddr,
     allow_flight: bool,
+    max_view_distance: u8,
     spawn_position: Position,
     spawn_look: LookAngles,
 }
@@ -25,6 +26,7 @@ impl Default for FalconConfig {
             server_port: 30000,
             server_ip: IpAddr::from_str("0.0.0.0").unwrap(),
             allow_flight: false,
+            max_view_distance: 10,
             spawn_position: Default::default(),
             spawn_look: Default::default(),
         }
@@ -52,6 +54,10 @@ impl FalconConfig {
     }
     pub fn allow_flight(&self) -> bool {
         self.allow_flight
+    }
+
+    pub fn max_view_distance(&self) -> u8 {
+        self.max_view_distance
     }
 
     pub fn spawn_pos(&self) -> Position {

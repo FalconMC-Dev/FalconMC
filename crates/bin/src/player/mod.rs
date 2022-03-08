@@ -7,6 +7,7 @@ use uuid::Uuid;
 use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
 use falcon_core::player::GameMode;
 use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
+use falcon_core::server::config::FalconConfig;
 use falcon_protocol::ProtocolSend;
 
 use crate::errors::*;
@@ -113,7 +114,8 @@ impl MinecraftPlayer for Player {
     }
 
     fn set_view_distance(&mut self, distance: u8) {
-        self.view_distance = distance;
+        self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().max_view_distance()));
+        debug!(view_distance = self.view_distance, "Decided view-distance");
     }
 
     fn get_protocol_version(&self) -> i32 {

@@ -81,9 +81,9 @@ impl VersionMatcher {
 pub struct ProtocolSend;
 
 impl ProtocolSend {
-    pub fn join_game(player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, reduced_debug: bool) -> Result<()> {
+    pub fn join_game(player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, view_distance: i32, reduced_debug: bool) -> Result<()> {
         if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
-            protocol.join_game(player, difficulty, max_players, level_type, reduced_debug)?;
+            protocol.join_game(player, difficulty, max_players, level_type, view_distance, reduced_debug)?;
         }
         Ok(())
     }
@@ -91,6 +91,13 @@ impl ProtocolSend {
     pub fn player_abilities(player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()> {
         if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
             protocol.player_abilities(player, flying_speed, fov_modifier)?;
+        }
+        Ok(())
+    }
+
+    pub fn unload_chunk(player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+            protocol.unload_chunk(player, chunk_x, chunk_z)?;
         }
         Ok(())
     }
@@ -139,6 +146,7 @@ pub trait ProtocolVersioned {
         difficulty: Difficulty,
         max_players: u8,
         level_type: String,
+        view_distance: i32,
         reduced_debug: bool,
     ) -> Result<()>;
 
@@ -148,6 +156,8 @@ pub trait ProtocolVersioned {
         flying_speed: f32,
         fov_modifier: f32,
     ) -> Result<()>;
+
+    fn unload_chunk(&self, player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()>;
 
     fn send_chunk(&self, player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()>;
 

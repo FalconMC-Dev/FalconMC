@@ -16,6 +16,7 @@ uuid = { version = "0.8.2", features = [ "v3" ] }
 derive-new = "0.5.9"
 ignore-result = "0.2.0"
 
+fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serializer" }
 serde = { version = "1.0.136", features = [ "derive" ] }
-serde_json = "1.0.78"
-tokio = { version = "1.16.1", features = [ "full" ] }
+serde_json = "1.0.79"
+tokio = { version = "1.17.0", features = [ "full" ] }
