@@ -2,7 +2,7 @@ pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
-use crate::errors::*;
+use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
 use crate::network::connection::MinecraftConnection;
 

@@ -9,7 +9,7 @@ edition = "2021"
 falcon_core_derive = { path = "../core_derive" }
 
 tracing = "0.1.30"
-error-chain = "0.12.4"
+thiserror = "1.0.30"
 
 ahash = { version = "0.7.6", features = [ "serde" ] }
 fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serializer" }

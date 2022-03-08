@@ -6,16 +6,17 @@ use falcon_core::player::MinecraftPlayer;
 use falcon_core::server::Difficulty;
 use falcon_core::world::chunks::Chunk;
 
-use crate::errors::*;
+use crate::error::Result;
+
 use crate::implement_packet_handler_enum;
-use crate::version::status::StatusPackets;
 
-pub mod v1_8_9;
-pub mod v1_12_2;
-pub mod v1_13;
-pub mod v1_13_2;
+// pub mod v1_8_9;
+// pub mod v1_12_2;
+// pub mod v1_13;
+// pub mod v1_13_2;
+// pub mod v1_14;
 
-pub mod status;
+// pub mod status;
 
 #[derive(PacketDecode)]
 pub struct HandshakePacket {
@@ -51,13 +52,14 @@ impl PacketHandler for HandshakePacket {
 
 pub enum VersionMatcher {
     Handshake(HandshakePacket),
-    Status(StatusPackets),
-    V1_8_9(v1_8_9::PacketList),
-    V1_13(v1_13::PacketList),
-    V1_13_2(v1_13_2::PacketList),
+    // Status(StatusPackets),
+    // V1_8_9(v1_8_9::PacketList),
+    // V1_13(v1_13::PacketList),
+    // V1_13_2(v1_13_2::PacketList),
+    // V1_14(v1_14::PacketList),
 }
 
-implement_packet_handler_enum!(VersionMatcher, Handshake, Status, V1_8_9, V1_13, V1_13_2);
+implement_packet_handler_enum!(VersionMatcher, Handshake);
 
 impl VersionMatcher {
     pub fn from_buf(
@@ -67,11 +69,12 @@ impl VersionMatcher {
     ) -> Result<Option<VersionMatcher>> {
         match state.connection_state() {
             ConnectionState::Handshake => Ok(Some(VersionMatcher::Handshake(HandshakePacket::from_buf(buffer)?))),
-            ConnectionState::Status => Ok(Some(VersionMatcher::Status(StatusPackets::from_buf(packet_id, buffer)?.ok_or(Error::from("Could not read status packet"))?))),
+            // ConnectionState::Status => Ok(Some(VersionMatcher::Status(StatusPackets::from_buf(packet_id, buffer)?.ok_or(Error::from("Could not read status packet"))?))),
             _ => match state.protocol_id() {
                 // PROTOCOL_1_8_9 => v1_8_9::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_8_9)),
-                PROTOCOL_1_13 => v1_13::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13)),
-                PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13_2)),
+                // PROTOCOL_1_13 => v1_13::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13)),
+                // PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => v1_13_2::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_13_2)),
+                // PROTOCOL_1_14 => v1_14::PacketList::from_buf(packet_id, state, buffer).map(|l| l.map(VersionMatcher::V1_14)),
                 _ => Ok(None),
             }
         }
@@ -132,8 +135,9 @@ impl ProtocolSend {
 
     pub fn get_protocol_version<'a>(version: i32) -> Option<&'a dyn ProtocolVersioned> {
         match version {
-            PROTOCOL_1_13 => Some(&v1_13::PacketSend),
-            PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => Some(&v1_13_2::PacketSend),
+            //PROTOCOL_1_13 => Some(&v1_13::PacketSend),
+            //PROTOCOL_1_13_2 | PROTOCOL_1_13_1 => Some(&v1_13_2::PacketSend),
+            //PROTOCOL_1_14 => Some(&v1_14::PacketSend),
             _ => None,
         }
     }

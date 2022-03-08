@@ -2,11 +2,10 @@ use std::borrow::Cow;
 use std::str::FromStr;
 
 use ahash::AHashMap;
-use error_chain::{bail, ensure};
 use fastnbt::borrow::{ByteArray, IntArray};
 use serde::Deserialize;
 
-use crate::errors::*;
+use crate::error::FalconCoreError;
 use crate::world::blocks::Blocks;
 
 pub const REQUIRED_DATA_VERSION: i32 = 2730;
@@ -58,27 +57,32 @@ impl<'a> SchematicData<'a> {
 }
 
 impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
-    type Error = Error;
+    type Error = FalconCoreError;
 
     fn try_from(value: SchematicVersionedRaw<'a>) -> std::result::Result<Self, Self::Error> {
-        ensure!(
-            value.version == 2,
-            ErrorKind::InvalidSchematicVersion(value.version)
-        );
+        if value.version != 2 {
+            return Err(FalconCoreError::InvalidSchematic(value.version));
+        }
         match value.data_version {
             Some(content) => {
                 if content != REQUIRED_DATA_VERSION {
-                    bail!(ErrorKind::WrongDataVersion(content, REQUIRED_DATA_VERSION))
+                    return Err(FalconCoreError::WrongDataVersion(REQUIRED_DATA_VERSION, content));
                 }
             }
-            None => bail!(ErrorKind::MissingData),
+            None => return Err(FalconCoreError::MissingData),
         }
-        ensure!(value.block_data.is_some(), ErrorKind::MissingData);
-        let block_data = value.block_data.unwrap();
+        let block_data = {
+            match value.block_data {
+                Some(data) => data,
+                None => return Err(FalconCoreError::MissingData),
+            }
+        };
 
         let mut effective_offset = [0; 3];
         if let Some(offset) = value.offset {
-            ensure!(offset.iter().count() == 3, ErrorKind::InvalidData);
+            if offset.iter().count() != 3 {
+                return Err(FalconCoreError::InvalidData(String::from("Expected 3 offset coords")))
+            }
             offset
                 .iter()
                 .enumerate()
@@ -89,7 +93,7 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
         for (state, index) in value.palette {
             effective_palette.insert(
                 index,
-                Blocks::from_str(state.as_ref()).chain_err(|| "Invalid BlockState")?,
+                Blocks::from_str(state.as_ref())?,
             );
         }
 

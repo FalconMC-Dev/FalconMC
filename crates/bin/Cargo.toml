@@ -18,7 +18,7 @@ tracing-futures = "0.2.5"
 tracing-subscriber = { version = "0.3.8", features = [ "local-time" ] }
 tracing-appender = "0.2.0"
 
-error-chain = "0.12.4"
+anyhow = "1.0.55"
 ignore-result = "0.2.0"
 
 flate2 = "1.0.22"

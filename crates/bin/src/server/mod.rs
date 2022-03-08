@@ -4,6 +4,7 @@ use std::thread;
 use std::time::Duration;
 
 use ahash::AHashMap;
+use anyhow::{Result, Context};
 use fastnbt::de::from_bytes;
 use flate2::read::GzDecoder;
 use tokio::runtime::Builder;
@@ -11,7 +12,6 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tokio::time::MissedTickBehavior;
 use uuid::Uuid;
 
-use falcon_core::errors::ResultExt;
 use falcon_core::network::connection::ConnectionTask;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
@@ -22,7 +22,6 @@ use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
 use falcon_protocol::ProtocolSend;
 
-use crate::errors::*;
 use crate::network::NetworkListener;
 use crate::player::Player;
 use crate::server::console::ConsoleListener;
@@ -49,17 +48,17 @@ impl MainServer {
 
         let world = {
             let world_file = std::fs::read("./world.schem")
-                .chain_err(|| "Could not load `world.schem`, stopping launch")?;
+                .with_context(|| "Could not load `world.schem`, stopping launch")?;
             let mut gz = GzDecoder::new(&world_file[..]);
             let mut decompressed_world = Vec::new();
             gz.read_to_end(&mut decompressed_world)
-                .chain_err(|| "Could not decompress world.schem, is this a valid schematic?")?;
+                .with_context(|| "Could not decompress world.schem, is this a valid schematic?")?;
             debug!("Checkpoint - loaded schem file");
             let schematic: SchematicVersionedRaw = from_bytes(&decompressed_world)
-                .chain_err(|| "Could not parse schematic file, is this valid nbt?")?;
+                .with_context(|| "Could not parse schematic file, is this valid nbt?")?;
             debug!("Checkpoint - deserialized into raw format");
             let data = SchematicData::try_from(schematic)
-                .chain_err(|| "Invalid schematic, this server cannot use this schematic currently!")?;
+                .with_context(|| "Invalid schematic, this server cannot use this schematic currently!")?;
             debug!("Checkpoint - parsed raw format");
             World::try_from(data)?
         };
@@ -85,7 +84,7 @@ impl MainServer {
         thread::Builder::new()
             .name(String::from("Main Server Thread"))
             .spawn(|| server.start_server_logic())
-            .chain_err(|| "Couldn't start server logic!")?;
+            .with_context(|| "Couldn't start server logic!")?;
 
         Ok(())
     }
@@ -176,10 +175,10 @@ impl MinecraftServer for MainServer {
         }
 
         let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-            ProtocolSend::send_chunk(player, chunk).chain_err(|| "Error sending chunk")
+            ProtocolSend::send_chunk(player, chunk)
         };
         let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-            ProtocolSend::send_air_chunk(player, x, z).chain_err(|| "Error sending chunk")
+            ProtocolSend::send_air_chunk(player, x, z)
         };
         if let Err(error) = self.world.send_chunks_for_player(player, chunk_fn, chunk_air_fn) {
             player.disconnect(format!("Error whilst sending packet: {}", error));
@@ -223,13 +222,13 @@ impl MinecraftServer for MainServer {
 
             if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
                 let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-                    ProtocolSend::send_chunk(player, chunk).chain_err(|| "Error sending chunk")
+                    ProtocolSend::send_chunk(player, chunk).with_context(|| "Error sending chunk")
                 };
                 let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                    ProtocolSend::send_air_chunk(player, x, z).chain_err(|| "Error sending chunk")
+                    ProtocolSend::send_air_chunk(player, x, z).with_context(|| "Error sending chunk")
                 };
                 let unload_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                    ProtocolSend::unload_chunk(player, x, z).chain_err(|| "Erorr unloading chunk")
+                    ProtocolSend::unload_chunk(player, x, z).with_context(|| "Erorr unloading chunk")
                 };
                 if let Err(error) = self.world.update_player_pos(player, old_chunk_x, old_chunk_z, chunk_x, chunk_z, chunk_fn, chunk_air_fn, unload_fn) {
                     player.disconnect(format!("Error whilst sending packet: {}", error));
@@ -242,13 +241,13 @@ impl MinecraftServer for MainServer {
         if let Entry::Occupied(mut entry) = self.players.entry(uuid) {
             let player = entry.get_mut();
             let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-                ProtocolSend::send_chunk(player, chunk).chain_err(|| "Error sending chunk")
+                ProtocolSend::send_chunk(player, chunk).with_context(|| "Error sending chunk")
             };
             let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                ProtocolSend::send_air_chunk(player, x, z).chain_err(|| "Error sending chunk")
+                ProtocolSend::send_air_chunk(player, x, z).with_context(|| "Error sending chunk")
             };
             let unload_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                ProtocolSend::unload_chunk(player, x, z).chain_err(|| "Erorr unloading chunk")
+                ProtocolSend::unload_chunk(player, x, z).with_context(|| "Erorr unloading chunk")
             };
             if let Err(error) = self.world.update_view_distance(player, view_distance, chunk_fn, chunk_air_fn, unload_fn) {
                 player.disconnect(format!("Error whilst sending packet: {}", error));

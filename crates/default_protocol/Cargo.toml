@@ -10,7 +10,7 @@ falcon_default_protocol_derive = { path = "../default_protocol_derive" }
 falcon_core = { path = "../core" }
 
 tracing = "0.1.30"
-error-chain = "0.12.4"
+thiserror = "1.0.30"
 
 uuid = { version = "0.8.2", features = [ "v3" ] }
 derive-new = "0.5.9"

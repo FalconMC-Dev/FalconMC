@@ -6,7 +6,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 
 use falcon_core::ShutdownHandle;
 
-use crate::errors::*;
+use anyhow::{Result, Context};
 
 pub struct ConsoleListener {
     shutdown_handle: broadcast::Sender<()>,
@@ -25,7 +25,7 @@ impl ConsoleListener {
         thread::Builder::new()
             .name(String::from("Console listener"))
             .spawn(|| console.start_reading())
-            .chain_err(|| "Couldn't start console listener!")?;
+            .with_context(|| "Couldn't start console listener!")?;
 
         Ok(console_rx)
     }
@@ -37,7 +37,7 @@ impl ConsoleListener {
             let stdin = std::io::stdin();
             if let Err(ref e) = stdin
                 .read_line(&mut buffer)
-                .chain_err(|| "Could not read from stdin!")
+                .with_context(|| "Could not read from stdin!")
             {
                 print_error!(e);
                 self.shutdown_handle.send(()).ignore();

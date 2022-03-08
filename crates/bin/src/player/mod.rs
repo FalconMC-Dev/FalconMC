@@ -10,7 +10,7 @@ use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Posit
 use falcon_core::server::config::FalconConfig;
 use falcon_protocol::ProtocolSend;
 
-use crate::errors::*;
+use anyhow::Result;
 
 #[derive(Debug)]
 pub struct Player {

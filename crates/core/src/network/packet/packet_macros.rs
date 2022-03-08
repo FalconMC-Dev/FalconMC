@@ -20,7 +20,7 @@ macro_rules! impl_packet_encode_primitive_self {
 macro_rules! impl_packet_decode_primitive_self {
     ( $type:ty, $fun:ident ) => {
         impl $crate::network::packet::PacketDecode for $type {
-            fn from_buf(buf: &mut dyn $crate::network::buffer::PacketBufferRead) -> Result<Self> {
+            fn from_buf(buf: &mut dyn $crate::network::buffer::PacketBufferRead) -> ::std::result::Result<Self, $crate::error::FalconCoreError> {
                 buf.$fun()
             }
         }

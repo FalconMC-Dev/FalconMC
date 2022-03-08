@@ -1,11 +1,12 @@
 #[macro_use]
-extern crate error_chain;
+extern crate anyhow;
 #[macro_use]
 extern crate tracing;
 
 use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;
+use anyhow::Context;
 use tracing::metadata::LevelFilter;
 use tracing_subscriber::Layer;
 use tracing_subscriber::layer::SubscriberExt;
@@ -14,11 +15,10 @@ use tracing_subscriber::util::SubscriberInitExt;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 
-use crate::errors::*;
 use crate::player::Player;
 use crate::server::MainServer;
 
-mod errors;
+mod error;
 mod network;
 mod server;
 mod player;
@@ -44,7 +44,7 @@ async fn main() {
 
     debug!("Loading config!");
     if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")
-        .chain_err(|| "The configuration file could not be loaded!")
+        .with_context(|| "The configuration file could not be loaded!")
     {
         print_error!(e);
         return;

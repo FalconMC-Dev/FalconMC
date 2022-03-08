@@ -1,8 +1,7 @@
 use bytes::Buf;
 use uuid::Uuid;
 
-use crate::errors::*;
-use error_chain::{bail, ensure};
+use crate::error::{Result, FalconCoreError};
 
 pub trait PacketBufferRead {
     /// Reads an [`i8`] from the underlying buffer.
@@ -44,15 +43,14 @@ pub trait PacketBufferRead {
     fn read_string(&mut self, max_length: i32) -> Result<String> {
         let len = self.read_var_i32()?;
         if len == 0 {
-            bail!(ErrorKind::StringSizeZero);
+            return Err(FalconCoreError::StringSizeZero);
         }
         if len > max_length * 4 + 3 {
-            bail!(ErrorKind::StringTooLong);
+            return Err(FalconCoreError::StringTooLong(max_length, len));
         }
-        let result = String::from_utf8(self.read_u8_array(len as usize)?)
-            .chain_err(|| ErrorKind::BadString)?;
+        let result = String::from_utf8(self.read_u8_array(len as usize)?)?;
         if result.chars().count() > max_length as usize {
-            bail!(ErrorKind::StringTooLong);
+            return Err(FalconCoreError::StringTooLong(max_length, result.chars().count() as i32));
         }
         Ok(result)
     }
@@ -62,7 +60,7 @@ pub trait PacketBufferRead {
         let mut result: i32 = 0;
         for i in 0..=6 {
             if i > 5 {
-                bail!(ErrorKind::VarI32TooLong);
+                return Err(FalconCoreError::VarI32TooLong);
             }
             let byte = self.read_u8()?;
             result |= ((byte & 0b0111_1111) as i32) << (i * 7);
@@ -78,7 +76,7 @@ pub trait PacketBufferRead {
         let mut result: i64 = 0;
         for i in 0..=11 {
             if i > 10 {
-                bail!(ErrorKind::VarI64TooLong);
+                return Err(FalconCoreError::VarI64TooLong);
             }
             let byte = self.read_u8()?;
             result |= ((byte & 0b0111_1111) as i64) << (i * 7);
@@ -154,13 +152,15 @@ impl<T: Buf> PacketBufferRead for T {
 }
 
 pub trait ByteLimitCheck {
-    /// Returns [`ErrorKind::NoMoreBytes`] when the amount of bytes requested is not available from the underlying buffer.
+    /// Returns [`FalconCoreError::NoMoreBytes`] when the amount of bytes requested is not available from the underlying buffer.
     fn ensure_bytes_available(&self, amount: usize) -> Result<()>;
 }
 
 impl<T: Buf> ByteLimitCheck for T {
     fn ensure_bytes_available(&self, amount: usize) -> Result<()> {
-        ensure!(self.remaining() >= amount, ErrorKind::NoMoreBytes);
+        if self.remaining() < amount {
+            return Err(FalconCoreError::NoMoreBytes);
+        }
         Ok(())
     }
 }

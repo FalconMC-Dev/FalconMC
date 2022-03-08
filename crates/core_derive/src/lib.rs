@@ -78,7 +78,7 @@ fn implement_decoder(item_struct: &mut ItemStruct) -> TokenStream {
 
     quote!(
         impl ::falcon_core::network::packet::PacketDecode for #struct_ident {
-            fn from_buf(buf: &mut dyn ::falcon_core::network::buffer::PacketBufferRead) -> ::falcon_core::errors::Result<Self> {
+            fn from_buf(buf: &mut dyn ::falcon_core::network::buffer::PacketBufferRead) -> ::falcon_core::error::Result<Self> {
                 Ok(#struct_ident {
                     #decoded_fields
                 })

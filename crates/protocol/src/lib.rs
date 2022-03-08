@@ -1,19 +1,17 @@
 #[macro_use]
-extern crate error_chain;
-#[macro_use]
 extern crate tracing;
 
 use std::alloc::System;
 use std::any::Any;
 
-use errors::*;
+use error::Result;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_default_protocol::DisconnectPacketLogin;
 
 pub use falcon_default_protocol::ProtocolSend;
 
-pub mod errors;
+pub mod error;
 mod macros;
 pub mod manager;
 

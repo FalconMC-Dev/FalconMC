@@ -9,7 +9,7 @@ use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_default_protocol::DefaultProtocol;
 
-use crate::errors::*;
+use crate::error::{PluginProtocolError, Result};
 use crate::FalconPlugin;
 
 pub static PROTOCOL_MANAGER: Lazy<ProtocolPluginManager> = Lazy::new(|| {
@@ -37,20 +37,16 @@ impl ProtocolPluginManager {
         debug!("Loading plugin...");
         type PluginCreate = unsafe fn() -> *mut dyn FalconPlugin;
 
-        let lib = Library::new(filename.as_ref()).chain_err(|| {
-            ErrorKind::LibraryLoadingError(
-                filename.as_ref().to_os_string(),
-                String::from("File was not recognized as plugin library!"),
-            )
-        })?;
+        let lib = Library::new(filename.as_ref()).map_err(|_| PluginProtocolError::LibraryLoadingError(
+            filename.as_ref().to_os_string(),
+            String::from("File was not recognized as plugin library!"),
+        ))?;
         self.loaded_libraries.push(lib);
         let lib = self.loaded_libraries.last().unwrap();
-        let constructor: Symbol<PluginCreate> = lib.get(b"_plugin_create").chain_err(|| {
-            ErrorKind::LibraryLoadingError(
-                filename.as_ref().to_os_string(),
-                String::from("The `_plugin_create` symbol wasn't found."),
-            )
-        })?;
+        let constructor: Symbol<PluginCreate> = lib.get(b"_plugin_create").map_err(|_| PluginProtocolError::LibraryLoadingError(
+            filename.as_ref().to_os_string(),
+            String::from("The `_plugin_create` symbol wasn't found."),
+        ))?;
         let boxed_raw = constructor();
 
         let plugin = Box::from_raw(boxed_raw);
@@ -64,9 +60,9 @@ impl ProtocolPluginManager {
     pub(crate) fn load_plugins(&mut self) {
         if let Ok(paths) = fs::read_dir("./protocols/") {
             for path in paths {
-                match path.chain_err(|| "Something went wrong when loading from `./protocols/`") {
+                match path.map_err(|e| format!("Something went wrong when loading from `./protocols/`: {}", e)) {
                     Ok(entry) => {
-                        match entry.file_type().chain_err(|| format!("Something went wrong when loading from `./protocols/`, aborted entry '{:?}'", entry.path())) {
+                        match entry.file_type().map_err(|e| format!("Something went wrong when loading from `./protocols/`, aborted entry '{:?}' due to {}", entry.path(), e)) {
                             Ok(file_type) => {
                                 if file_type.is_file() {
                                     if let Err(error) = unsafe { self.load_plugin(entry.path()) } {
@@ -74,10 +70,10 @@ impl ProtocolPluginManager {
                                     }
                                 }
                             },
-                            Err(ref error) => print_error!(error),
+                            Err(ref error) => error!("Encountered error: {}", error),
                         }
                     },
-                    Err(ref error) => print_error!(error),
+                    Err(ref error) => error!("Encountered error: {}", error),
                 }
             }
         }

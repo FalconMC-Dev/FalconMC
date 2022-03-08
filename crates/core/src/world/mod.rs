@@ -1,4 +1,4 @@
-use crate::errors::*;
+use crate::error::FalconCoreError;
 
 use crate::network::buffer::read_var_i32_from_iter;
 use crate::player::Position;
@@ -47,15 +47,15 @@ impl World {
     }
 
     /// Initialize terrain when player spawns
-    pub fn send_chunks_for_player<C, A>(
+    pub fn send_chunks_for_player<C, A, E>(
         &self,
         player: &mut dyn MinecraftPlayer,
         chunk_fn: C,
         air_fn: A,
-    ) -> Result<()>
+    ) -> Result<(), E>
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
         let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
         let view_distance = player.get_view_distance();
@@ -71,7 +71,7 @@ impl World {
         Ok(())
     }
 
-    pub fn update_player_pos<C, A, U>(
+    pub fn update_player_pos<C, A, U, E>(
         &self,
         player: &mut dyn MinecraftPlayer,
         old_chunk_x: i32,
@@ -81,11 +81,11 @@ impl World {
         chunk_fn: C,
         air_fn: A,
         unload_fn: U,
-    ) -> Result<()>
+    ) -> Result<(), E>
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
-        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
         let view_distance = player.get_view_distance();
         // unload old chunks
@@ -110,18 +110,18 @@ impl World {
         Ok(())
     }
 
-    pub fn update_view_distance<C, A, U>(
+    pub fn update_view_distance<C, A, U, E>(
         &self,
         player: &mut dyn MinecraftPlayer,
         view_distance: u8,
         chunk_fn: C,
         air_fn: A,
         unload_fn: U
-    ) -> Result<()>
+    ) -> Result<(), E>
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<()>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
-        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<()>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
         let old_view_distance = player.get_view_distance();
         let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
@@ -150,10 +150,10 @@ impl World {
 }
 
 impl<'a> TryFrom<SchematicData<'a>> for World {
-    type Error = Error;
+    type Error = FalconCoreError;
 
     #[tracing::instrument(name = "world_loading", skip_all)]
-    fn try_from(schematic: SchematicData<'a>) -> std::result::Result<Self, Self::Error> {
+    fn try_from(schematic: SchematicData<'a>) -> Result<Self, Self::Error> {
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;
         let count_x = ((schematic.width - rest_x) / 16) as usize + if rest_x > 0 { 1 } else { 0 };
@@ -173,7 +173,7 @@ impl<'a> TryFrom<SchematicData<'a>> for World {
         for y in 0..schematic.height as usize {
             for z in 0..schematic.length as usize {
                 for x in 0..schematic.width as usize {
-                    let schematic_block = schematic_blocks.next().ok_or_else(|| Error::from("Invalid world data, fewer blocks than size given!!"))?;
+                    let schematic_block = schematic_blocks.next().ok_or_else(|| FalconCoreError::InvalidData(String::from("Invalid world data, fewer blocks than size given!!")))?;
                     match air_value {
                         Some(value) if value == schematic_block => {}
                         _ => {
@@ -181,7 +181,7 @@ impl<'a> TryFrom<SchematicData<'a>> for World {
                                 (x / SECTION_WIDTH as usize) as i32,
                                 (z / SECTION_LENGTH as usize) as i32,
                             );
-                            let palette_entry = *schematic.palette.get(&schematic_block).ok_or_else(|| Error::from("Invalid schematic data, could not find corresponding palette entry!!"))?;
+                            let palette_entry = *schematic.palette.get(&schematic_block).ok_or_else(|| FalconCoreError::InvalidData(String::from("Invalid schematic data, could not find corresponding palette entry!!")))?;
                             let chunk = world.get_chunk_mut(chunk_pos);
                             chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, palette_entry);
                         }

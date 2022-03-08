@@ -5,7 +5,7 @@ extern crate derive_new;
 #[macro_use]
 extern crate tracing;
 
-pub mod errors;
+pub mod error;
 pub mod network;
 pub mod player;
 pub mod schematic;

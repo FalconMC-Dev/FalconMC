@@ -16,7 +16,7 @@ use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use falcon_protocol::UNKNOWN_PROTOCOL;
 
-use crate::errors::*;
+use anyhow::Result;
 
 pub struct ClientConnection {
     shutdown_handle: ShutdownHandle,
@@ -201,7 +201,7 @@ impl ClientConnection {
                 };
             }
         }
-        Err(ErrorKind::InvalidPacketLength.into())
+        Err(anyhow!("The packet length was longer than 21 bits!"))
     }
 }
 
