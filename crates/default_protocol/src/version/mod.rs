@@ -32,15 +32,15 @@ impl PacketHandler for HandshakePacket {
     fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
         match self.next_state {
             1 => connection
-                .get_handler_state_mut()
+                .handler_state_mut()
                 .set_connection_state(ConnectionState::Status),
             2 => connection
-                .get_handler_state_mut()
+                .handler_state_mut()
                 .set_connection_state(ConnectionState::Login),
             _ => connection.disconnect(String::from("Impossible next state!")),
         }
         connection
-            .get_handler_state_mut()
+            .handler_state_mut()
             .set_protocol_id(self.version);
         Ok(())
     }

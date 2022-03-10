@@ -210,19 +210,19 @@ impl MinecraftConnection for ClientConnection {
         &self.addr
     }
 
-    fn get_handler_state(&self) -> &PacketHandlerState {
+    fn handler_state(&self) -> &PacketHandlerState {
         &self.handler_state
     }
 
-    fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState {
+    fn handler_state_mut(&mut self) -> &mut PacketHandlerState {
         &mut self.handler_state
     }
 
-    fn get_server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>> {
+    fn server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>> {
         &mut self.server_tx
     }
 
-    fn get_connection_link(&self) -> UnboundedSender<Box<ConnectionTask>> {
+    fn connection_link(&self) -> UnboundedSender<Box<ConnectionTask>> {
         self.connection_sync.0.clone()
     }
 

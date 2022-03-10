@@ -26,7 +26,7 @@ impl DefaultProtocol {
         buffer: &mut R,
         connection: &mut C,
     ) -> Result<Option<()>> {
-        let handler_state = connection.get_handler_state();
+        let handler_state = connection.handler_state();
         let span = trace_span!("default_process_packet", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
         let _enter = span.enter();
 

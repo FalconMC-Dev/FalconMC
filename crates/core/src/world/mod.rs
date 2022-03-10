@@ -43,7 +43,7 @@ impl World {
     }
 
     fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
-        self.chunks.entry(pos).or_insert(Chunk::empty(pos))
+        self.chunks.entry(pos).or_insert_with(|| Chunk::empty(pos))
     }
 
     /// Initialize terrain when player spawns
@@ -110,6 +110,7 @@ impl World {
         Ok(())
     }
 
+    #[allow(clippy::comparison_chain)]
     pub fn update_view_distance<C, A, U, E>(
         &self,
         player: &mut dyn MinecraftPlayer,

@@ -38,7 +38,7 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
         let count = self
             .items
             .iter()
-            .map(|item| to_i32(item))
+            .map(to_i32)
             .filter(|item| item.is_some())
             .count();
         usize::BITS - count.leading_zeros()
@@ -55,7 +55,7 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
     {
         let default_value = to_i32(&default).unwrap();
         data_iterator.map(move |value| {
-            to_i32(&self.items[value as usize]).unwrap_or_else(|| default_value) as u64
+            to_i32(&self.items[value as usize]).unwrap_or(default_value) as u64
         })
     }
 
@@ -72,7 +72,7 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
         let mut palette_missing = 0;
         let modified_palette: Vec<i32> = {
             let mut section_palette: Vec<Option<i32>> =
-                self.items.iter().map(|item| to_i32(item)).collect();
+                self.items.iter().map(to_i32).collect();
             let mut i = 0;
             while i < section_palette.len() - palette_missing {
                 if section_palette[i].is_none() {

@@ -10,13 +10,13 @@ pub type ConnectionTask = dyn FnOnce(&mut dyn MinecraftConnection) + Send + Sync
 pub trait MinecraftConnection {
     fn get_address(&self) -> &SocketAddr;
 
-    fn get_handler_state(&self) -> &PacketHandlerState;
+    fn handler_state(&self) -> &PacketHandlerState;
 
-    fn get_handler_state_mut(&mut self) -> &mut PacketHandlerState;
+    fn handler_state_mut(&mut self) -> &mut PacketHandlerState;
 
-    fn get_server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>>;
+    fn server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>>;
 
-    fn get_connection_link(&self) -> UnboundedSender<Box<ConnectionTask>>;
+    fn connection_link(&self) -> UnboundedSender<Box<ConnectionTask>>;
 
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode);
 
