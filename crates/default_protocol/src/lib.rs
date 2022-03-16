@@ -13,7 +13,7 @@ pub use version::ProtocolSend;
 use crate::version::VersionMatcher;
 
 pub mod error;
-pub(crate) mod macros;
+pub mod macros;
 pub mod version;
 pub mod serverbound;
 
