@@ -24,23 +24,25 @@ macro_rules! implement_packet_handler_enum {
 #[macro_export]
 macro_rules! packet_modules {
     (
+    $(extern $visi_rest:vis mod $mod_name_rest:ident;)*
     $(type Handshake => {
         $($visi_handshake:vis mod $mod_name_handshake:ident;)*
     })?
-    $(,)?
+    $(;)?
     $(type Status => {
         $($visi_status:vis mod $mod_name_status:ident;)*
     })?
-    $(,)?
+    $(;)?
     $(type Login => {
         $($visi_login:vis mod $mod_name_login:ident;)*
     })?
-    $(,)?
+    $(;)?
     $(type Play => {
         $($visi_play:vis mod $mod_name_play:ident;)*
     })?
-    $(,)?
+    $(;)?
     ) => {
+        $($visi_rest mod $mod_name_rest;)*
         $($($visi_handshake mod $mod_name_handshake;)*)?
         $($($visi_status mod $mod_name_status;)*)?
         $($($visi_login mod $mod_name_login;)*)?
@@ -51,6 +53,9 @@ macro_rules! packet_modules {
             R: ::falcon_core::network::buffer::PacketBufferRead,
             C: ::falcon_core::network::connection::MinecraftConnection,
         {
+            $(if $mod_name_rest::falcon_process_packet(packet_id, buffer, connection)?.is_some() {
+                return Ok(Some(()));
+            })*
             let connection_state = connection.handler_state().connection_state();
             match connection_state {
                 $(::falcon_core::network::ConnectionState::Handshake => {
