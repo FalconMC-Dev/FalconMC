@@ -8,6 +8,7 @@ pub mod buffer;
 pub mod connection;
 pub mod packet;
 
+pub const UNKNOWN_PROTOCOL: i32 = -1;
 pub const PROTOCOL_1_8_9: i32 = 47;
 pub const PROTOCOL_1_13: i32 = 393;
 pub const PROTOCOL_1_13_1: i32 = 401;

@@ -14,7 +14,7 @@ use falcon_core::network::ConnectionState::{Login, Status};
 use falcon_core::network::{ConnectionState, PacketHandlerState};
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
-use falcon_protocol::UNKNOWN_PROTOCOL;
+use falcon_core::network::UNKNOWN_PROTOCOL;
 
 use anyhow::Result;
 

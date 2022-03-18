@@ -18,8 +18,6 @@ pub mod manager;
 #[global_allocator]
 static ALLOCATOR: System = System;
 
-pub static UNKNOWN_PROTOCOL: i32 = -1;
-
 pub trait FalconPlugin: Any + Send + Sync {
     fn name(&self) -> &'static str;
 

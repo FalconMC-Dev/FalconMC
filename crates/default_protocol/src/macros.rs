@@ -22,6 +22,28 @@ macro_rules! implement_packet_handler_enum {
 }
 
 #[macro_export]
+macro_rules! packet_send_fn {
+    (
+        $($spec_name:ident => $fn_name:ident {
+            $(mod $mod_name:path;)+
+        }),*
+    ) => {
+        $(
+        pub fn $fn_name<C>(packet: $spec_name, connection: &mut C)
+        where
+            C: ::falcon_core::network::connection::MinecraftConnection,
+        {
+            $(
+            if let Some(_) = $mod_name(packet, connection) {
+                return;
+            }
+            )+
+        }
+        )*
+    }
+}
+
+#[macro_export]
 macro_rules! packet_modules {
     (
     $(extern $visi_rest:vis mod $mod_name_rest:ident;)*
