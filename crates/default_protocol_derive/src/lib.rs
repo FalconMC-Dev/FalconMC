@@ -122,7 +122,7 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
                     #version => connection.send_packet(#packet_id, &packet)
                 ));
             }
-            let name_spanned = Ident::new(&format!("{}", name.value()), name.span());
+            let name_spanned = Ident::new(&name.value().to_string(), name.span());
             functions_outgoing.push(quote!(
                 pub fn #name_spanned<T, C>(packet: T, connection: &mut C) -> Option<()>
                 where
