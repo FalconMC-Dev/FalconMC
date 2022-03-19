@@ -36,25 +36,54 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
 
         // Receiving
         let version_to_packet_id = packet_structs_to_version_receive_list(&packet_structs);
+        let mut all_version_match_arms = Vec::new();
         let mut match_arms_receive = Vec::new();
         let receive_empty = version_to_packet_id.is_empty();
         for (version, packet_list) in version_to_packet_id {
             let mut inner_match_arms = Vec::new();
             for (struct_name, packet_id) in packet_list {
                 let span = struct_name.span();
-                inner_match_arms.push(quote_spanned!(span=>
-                    #packet_id => Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(<#struct_name as ::falcon_core::network::packet::PacketDecode>::from_buf(buffer)?, connection)?))
+                let tokens = quote_spanned!(span=>
+                    #packet_id => {
+                        let packet = <#struct_name as ::falcon_core::network::packet::PacketDecode>::from_buf(buffer)?;
+                        let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
+                        let span = ::tracing::trace_span!("handle_packet", %packet_name);
+                        let _enter = span.enter();
+                        Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
+                    }
+                );
+                if version == -1 {
+                    all_version_match_arms.push(tokens);
+                } else {
+                    inner_match_arms.push(tokens);
+                }
+            }
+            if version != -1 {
+                match_arms_receive.push(quote!(
+                    #version => {
+                        match packet_id {
+                            #(#inner_match_arms,)*
+                            _ => Ok(None),
+                        }
+                    }
                 ));
             }
-            match_arms_receive.push(quote!(
-                #version => {
-                    match packet_id {
-                        #(#inner_match_arms,)*
-                        _ => Ok(None),
-                    }
-                }
-            ));
         }
+        let all_version_tokens = if !all_version_match_arms.is_empty() {
+            quote!(
+                if let Ok(Some(_)) = match packet_id {
+                    #(#all_version_match_arms,)*
+                    _ => {
+                        let result: Result<_, crate::error::DefaultProtocolError> = Ok(None);
+                        result
+                    }
+                } {
+                    return Ok(Some(()))
+                }
+            )
+        } else {
+            quote!()
+        };
         if !receive_empty {
             content.push(Item::Verbatim(quote!(
                 pub fn falcon_process_packet<R, C>(packet_id: i32, buffer: &mut R, connection: &mut C) -> Result<Option<()>, crate::error::DefaultProtocolError>
@@ -63,6 +92,7 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
                     C: ::falcon_core::network::connection::MinecraftConnection,
                 {
                     let protocol_version = connection.handler_state().protocol_id();
+                    #all_version_tokens
                     match protocol_version {
                         #(#match_arms_receive,)*
                         _ => Ok(None)
@@ -183,7 +213,7 @@ impl Parse for FalconAttrArgs {
                 VersionToId(element) => {
                     for version_lit in &element.versions {
                         let version: i32 = version_lit.base10_parse::<i32>()?;
-                        if version < 0 {
+                        if version < -1 {
                             return Err(Error::new(version_lit.span(), "Protocol versions should be non-negative integers"));
                         }
                         if versions.iter().any(|e: &VersionToPacketId| {
