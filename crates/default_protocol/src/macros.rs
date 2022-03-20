@@ -26,15 +26,15 @@ macro_rules! packet_send_fn {
     (
         $($spec_name:ident => $fn_name:ident {
             $(mod $mod_name:path;)+
-        }),*
+        }$(,)?)*
     ) => {
         $(
         pub fn $fn_name<C>(packet: $spec_name, connection: &mut C)
         where
-            C: ::falcon_core::network::connection::MinecraftConnection,
+            C: ::falcon_core::network::connection::MinecraftConnection + ?Sized,
         {
             $(
-            if let Some(_) = $mod_name(packet, connection) {
+            if $mod_name(packet, connection) {
                 return;
             }
             )+

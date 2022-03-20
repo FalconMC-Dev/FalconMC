@@ -22,7 +22,7 @@ impl DefaultProtocol {
         connection: &mut C,
     ) -> Result<Option<()>> {
         let handler_state = connection.handler_state();
-        let span = trace_span!("default_process_packet", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
+        let span = trace_span!("default", packet_id = %format!("{:#04X}", packet_id), state = ?handler_state.connection_state());
         let _enter = span.enter();
 
         serverbound::falcon_process_packet(packet_id, buffer, connection)
