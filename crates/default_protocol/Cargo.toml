@@ -9,10 +9,11 @@ edition = "2021"
 falcon_default_protocol_derive = { path = "../default_protocol_derive" }
 falcon_core = { path = "../core" }
 
-tracing = "0.1.30"
+tracing = "0.1.32"
 thiserror = "1.0.30"
 
 uuid = { version = "0.8.2", features = [ "v3" ] }
+derive-new = "0.5.9"
 ignore-result = "0.2.0"
 
 fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serializer" }
