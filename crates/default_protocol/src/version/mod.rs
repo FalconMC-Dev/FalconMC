@@ -1,6 +1,6 @@
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
-use falcon_core::network::packet::{PacketDecode, PacketHandler, PacketHandlerResult};
+use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 use falcon_core::network::*;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::server::Difficulty;
@@ -29,7 +29,7 @@ pub struct HandshakePacket {
 }
 
 impl PacketHandler for HandshakePacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult {
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult {
         match self.next_state {
             1 => connection
                 .handler_state_mut()
@@ -85,49 +85,49 @@ pub struct ProtocolSend;
 
 impl ProtocolSend {
     pub fn join_game(player: &mut dyn MinecraftPlayer, difficulty: Difficulty, max_players: u8, level_type: String, view_distance: i32, reduced_debug: bool) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.join_game(player, difficulty, max_players, level_type, view_distance, reduced_debug)?;
         }
         Ok(())
     }
 
     pub fn player_abilities(player: &mut dyn MinecraftPlayer, flying_speed: f32, fov_modifier: f32) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.player_abilities(player, flying_speed, fov_modifier)?;
         }
         Ok(())
     }
 
     pub fn unload_chunk(player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.unload_chunk(player, chunk_x, chunk_z)?;
         }
         Ok(())
     }
 
     pub fn send_chunk(player: &mut dyn MinecraftPlayer, chunk: &Chunk) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.send_chunk(player, chunk)?;
         }
         Ok(())
     }
 
     pub fn send_air_chunk(player: &mut dyn MinecraftPlayer, chunk_x: i32, chunk_z: i32) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.send_air_chunk(player, chunk_x, chunk_z)?;
         }
         Ok(())
     }
 
     pub fn player_position_and_look(player: &mut dyn MinecraftPlayer, flags: u8, teleport_id: i32) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.player_position_and_look(player, flags, teleport_id)?;
         }
         Ok(())
     }
 
     pub fn keep_alive(player: &mut dyn MinecraftPlayer, elapsed: u64) -> Result<()> {
-        if let Some(protocol) = ProtocolSend::get_protocol_version(player.get_protocol_version()) {
+        if let Some(protocol) = ProtocolSend::get_protocol_version(player.protocol_version()) {
             protocol.keep_alive(player, elapsed)?;
         }
         Ok(())

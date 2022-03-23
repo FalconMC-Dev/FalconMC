@@ -1,10 +1,8 @@
 use std::time::Instant;
 
-use ignore_result::Ignore;
-use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
-use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
+use falcon_core::network::connection::{ConnectionActor, ConnectionWrapper};
 use falcon_core::player::GameMode;
 use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
 use falcon_core::server::config::FalconConfig;
@@ -28,7 +26,7 @@ pub struct Player {
     // connection data
     time: Instant,
     protocol_version: i32,
-    connection: UnboundedSender<Box<ConnectionTask>>,
+    connection: ConnectionWrapper,
 }
 
 impl Player {
@@ -39,7 +37,7 @@ impl Player {
         spawn_pos: Position,
         spawn_look: LookAngles,
         protocol_version: i32,
-        connection: UnboundedSender<Box<ConnectionTask>>,
+        connection: ConnectionWrapper,
     ) -> Self {
         Player {
             username,
@@ -69,47 +67,47 @@ impl Player {
 }
 
 impl MinecraftPlayer for Player {
-    fn get_username(&self) -> &str {
+    fn username(&self) -> &str {
         &self.username
     }
 
-    fn get_uuid(&self) -> Uuid {
+    fn uuid(&self) -> Uuid {
         self.uuid
     }
 
-    fn get_entity_id(&self) -> i32 {
+    fn entity_id(&self) -> i32 {
         self.eid
     }
 
-    fn get_game_mode(&self) -> GameMode {
+    fn game_mode(&self) -> GameMode {
         self.game_mode
     }
 
-    fn get_dimension(&self) -> i32 {
+    fn dimension(&self) -> i32 {
         self.dimension
     }
 
-    fn get_ability_flags(&self) -> PlayerAbilityFlags {
+    fn ability_flags(&self) -> PlayerAbilityFlags {
         self.ability_flags
     }
 
-    fn get_position(&self) -> &Position {
+    fn position(&self) -> &Position {
         &self.position
     }
 
-    fn get_position_mut(&mut self) -> &mut Position {
+    fn position_mut(&mut self) -> &mut Position {
         &mut self.position
     }
 
-    fn get_look_angles(&self) -> &LookAngles {
+    fn look_angles(&self) -> &LookAngles {
         &self.look_angles
     }
 
-    fn get_look_angles_mut(&mut self) -> &mut LookAngles {
+    fn look_angles_mut(&mut self) -> &mut LookAngles {
         &mut self.look_angles
     }
 
-    fn get_view_distance(&self) -> u8 {
+    fn view_distance(&self) -> u8 {
         self.view_distance
     }
 
@@ -118,19 +116,15 @@ impl MinecraftPlayer for Player {
         debug!(view_distance = self.view_distance, "Decided view-distance");
     }
 
-    fn get_protocol_version(&self) -> i32 {
+    fn protocol_version(&self) -> i32 {
         self.protocol_version
     }
 
     fn disconnect(&mut self, reason: String) {
-        let task = {
-            // TODO: Using login packet here, this is incorrect
-            Box::new(move |conn: &mut dyn MinecraftConnection| conn.disconnect(reason))
-        };
-        self.connection.send(task).ignore();
+        self.connection.disconnect(reason);
     }
 
-    fn get_client_connection(&mut self) -> &mut UnboundedSender<Box<ConnectionTask>> {
+    fn client_connection(&mut self) -> &mut ConnectionWrapper {
         &mut self.connection
     }
 }

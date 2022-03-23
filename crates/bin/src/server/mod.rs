@@ -8,15 +8,15 @@ use anyhow::{Result, Context};
 use fastnbt::de::from_bytes;
 use flate2::read::GzDecoder;
 use tokio::runtime::Builder;
-use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
+use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::MissedTickBehavior;
 use uuid::Uuid;
 
-use falcon_core::network::connection::ConnectionTask;
+use falcon_core::network::connection::ConnectionWrapper;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::server::config::FalconConfig;
-use falcon_core::server::{Difficulty, McTask, MinecraftServer};
+use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData};
 use falcon_core::world::chunks::Chunk;
 use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
@@ -143,20 +143,22 @@ impl MainServer {
     }
 }
 
-impl MinecraftServer for MainServer {
-    fn online_player_count(&self) -> i32 {
+impl ServerData for MainServer {
+    fn online_count(&self) -> i32 {
         self.players.len() as i32
     }
 
-    fn get_player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer> {
+    fn player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer> {
         self.players.get(&uuid).map(|player| player as &dyn MinecraftPlayer)
     }
 
-    fn get_player_mut(&mut self, uuid: Uuid) -> Option<&mut dyn MinecraftPlayer> {
+    fn player_mut(&mut self, uuid: Uuid) -> Option<&mut dyn MinecraftPlayer> {
         self.players.get_mut(&uuid).map(|player| player as &mut dyn MinecraftPlayer)
     }
+}
 
-    fn player_join(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: UnboundedSender<Box<ConnectionTask>>) {
+impl ServerActor for MainServer {
+    fn player_join(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
         if self.players.contains_key(&uuid) {
             // TODO: Kick duplicqted playeers
             error!(%uuid, %username, "Duplicate player joining");
@@ -192,33 +194,44 @@ impl MinecraftServer for MainServer {
     fn player_leave(&mut self, uuid: Uuid) {
         let player = self.players.remove(&uuid);
         if let Some(player) = player {
-            info!(%uuid, name = player.get_username(), "Player disconnected!");
+            info!(%uuid, name = player.username(), "Player disconnected!");
         }
     }
 
     /// Signals through the update of the player's position and look
-    fn player_position_and_look(
+    fn player_update_pos_look(
         &mut self,
         uuid: Uuid,
-        x: f64,
-        y: f64,
-        z: f64,
-        yaw: f32,
-        pitch: f32,
-        _on_ground: bool,
+        x: Option<f64>,
+        y: Option<f64>,
+        z: Option<f64>,
+        yaw: Option<f32>,
+        pitch: Option<f32>,
+        _on_ground: Option<bool>,
     ) {
+        // TODO: make more fancy
         // TODO: fire event
         if let Entry::Occupied(mut entry) = self.players.entry(uuid) {
             let player = entry.get_mut();
-            let position = player.get_position_mut();
+            let position = player.position_mut();
             let (old_chunk_x, old_chunk_z) = (position.get_chunk_x(), position.get_chunk_z());
-            position.set_x(x);
-            position.set_y(y);
-            position.set_z(z);
+            if let Some(x) = x {
+                position.set_x(x);
+            }
+            if let Some(y) = y {
+                position.set_y(y);
+            }
+            if let Some(z) = z {
+                position.set_z(z);
+            }
             let (chunk_x, chunk_z) = (position.get_chunk_x(), position.get_chunk_z());
-            let look_angles = player.get_look_angles_mut();
-            look_angles.set_yaw(yaw);
-            look_angles.set_pitch(pitch);
+            let look_angles = player.look_angles_mut();
+            if let Some(yaw) = yaw {
+                look_angles.set_yaw(yaw)
+            }
+            if let Some(pitch) = pitch {
+                look_angles.set_pitch(pitch);
+            }
 
             if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
                 let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {

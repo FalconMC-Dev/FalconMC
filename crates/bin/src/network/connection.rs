@@ -8,11 +8,11 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{interval, Interval, MissedTickBehavior};
 
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead, PacketBufferWrite};
-use falcon_core::network::connection::{ConnectionTask, MinecraftConnection};
+use falcon_core::network::connection::{ConnectionActor, ConnectionData, ConnectionTask, ConnectionWrapper};
 use falcon_core::network::packet::PacketEncode;
 use falcon_core::network::ConnectionState::{Login, Status};
 use falcon_core::network::{ConnectionState, PacketHandlerState};
-use falcon_core::server::McTask;
+use falcon_core::server::{McTask, ServerWrapper};
 use falcon_core::ShutdownHandle;
 use falcon_core::network::UNKNOWN_PROTOCOL;
 
@@ -29,7 +29,7 @@ pub struct ClientConnection {
     in_buffer: BytesMut,
     // synchronization
     time_out: Interval,
-    server_tx: UnboundedSender<Box<McTask>>,
+    server_tx: ServerWrapper,
     connection_sync: (
         UnboundedSender<Box<ConnectionTask>>,
         UnboundedReceiver<Box<ConnectionTask>>,
@@ -54,7 +54,7 @@ impl ClientConnection {
             out_buffer: BytesMut::with_capacity(4096),
             in_buffer: BytesMut::with_capacity(4096),
             time_out,
-            server_tx,
+            server_tx: ServerWrapper::new(server_tx),
             connection_sync: tokio::sync::mpsc::unbounded_channel(),
         };
 
@@ -140,7 +140,7 @@ impl ClientConnection {
         }
         if self.handler_state.connection_state() == ConnectionState::Disconnected {
             if let Some(uuid) = self.handler_state.player_uuid() {
-                if self.server_tx.send(Box::new(move |server| server.player_leave(uuid))).is_err() {
+                if self.server_tx.execute(move |server| server.player_leave(uuid)).is_err() {
                     warn!(%uuid, "Could not make server lose player, keep alive should clean up!");
                 }
             }
@@ -205,8 +205,8 @@ impl ClientConnection {
     }
 }
 
-impl MinecraftConnection for ClientConnection {
-    fn get_address(&self) -> &SocketAddr {
+impl ConnectionData for ClientConnection {
+    fn address(&self) -> &SocketAddr {
         &self.addr
     }
 
@@ -218,12 +218,12 @@ impl MinecraftConnection for ClientConnection {
         &mut self.handler_state
     }
 
-    fn server_link_mut(&mut self) -> &mut UnboundedSender<Box<McTask>> {
+    fn server(&mut self) -> &mut ServerWrapper {
         &mut self.server_tx
     }
 
-    fn connection_link(&self) -> UnboundedSender<Box<ConnectionTask>> {
-        self.connection_sync.0.clone()
+    fn wrapper(&self) -> ConnectionWrapper {
+        ConnectionWrapper::new(self.connection_sync.0.clone())
     }
 
     fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode) {
@@ -237,12 +237,15 @@ impl MinecraftConnection for ClientConnection {
         self.out_buffer.write_var_i32(temp_buf.len() as i32);
         self.out_buffer.unsplit(temp_buf);
     }
+}
 
+impl ConnectionActor for ClientConnection {
     fn reset_keep_alive(&mut self) {
         self.time_out.reset();
     }
 
-    fn disconnect(&mut self, reason: String) { // TODO: change into ChatComponent
+    fn disconnect(&mut self, reason: String) {
+        // TODO: make disctinct between login and play
         let packet = falcon_protocol::build_disconnect_packet(reason);
         self.send_packet(0x00, &packet);
         self.handler_state.set_connection_state(ConnectionState::Disconnected);

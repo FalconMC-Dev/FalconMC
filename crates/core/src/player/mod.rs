@@ -1,52 +1,51 @@
-use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
 use serde::{Deserialize, Serialize};
 
 use crate::network::buffer::PacketBufferWrite;
 
-use crate::network::connection::ConnectionTask;
+use crate::network::connection::ConnectionWrapper;
 use crate::network::packet::PacketEncode;
 
 pub trait MinecraftPlayer {
     /// identity methods
-    fn get_username(&self) -> &str;
+    fn username(&self) -> &str;
 
-    fn get_uuid(&self) -> Uuid;
+    fn uuid(&self) -> Uuid;
 
     /// game methods
-    fn get_entity_id(&self) -> i32;
+    fn entity_id(&self) -> i32;
 
-    fn get_game_mode(&self) -> GameMode;
+    fn game_mode(&self) -> GameMode;
 
-    fn get_dimension(&self) -> i32;
+    fn dimension(&self) -> i32;
 
-    fn get_ability_flags(&self) -> PlayerAbilityFlags;
+    fn ability_flags(&self) -> PlayerAbilityFlags;
 
-    fn get_position(&self) -> &Position;
+    fn position(&self) -> &Position;
 
     /// This function should only be used to internally update the player's position
     /// as a result of an incoming packet, this does not update the position
     /// on the client-side!!!
-    fn get_position_mut(&mut self) -> &mut Position;
+    fn position_mut(&mut self) -> &mut Position;
 
-    fn get_look_angles(&self) -> &LookAngles;
+    fn look_angles(&self) -> &LookAngles;
 
     /// This function should only be used to internally update the player's look angles
     /// as a result of an incoming packet, this does not update the angles
     /// on the client-side!!!
-    fn get_look_angles_mut(&mut self) -> &mut LookAngles;
+    fn look_angles_mut(&mut self) -> &mut LookAngles;
 
-    fn get_view_distance(&self) -> u8;
+    fn view_distance(&self) -> u8;
 
     fn set_view_distance(&mut self, distance: u8);
 
     /// connection methods
-    fn get_protocol_version(&self) -> i32;
+    fn protocol_version(&self) -> i32;
 
     fn disconnect(&mut self, reason: String);
 
-    fn get_client_connection(&mut self) -> &mut UnboundedSender<Box<ConnectionTask>>;
+    fn client_connection(&mut self) -> &mut ConnectionWrapper;
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

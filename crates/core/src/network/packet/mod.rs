@@ -21,30 +21,30 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> PacketHandlerResult;
+    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;
 }
 
-pub type PacketHandlerResult = std::result::Result<(), PacketHandlerError>;
+pub type TaskScheduleResult = std::result::Result<(), TaskScheduleError>;
 
 #[derive(Clone, Copy, Debug)]
-pub enum PacketHandlerError {
-    ServerThreadSendError,
+pub enum TaskScheduleError {
+    ThreadSendError,
 }
 
-impl Display for PacketHandlerError {
+impl Display for TaskScheduleError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PacketHandlerError::ServerThreadSendError => {
+            TaskScheduleError::ThreadSendError => {
                 write!(f, "could not send task to server thread")
             }
         }
     }
 }
 
-impl std::error::Error for PacketHandlerError {}
+impl std::error::Error for TaskScheduleError {}
 
 impl_packet_primitive_self!(u8, write_u8, read_u8);
 impl_packet_primitive_self!(i8, write_i8, read_i8);

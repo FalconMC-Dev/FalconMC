@@ -1,6 +1,6 @@
 use thiserror::Error;
 use falcon_core::error::FalconCoreError;
-use falcon_core::network::packet::PacketHandlerError;
+use falcon_core::network::packet::TaskScheduleError;
 
 pub type Result<T> = std::result::Result<T, DefaultProtocolError>;
 
@@ -9,5 +9,5 @@ pub enum DefaultProtocolError {
     #[error("Falcon core threw error")]
     FalconCore(#[from] FalconCoreError),
     #[error("Error while executing packet logic")]
-    PacketHandleError(#[from] PacketHandlerError),
+    PacketHandleError(#[from] TaskScheduleError),
 }

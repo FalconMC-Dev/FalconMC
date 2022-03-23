@@ -57,8 +57,8 @@ impl World {
         C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
         A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
-        let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
-        let view_distance = player.get_view_distance();
+        let (chunk_x, chunk_z) = player.position().get_chunk_coords();
+        let view_distance = player.view_distance();
 
         for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
             for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
@@ -87,7 +87,7 @@ impl World {
         A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
         U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
-        let view_distance = player.get_view_distance();
+        let view_distance = player.view_distance();
         // unload old chunks
         for x in old_chunk_x - view_distance as i32..=old_chunk_x + view_distance as i32 {
             for z in old_chunk_z - view_distance as i32..=old_chunk_z + view_distance as i32 {
@@ -124,8 +124,8 @@ impl World {
         A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
         U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
     {
-        let old_view_distance = player.get_view_distance();
-        let (chunk_x, chunk_z) = player.get_position().get_chunk_coords();
+        let old_view_distance = player.view_distance();
+        let (chunk_x, chunk_z) = player.position().get_chunk_coords();
         if old_view_distance < view_distance {
             for x in -(view_distance as i8)..=view_distance as i8 {
                 for z in -(view_distance as i8)..=view_distance as i8 {
