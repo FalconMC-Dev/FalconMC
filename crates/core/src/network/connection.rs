@@ -68,6 +68,15 @@ impl ConnectionWrapper {
         })
     }
 
+    pub fn build_send_packet<T>(&self, packet: T, func: fn(T, &mut dyn MinecraftConnection))
+    where
+        T: Sync + Send + 'static,
+    {
+        self.link.send(Box::new(move |connection| {
+            func(packet, connection)
+        })).ignore();
+    }
+
     pub fn execute<T>(&self, task: T)
         where
             T: FnOnce(&mut dyn MinecraftConnection) + Send + Sync + 'static,

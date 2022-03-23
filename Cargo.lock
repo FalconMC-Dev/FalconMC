@@ -184,6 +184,7 @@ dependencies = [
  "anyhow",
  "bytes",
  "falcon_core",
+ "falcon_default_protocol",
  "falcon_protocol",
  "fastnbt 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "flate2",

@@ -29,9 +29,13 @@ pub trait ServerData {
 }
 
 pub trait ServerActor {
+    /// Called when a player tries to join the server,
+    /// i.e. when the login start packet is received.
+    fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper);
+
     /// Called when a player executes a successful login,
     /// i.e. when a player should spawn in the world.
-    fn player_join(&mut self, username: String, uuid: Uuid, protocol_version: i32, client_connection: ConnectionWrapper);
+    fn login_success(&mut self, username: String, uuid: Uuid, protocol_version: i32, client_connection: ConnectionWrapper);
 
     /// Called when a player loses connection with the server,
     /// i.e. when a connection breaks or the player leaves the game.
@@ -59,9 +63,15 @@ pub struct ServerWrapper {
 }
 
 impl ServerActor for ServerWrapper {
-    fn player_join(&mut self, username: String, uuid: Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
+    fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
         self.link.send(Box::new(move |server| {
-            server.player_join(username, uuid, protocol_version, client_connection);
+            server.player_login(username, protocol_version, client_connection);
+        })).ignore();
+    }
+
+    fn login_success(&mut self, username: String, uuid: Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
+        self.link.send(Box::new(move |server| {
+            server.login_success(username, uuid, protocol_version, client_connection);
         })).ignore();
     }
 

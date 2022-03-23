@@ -13,6 +13,7 @@ use tokio::time::MissedTickBehavior;
 use uuid::Uuid;
 
 use falcon_core::network::connection::ConnectionWrapper;
+use falcon_core::network::ConnectionState;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::server::config::FalconConfig;
@@ -20,6 +21,7 @@ use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData};
 use falcon_core::world::chunks::Chunk;
 use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
+use falcon_default_protocol::clientbound::specs::login::LoginSuccessSpec;
 use falcon_protocol::ProtocolSend;
 
 use crate::network::NetworkListener;
@@ -158,7 +160,20 @@ impl ServerData for MainServer {
 }
 
 impl ServerActor for MainServer {
-    fn player_join(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
+    fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
+        debug!(player_name = %username);
+        let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
+        let username2 = username.clone();
+        client_connection.execute(move |connection| {
+            falcon_default_protocol::clientbound::send_login_success(LoginSuccessSpec::new(player_uuid.clone(), username2), connection);
+            let handler_state = connection.handler_state_mut();
+            handler_state.set_connection_state(ConnectionState::Play);
+            handler_state.set_player_uuid(player_uuid);
+        });
+        self.login_success(username, player_uuid, protocol_version, client_connection);
+    }
+
+    fn login_success(&mut self, username: String, uuid: uuid::Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
         if self.players.contains_key(&uuid) {
             // TODO: Kick duplicqted playeers
             error!(%uuid, %username, "Duplicate player joining");

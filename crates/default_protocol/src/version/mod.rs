@@ -18,7 +18,7 @@ use crate::implement_packet_handler_enum;
 
 // pub mod status;
 
-#[derive(PacketDecode)]
+/*#[derive(PacketDecode)]
 pub struct HandshakePacket {
     #[var_int]
     version: i32,
@@ -29,7 +29,7 @@ pub struct HandshakePacket {
 }
 
 impl PacketHandler for HandshakePacket {
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult {
+    fn handle_packet(self, connection: &mut ConnectionWrapper) -> TaskScheduleResult {
         match self.next_state {
             1 => connection
                 .handler_state_mut()
@@ -79,7 +79,7 @@ impl VersionMatcher {
             }
         }
     }
-}
+}*/
 
 pub struct ProtocolSend;
 

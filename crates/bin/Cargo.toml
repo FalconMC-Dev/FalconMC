@@ -11,6 +11,7 @@ path = "src/main.rs"
 
 [dependencies]
 falcon_core = { path = "../core" }
+falcon_default_protocol = { path = "../default_protocol" }
 falcon_protocol = { path = "../protocol" }
 
 tracing = "0.1.32"
