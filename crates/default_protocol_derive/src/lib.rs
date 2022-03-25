@@ -114,21 +114,18 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
         // Sending
         let version_to_packet_id = packet_structs_to_version_outgoing_list(&packet_structs);
         let mut functions_outgoing = Vec::new();
-        for (packet_ident, (name, packet_list)) in version_to_packet_id {
+        for (packet_ident, (name, (packet_id, versions))) in version_to_packet_id {
             let mut all_tokens = None;
             let mut inner_match_arms = Vec::new();
-            for (version, packet_id) in packet_list {
-                let span = packet_ident.span();
-                if version == -1 {
-                    all_tokens = Some(quote_spanned!(span=>
-                        connection.send_packet(#packet_id, &packet);
-                    ));
-                } else {
-                    let span = packet_ident.span();
-                    inner_match_arms.push(quote_spanned!(span=>
-                        #version => connection.send_packet(#packet_id, &packet)
-                    ));
-                }
+            let span = packet_ident.span();
+            if versions.contains(&-1) {
+                all_tokens = Some(quote_spanned!(span=>
+                    connection.send_packet(#packet_id, &packet);
+                ));
+            } else {
+                inner_match_arms.push(quote_spanned!(span=>
+                    #(#versions)|* => connection.send_packet(#packet_id, &packet)
+                ));
             }
             let name_spanned = Ident::new(&name.value().to_string(), name.span());
             let tokens = if let Some(tokens) = all_tokens {
