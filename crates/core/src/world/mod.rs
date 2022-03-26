@@ -11,7 +11,6 @@ use falcon_core::world::chunks::SECTION_LENGTH;
 use itertools::Itertools;
 
 pub mod blocks;
-pub mod block_util;
 pub mod chunks;
 pub mod palette;
 
@@ -47,31 +46,30 @@ impl World {
     }
 
     /// Initialize terrain when player spawns
-    pub fn send_chunks_for_player<C, A, E>(
+    pub fn send_chunks_for_player<C, A>(
         &self,
         player: &mut dyn MinecraftPlayer,
         chunk_fn: C,
         air_fn: A,
-    ) -> Result<(), E>
+    )
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk),
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32),
     {
-        let (chunk_x, chunk_z) = player.position().get_chunk_coords();
+        let (chunk_x, chunk_z) = player.position().chunk_coords();
         let view_distance = player.view_distance();
 
         for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
             for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
                 match self.get_chunk(ChunkPos::new(x, z)) {
-                    None => air_fn(player, x, z)?,
-                    Some(chunk) => chunk_fn(player, chunk)?,
+                    None => air_fn(player, x, z),
+                    Some(chunk) => chunk_fn(player, chunk),
                 }
             }
         }
-        Ok(())
     }
 
-    pub fn update_player_pos<C, A, U, E>(
+    pub fn update_player_pos<C, A, U>(
         &self,
         player: &mut dyn MinecraftPlayer,
         old_chunk_x: i32,
@@ -81,18 +79,18 @@ impl World {
         chunk_fn: C,
         air_fn: A,
         unload_fn: U,
-    ) -> Result<(), E>
+    )
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
-        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk),
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32),
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32),
     {
         let view_distance = player.view_distance();
         // unload old chunks
         for x in old_chunk_x - view_distance as i32..=old_chunk_x + view_distance as i32 {
             for z in old_chunk_z - view_distance as i32..=old_chunk_z + view_distance as i32 {
                 if (chunk_x - x).abs() > view_distance as i32 || (chunk_z - z).abs() > view_distance as i32 {
-                    unload_fn(player, x, z)?;
+                    unload_fn(player, x, z);
                 }
             }
         }
@@ -101,38 +99,37 @@ impl World {
             for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
                 if (old_chunk_x - x).abs() > view_distance as i32 || (old_chunk_z - z).abs() > view_distance as i32 {
                     match self.get_chunk(ChunkPos::new(x, z)) {
-                        None => air_fn(player, x, z)?,
-                        Some(chunk) => chunk_fn(player, chunk)?,
+                        None => air_fn(player, x, z),
+                        Some(chunk) => chunk_fn(player, chunk),
                     }
                 }
             }
         }
-        Ok(())
     }
 
     #[allow(clippy::comparison_chain)]
-    pub fn update_view_distance<C, A, U, E>(
+    pub fn update_view_distance<C, A, U>(
         &self,
         player: &mut dyn MinecraftPlayer,
         view_distance: u8,
         chunk_fn: C,
         air_fn: A,
         unload_fn: U
-    ) -> Result<(), E>
+    )
     where
-        C: Fn(&mut dyn MinecraftPlayer, &Chunk) -> Result<(), E>,
-        A: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
-        U: Fn(&mut dyn MinecraftPlayer, i32, i32) -> Result<(), E>,
+        C: Fn(&mut dyn MinecraftPlayer, &Chunk),
+        A: Fn(&mut dyn MinecraftPlayer, i32, i32),
+        U: Fn(&mut dyn MinecraftPlayer, i32, i32),
     {
         let old_view_distance = player.view_distance();
-        let (chunk_x, chunk_z) = player.position().get_chunk_coords();
+        let (chunk_x, chunk_z) = player.position().chunk_coords();
         if old_view_distance < view_distance {
             for x in -(view_distance as i8)..=view_distance as i8 {
                 for z in -(view_distance as i8)..=view_distance as i8 {
                     if x.abs() as u8 > old_view_distance || z.abs() as u8 > old_view_distance {
                         match self.get_chunk(ChunkPos::new(chunk_x + x as i32, chunk_z + z as i32)) {
-                            None => air_fn(player, chunk_x + x as i32, chunk_z + z as i32)?,
-                            Some(chunk) => chunk_fn(player, chunk)?,
+                            None => air_fn(player, chunk_x + x as i32, chunk_z + z as i32),
+                            Some(chunk) => chunk_fn(player, chunk),
                         }
                     }
                 }
@@ -141,12 +138,11 @@ impl World {
             for x in -(old_view_distance as i8)..=old_view_distance as i8 {
                 for z in -(old_view_distance as i8)..=old_view_distance as i8 {
                     if x.abs() as u8 > view_distance || z.abs() as u8 > view_distance {
-                        unload_fn(player, chunk_x + x as i32, chunk_z + z as i32)?;
+                        unload_fn(player, chunk_x + x as i32, chunk_z + z as i32);
                     }
                 }
             }
         }
-        Ok(())
     }
 }
 
@@ -235,9 +231,9 @@ impl BlockPosition {
 impl From<Position> for BlockPosition {
     fn from(pos: Position) -> Self {
         BlockPosition::new(
-            pos.get_x().floor() as i32,
-            pos.get_y().floor() as i32,
-            pos.get_z().floor() as i32,
+            pos.x().floor() as i32,
+            pos.y().floor() as i32,
+            pos.z().floor() as i32,
         )
     }
 }

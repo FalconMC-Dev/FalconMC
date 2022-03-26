@@ -4,25 +4,25 @@ pub use inner::*;
 mod inner {
     use falcon_core::network::connection::MinecraftConnection;
     use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
-    use falcon_core::server::ServerActor;
 
     #[derive(PacketDecode)]
-    #[falcon_packet(47, 404 = 0x00)]
-    pub struct LoginStartPacket {
-        name: String,
+    #[falcon_packet(340 = 0x0B; 393, 401, 404 = 0x0E)]
+    pub struct KeepAlivePacket {
+        id: i64,
     }
 
-    impl PacketHandler for LoginStartPacket {
+    impl PacketHandler for KeepAlivePacket {
         fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult {
-            let version = connection.handler_state().protocol_id();
-            let wrapper = connection.wrapper();
-            connection.server()
-                .player_login(self.name, version, wrapper);
+            if connection.handler_state().last_keep_alive() != self.id as u64 {
+                connection.disconnect(String::from("Received invalid Keep Alive id!"));
+            } else {
+                connection.reset_keep_alive();
+            }
             Ok(())
         }
 
         fn get_name(&self) -> &'static str {
-            "Login Start (1.8.9)"
+            "Keep alive (1.12.2)"
         }
     }
 }

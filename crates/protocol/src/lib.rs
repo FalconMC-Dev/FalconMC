@@ -9,8 +9,6 @@ use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_default_protocol::DisconnectPacketLogin;
 
-pub use falcon_default_protocol::ProtocolSend;
-
 pub mod error;
 mod macros;
 pub mod manager;

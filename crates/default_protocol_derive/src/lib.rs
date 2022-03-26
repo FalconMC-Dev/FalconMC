@@ -114,19 +114,22 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
         // Sending
         let version_to_packet_id = packet_structs_to_version_outgoing_list(&packet_structs);
         let mut functions_outgoing = Vec::new();
-        for (packet_ident, (name, packet_list)) in version_to_packet_id {
+        for (packet_ident, (name, packet_map)) in version_to_packet_id {
             let mut all_tokens = None;
             let mut inner_match_arms = Vec::new();
-            for (version, packet_id) in packet_list {
-                let span = packet_ident.span();
-                if version == -1 {
+            let span = packet_ident.span();
+            for (packet_id, versions) in packet_map {
+                if versions.contains(&-1) {
                     all_tokens = Some(quote_spanned!(span=>
+                        let packet: #packet_ident = packet.take().unwrap().into();
                         connection.send_packet(#packet_id, &packet);
                     ));
                 } else {
-                    let span = packet_ident.span();
                     inner_match_arms.push(quote_spanned!(span=>
-                        #version => connection.send_packet(#packet_id, &packet)
+                        #(#versions)|* => {
+                            let packet: #packet_ident = packet.take().unwrap().into();
+                            connection.send_packet(#packet_id, &packet)
+                        }
                     ));
                 }
             }
@@ -143,12 +146,14 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
                 )
             };
             functions_outgoing.push(quote!(
-                pub fn #name_spanned<T, C>(packet: T, connection: &mut C) -> bool
+                pub fn #name_spanned<T, C>(packet: &mut Option<T>, connection: &mut C) -> bool
                 where
                     #packet_ident: ::std::convert::From<T>,
                     C: ::falcon_core::network::connection::MinecraftConnection + ?Sized,
                 {
-                    let packet: #packet_ident = packet.into();
+                    if packet.is_none() {
+                        return false;
+                    }
                     #tokens
                     true
                 }
