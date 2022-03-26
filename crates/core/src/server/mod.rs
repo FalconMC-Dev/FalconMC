@@ -10,6 +10,7 @@ use falcon_core::network::packet::TaskScheduleError;
 use crate::network::connection::ConnectionWrapper;
 use crate::network::packet::TaskScheduleResult;
 use crate::player::MinecraftPlayer;
+use crate::server::config::FalconConfig;
 
 pub mod config;
 
@@ -128,8 +129,29 @@ pub enum Difficulty {
     Hard,
 }
 
-#[derive(Debug, Serialize, new)]
+#[derive(Debug, Serialize)]
 pub struct ServerVersion {
     pub name: String,
     pub protocol: i32,
+}
+
+impl ServerVersion {
+    pub fn new(name: String, protocol_id: i32) -> Self {
+        let excluded = FalconConfig::global().excluded_versions();
+        let (name, version) = if !FalconConfig::ALLOWED_VERSIONS.contains(&protocol_id.unsigned_abs()) || excluded.contains(&protocol_id.unsigned_abs()) {
+            let (name, mut protocol) = (String::from("Unsupported version"), FalconConfig::ALLOWED_VERSIONS[0]);
+            for version in FalconConfig::ALLOWED_VERSIONS {
+                if !excluded.contains(&version) {
+                    protocol = version;
+                }
+            }
+            (name, protocol as i32)
+        } else {
+            (name, protocol_id)
+        };
+        ServerVersion {
+            name,
+            protocol: version,
+        }
+    }
 }

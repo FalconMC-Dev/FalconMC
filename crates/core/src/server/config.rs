@@ -10,13 +10,18 @@ static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct FalconConfig {
-    connection: ConnectionConfig,
+    connection: ConnectionSettings,
     players: PlayerSettings,
     server: ServerSettings,
-
+    versions: VersionSettings,
 }
 
 impl FalconConfig {
+    // 47, 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, --> for future update
+    pub const ALLOWED_VERSIONS: [u32; 3]= [
+         393, 401, 404
+    ];
+
     pub fn global() -> &'static FalconConfig {
         INSTANCE.get().expect("FalconConfig is not initialized!!")
     }
@@ -32,6 +37,10 @@ impl FalconConfig {
 
     pub fn server_ip(&self) -> IpAddr {
         self.connection.server_ip
+    }
+
+    pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ {
+        (self.server_ip(), self.server_port())
     }
 
     pub fn max_players(&self) -> i32 {
@@ -58,20 +67,20 @@ impl FalconConfig {
         self.players.spawn_look
     }
 
-    pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ {
-        (self.server_ip(), self.server_port())
+    pub fn excluded_versions(&self) -> &Vec<u32> {
+        &self.versions.excluded
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ConnectionConfig {
+pub struct ConnectionSettings {
     server_ip: IpAddr,
     server_port: u16,
 }
 
-impl Default for ConnectionConfig {
+impl Default for ConnectionSettings {
     fn default() -> Self {
-        ConnectionConfig {
+        ConnectionSettings {
             server_port: 30000,
             server_ip: IpAddr::from_str("0.0.0.0").unwrap(),
         }
@@ -110,4 +119,9 @@ impl Default for ServerSettings {
             description: String::from("§eFalcon server§r§b!!!"),
         }
     }
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct VersionSettings {
+    excluded: Vec<u32>,
 }
