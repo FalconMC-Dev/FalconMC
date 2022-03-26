@@ -10,6 +10,7 @@ use falcon_core::network::packet::TaskScheduleError;
 use crate::network::connection::ConnectionWrapper;
 use crate::network::packet::TaskScheduleResult;
 use crate::player::MinecraftPlayer;
+use crate::server::config::FalconConfig;
 
 pub mod config;
 
@@ -29,6 +30,10 @@ pub trait ServerData {
 }
 
 pub trait ServerActor {
+    /// Called when the server's status is received,
+    /// i.e. when the server is pinged in the multiplayer menu.
+    fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper);
+
     /// Called when a player tries to join the server,
     /// i.e. when the login start packet is received.
     fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper);
@@ -63,6 +68,12 @@ pub struct ServerWrapper {
 }
 
 impl ServerActor for ServerWrapper {
+    fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper) {
+        self.link.send(Box::new(move |server| {
+            server.request_status(protocol_id, connection);
+        })).ignore();
+    }
+
     fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
         self.link.send(Box::new(move |server| {
             server.player_login(username, protocol_version, client_connection);
@@ -118,8 +129,29 @@ pub enum Difficulty {
     Hard,
 }
 
-#[derive(Debug, Serialize, new)]
+#[derive(Debug, Serialize)]
 pub struct ServerVersion {
     pub name: String,
     pub protocol: i32,
+}
+
+impl ServerVersion {
+    pub fn new(name: String, protocol_id: i32) -> Self {
+        let excluded = FalconConfig::global().excluded_versions();
+        let (name, version) = if !FalconConfig::ALLOWED_VERSIONS.contains(&protocol_id.unsigned_abs()) || excluded.contains(&protocol_id.unsigned_abs()) {
+            let (name, mut protocol) = (String::from("Unsupported version"), FalconConfig::ALLOWED_VERSIONS[0]);
+            for version in FalconConfig::ALLOWED_VERSIONS {
+                if !excluded.contains(&version) {
+                    protocol = version;
+                }
+            }
+            (name, protocol as i32)
+        } else {
+            (name, protocol_id)
+        };
+        ServerVersion {
+            name,
+            protocol: version,
+        }
+    }
 }

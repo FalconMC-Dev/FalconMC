@@ -17,7 +17,6 @@ fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serialize
 serde = { version = "1.0.136", features = [ "derive" ] }
 confy = "0.4.0"
 
-derive-new = "0.5.9"
 itertools = "0.10.3"
 ignore-result = "0.2.0"
 

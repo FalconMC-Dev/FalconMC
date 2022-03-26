@@ -22,7 +22,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47, 404 = 0x02; outgoing = "login_success"; no_receive)]
+    #[falcon_packet(47, 393, 401, 404 = 0x02; outgoing = "login_success"; no_receive)]
     pub struct LoginSuccess {
         uuid: String,
         #[max_length(16)]

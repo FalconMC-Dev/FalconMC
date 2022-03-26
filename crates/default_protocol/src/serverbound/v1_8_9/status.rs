@@ -5,6 +5,7 @@ mod inner {
     use falcon_core::network::connection::MinecraftConnection;
     use falcon_core::network::ConnectionState;
     use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
+    use falcon_core::server::ServerActor;
     use crate::clientbound::send_status_pong;
 
     #[derive(PacketDecode)]
@@ -13,7 +14,10 @@ mod inner {
 
     impl PacketHandler for StatusRequestPacket {
         fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult {
-            debug!("Incoming status!");
+            let version = connection.handler_state().protocol_id();
+            let wrapper = connection.wrapper();
+            connection.server()
+                .request_status(version, wrapper);
             Ok(())
         }
 
