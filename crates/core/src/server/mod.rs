@@ -29,6 +29,10 @@ pub trait ServerData {
 }
 
 pub trait ServerActor {
+    /// Called when the server's status is received,
+    /// i.e. when the server is pinged in the multiplayer menu.
+    fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper);
+
     /// Called when a player tries to join the server,
     /// i.e. when the login start packet is received.
     fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper);
@@ -63,6 +67,12 @@ pub struct ServerWrapper {
 }
 
 impl ServerActor for ServerWrapper {
+    fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper) {
+        self.link.send(Box::new(move |server| {
+            server.request_status(protocol_id, connection);
+        })).ignore();
+    }
+
     fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
         self.link.send(Box::new(move |server| {
             server.player_login(username, protocol_version, client_connection);

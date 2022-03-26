@@ -17,12 +17,13 @@ use falcon_core::network::ConnectionState;
 use falcon_core::player::MinecraftPlayer;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::server::config::FalconConfig;
-use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData};
+use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData, ServerVersion};
 use falcon_core::world::chunks::Chunk;
 use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
 use falcon_default_protocol::clientbound as falcon_send;
 use falcon_default_protocol::clientbound::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec};
+use falcon_default_protocol::clientbound::specs::status::{PlayerData, StatusResponseSpec};
 use falcon_send::specs::login::LoginSuccessSpec;
 
 use crate::network::NetworkListener;
@@ -161,6 +162,13 @@ impl ServerData for MainServer {
 }
 
 impl ServerActor for MainServer {
+    fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper) {
+        let version = ServerVersion::new(String::from("1.13-1.17.1"), protocol_id);
+        let player_data = PlayerData::new(FalconConfig::global().max_players(), self.online_count());
+        let description = String::from("§eFalcon server§r§b!!!");
+        connection.build_send_packet(StatusResponseSpec::new(version, player_data, description), |p, c| falcon_send::send_status_response(p, c));
+    }
+
     fn player_login(&mut self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
         debug!(player_name = %username);
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
