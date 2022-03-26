@@ -49,7 +49,7 @@ macro_rules! define_spec {
 #[macro_export]
 macro_rules! packet_send_fn {
     (
-        $($spec_name:path => $fn_name:ident {
+        $($spec_name:ty => $fn_name:ident {
             $(mod $mod_name:path;)+
         }$(,)?)*
     ) => {
