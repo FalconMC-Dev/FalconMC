@@ -22,9 +22,32 @@ macro_rules! implement_packet_handler_enum {
 }
 
 #[macro_export]
+macro_rules! define_spec {
+    ($spec_name:ident $(=> $($arg:ident: $arg_ty:ty),*)? {
+        $($default:ident: $default_ty:ty),*$(,)?
+        $(;$(let $field:ident: $field_ty:ty = $init:expr),*$(,)?)?
+    }$(, $($trait:path),*)?) => {
+        $($(#[derive($trait)])*)?
+        pub struct $spec_name {
+            $($(pub(crate) $field: $field_ty,)*)?
+            $(pub(crate) $default: $default_ty),*
+        }
+
+        impl $spec_name {
+            pub fn new($($($arg: $arg_ty,)*)? $($default: $default_ty),*) -> Self {
+                $spec_name {
+                    $($($field: $init,)*)?
+                    $($default),*
+                }
+            }
+        }
+    }
+}
+
+#[macro_export]
 macro_rules! packet_send_fn {
     (
-        $($spec_name:ident => $fn_name:ident {
+        $($spec_name:path => $fn_name:ident {
             $(mod $mod_name:path;)+
         }$(,)?)*
     ) => {
@@ -33,8 +56,9 @@ macro_rules! packet_send_fn {
         where
             C: ::falcon_core::network::connection::MinecraftConnection + ?Sized,
         {
+            let mut packet = Some(packet);
             $(
-            if $mod_name(packet, connection) {
+            if $mod_name(&mut packet, connection) {
                 return;
             }
             )+

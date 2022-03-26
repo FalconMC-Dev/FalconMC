@@ -114,18 +114,24 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
         // Sending
         let version_to_packet_id = packet_structs_to_version_outgoing_list(&packet_structs);
         let mut functions_outgoing = Vec::new();
-        for (packet_ident, (name, (packet_id, versions))) in version_to_packet_id {
+        for (packet_ident, (name, packet_map)) in version_to_packet_id {
             let mut all_tokens = None;
             let mut inner_match_arms = Vec::new();
             let span = packet_ident.span();
-            if versions.contains(&-1) {
-                all_tokens = Some(quote_spanned!(span=>
-                    connection.send_packet(#packet_id, &packet);
-                ));
-            } else {
-                inner_match_arms.push(quote_spanned!(span=>
-                    #(#versions)|* => connection.send_packet(#packet_id, &packet)
-                ));
+            for (packet_id, versions) in packet_map {
+                if versions.contains(&-1) {
+                    all_tokens = Some(quote_spanned!(span=>
+                        let packet: #packet_ident = packet.take().unwrap().into();
+                        connection.send_packet(#packet_id, &packet);
+                    ));
+                } else {
+                    inner_match_arms.push(quote_spanned!(span=>
+                        #(#versions)|* => {
+                            let packet: #packet_ident = packet.take().unwrap().into();
+                            connection.send_packet(#packet_id, &packet)
+                        }
+                    ));
+                }
             }
             let name_spanned = Ident::new(&name.value().to_string(), name.span());
             let tokens = if let Some(tokens) = all_tokens {
@@ -140,12 +146,14 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
                 )
             };
             functions_outgoing.push(quote!(
-                pub fn #name_spanned<T, C>(packet: T, connection: &mut C) -> bool
+                pub fn #name_spanned<T, C>(packet: &mut Option<T>, connection: &mut C) -> bool
                 where
                     #packet_ident: ::std::convert::From<T>,
                     C: ::falcon_core::network::connection::MinecraftConnection + ?Sized,
                 {
-                    let packet: #packet_ident = packet.into();
+                    if packet.is_none() {
+                        return false;
+                    }
                     #tokens
                     true
                 }
