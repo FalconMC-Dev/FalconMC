@@ -26,6 +26,7 @@ macro_rules! define_spec {
     ($spec_name:ident $(=> $($arg:ident: $arg_ty:ty),*)? {
         $($default:ident: $default_ty:ty),*$(,)?
         $(;$(let $field:ident: $field_ty:ty = $init:expr),*$(,)?)?
+        $(;{$($data:stmt)*})?
     }$(, $($trait:path),*)?) => {
         $($(#[derive($trait)])*)?
         pub struct $spec_name {
@@ -35,6 +36,7 @@ macro_rules! define_spec {
 
         impl $spec_name {
             pub fn new($($($arg: $arg_ty,)*)? $($default: $default_ty),*) -> Self {
+                $($($data)*)?
                 $spec_name {
                     $($($field: $init,)*)?
                     $($default),*
