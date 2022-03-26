@@ -165,7 +165,7 @@ impl ServerActor for MainServer {
     fn request_status(&self, protocol_id: i32, connection: ConnectionWrapper) {
         let version = ServerVersion::new(String::from("1.13-1.17.1"), protocol_id);
         let player_data = PlayerData::new(FalconConfig::global().max_players(), self.online_count());
-        let description = String::from("§eFalcon server§r§b!!!");
+        let description = String::from(FalconConfig::global().description());
         connection.build_send_packet(StatusResponseSpec::new(version, player_data, description), |p, c| falcon_send::send_status_response(p, c));
     }
 
