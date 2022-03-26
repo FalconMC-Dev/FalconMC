@@ -45,7 +45,9 @@ pub trait MinecraftPlayer {
 
     fn disconnect(&mut self, reason: String);
 
-    fn client_connection(&mut self) -> &mut ConnectionWrapper;
+    fn connection(&self) -> &ConnectionWrapper;
+
+    fn connection_mut(&mut self) -> &mut ConnectionWrapper;
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -106,15 +108,15 @@ impl Position {
         Position { x, y, z }
     }
 
-    pub fn get_x(&self) -> f64 {
+    pub fn x(&self) -> f64 {
         self.x
     }
 
-    pub fn get_y(&self) -> f64 {
+    pub fn y(&self) -> f64 {
         self.y
     }
 
-    pub fn get_z(&self) -> f64 {
+    pub fn z(&self) -> f64 {
         self.z
     }
 
@@ -131,17 +133,17 @@ impl Position {
     }
 
     /// A chunk is 16 wide to this function, this is hardcoded
-    pub fn get_chunk_x(&self) -> i32 {
+    pub fn chunk_x(&self) -> i32 {
         (self.x as i32) >> 4
     }
 
     /// A chunk is 16 long to this function, this is hardcoded
-    pub fn get_chunk_z(&self) -> i32 {
+    pub fn chunk_z(&self) -> i32 {
         (self.z as i32) >> 4
     }
 
-    pub fn get_chunk_coords(&self) -> (i32, i32) {
-        (self.get_chunk_x(), self.get_chunk_z())
+    pub fn chunk_coords(&self) -> (i32, i32) {
+        (self.chunk_x(), self.chunk_z())
     }
 }
 
@@ -156,11 +158,11 @@ impl LookAngles {
         LookAngles { yaw, pitch }
     }
 
-    pub fn get_yaw(&self) -> f32 {
+    pub fn yaw(&self) -> f32 {
         self.yaw
     }
 
-    pub fn get_pitch(&self) -> f32 {
+    pub fn pitch(&self) -> f32 {
         self.pitch
     }
 

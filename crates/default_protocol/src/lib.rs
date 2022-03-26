@@ -1,18 +1,15 @@
 #[macro_use]
-extern crate derive_new;
-#[macro_use]
 extern crate tracing;
 
 use crate::error::Result;
 use falcon_core::network::buffer::PacketBufferRead;
 use falcon_core::network::connection::MinecraftConnection;
 use falcon_core::network::packet::PacketEncode;
-pub use version::ProtocolSend;
 
 pub mod error;
 pub mod macros;
-pub mod version;
 pub mod serverbound;
+pub mod clientbound;
 
 #[derive(Debug, Default)]
 pub struct DefaultProtocol;

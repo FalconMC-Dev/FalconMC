@@ -245,7 +245,6 @@ dependencies = [
 name = "falcon_default_protocol"
 version = "0.1.0"
 dependencies = [
- "derive-new",
  "falcon_core",
  "falcon_default_protocol_derive",
  "fastnbt 1.3.0 (git+https://github.com/owengage/fastnbt?branch=dev/serializer)",

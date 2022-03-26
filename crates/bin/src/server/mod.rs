@@ -21,8 +21,9 @@ use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData};
 use falcon_core::world::chunks::Chunk;
 use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
-use falcon_default_protocol::clientbound::specs::login::LoginSuccessSpec;
-use falcon_protocol::ProtocolSend;
+use falcon_default_protocol::clientbound as falcon_send;
+use falcon_default_protocol::clientbound::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec};
+use falcon_send::specs::login::LoginSuccessSpec;
 
 use crate::network::NetworkListener;
 use crate::player::Player;
@@ -141,7 +142,7 @@ impl MainServer {
 
     #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
     fn keep_alive(&mut self) {
-        self.players.retain(|_, player| player.send_keep_alive().is_ok());
+        self.players.values().for_each(|player| player.send_keep_alive());
     }
 }
 
@@ -165,7 +166,7 @@ impl ServerActor for MainServer {
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
         let username2 = username.clone();
         client_connection.execute(move |connection| {
-            falcon_default_protocol::clientbound::send_login_success(LoginSuccessSpec::new(player_uuid.clone(), username2), connection);
+            falcon_send::send_login_success(LoginSuccessSpec::new(player_uuid, username2), connection);
             let handler_state = connection.handler_state_mut();
             handler_state.set_connection_state(ConnectionState::Play);
             handler_state.set_player_uuid(player_uuid);
@@ -184,26 +185,13 @@ impl ServerActor for MainServer {
         self.entity_id_count += 1;
 
         let player = self.players.entry(uuid).or_insert(player);
-        if let Err(error) = ProtocolSend::join_game(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 6, false) {
-            player.disconnect(format!("Error whilst sending packet: {}", error));
-        }
-        if let Err(error) = ProtocolSend::player_abilities(player, 0.05, 0.1) {
-            player.disconnect(format!("Error whilst sending packet: {}", error));
-        }
-
-        let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-            ProtocolSend::send_chunk(player, chunk)
-        };
-        let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-            ProtocolSend::send_air_chunk(player, x, z)
-        };
-        if let Err(error) = self.world.send_chunks_for_player(player, chunk_fn, chunk_air_fn) {
-            player.disconnect(format!("Error whilst sending packet: {}", error));
-        }
-
-        if let Err(error) = ProtocolSend::player_position_and_look(player, 0, 1) {
-            player.disconnect(format!("Error whilst sending packet: {}", error));
-        }
+        let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), FalconConfig::global().max_view_distance() as i32, false);
+        player.connection().build_send_packet(join_game_spec, |p, c| falcon_send::send_join_game(p, c));
+        let player_abilities = PlayerAbilitiesSpec::new(player, 0.05, 0.1);
+        player.connection().build_send_packet(player_abilities, |p, c| falcon_send::send_player_abilities(p, c));
+        self.world.send_chunks_for_player(player, CHUNK_FN, CHUNK_AIR_FN);
+        let position_look = PositionAndLookSpec::new(player, 0, 1);
+        player.connection().build_send_packet(position_look, |p, c| falcon_send::send_position_look(p, c));
     }
 
     fn player_leave(&mut self, uuid: Uuid) {
@@ -228,39 +216,18 @@ impl ServerActor for MainServer {
         // TODO: fire event
         if let Entry::Occupied(mut entry) = self.players.entry(uuid) {
             let player = entry.get_mut();
-            let position = player.position_mut();
-            let (old_chunk_x, old_chunk_z) = (position.get_chunk_x(), position.get_chunk_z());
-            if let Some(x) = x {
-                position.set_x(x);
-            }
-            if let Some(y) = y {
-                position.set_y(y);
-            }
-            if let Some(z) = z {
-                position.set_z(z);
-            }
-            let (chunk_x, chunk_z) = (position.get_chunk_x(), position.get_chunk_z());
             let look_angles = player.look_angles_mut();
-            if let Some(yaw) = yaw {
-                look_angles.set_yaw(yaw)
-            }
-            if let Some(pitch) = pitch {
-                look_angles.set_pitch(pitch);
-            }
+            yaw.map(|e| look_angles.set_yaw(e));
+            pitch.map(|e| look_angles.set_pitch(e));
 
+            let position = player.position_mut();
+            let (old_chunk_x, old_chunk_z) = (position.chunk_x(), position.chunk_z());
+            x.map(|x| position.set_x(x));
+            y.map(|y| position.set_y(y));
+            z.map(|z| position.set_z(z));
+            let (chunk_x, chunk_z) = (position.chunk_x(), position.chunk_z());
             if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
-                let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-                    ProtocolSend::send_chunk(player, chunk).with_context(|| "Error sending chunk")
-                };
-                let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                    ProtocolSend::send_air_chunk(player, x, z).with_context(|| "Error sending chunk")
-                };
-                let unload_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                    ProtocolSend::unload_chunk(player, x, z).with_context(|| "Erorr unloading chunk")
-                };
-                if let Err(error) = self.world.update_player_pos(player, old_chunk_x, old_chunk_z, chunk_x, chunk_z, chunk_fn, chunk_air_fn, unload_fn) {
-                    player.disconnect(format!("Error whilst sending packet: {}", error));
-                }
+                self.world.update_player_pos(player, old_chunk_x, old_chunk_z, chunk_x, chunk_z, CHUNK_FN, CHUNK_AIR_FN, UNLOAD_FN);
             }
         }
     }
@@ -268,19 +235,20 @@ impl ServerActor for MainServer {
     fn player_update_view_distance(&mut self, uuid: Uuid, view_distance: u8) {
         if let Entry::Occupied(mut entry) = self.players.entry(uuid) {
             let player = entry.get_mut();
-            let chunk_fn = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
-                ProtocolSend::send_chunk(player, chunk).with_context(|| "Error sending chunk")
-            };
-            let chunk_air_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                ProtocolSend::send_air_chunk(player, x, z).with_context(|| "Error sending chunk")
-            };
-            let unload_fn = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
-                ProtocolSend::unload_chunk(player, x, z).with_context(|| "Erorr unloading chunk")
-            };
-            if let Err(error) = self.world.update_view_distance(player, view_distance, chunk_fn, chunk_air_fn, unload_fn) {
-                player.disconnect(format!("Error whilst sending packet: {}", error));
-            }
+            self.world.update_view_distance(player, view_distance, CHUNK_FN, CHUNK_AIR_FN, UNLOAD_FN);
             player.set_view_distance(view_distance);
         }
     }
 }
+
+const CHUNK_FN: fn(&mut dyn MinecraftPlayer, &Chunk) = |player: &mut dyn MinecraftPlayer, chunk: &Chunk| {
+    let packet = ChunkDataSpec::new(chunk, player.protocol_version());
+    player.connection().build_send_packet(packet, |p, c| falcon_send::send_chunk_data(p, c));
+};
+const CHUNK_AIR_FN: fn(&mut dyn MinecraftPlayer, i32, i32) = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
+    let packet = ChunkDataSpec::empty(x, z);
+    player.connection().build_send_packet(packet, |p, c| falcon_send::send_chunk_data(p, c));
+};
+const UNLOAD_FN: fn(&mut dyn MinecraftPlayer, i32, i32) = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
+    player.connection().build_send_packet((x, z), |p, c| falcon_send::send_unload_chunk(p, c));
+};

@@ -6,9 +6,7 @@ use falcon_core::network::connection::{ConnectionActor, ConnectionWrapper};
 use falcon_core::player::GameMode;
 use falcon_core::player::{LookAngles, MinecraftPlayer, PlayerAbilityFlags, Position};
 use falcon_core::server::config::FalconConfig;
-use falcon_protocol::ProtocolSend;
-
-use anyhow::Result;
+use falcon_default_protocol::clientbound as falcon_send;
 
 #[derive(Debug)]
 pub struct Player {
@@ -56,13 +54,13 @@ impl Player {
     }
 
     #[tracing::instrument(skip(self))]
-    pub fn send_keep_alive(&mut self) -> Result<()> {
+    pub fn send_keep_alive(&self) {
         debug!("Keep alive sent!");
-        let elapsed = self.time.elapsed();
-        if let Err(error) = ProtocolSend::keep_alive(self, elapsed.as_secs()) {
-            bail!("Could not send keep alive - disconnecting! For: {}, due to: {}", &self.username, error);
-        }
-        Ok(())
+        let elapsed = self.time.elapsed().as_secs();
+        self.connection.execute(move |connection| {
+            connection.handler_state_mut().set_last_keep_alive(elapsed);
+            falcon_send::send_keep_alive(elapsed as i64, connection);
+        });
     }
 }
 
@@ -124,7 +122,11 @@ impl MinecraftPlayer for Player {
         self.connection.disconnect(reason);
     }
 
-    fn client_connection(&mut self) -> &mut ConnectionWrapper {
+    fn connection(&self) -> &ConnectionWrapper {
+        &self.connection
+    }
+
+    fn connection_mut(&mut self) -> &mut ConnectionWrapper {
         &mut self.connection
     }
 }
