@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 falcon_default_protocol_derive = { path = "../default_protocol_derive" }
 falcon_core = { path = "../core" }
+mc_chat = { version = "0.3.0", features = [ "serde" ] }
 
 tracing = "0.1.32"
 thiserror = "1.0.30"

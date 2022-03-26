@@ -2,6 +2,7 @@ pub use inner::*;
 
 #[falcon_default_protocol_derive::packet_module]
 mod inner {
+    use mc_chat::{ChatComponent, ComponentStyle};
     use falcon_core::network::connection::MinecraftConnection;
     use falcon_core::network::ConnectionState;
     use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
@@ -26,7 +27,7 @@ mod inner {
                 2 => connection
                     .handler_state_mut()
                     .set_connection_state(ConnectionState::Login),
-                _ => connection.disconnect(String::from("Impossible next state!")),
+                _ => connection.disconnect(ChatComponent::from_text("Impossible next state!", ComponentStyle::with_version(self.version.unsigned_abs()))),
             }
             connection
                 .handler_state_mut()

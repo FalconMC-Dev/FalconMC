@@ -2,6 +2,7 @@ pub use inner::*;
 
 #[falcon_default_protocol_derive::packet_module]
 mod inner {
+    use mc_chat::ChatComponent;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::player::PlayerAbilityFlags;
     use crate::clientbound::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
@@ -46,6 +47,21 @@ mod inner {
                 flags: spec.flags,
                 fly_speed: spec.flying_speed,
                 fov_modifier: spec.fov_modifier
+            }
+        }
+    }
+
+    #[derive(PacketEncode)]
+    #[falcon_packet(47 = 0x40; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340 = 0x1A; 393, 401, 404 = 0x1B; no_receive; outgoing = "disconnect")]
+    pub struct DisconnectPacket {
+        #[max_length(262144)]
+        reason: String,
+    }
+
+    impl From<ChatComponent> for DisconnectPacket {
+        fn from(reason: ChatComponent) -> Self {
+            DisconnectPacket {
+                reason: serde_json::to_string(&reason).unwrap(),
             }
         }
     }

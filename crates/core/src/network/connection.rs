@@ -1,5 +1,6 @@
 use std::net::SocketAddr;
 use ignore_result::Ignore;
+use mc_chat::ChatComponent;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::network::packet::PacketEncode;
@@ -25,7 +26,7 @@ pub trait ConnectionData {
 pub trait ConnectionActor {
     fn reset_keep_alive(&mut self);
 
-    fn disconnect(&mut self, reason: String); // TODO: change into ChatComponent
+    fn disconnect(&mut self, reason: ChatComponent);
 }
 
 pub trait MinecraftConnection: ConnectionData + ConnectionActor {}
@@ -44,7 +45,7 @@ impl ConnectionActor for ConnectionWrapper {
         })).ignore();
     }
 
-    fn disconnect(&mut self, reason: String) {
+    fn disconnect(&mut self, reason: ChatComponent) {
         self.link.send(Box::new(move |conn| {
             conn.disconnect(reason);
         })).ignore();

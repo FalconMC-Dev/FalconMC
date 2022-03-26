@@ -1,3 +1,4 @@
+use mc_chat::ChatComponent;
 use uuid::Uuid;
 
 use serde::{Deserialize, Serialize};
@@ -43,7 +44,7 @@ pub trait MinecraftPlayer {
     /// connection methods
     fn protocol_version(&self) -> i32;
 
-    fn disconnect(&mut self, reason: String);
+    fn disconnect(&mut self, reason: ChatComponent);
 
     fn connection(&self) -> &ConnectionWrapper;
 

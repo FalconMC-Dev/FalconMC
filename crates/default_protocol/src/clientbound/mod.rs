@@ -3,6 +3,7 @@ use crate::packet_send_fn;
 use specs::status::*;
 use specs::login::*;
 use specs::play::*;
+use mc_chat::ChatComponent;
 
 pub mod v1_8_9;
 pub mod v1_9;
@@ -23,6 +24,9 @@ packet_send_fn! {
 
 // Login packets
 packet_send_fn! {
+    ChatComponent => send_login_disconnect {
+        mod v1_8_9::login::disconnect;
+    }
     LoginSuccessSpec => send_login_success {
         mod v1_8_9::login::login_success;
     }
@@ -30,6 +34,9 @@ packet_send_fn! {
 
 // Play packets
 packet_send_fn! {
+    ChatComponent => send_play_disconnect {
+        mod v1_8_9::play::disconnect;
+    }
     JoinGameSpec => send_join_game {
         mod v1_8_9::play::join_game;
         mod v1_9_1::play::join_game;

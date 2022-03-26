@@ -2,6 +2,7 @@ pub use inner::*;
 
 #[falcon_default_protocol_derive::packet_module]
 mod inner {
+    use mc_chat::{ChatComponent, ComponentStyle};
     use falcon_core::network::connection::MinecraftConnection;
     use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 
@@ -14,7 +15,8 @@ mod inner {
     impl PacketHandler for KeepAlivePacket {
         fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult {
             if connection.handler_state().last_keep_alive() != self.id as u64 {
-                connection.disconnect(String::from("Received invalid Keep Alive id!"));
+                let version = connection.handler_state().protocol_id();
+                connection.disconnect(ChatComponent::from_text("Received invalid Keep Alive id!", ComponentStyle::with_version(version.unsigned_abs())));
             } else {
                 connection.reset_keep_alive();
             }

@@ -17,6 +17,7 @@ use falcon_core::ShutdownHandle;
 use falcon_core::network::UNKNOWN_PROTOCOL;
 
 use anyhow::Result;
+use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
 
 pub struct ClientConnection {
     shutdown_handle: ShutdownHandle,
@@ -69,7 +70,10 @@ impl ClientConnection {
                     break;
                 }
                 _ = self.time_out.tick() => {
-                    self.disconnect(String::from("Did not receive Keep alive packet!"));
+                    self.disconnect(ChatComponent::from_text(
+                        "Did not receive Keep alive packet!",
+                        ComponentStyle::with_version(self.handler_state.protocol_id().unsigned_abs())
+                    ));
                 }
                 readable = self.socket.readable(), if self.handler_state.connection_state() != ConnectionState::Disconnected => {
                     let span = trace_span!("incoming_data", state = %self.handler_state);
@@ -89,7 +93,10 @@ impl ClientConnection {
                             trace!(length = n, "Data received!");
                             if let Err(e) = self.read_packets() {
                                 debug!("Read error: {}", e);
-                                self.disconnect(String::from("Error while reading packet"));
+                                self.disconnect(ChatComponent::from_text(
+                                    "Error while reading packet",
+                                    ComponentStyle::with_version(self.handler_state.protocol_id().unsigned_abs())
+                                ));
                             }
                         }
                         Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
@@ -99,7 +106,10 @@ impl ClientConnection {
                             if self.handler_state.connection_state() == ConnectionState::Play {
                                 error!("Unexpected error ocurred on read: {}", e);
                             }
-                            self.disconnect(format!("Unexpected error ocurred on read: {}", e));
+                            self.disconnect(ChatComponent::from_text(
+                                format!("Unexpected error ocurred on read: {}", e),
+                                ComponentStyle::with_version(self.handler_state.protocol_id().unsigned_abs())
+                            ));
                         }
                     }
                 }
@@ -168,7 +178,10 @@ impl ClientConnection {
             if self.handler_state.connection_state() == Login
                 || self.handler_state.connection_state() == Status
             {
-                self.disconnect(String::from("{\"text\":\"Unsupported version!\"}"));
+                self.disconnect(ChatComponent::from_text(
+                    "Unsupported version!",
+                    ComponentStyle::with_version(self.handler_state.protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red)
+                ));
             }
             trace!("Unknown packet received, skipping!");
         }
@@ -244,10 +257,11 @@ impl ConnectionActor for ClientConnection {
         self.time_out.reset();
     }
 
-    fn disconnect(&mut self, reason: String) {
-        // TODO: make disctinct between login and play
-        let packet = falcon_protocol::build_disconnect_packet(reason);
-        self.send_packet(0x00, &packet);
+    fn disconnect(&mut self, reason: ChatComponent) {
+        match self.handler_state.connection_state() {
+            ConnectionState::Play => falcon_default_protocol::clientbound::send_play_disconnect(reason, self),
+            _ => falcon_default_protocol::clientbound::send_login_disconnect(reason, self),
+        }
         self.handler_state.set_connection_state(ConnectionState::Disconnected);
     }
 }

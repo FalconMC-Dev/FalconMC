@@ -1,4 +1,5 @@
 use std::time::Instant;
+use mc_chat::ChatComponent;
 
 use uuid::Uuid;
 
@@ -118,7 +119,7 @@ impl MinecraftPlayer for Player {
         self.protocol_version
     }
 
-    fn disconnect(&mut self, reason: String) {
+    fn disconnect(&mut self, reason: ChatComponent) {
         self.connection.disconnect(reason);
     }
 
