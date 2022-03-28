@@ -1,5 +1,5 @@
 [package]
-name = "falcon_protocol"
+name = "falcon_plugins"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 falcon_core = { path = "../core" }
-falcon_default_protocol = { path = "../default_protocol" }
 
 tracing = "0.1.32"
 thiserror = "1.0.30"
