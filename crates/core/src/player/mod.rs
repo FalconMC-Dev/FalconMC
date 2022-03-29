@@ -1,177 +1,122 @@
+use std::time::Instant;
+
 use mc_chat::ChatComponent;
 use uuid::Uuid;
 
-use serde::{Deserialize, Serialize};
-
-use crate::network::buffer::PacketBufferWrite;
+use data::*;
 
 use crate::network::connection::ConnectionWrapper;
-use crate::network::packet::PacketEncode;
+use crate::server::config::FalconConfig;
 
-pub trait MinecraftPlayer {
-    /// identity methods
-    fn username(&self) -> &str;
+pub mod data;
 
-    fn uuid(&self) -> Uuid;
-
-    /// game methods
-    fn entity_id(&self) -> i32;
-
-    fn game_mode(&self) -> GameMode;
-
-    fn dimension(&self) -> i32;
-
-    fn ability_flags(&self) -> PlayerAbilityFlags;
-
-    fn position(&self) -> &Position;
-
-    /// This function should only be used to internally update the player's position
-    /// as a result of an incoming packet, this does not update the position
-    /// on the client-side!!!
-    fn position_mut(&mut self) -> &mut Position;
-
-    fn look_angles(&self) -> &LookAngles;
-
-    /// This function should only be used to internally update the player's look angles
-    /// as a result of an incoming packet, this does not update the angles
-    /// on the client-side!!!
-    fn look_angles_mut(&mut self) -> &mut LookAngles;
-
-    fn view_distance(&self) -> u8;
-
-    fn set_view_distance(&mut self, distance: u8);
-
-    /// connection methods
-    fn protocol_version(&self) -> i32;
-
-    fn disconnect(&mut self, reason: ChatComponent);
-
-    fn connection(&self) -> &ConnectionWrapper;
-
-    fn connection_mut(&mut self) -> &mut ConnectionWrapper;
+#[derive(Debug)]
+pub struct Player {
+    // identity
+    username: String,
+    uuid: Uuid,
+    // in-game data
+    eid: i32,
+    game_mode: GameMode,
+    dimension: i32,
+    ability_flags: PlayerAbilityFlags,
+    position: Position,
+    look_angles: LookAngles,
+    view_distance: u8,
+    // connection data
+    pub time: Instant,
+    protocol_version: i32,
+    connection: ConnectionWrapper,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum GameMode {
-    Survival = 0,
-    Creative,
-    Adventure,
-    Spectator,
-}
-
-#[derive(Clone, Copy, Default, Debug)]
-pub struct PlayerAbilityFlags {
-    invulnerable: bool,
-    flying: bool,
-    allow_flying: bool,
-    instant_break: bool,
-}
-
-impl PlayerAbilityFlags {
-    pub fn new(invulnerable: bool, flying: bool, allow_flying: bool, instant_break: bool) -> Self {
-        PlayerAbilityFlags {
-            invulnerable,
-            flying,
-            allow_flying,
-            instant_break,
+impl Player {
+    pub fn new(
+        username: String,
+        uuid: Uuid,
+        eid: i32,
+        spawn_pos: Position,
+        spawn_look: LookAngles,
+        protocol_version: i32,
+        connection: ConnectionWrapper,
+    ) -> Self {
+        Player {
+            username,
+            uuid,
+            eid,
+            game_mode: GameMode::Creative,
+            dimension: 0,
+            ability_flags: PlayerAbilityFlags::new(false, true, true, true),
+            position: spawn_pos,
+            look_angles: spawn_look,
+            view_distance: 5,
+            time: Instant::now(),
+            protocol_version,
+            connection,
         }
     }
-}
 
-impl PacketEncode for PlayerAbilityFlags {
-    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-        let mut byte = 0u8;
-        if self.invulnerable {
-            byte |= 1;
-        }
-        if self.flying {
-            byte |= 1 << 1;
-        }
-        if self.allow_flying {
-            byte |= 1 << 2;
-        }
-        if self.instant_break {
-            byte |= 1 << 3;
-        }
-        buf.write_u8(byte);
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
-pub struct Position {
-    x: f64,
-    y: f64,
-    z: f64,
-}
-
-impl Position {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Position { x, y, z }
+    pub fn username(&self) -> &str {
+        &self.username
     }
 
-    pub fn x(&self) -> f64 {
-        self.x
+    pub fn uuid(&self) -> Uuid {
+        self.uuid
     }
 
-    pub fn y(&self) -> f64 {
-        self.y
+    pub fn entity_id(&self) -> i32 {
+        self.eid
     }
 
-    pub fn z(&self) -> f64 {
-        self.z
+    pub fn game_mode(&self) -> GameMode {
+        self.game_mode
     }
 
-    pub fn set_x(&mut self, x: f64) {
-        self.x = x;
+    pub fn dimension(&self) -> i32 {
+        self.dimension
     }
 
-    pub fn set_y(&mut self, y: f64) {
-        self.y = y;
+    pub fn ability_flags(&self) -> PlayerAbilityFlags {
+        self.ability_flags
     }
 
-    pub fn set_z(&mut self, z: f64) {
-        self.z = z;
+    pub fn position(&self) -> &Position {
+        &self.position
     }
 
-    /// A chunk is 16 wide to this function, this is hardcoded
-    pub fn chunk_x(&self) -> i32 {
-        (self.x as i32) >> 4
+    pub fn position_mut(&mut self) -> &mut Position {
+        &mut self.position
     }
 
-    /// A chunk is 16 long to this function, this is hardcoded
-    pub fn chunk_z(&self) -> i32 {
-        (self.z as i32) >> 4
+    pub fn look_angles(&self) -> &LookAngles {
+        &self.look_angles
     }
 
-    pub fn chunk_coords(&self) -> (i32, i32) {
-        (self.chunk_x(), self.chunk_z())
-    }
-}
-
-#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
-pub struct LookAngles {
-    yaw: f32,
-    pitch: f32,
-}
-
-impl LookAngles {
-    pub fn new(yaw: f32, pitch: f32) -> Self {
-        LookAngles { yaw, pitch }
+    pub fn look_angles_mut(&mut self) -> &mut LookAngles {
+        &mut self.look_angles
     }
 
-    pub fn yaw(&self) -> f32 {
-        self.yaw
+    pub fn view_distance(&self) -> u8 {
+        self.view_distance
     }
 
-    pub fn pitch(&self) -> f32 {
-        self.pitch
+    pub fn set_view_distance(&mut self, distance: u8) {
+        self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().max_view_distance()));
+        debug!(view_distance = self.view_distance, "Decided view-distance");
     }
 
-    pub fn set_yaw(&mut self, yaw: f32) {
-        self.yaw = yaw;
+    pub fn protocol_version(&self) -> i32 {
+        self.protocol_version
     }
 
-    pub fn set_pitch(&mut self, pitch: f32) {
-        self.pitch = pitch;
+    pub fn disconnect(&mut self, reason: ChatComponent) {
+        self.connection.disconnect(reason);
+    }
+
+    pub fn connection(&self) -> &ConnectionWrapper {
+        &self.connection
+    }
+
+    pub fn connection_mut(&mut self) -> &mut ConnectionWrapper {
+        &mut self.connection
     }
 }

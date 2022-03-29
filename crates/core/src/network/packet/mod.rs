@@ -1,10 +1,10 @@
+use std::borrow::Cow;
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
-use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
-use crate::network::connection::MinecraftConnection;
+use crate::network::connection::ClientConnection;
 
 mod packet_macros;
 
@@ -21,7 +21,7 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut dyn MinecraftConnection) -> TaskScheduleResult;
+    fn handle_packet(self, connection: &mut ClientConnection) -> TaskScheduleResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;
@@ -29,22 +29,13 @@ pub trait PacketHandler {
 
 pub type TaskScheduleResult = std::result::Result<(), TaskScheduleError>;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(thiserror::Error, Clone, Debug)]
 pub enum TaskScheduleError {
+    #[error("Could not send task to server thread")]
     ThreadSendError,
+    #[error("Error while parsing packet")]
+    Message(Cow<'static, str>),
 }
-
-impl Display for TaskScheduleError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            TaskScheduleError::ThreadSendError => {
-                write!(f, "could not send task to server thread")
-            }
-        }
-    }
-}
-
-impl std::error::Error for TaskScheduleError {}
 
 impl_packet_primitive_self!(u8, write_u8, read_u8);
 impl_packet_primitive_self!(i8, write_i8, read_i8);

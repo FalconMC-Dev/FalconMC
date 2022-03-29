@@ -1,4 +1,4 @@
-use crate::player::{LookAngles, Position};
+use crate::player::data::{LookAngles, Position};
 use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};

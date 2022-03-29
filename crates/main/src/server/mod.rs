@@ -32,19 +32,6 @@ use crate::server::console::ConsoleListener;
 
 pub mod console;
 
-pub struct MainServer {
-    // threads
-    shutdown_handle: ShutdownHandle,
-    should_stop: bool,
-    console_rx: UnboundedReceiver<String>,
-    server_rx: UnboundedReceiver<Box<McTask>>,
-    // players
-    entity_id_count: i32,
-    players: AHashMap<Uuid, Player>,
-    // world
-    world: World,
-}
-
 /// Initialization methods on startup
 impl MainServer {
     pub fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
@@ -144,20 +131,6 @@ impl MainServer {
     #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
     fn keep_alive(&mut self) {
         self.players.values().for_each(|player| player.send_keep_alive());
-    }
-}
-
-impl ServerData for MainServer {
-    fn online_count(&self) -> i32 {
-        self.players.len() as i32
-    }
-
-    fn player(&self, uuid: Uuid) -> Option<&dyn MinecraftPlayer> {
-        self.players.get(&uuid).map(|player| player as &dyn MinecraftPlayer)
-    }
-
-    fn player_mut(&mut self, uuid: Uuid) -> Option<&mut dyn MinecraftPlayer> {
-        self.players.get_mut(&uuid).map(|player| player as &mut dyn MinecraftPlayer)
     }
 }
 

@@ -1,5 +1,5 @@
 [package]
-name = "falcon_bin"
+name = "falcon_main"
 version = "0.1.0"
 edition = "2021"
 
