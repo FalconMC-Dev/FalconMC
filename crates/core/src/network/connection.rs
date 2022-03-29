@@ -94,6 +94,7 @@ impl ClientConnection {
         self.time_out.reset();
     }
 
+    /// TODO: move to falcon_logic
     pub fn disconnect(&mut self, reason: ChatComponent) {
         /*match self.handler_state.connection_state() {
             ConnectionState::Play => falcon_default_protocol::clientbound::send_play_disconnect(reason, self),
