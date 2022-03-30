@@ -78,7 +78,7 @@ impl ClientConnection {
         ConnectionWrapper::new(self.connection_sync.0.clone())
     }
 
-    pub fn send_packet(&mut self, packet_id: i32, packet_out: &dyn PacketEncode) {
+    pub fn send_packet<P: PacketEncode>(&mut self, packet_id: i32, packet_out: &P) {
         if self.handler_state.connection_state() == ConnectionState::Disconnected {
             return;
         }
