@@ -265,7 +265,6 @@ dependencies = [
  "fastnbt 1.3.0 (git+https://github.com/owengage/fastnbt?branch=dev/serializer)",
  "ignore-result",
  "itertools",
- "mc_chat",
  "once_cell",
  "serde",
  "thiserror",
@@ -293,6 +292,14 @@ dependencies = [
 [[package]]
 name = "falcon_logic"
 version = "0.1.0"
+dependencies = [
+ "falcon_core",
+ "falcon_send",
+ "ignore-result",
+ "mc_chat",
+ "tracing",
+ "uuid",
+]
 
 [[package]]
 name = "falcon_main"
@@ -302,8 +309,8 @@ dependencies = [
  "anyhow",
  "bytes",
  "falcon_core",
- "falcon_plugin",
- "falcon_protocol",
+ "falcon_logic",
+ "falcon_receive",
  "fastnbt 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "flate2",
  "ignore-result",
@@ -358,10 +365,27 @@ dependencies = [
 [[package]]
 name = "falcon_receive"
 version = "0.1.0"
+dependencies = [
+ "falcon_core",
+ "falcon_logic",
+ "falcon_protocol_derive",
+ "falcon_send",
+ "mc_chat",
+ "thiserror",
+ "tracing",
+]
 
 [[package]]
 name = "falcon_send"
 version = "0.1.0"
+dependencies = [
+ "falcon_core",
+ "falcon_protocol_derive",
+ "mc_chat",
+ "serde",
+ "serde_json",
+ "uuid",
+]
 
 [[package]]
 name = "fastnbt"
@@ -712,9 +736,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.16"
+version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4af2ec4714533fcdf07e886f17025ace8b997b9ce51204ee69b6da831c3da57"
+checksum = "632d02bff7f874a36f33ea8bb416cd484b90cc66c1194b1a1110d067a7013f58"
 dependencies = [
  "proc-macro2",
 ]
@@ -948,9 +972,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.89"
+version = "1.0.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea297be220d52398dcc07ce15a209fce436d361735ac1db700cab3b6cdfb9f54"
+checksum = "704df27628939572cd88d33f171cd6f896f4eaca85252c6e0a72d8d8287ee86f"
 dependencies = [
  "proc-macro2",
  "quote",

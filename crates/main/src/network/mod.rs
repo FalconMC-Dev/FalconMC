@@ -1,7 +1,7 @@
 mod connection;
 
 use anyhow::Context;
-use connection::ClientConnection;
+use falcon_core::network::connection::ClientConnection;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
@@ -53,7 +53,7 @@ impl NetworkListener {
                     match connection {
                         Ok((socket, addr)) => {
                             debug!(address = %addr, "Accepted connection");
-                            tokio::spawn(ClientConnection::process_socket(self.shutdown_handle.clone(), socket, addr, self.server_tx.clone()));
+                            tokio::spawn(connection::new_connection(self.shutdown_handle.clone(), socket, addr, self.server_tx.clone()));
                         },
                         Err(e) => {
                             print_error!(anyhow!("Connection broke due to {}", e));

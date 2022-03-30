@@ -1,4 +1,3 @@
-use std::collections::hash_map::Entry;
 use std::io::Read;
 use std::thread;
 use std::time::Duration;
@@ -8,81 +7,116 @@ use anyhow::{Result, Context};
 use fastnbt::de::from_bytes;
 use flate2::read::GzDecoder;
 use tokio::runtime::Builder;
-use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
+use tokio::sync::mpsc::unbounded_channel;
 use tokio::time::MissedTickBehavior;
-use uuid::Uuid;
 
-use falcon_core::network::connection::ConnectionWrapper;
-use falcon_core::network::ConnectionState;
-use falcon_core::player::MinecraftPlayer;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
-use falcon_core::server::config::FalconConfig;
-use falcon_core::server::{Difficulty, McTask, ServerActor, ServerData, ServerVersion};
-use falcon_core::world::chunks::Chunk;
+use falcon_core::server::MainServer;
 use falcon_core::world::World;
 use falcon_core::ShutdownHandle;
-use falcon_default_protocol::clientbound as falcon_send;
-use falcon_default_protocol::clientbound::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec};
-use falcon_default_protocol::clientbound::specs::status::{PlayerData, StatusResponseSpec};
-use falcon_send::specs::login::LoginSuccessSpec;
+use falcon_logic::PlayerLogic;
 
 use crate::network::NetworkListener;
-use crate::player::Player;
 use crate::server::console::ConsoleListener;
 
 pub mod console;
 
-/// Initialization methods on startup
-impl MainServer {
-    pub fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
-        info!("Starting server thread...");
+pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
+    info!("Starting server thread...");
 
-        let world = {
-            let world_file = std::fs::read("./world.schem")
-                .with_context(|| "Could not load `world.schem`, stopping launch")?;
-            let mut gz = GzDecoder::new(&world_file[..]);
-            let mut decompressed_world = Vec::new();
-            gz.read_to_end(&mut decompressed_world)
-                .with_context(|| "Could not decompress world.schem, is this a valid schematic?")?;
-            debug!("Checkpoint - loaded schem file");
-            let schematic: SchematicVersionedRaw = from_bytes(&decompressed_world)
-                .with_context(|| "Could not parse schematic file, is this valid nbt?")?;
-            debug!("Checkpoint - deserialized into raw format");
-            let data = SchematicData::try_from(schematic)
-                .with_context(|| "Invalid schematic, this server cannot use this schematic currently!")?;
-            debug!("Checkpoint - parsed raw format");
-            World::try_from(data)?
-        };
-        info!("Loaded world");
+    let world = {
+        let world_file = std::fs::read("./world.schem")
+            .with_context(|| "Could not load `world.schem`, stopping launch")?;
+        let mut gz = GzDecoder::new(&world_file[..]);
+        let mut decompressed_world = Vec::new();
+        gz.read_to_end(&mut decompressed_world)
+            .with_context(|| "Could not decompress world.schem, is this a valid schematic?")?;
+        debug!("Checkpoint - loaded schem file");
+        let schematic: SchematicVersionedRaw = from_bytes(&decompressed_world)
+            .with_context(|| "Could not parse schematic file, is this valid nbt?")?;
+        debug!("Checkpoint - deserialized into raw format");
+        let data = SchematicData::try_from(schematic)
+            .with_context(|| "Invalid schematic, this server cannot use this schematic currently!")?;
+        debug!("Checkpoint - parsed raw format");
+        World::try_from(data)?
+    };
+    info!("Loaded world");
 
-        let console_rx = ConsoleListener::start_console(shutdown_handle.clone())?;
-        let (server_tx, server_rx) = unbounded_channel();
-        let server = MainServer {
-            shutdown_handle,
-            should_stop: false,
-            console_rx,
-            server_rx,
-            entity_id_count: 0,
-            players: AHashMap::new(),
-            world,
-        };
+    let console_rx = ConsoleListener::start_console(shutdown_handle.clone())?;
+    let (server_tx, server_rx) = unbounded_channel();
+    let mut server = MainServer::new(
+        shutdown_handle,
+        console_rx,
+        server_rx,
+        AHashMap::new(),
+        world,
+    );
 
-        tokio::spawn(NetworkListener::start_network_listening(
-            server.shutdown_handle.clone(),
-            server_tx,
-        ));
+    tokio::spawn(NetworkListener::start_network_listening(
+        server.shutdown_handle().clone(),
+        server_tx,
+    ));
 
-        thread::Builder::new()
-            .name(String::from("Main Server Thread"))
-            .spawn(|| server.start_server_logic())
-            .with_context(|| "Couldn't start server logic!")?;
+    thread::Builder::new()
+        .name(String::from("Main Server Thread"))
+        .spawn(move || start_server_logic(server))
+        .with_context(|| "Couldn't start server logic!")?;
 
-        Ok(())
+    Ok(())
+}
+
+#[tracing::instrument(name = "server", skip(server))]
+fn start_server_logic(mut server: MainServer) {
+    debug!("Starting server logic!");
+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
+
+    rt.block_on(async move {
+        let mut tick_interval = tokio::time::interval(Duration::from_millis(50));
+        tick_interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+        let mut keep_alive_interval = tokio::time::interval(Duration::from_secs(12));
+        keep_alive_interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+
+        while !server.should_stop {
+            tokio::select! {
+                    _ = tick_interval.tick() => {
+                        tick(&mut server);
+                    }
+                    _ = keep_alive_interval.tick() => {
+                        keep_alive(&mut server);
+                    }
+                    _ = server.shutdown_handle().wait_for_shutdown() => {
+                        break;
+                    }
+                }
+        }
+        debug!("Stopping server logic!");
+    });
+}
+
+/// Game loop method
+#[tracing::instrument(skip(server), fields(player_count = server.online_count()))]
+fn tick(server: &mut MainServer) {
+    while let Ok(task) = server.server_rx.try_recv() {
+        task(server);
+    }
+    while let Ok(command) = server.console_rx.try_recv() {
+        info!(cmd = %command.trim(), "Console command execution");
+        // TODO: better commands
+        if command.trim() == "stop" {
+            info!("Shutting down server! (Stop command executed)");
+            server.should_stop = true;
+            server.shutdown_handle().send_shutdown();
+            return;
+        }
     }
 }
 
-/// Game loop methods
-impl MainServer {
+#[tracing::instrument(skip(server), fields(player_count = server.players.len()))]
+fn keep_alive(server: &mut MainServer) {
+    server.players.values().for_each(|player| player.send_keep_alive());
+}
+
+/* impl MainServer {
     #[tracing::instrument(name = "server", skip(self))]
     fn start_server_logic(mut self) {
         debug!("Starting server logic!");
@@ -232,4 +266,4 @@ const CHUNK_AIR_FN: fn(&mut dyn MinecraftPlayer, i32, i32) = |player: &mut dyn M
 };
 const UNLOAD_FN: fn(&mut dyn MinecraftPlayer, i32, i32) = |player: &mut dyn MinecraftPlayer, x: i32, z: i32| {
     player.connection().build_send_packet((x, z), |p, c| falcon_send::send_unload_chunk(p, c));
-};
+};*/

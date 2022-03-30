@@ -1,5 +1,6 @@
 use std::string::FromUtf8Error;
 use thiserror::Error;
+use crate::network::packet::TaskScheduleError;
 use crate::world::blocks::ParseBlockError;
 
 pub type Result<T> = std::result::Result<T, FalconCoreError>;
@@ -27,5 +28,7 @@ pub enum FalconCoreError {
     #[error("Could not find the correct schematic blockdata")]
     MissingData,
     #[error("Error while reading block data")]
-    ParseBlockError(#[from] ParseBlockError)
+    ParseBlockError(#[from] ParseBlockError),
+    #[error("Error while executing packet logic")]
+    PacketHandleError(#[from] TaskScheduleError),
 }

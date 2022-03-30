@@ -1,7 +1,6 @@
 use std::net::SocketAddr;
 use bytes::BytesMut;
 use ignore_result::Ignore;
-use mc_chat::ChatComponent;
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::Interval;
@@ -15,7 +14,7 @@ use crate::ShutdownHandle;
 pub type ConnectionTask = dyn FnOnce(&mut ClientConnection) + Send + Sync;
 
 pub struct ClientConnection {
-    shutdown_handle: ShutdownHandle,
+    pub shutdown_handle: ShutdownHandle,
     // connection data
     pub socket: TcpStream,
     addr: SocketAddr,
@@ -93,15 +92,6 @@ impl ClientConnection {
     pub fn reset_keep_alive(&mut self) {
         self.time_out.reset();
     }
-
-    /// TODO: move to falcon_logic
-    pub fn disconnect(&mut self, reason: ChatComponent) {
-        /*match self.handler_state.connection_state() {
-            ConnectionState::Play => falcon_default_protocol::clientbound::send_play_disconnect(reason, self),
-            _ => falcon_default_protocol::clientbound::send_login_disconnect(reason, self),
-        }*/
-        self.handler_state.set_connection_state(ConnectionState::Disconnected);
-    }
 }
 
 #[derive(Debug)]
@@ -113,12 +103,6 @@ impl ConnectionWrapper {
     pub fn reset_keep_alive(&mut self) {
         self.link.send(Box::new(|conn| {
             conn.reset_keep_alive();
-        })).ignore();
-    }
-
-    pub fn disconnect(&mut self, reason: ChatComponent) {
-        self.link.send(Box::new(move |conn| {
-            conn.disconnect(reason);
         })).ignore();
     }
 }
@@ -154,5 +138,9 @@ impl ConnectionWrapper {
             T: FnOnce(&mut ClientConnection) + Send + Sync + 'static,
     {
         self.link.send(Box::new(task)).ignore();
+    }
+
+    pub fn link(&self) -> &UnboundedSender<Box<ConnectionTask>> {
+        &self.link
     }
 }

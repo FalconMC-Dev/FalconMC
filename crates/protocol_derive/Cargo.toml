@@ -1,5 +1,5 @@
 [package]
-name = "falcon_core_derive"
+name = "falcon_protocol_derive"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,6 +9,6 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0.90", features = ["full"] }
+syn = { version = "1.0.90", features = [ "full" ] }
 quote = "1.0.17"
 proc-macro2 = "1.0.36"

@@ -48,13 +48,13 @@ impl World {
     /// Initialize terrain when player spawns
     pub fn send_chunks_for_player<C, A>(
         &self,
-        player: &mut Player,
+        player: &Player,
         chunk_fn: C,
         air_fn: A,
     )
     where
-        C: Fn(&mut Player, &Chunk),
-        A: Fn(&mut Player, i32, i32),
+        C: Fn(&Player, &Chunk),
+        A: Fn(&Player, i32, i32),
     {
         let (chunk_x, chunk_z) = player.position().chunk_coords();
         let view_distance = player.view_distance();
@@ -71,7 +71,7 @@ impl World {
 
     pub fn update_player_pos<C, A, U>(
         &self,
-        player: &mut Player,
+        player: &Player,
         old_chunk_x: i32,
         old_chunk_z: i32,
         chunk_x: i32,
@@ -81,9 +81,9 @@ impl World {
         unload_fn: U,
     )
     where
-        C: Fn(&mut Player, &Chunk),
-        A: Fn(&mut Player, i32, i32),
-        U: Fn(&mut Player, i32, i32),
+        C: Fn(&Player, &Chunk),
+        A: Fn(&Player, i32, i32),
+        U: Fn(&Player, i32, i32),
     {
         let view_distance = player.view_distance();
         // unload old chunks
@@ -110,16 +110,16 @@ impl World {
     #[allow(clippy::comparison_chain)]
     pub fn update_view_distance<C, A, U>(
         &self,
-        player: &mut Player,
+        player: &Player,
         view_distance: u8,
         chunk_fn: C,
         air_fn: A,
         unload_fn: U
     )
     where
-        C: Fn(&mut Player, &Chunk),
-        A: Fn(&mut Player, i32, i32),
-        U: Fn(&mut Player, i32, i32),
+        C: Fn(&Player, &Chunk),
+        A: Fn(&Player, i32, i32),
+        U: Fn(&Player, i32, i32),
     {
         let old_view_distance = player.view_distance();
         let (chunk_x, chunk_z) = player.position().chunk_coords();

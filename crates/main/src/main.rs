@@ -15,13 +15,9 @@ use tracing_subscriber::util::SubscriberInitExt;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 
-use crate::player::Player;
-use crate::server::MainServer;
-
 mod error;
 mod network;
 mod server;
-mod player;
 
 #[tokio::main]
 async fn main() {
@@ -40,7 +36,6 @@ async fn main() {
         .init();
 
     info!("Launching Falcon Server!");
-    debug!("Player size: {}", std::mem::size_of::<Player>());
 
     debug!("Loading config!");
     if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")
@@ -51,7 +46,7 @@ async fn main() {
     }
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
-    if let Err(ref e) = MainServer::start_server(shutdown_handle.clone()) {
+    if let Err(ref e) = server::start_server(shutdown_handle.clone()) {
         print_error!(e);
         shutdown_handle.send_shutdown();
     } else {

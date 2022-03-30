@@ -1,6 +1,5 @@
 use std::time::Instant;
 
-use mc_chat::ChatComponent;
 use uuid::Uuid;
 
 use data::*;
@@ -106,10 +105,6 @@ impl Player {
 
     pub fn protocol_version(&self) -> i32 {
         self.protocol_version
-    }
-
-    pub fn disconnect(&mut self, reason: ChatComponent) {
-        self.connection.disconnect(reason);
     }
 
     pub fn connection(&self) -> &ConnectionWrapper {
