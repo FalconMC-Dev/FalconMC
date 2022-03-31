@@ -1,25 +1,23 @@
-# Maximum amount of players, -1 indicates unlimited
-max_players = -1
-
-# Server port
+[connection]
+server_ip = '0.0.0.0'
 server_port = 30000
 
-# Server ip
-server_ip = '0.0.0.0'
-
-# Whether to enable flight or not
+[players]
 allow_flight = false
-
-# Maximum amount of chunks to send
 max_view_distance = 10
 
-# where the player will spawn
-[spawn_position]
-x = 16.5
-y = 4.0
-z = 15.5
+[players.spawn_position]
+x = 0.0
+y = 70.0
+z = 0.0
 
-# what direction the player will be looking
-[spawn_look]
+[players.spawn_look]
 yaw = 0.0
-pitch = -90.0
+pitch = 0.0
+
+[server]
+max_players = -1
+description = '§eFalcon server§r§b!!!'
+
+[versions]
+excluded = []

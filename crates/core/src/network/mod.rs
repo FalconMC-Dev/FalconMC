@@ -9,11 +9,6 @@ pub mod connection;
 pub mod packet;
 
 pub const UNKNOWN_PROTOCOL: i32 = -1;
-pub const PROTOCOL_1_8_9: i32 = 47;
-pub const PROTOCOL_1_13: i32 = 393;
-pub const PROTOCOL_1_13_1: i32 = 401;
-pub const PROTOCOL_1_13_2: i32 = 404;
-pub const PROTOCOL_1_14: i32 = 477;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct PacketHandlerState {
