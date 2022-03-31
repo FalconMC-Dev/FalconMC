@@ -6,8 +6,7 @@ use libloading::{Library, Symbol};
 use once_cell::sync::Lazy;
 
 use falcon_core::network::buffer::PacketBufferRead;
-use falcon_core::network::connection::MinecraftConnection;
-use falcon_default_protocol::DefaultProtocol;
+use falcon_core::network::connection::ClientConnection;
 
 use crate::error::{PluginProtocolError, Result};
 use crate::FalconPlugin;
@@ -50,7 +49,7 @@ impl ProtocolPluginManager {
         let boxed_raw = constructor();
 
         let plugin = Box::from_raw(boxed_raw);
-        debug!(name = plugin.name(), "Plugin loaded!");
+        debug!(name = plugin.name().as_str(), "Plugin loaded!");
         plugin.on_protocol_load();
         self.plugins.push((plugin.get_priority(), plugin));
         Ok(())
@@ -82,22 +81,22 @@ impl ProtocolPluginManager {
     }
 
     #[tracing::instrument(skip(self, buffer, connection))]
-    pub fn process_packet<R: PacketBufferRead, C: MinecraftConnection>(
+    pub fn process_packet<R: PacketBufferRead>(
         &self,
         packet_id: i32,
         buffer: &mut R,
-        connection: &mut C,
+        connection: &mut ClientConnection,
     ) -> Result<Option<()>> {
         let mut found = false;
-        // first evaluate default protocol
-        match DefaultProtocol::process_packet(packet_id, buffer, connection) {
+        // first evaluate default plugins
+        /*match DefaultProtocol::process_packet(packet_id, buffer, connection) {
             Ok(Some(_)) => found = true,
             Err(error) => return Err(error.into()),
             _ => {}
-        }
+        }*/
         // then propagate to plugins
         for (_, factory) in &self.plugins {
-            trace!(plugin_name = factory.name(), "Firing process_packet()!");
+            trace!(plugin_name = factory.name().as_str(), "Firing process_packet()!");
             match factory.process_packet(packet_id, buffer, connection) {
                 Ok(Some(_)) => found = true,
                 Err(error) => return Err(error),
@@ -116,7 +115,7 @@ impl ProtocolPluginManager {
         debug!("Unloading plugins!");
 
         for (_, plugin) in self.plugins.drain(..) {
-            trace!(plugin_name = plugin.name(), "Firing on_plugin_unload()!");
+            trace!(plugin_name = plugin.name().as_str(), "Firing on_plugin_unload()!");
             plugin.on_protocol_unload();
         }
 

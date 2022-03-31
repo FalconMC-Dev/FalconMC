@@ -1,5 +1,5 @@
 [package]
-name = "falcon_plugins"
+name = "falcon_plugin"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 falcon_core = { path = "../core" }
+
+abi_stable = "0.10.4"
 
 tracing = "0.1.32"
 thiserror = "1.0.30"
