@@ -1,4 +1,7 @@
 pub use inner::*;
+pub use chunk::*;
+
+mod chunk;
 
 #[falcon_protocol_derive::packet_module]
 mod inner {
