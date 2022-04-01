@@ -11,6 +11,7 @@ use falcon_core::world::chunks::SECTION_LENGTH;
 use itertools::Itertools;
 
 pub mod blocks;
+pub mod block_util;
 pub mod chunks;
 pub mod palette;
 
