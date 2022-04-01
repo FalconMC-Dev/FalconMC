@@ -10,7 +10,7 @@ mod inner {
     use falcon_logic::ServerLogic;
 
     #[derive(PacketDecode)]
-    #[falcon_packet(47, 393, 401, 404 = 0x00)]
+    #[falcon_packet(47, 393, 401, 404, 477 = 0x00)]
     pub struct LoginStartPacket {
         name: String,
     }

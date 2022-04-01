@@ -8,7 +8,7 @@ mod inner {
     use falcon_logic::connection::disconnect;
 
     #[derive(PacketDecode)]
-    #[falcon_packet(340 = 0x0B; 393, 401, 404 = 0x0E)]
+    #[falcon_packet(340 = 0x0B; 393, 401, 404 = 0x0E; 477 = 0x0F)]
     pub struct KeepAlivePacket {
         id: i64,
     }
