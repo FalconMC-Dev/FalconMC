@@ -10,6 +10,7 @@ pub mod v1_9;
 pub mod v1_9_1;
 pub mod v1_12_2;
 pub mod v1_13;
+pub mod v1_14;
 
 // Status packets
 packet_send_fn! {
@@ -39,6 +40,11 @@ packet_send_fn! {
     JoinGameSpec => send_join_game {
         mod v1_8_9::play::join_game;
         mod v1_9_1::play::join_game;
+        mod v1_14::play::join_game;
+    }
+    ServerDifficultySpec => send_server_difficulty {
+        mod v1_8_9::play::send_difficulty;
+        mod v1_14::play::send_difficulty;
     }
     PlayerAbilitiesSpec => send_player_abilities {
         mod v1_8_9::play::player_abilities;

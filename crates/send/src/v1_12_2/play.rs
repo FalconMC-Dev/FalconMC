@@ -5,7 +5,7 @@ mod inner {
     use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(340 = 0x1F; 393, 401, 404 = 0x21; no_receive; outgoing = "keep_alive")]
+    #[falcon_packet(340 = 0x1F; 393, 401, 404 = 0x21; 477 = 0x20; no_receive; outgoing = "keep_alive")]
     pub struct KeepAlivePacket {
         id: i64,
     }

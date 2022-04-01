@@ -49,6 +49,13 @@ define_spec! {
 }
 
 define_spec! {
+    ServerDifficultySpec {
+        difficulty: Difficulty,
+        locked: bool,
+    }
+}
+
+define_spec! {
     ChunkDataSpec => chunk: &Chunk, protocol_version: i32 {
         ;let chunk_x: i32 = chunk_pos.x,
         let chunk_z: i32 = chunk_pos.z,
