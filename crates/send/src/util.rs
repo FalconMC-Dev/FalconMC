@@ -17,15 +17,15 @@ impl HeightMap {
             },
             _ => {
                 let mut heightmap = Vec::with_capacity(256);
-                for x in 0..16 {
-                    for z in 0..16 {
+                for z in 0..16 {
+                    for x in 0..16 {
                         let mut found = false;
                         for section in sections.iter().rev() {
-                            let top_y = section.section_index * 16 + 16;
-                            for y in (top_y-16..top_y).rev() {
-                                let block = section.palette.at(ChunkSection::calculate_index(x as u16, y as u16, z as u16)).unwrap();
+                            let top_y = section.section_index * 16;
+                            for y in (0..16).rev() {
+                                let block = section.palette.at(section.blocks[ChunkSection::calculate_index(x as u16, y as u16, z as u16)] as usize).unwrap();
                                 if to_i32(block).is_some() && blocks_movement(block) {
-                                    heightmap.insert((x + z * 16) as usize, (y + 1) as u16);
+                                    heightmap.push((top_y + y + 1) as u16);
                                     found = true;
                                     break;
                                 }

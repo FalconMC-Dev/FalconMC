@@ -117,11 +117,11 @@ mod inner {
 
             let (block_data, palette) = if bits_per_block > 8 {
                 let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
+                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, None)
             } else {
                 let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(bits_per_block, blocks);
+                let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, Some(palette))
             };
             ChunkSectionData {
@@ -132,25 +132,24 @@ mod inner {
         }
     }
 
-    pub fn build_compacted_data_array<E: Iterator<Item=u64>>(bits_per_block: u8, elements: E) -> Vec<u64> {
-        let long_count: u32 = (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS;
-        let mut compacted_data = Vec::with_capacity(long_count as usize);
+    pub fn build_compacted_data_array<E: Iterator<Item=u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
+        let mut compacted_data = Vec::with_capacity(capacity as usize);
         let mut current_long = 0u64;
         let mut offset = 0;
         let mut pos = 0;
 
         for element in elements {
-            let bit_shift = pos * bits_per_block + offset;
-            if bit_shift < (i64::BITS - bits_per_block as u32) as u8 {
+            let bit_shift = pos * bits_per_element + offset;
+            if bit_shift < (i64::BITS - bits_per_element as u32) as u8 {
                 current_long |= element << bit_shift;
                 pos += 1;
             } else {
-                offset = bit_shift - (i64::BITS - bits_per_block as u32) as u8;
+                offset = bit_shift - (i64::BITS - bits_per_element as u32) as u8;
                 current_long |= element << bit_shift;
                 compacted_data.push(current_long);
                 current_long = 0u64;
                 if offset != 0 {
-                    let diff = bits_per_block - offset;
+                    let diff = bits_per_element - offset;
                     current_long |= element >> diff;
                 }
                 pos = 0;

@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate tracing;
+
 use specs::status::*;
 use specs::login::*;
 use specs::play::*;

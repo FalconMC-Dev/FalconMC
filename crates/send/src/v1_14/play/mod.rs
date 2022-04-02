@@ -13,8 +13,9 @@ mod inner {
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,
-        dimension: i8,
+        dimension: i32,
         max_players: u8,
+        #[max_length(16)]
         level_type: String,
         #[var_int]
         view_distance: i32,
@@ -26,7 +27,7 @@ mod inner {
             JoinGamePacket {
                 entity_id: spec.entity_id,
                 game_mode: spec.game_mode as u8,
-                dimension: spec.dimension as i8,
+                dimension: spec.dimension,
                 max_players: spec.max_players,
                 level_type: spec.level_type,
                 view_distance: spec.view_distance,

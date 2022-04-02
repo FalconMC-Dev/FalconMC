@@ -367,6 +367,7 @@ dependencies = [
  "mc_chat",
  "serde",
  "serde_json",
+ "tracing",
  "uuid",
 ]
 

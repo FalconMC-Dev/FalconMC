@@ -7,7 +7,7 @@ mod inner {
     use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
-    use falcon_core::world::chunks::{SECTION_LENGTH, SECTION_WIDTH};
+    use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
     use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
     use crate::util::HeightMap;
     use crate::v1_13::play::build_compacted_data_array;
@@ -38,6 +38,7 @@ mod inner {
                 motion_blocking: LongArray::new(
                     build_compacted_data_array(
                         9,
+                        36,
                         map.motion_blocking().into_iter().map(|v| v as u64)
                     ).into_iter().map(|v| v as i64).collect()
                 )
@@ -105,7 +106,7 @@ mod inner {
 
     impl ChunkSectionData {
         pub fn get_data_size(&self) -> i32 {
-            let mut size = 1; // always one for bits per block;
+            let mut size = 1 + 2; // always one for bits per block + block count: i16;
             if let Some(palette) = &self.palette {
                 size += get_var_i32_size(palette.len() as i32);
                 size += palette.iter().map(|x| get_var_i32_size(*x)).sum::<usize>();
@@ -137,11 +138,11 @@ mod inner {
                 });
             let (block_data, palette) = if bits_per_block > 8 {
                 let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
+                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, None)
             } else {
                 let (blocks, palette) = spec.palette.build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(bits_per_block, blocks);
+                let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, Some(palette))
             };
             ChunkSectionData {
