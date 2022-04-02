@@ -99,7 +99,7 @@ mod inner {
     }
 
     impl From<ChunkSectionDataSpec> for ChunkSectionData {
-        fn from(mut spec: ChunkSectionDataSpec) -> Self {
+        fn from(spec: ChunkSectionDataSpec) -> Self {
             let block_to_int = match spec.protocol_version {
                 401 | 404 => Blocks::get_global_id_1631,
                 _ => Blocks::get_global_id_1519,
@@ -116,11 +116,11 @@ mod inner {
             };
 
             let (block_data, palette) = if bits_per_block > 8 {
-                let blocks = spec.palette.build_direct_palette(spec.blocks.drain(..), block_to_int, Blocks::Air);
+                let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, blocks);
                 (block_data, None)
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.drain(..), block_to_int, Blocks::Air);
+                let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(bits_per_block, blocks);
                 (block_data, Some(palette))
             };

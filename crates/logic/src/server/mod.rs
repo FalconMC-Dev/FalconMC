@@ -10,7 +10,7 @@ use falcon_core::server::data::{Difficulty, ServerVersion};
 use falcon_core::server::MainServer;
 use falcon_core::world::chunks::Chunk;
 use falcon_send::specs::login::LoginSuccessSpec;
-use falcon_send::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec};
+use falcon_send::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
 use falcon_send::specs::status::{PlayerData, StatusResponseSpec};
 
 mod wrapper;
@@ -50,6 +50,8 @@ pub fn login_success(server: &mut MainServer, username: String, uuid: Uuid, prot
         let player = entry.get();
         let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), FalconConfig::global().max_view_distance() as i32, false);
         player.connection().build_send_packet(join_game_spec, falcon_send::send_join_game);
+        let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);
+        player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);
         let player_abilities = PlayerAbilitiesSpec::new(player, 0.05, 0.1);
         player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
         server.world.send_chunks_for_player(player, CHUNK_FN, CHUNK_AIR_FN);

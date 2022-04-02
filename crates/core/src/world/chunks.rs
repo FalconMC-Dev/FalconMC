@@ -90,6 +90,10 @@ impl ChunkSection {
         }
     }
 
+    pub fn block_at(&self, x: u16, y: u16, z: u16) -> &Blocks {
+        self.palette.at(self.blocks[ChunkSection::calculate_index(x, y, z)] as usize).unwrap()
+    }
+
     /// This is the block-count internal to `FalconMC`. Depending on the version
     /// this count will not be correct due to missing blocks. Do not depend on this number when working
     /// on networking synchronization!!
@@ -105,7 +109,7 @@ impl ChunkSection {
         &self.blocks
     }
 
-    fn calculate_index(x: u16, y: u16, z: u16) -> usize {
+    pub fn calculate_index(x: u16, y: u16, z: u16) -> usize {
         (x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize
     }
 }

@@ -65,8 +65,8 @@ define_spec! {
             let chunk_pos = chunk.get_position()
             let bit_mask = chunk.get_bit_mask()
             let mut chunk_sections = Vec::with_capacity(bit_mask.count_ones() as usize)
-            for section in chunk.get_chunk_sections().iter().flatten() {
-                chunk_sections.push(ChunkSectionDataSpec::new(section, protocol_version));
+            for (i, section) in chunk.get_chunk_sections().iter().enumerate().filter_map(|(i, v)| v.as_ref().map(|v| (i, v))) {
+                chunk_sections.push(ChunkSectionDataSpec::new(section, i, protocol_version));
             }
         }
     }
@@ -85,6 +85,7 @@ impl ChunkDataSpec {
 
 define_spec! {
     ChunkSectionDataSpec => section: &ChunkSection {
+        section_index: usize,
         protocol_version: i32;
         let palette: Palette<Blocks> = section.get_palette().clone(),
         let blocks: Vec<u16> = section.get_block_data().clone(),

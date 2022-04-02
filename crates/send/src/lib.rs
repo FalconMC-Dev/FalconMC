@@ -5,6 +5,7 @@ use mc_chat::ChatComponent;
 
 pub mod macros;
 pub mod specs;
+pub mod util;
 pub mod v1_8_9;
 pub mod v1_9;
 pub mod v1_9_1;
@@ -57,6 +58,7 @@ packet_send_fn! {
     }
     ChunkDataSpec => send_chunk_data {
         mod v1_13::play::chunk_data;
+        mod v1_14::play::chunk_data;
     }
     (i32, i32) => send_unload_chunk {
         mod v1_9::play::unload_chunk;
