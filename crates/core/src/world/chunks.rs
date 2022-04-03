@@ -131,3 +131,15 @@ impl ChunkPos {
         ChunkPos { x, z }
     }
 }
+
+impl From<ChunkPos> for (i32, i32) {
+    fn from(pos: ChunkPos) -> Self {
+        (pos.x, pos.z)
+    }
+}
+
+impl From<&ChunkPos> for (i32, i32) {
+    fn from(pos: &ChunkPos) -> Self {
+        (pos.x, pos.z)
+    }
+}

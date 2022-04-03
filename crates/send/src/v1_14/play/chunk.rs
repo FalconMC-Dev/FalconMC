@@ -133,8 +133,11 @@ mod inner {
 
             let mut block_count = 0;
             let block_iterator = spec.blocks.into_iter()
-                .inspect(|v| if matches!(spec.palette.at(*v as usize).unwrap(), Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) {
-                    block_count += 1;
+                .inspect(|v| {
+                    let block = spec.palette.at(*v as usize).unwrap();
+                    if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) && block_to_int(block).is_some() {
+                        block_count += 1;
+                    }
                 });
             let (block_data, palette) = if bits_per_block > 8 {
                 let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);

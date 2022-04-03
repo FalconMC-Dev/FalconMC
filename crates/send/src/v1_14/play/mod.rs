@@ -51,4 +51,22 @@ mod inner {
             }
         }
     }
+
+    #[derive(PacketEncode)]
+    #[falcon_packet(477 = 0x40; no_receive; outgoing = "update_viewpos")]
+    pub struct UpdateViewPosition {
+        #[var_int]
+        chunk_x: i32,
+        #[var_int]
+        chunk_z: i32,
+    }
+
+    impl From<(i32, i32)> for UpdateViewPosition {
+        fn from((chunk_x, chunk_z): (i32, i32)) -> Self {
+            UpdateViewPosition {
+                chunk_x,
+                chunk_z
+            }
+        }
+    }
 }

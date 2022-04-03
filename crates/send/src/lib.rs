@@ -66,4 +66,7 @@ packet_send_fn! {
     (i32, i32) => send_unload_chunk {
         mod v1_9::play::unload_chunk;
     }
+    (i32, i32) => send_update_viewpos {
+        mod v1_14::play::update_viewpos;
+    }
 }
