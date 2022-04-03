@@ -2,25 +2,48 @@ pub use inner::*;
 
 #[falcon_protocol_derive::packet_module]
 mod inner {
+    use serde::Serialize;
+    use fastnbt::LongArray;
     use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
     use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
+    use crate::util::HeightMap;
+    use crate::v1_13::play::build_compacted_data_array;
 
     const MAX_BITS_PER_BLOCK: u8 = 14;
 
     const BIOME_COUNT: u16 = SECTION_WIDTH * SECTION_LENGTH;
-    const LIGHT_COUNT: usize = ((SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH) / 2) as usize;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
-    const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
-    #[falcon_packet(393, 401, 404 = 0x22; no_receive; outgoing = "chunk_data")]
+    #[falcon_packet(477 = 0x21; no_receive; outgoing = "chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
         bit_mask: i32,
+        heightmap: PacketHeightMap,
         chunk_sections: Vec<ChunkSectionData>,
+    }
+
+    #[derive(Serialize)]
+    struct PacketHeightMap {
+        #[serde(rename = "MOTION_BLOCKING")]
+        motion_blocking: LongArray,
+    }
+    
+    impl From<HeightMap> for PacketHeightMap {
+        fn from(map: HeightMap) -> Self {
+            PacketHeightMap {
+                motion_blocking: LongArray::new(
+                    build_compacted_data_array(
+                        9,
+                        36,
+                        map.motion_blocking().into_iter().map(|v| v as u64)
+                    ).into_iter().map(|v| v as i64).collect()
+                )
+            }
+        }
     }
 
     impl PacketEncode for ChunkDataPacket {
@@ -29,6 +52,7 @@ mod inner {
             buf.write_i32(self.chunk_z);
             buf.write_bool(true); // We only send full chunks currently!
             buf.write_var_i32(self.bit_mask);
+            buf.write_u8_array(fastnbt::ser::to_bytes(&self.heightmap).unwrap().as_slice());
             let mut data_size: i32 = BIOME_COUNT as i32 * 4; // biomes get sent because of full chunk
             for chunk in &self.chunk_sections {
                 data_size += chunk.get_data_size();
@@ -50,12 +74,14 @@ mod inner {
                 chunk_x: spec.chunk_x,
                 chunk_z: spec.chunk_z,
                 bit_mask: spec.bitmask,
+                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_1976).into(),
                 chunk_sections: spec.sections.into_iter().map(|e| e.into()).collect(),
             }
         }
     }
 
     pub struct ChunkSectionData {
+        block_count: i16,
         bits_per_block: u8,
         palette: Option<Vec<i32>>,
         block_data: Vec<u64>,
@@ -63,6 +89,7 @@ mod inner {
 
     impl PacketEncode for ChunkSectionData {
         fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+            buf.write_i16(self.block_count);
             buf.write_u8(self.bits_per_block);
             if let Some(palette) = &self.palette {
                 buf.write_var_i32(palette.len() as i32);
@@ -74,36 +101,25 @@ mod inner {
             for x in &self.block_data {
                 buf.write_i64(*x as i64);
             }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
         }
     }
 
     impl ChunkSectionData {
         pub fn get_data_size(&self) -> i32 {
-            let mut size = 1; // always one for bits per block;
+            let mut size = 1 + 2; // always one for bits per block + block count: i16;
             if let Some(palette) = &self.palette {
                 size += get_var_i32_size(palette.len() as i32);
                 size += palette.iter().map(|x| get_var_i32_size(*x)).sum::<usize>();
             }
             size += get_var_i32_size(self.block_data.len() as i32);
             size += self.block_data.len() * std::mem::size_of::<u64>();
-            size += LIGHT_COUNT;
-            size += LIGHT_COUNT; // we only have the overworld for now
             size as i32
         }
     }
 
     impl From<ChunkSectionDataSpec> for ChunkSectionData {
         fn from(spec: ChunkSectionDataSpec) -> Self {
-            let block_to_int = match spec.protocol_version {
-                401 | 404 => Blocks::get_global_id_1631,
-                _ => Blocks::get_global_id_1519,
-            };
+            let block_to_int = Blocks::get_global_id_1976;
             let bits_per_block = {
                 let actual = spec.palette.calculate_bits_per_entry(block_to_int);
                 if actual < 4 {
@@ -115,47 +131,29 @@ mod inner {
                 }
             };
 
+            let mut block_count = 0;
+            let block_iterator = spec.blocks.into_iter()
+                .inspect(|v| {
+                    let block = spec.palette.at(*v as usize).unwrap();
+                    if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) && block_to_int(block).is_some() {
+                        block_count += 1;
+                    }
+                });
             let (block_data, palette) = if bits_per_block > 8 {
-                let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
+                let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, None)
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
+                let (blocks, palette) = spec.palette.build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
                 (block_data, Some(palette))
             };
             ChunkSectionData {
+                block_count,
                 bits_per_block,
                 palette,
                 block_data,
             }
         }
-    }
-
-    pub fn build_compacted_data_array<E: Iterator<Item=u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
-        let mut compacted_data = Vec::with_capacity(capacity as usize);
-        let mut current_long = 0u64;
-        let mut offset = 0;
-        let mut pos = 0;
-
-        for element in elements {
-            let bit_shift = pos * bits_per_element + offset;
-            if bit_shift < (i64::BITS - bits_per_element as u32) as u8 {
-                current_long |= element << bit_shift;
-                pos += 1;
-            } else {
-                offset = bit_shift - (i64::BITS - bits_per_element as u32) as u8;
-                current_long |= element << bit_shift;
-                compacted_data.push(current_long);
-                current_long = 0u64;
-                if offset != 0 {
-                    let diff = bits_per_element - offset;
-                    current_long |= element >> diff;
-                }
-                pos = 0;
-            }
-        }
-
-        compacted_data
     }
 }

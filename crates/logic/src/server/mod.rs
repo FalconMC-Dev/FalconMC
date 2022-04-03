@@ -10,7 +10,7 @@ use falcon_core::server::data::{Difficulty, ServerVersion};
 use falcon_core::server::MainServer;
 use falcon_core::world::chunks::Chunk;
 use falcon_send::specs::login::LoginSuccessSpec;
-use falcon_send::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec};
+use falcon_send::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
 use falcon_send::specs::status::{PlayerData, StatusResponseSpec};
 
 mod wrapper;
@@ -50,6 +50,8 @@ pub fn login_success(server: &mut MainServer, username: String, uuid: Uuid, prot
         let player = entry.get();
         let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), FalconConfig::global().max_view_distance() as i32, false);
         player.connection().build_send_packet(join_game_spec, falcon_send::send_join_game);
+        let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);
+        player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);
         let player_abilities = PlayerAbilitiesSpec::new(player, 0.05, 0.1);
         player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
         server.world.send_chunks_for_player(player, CHUNK_FN, CHUNK_AIR_FN);
@@ -76,14 +78,24 @@ pub fn player_update_pos_look(server: &mut MainServer, uuid: Uuid, x: Option<f64
         yaw.map(|e| look_angles.set_yaw(e));
         pitch.map(|e| look_angles.set_pitch(e));
 
+        let mut update_viewpos = false;
         let position = player.position_mut();
         let (old_chunk_x, old_chunk_z) = (position.chunk_x(), position.chunk_z());
         x.map(|x| position.set_x(x));
-        y.map(|y| position.set_y(y));
+        if let Some(y) = y {
+            if y as i32 != position.y() as i32 {
+                update_viewpos = true;
+            }
+            position.set_y(y);
+        }
         z.map(|z| position.set_z(z));
         let (chunk_x, chunk_z) = (position.chunk_x(), position.chunk_z());
         if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
+            update_viewpos = true;
             server.world.update_player_pos(player, old_chunk_x, old_chunk_z, chunk_x, chunk_z, CHUNK_FN, CHUNK_AIR_FN, UNLOAD_FN);
+        }
+        if update_viewpos {
+            player.connection().build_send_packet((chunk_x, chunk_z), falcon_send::send_update_viewpos);
         }
     }
 }

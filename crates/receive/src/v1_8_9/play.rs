@@ -7,7 +7,7 @@ mod inner {
     use falcon_logic::ServerLogic;
 
     #[derive(PacketDecode)]
-    #[falcon_packet(47 = 0x04; 107, 108, 109, 110, 210, 315, 316 = 0x0C; 335 = 0x0E; 338, 340 = 0x0D; 393, 401, 404 = 0x10)]
+    #[falcon_packet(47 = 0x04; 107, 108, 109, 110, 210, 315, 316 = 0x0C; 335 = 0x0E; 338, 340 = 0x0D; 393, 401, 404 = 0x10; 477 = 0x11)]
     pub struct PlayerPositionPacket {
         x: f64,
         y: f64,
@@ -30,7 +30,7 @@ mod inner {
     }
 
     #[derive(PacketDecode)]
-    #[falcon_packet(47 = 0x05; 107, 108, 109, 110, 210, 315, 316 = 0x0E; 335 = 0x10; 338, 340 = 0x0F; 393, 401, 404 = 0x12)]
+    #[falcon_packet(47 = 0x05; 107, 108, 109, 110, 210, 315, 316 = 0x0E; 335 = 0x10; 338, 340 = 0x0F; 393, 401, 404 = 0x12; 477 = 0x13)]
     pub struct PlayerLookPacket {
         yaw: f32,
         pitch: f32,
@@ -51,7 +51,7 @@ mod inner {
     }
 
     #[derive(PacketDecode)]
-    #[falcon_packet(47 = 0x06; 107, 108, 109, 110, 210, 315, 316 = 0x0D; 335 = 0x0F; 338, 340 = 0x0E; 393, 401, 404 = 0x11)]
+    #[falcon_packet(47 = 0x06; 107, 108, 109, 110, 210, 315, 316 = 0x0D; 335 = 0x0F; 338, 340 = 0x0E; 393, 401, 404 = 0x11; 477 = 0x12)]
     pub struct PositionLookPacket {
         x: f64,
         y: f64,

@@ -5,6 +5,7 @@ mod inner {
     use mc_chat::ChatComponent;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::player::data::PlayerAbilityFlags;
+    use crate::ServerDifficultySpec;
     use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
 
     #[derive(PacketEncode)]
@@ -34,7 +35,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x39; 107, 108, 109, 110, 210, 315, 316, 335 = 0x2B; 338, 340 = 0x2C; 393, 401, 404 = 0x2E; no_receive; outgoing = "player_abilities")]
+    #[falcon_packet(47 = 0x39; 107, 108, 109, 110, 210, 315, 316, 335 = 0x2B; 338, 340 = 0x2C; 393, 401, 404 = 0x2E; 477 = 0x31; no_receive; outgoing = "player_abilities")]
     pub struct PlayerAbilityPacket {
         flags: PlayerAbilityFlags,
         fly_speed: f32,
@@ -52,7 +53,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x40; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340 = 0x1A; 393, 401, 404 = 0x1B; no_receive; outgoing = "disconnect")]
+    #[falcon_packet(47 = 0x40; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477 = 0x1A; 393, 401, 404 = 0x1B; no_receive; outgoing = "disconnect")]
     pub struct DisconnectPacket {
         #[max_length(262144)]
         reason: String,
@@ -62,6 +63,20 @@ mod inner {
         fn from(reason: ChatComponent) -> Self {
             DisconnectPacket {
                 reason: serde_json::to_string(&reason).unwrap(),
+            }
+        }
+    }
+
+    #[derive(PacketEncode)]
+    #[falcon_packet(47 = 0x41; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 393, 401, 404 = 0x0D; no_receive; outgoing = "send_difficulty")]
+    pub struct ServerDifficultyPacket {
+        difficulty: u8,
+    }
+
+    impl From<ServerDifficultySpec> for ServerDifficultyPacket {
+        fn from(spec: ServerDifficultySpec) -> Self {
+            ServerDifficultyPacket {
+                difficulty: spec.difficulty as u8,
             }
         }
     }
