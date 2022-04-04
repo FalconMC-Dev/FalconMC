@@ -6,7 +6,7 @@ mod inner {
     use crate::specs::play::PositionAndLookSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335 = 0x2E; 338, 340 = 0x2F; 393, 401, 404 = 0x32; 477 = 0x35; no_receive; outgoing = "position_look")]
+    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335 = 0x2E; 338, 340 = 0x2F; 393, 401, 404 = 0x32; 477, 480, 485, 490, 498 = 0x35; no_receive; outgoing = "position_look")]
     pub struct PositionLookPacket {
         x: f64,
         y: f64,
@@ -33,7 +33,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477 = 0x1D; 393, 401, 404 = 0x1F; no_receive; outgoing = "unload_chunk")]
+    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498 = 0x1D; 393, 401, 404 = 0x1F; no_receive; outgoing = "unload_chunk")]
     pub struct UnloadChunkPacket {
         chunk_x: i32,
         chunk_z: i32,

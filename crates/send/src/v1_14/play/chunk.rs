@@ -17,7 +17,7 @@ mod inner {
     const BIOME_COUNT: u16 = SECTION_WIDTH * SECTION_LENGTH;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
 
-    #[falcon_packet(477 = 0x21; no_receive; outgoing = "chunk_data")]
+    #[falcon_packet(477, 480, 485, 490, 498 = 0x21; no_receive; outgoing = "chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,

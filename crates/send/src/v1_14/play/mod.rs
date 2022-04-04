@@ -9,7 +9,7 @@ mod inner {
     use crate::{JoinGameSpec, ServerDifficultySpec};
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477 = 0x25; no_receive; outgoing = "join_game")]
+    #[falcon_packet(477, 480, 485, 490, 498 = 0x25; no_receive; outgoing = "join_game")]
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,
@@ -37,7 +37,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477 = 0x0D; no_receive; outgoing = "send_difficulty")]
+    #[falcon_packet(477, 480, 485, 490, 498 = 0x0D; no_receive; outgoing = "send_difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
         locked: bool,
@@ -53,7 +53,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477 = 0x40; no_receive; outgoing = "update_viewpos")]
+    #[falcon_packet(477, 480, 485, 490, 498 = 0x40; no_receive; outgoing = "update_viewpos")]
     pub struct UpdateViewPosition {
         #[var_int]
         chunk_x: i32,

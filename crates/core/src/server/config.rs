@@ -18,8 +18,8 @@ pub struct FalconConfig {
 
 impl FalconConfig {
     // 47, 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, --> for future update
-    pub const ALLOWED_VERSIONS: [u32; 4]= [
-         393, 401, 404, 477
+    pub const ALLOWED_VERSIONS: [u32; 8]= [
+         393, 401, 404, 477, 480, 485, 490, 498
     ];
 
     pub fn global() -> &'static FalconConfig {
