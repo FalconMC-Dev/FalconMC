@@ -48,7 +48,7 @@ pub fn login_success(server: &mut MainServer, username: String, uuid: Uuid, prot
     server.players.insert(uuid, player);
     if let Entry::Occupied(entry) = server.players.entry(uuid) {
         let player = entry.get();
-        let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), FalconConfig::global().max_view_distance() as i32, false);
+        let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 0, FalconConfig::global().max_view_distance() as i32, false, false);
         player.connection().build_send_packet(join_game_spec, falcon_send::send_join_game);
         let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);
         player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);

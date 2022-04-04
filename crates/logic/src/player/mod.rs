@@ -14,7 +14,6 @@ impl PlayerLogic for Player {
 
     #[tracing::instrument(skip(self))]
     fn send_keep_alive(&self) {
-        debug!("Keep alive sent!");
         let elapsed = self.time.elapsed().as_secs();
         self.connection().execute(move |connection| {
             connection.handler_state_mut().set_last_keep_alive(elapsed);

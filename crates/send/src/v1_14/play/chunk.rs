@@ -8,6 +8,7 @@ mod inner {
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
+    use falcon_core::world::palette::PaletteToI32;
     use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
     use crate::util::HeightMap;
     use crate::v1_13::play::build_compacted_data_array;
@@ -27,7 +28,7 @@ mod inner {
     }
 
     #[derive(Serialize)]
-    struct PacketHeightMap {
+    pub(crate) struct PacketHeightMap {
         #[serde(rename = "MOTION_BLOCKING")]
         motion_blocking: LongArray,
     }
@@ -75,7 +76,7 @@ mod inner {
                 chunk_z: spec.chunk_z,
                 bit_mask: spec.bitmask,
                 heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_1976).into(),
-                chunk_sections: spec.sections.into_iter().map(|e| e.into()).collect(),
+                chunk_sections: spec.sections.into_iter().map(|e| into_chunk_section(e, Blocks::get_global_id_1976)).collect(),
             }
         }
     }
@@ -117,43 +118,40 @@ mod inner {
         }
     }
 
-    impl From<ChunkSectionDataSpec> for ChunkSectionData {
-        fn from(spec: ChunkSectionDataSpec) -> Self {
-            let block_to_int = Blocks::get_global_id_1976;
-            let bits_per_block = {
-                let actual = spec.palette.calculate_bits_per_entry(block_to_int);
-                if actual < 4 {
-                    4u8
-                } else if actual < 9 {
-                    actual as u8
-                } else {
-                    MAX_BITS_PER_BLOCK
-                }
-            };
-
-            let mut block_count = 0;
-            let block_iterator = spec.blocks.into_iter()
-                .inspect(|v| {
-                    let block = spec.palette.at(*v as usize).unwrap();
-                    if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) && block_to_int(block).is_some() {
-                        block_count += 1;
-                    }
-                });
-            let (block_data, palette) = if bits_per_block > 8 {
-                let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
-                (block_data, None)
+    pub(crate) fn into_chunk_section(spec: ChunkSectionDataSpec, block_to_int: PaletteToI32<Blocks>) -> ChunkSectionData {
+        let bits_per_block = {
+            let actual = spec.palette.calculate_bits_per_entry(block_to_int);
+            if actual < 4 {
+                4u8
+            } else if actual < 9 {
+                actual as u8
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
-                (block_data, Some(palette))
-            };
-            ChunkSectionData {
-                block_count,
-                bits_per_block,
-                palette,
-                block_data,
+                MAX_BITS_PER_BLOCK
             }
+        };
+
+        let mut block_count = 0;
+        let block_iterator = spec.blocks.into_iter()
+            .inspect(|v| {
+                let block = spec.palette.at(*v as usize).unwrap();
+                if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) && block_to_int(block).is_some() {
+                    block_count += 1;
+                }
+            });
+        let (block_data, palette) = if bits_per_block > 8 {
+            let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);
+            let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+            (block_data, None)
+        } else {
+            let (blocks, palette) = spec.palette.build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
+            let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+            (block_data, Some(palette))
+        };
+        ChunkSectionData {
+            block_count,
+            bits_per_block,
+            palette,
+            block_data,
         }
     }
 }
