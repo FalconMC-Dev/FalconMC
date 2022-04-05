@@ -16,6 +16,7 @@ pub mod v1_12_2;
 pub mod v1_13;
 pub mod v1_14;
 pub mod v1_15;
+pub mod v1_16;
 
 // Status packets
 packet_send_fn! {
