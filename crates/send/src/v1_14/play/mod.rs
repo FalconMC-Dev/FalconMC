@@ -37,7 +37,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477, 480, 485, 490, 498 = 0x0D; 573, 575, 578 = 0x0E; no_receive; outgoing = "send_difficulty")]
+    #[falcon_packet(477, 480, 485, 490, 498, 735 = 0x0D; 573, 575, 578 = 0x0E; no_receive; outgoing = "send_difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
         locked: bool,
@@ -53,7 +53,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477, 480, 485, 490, 498 = 0x40; 573, 575, 578 = 0x41; no_receive; outgoing = "update_viewpos")]
+    #[falcon_packet(477, 480, 485, 490, 498, 735 = 0x40; 573, 575, 578 = 0x41; no_receive; outgoing = "update_viewpos")]
     pub struct UpdateViewPosition {
         #[var_int]
         chunk_x: i32,

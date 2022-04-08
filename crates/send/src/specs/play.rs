@@ -19,7 +19,7 @@ define_spec! {
         hashed_seed: i64,
         view_distance: i32,
         reduced_debug: bool,
-        immediate_respawn: bool;
+        enable_respawn_screen: bool;
         let entity_id: i32 = player.entity_id(),
         let game_mode: GameMode = player.game_mode(),
         let dimension: i32 = player.dimension()

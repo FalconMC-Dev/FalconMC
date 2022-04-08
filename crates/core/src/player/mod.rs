@@ -100,7 +100,6 @@ impl Player {
 
     pub fn set_view_distance(&mut self, distance: u8) {
         self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().max_view_distance()));
-        debug!(view_distance = self.view_distance, "Decided view-distance");
     }
 
     pub fn protocol_version(&self) -> i32 {

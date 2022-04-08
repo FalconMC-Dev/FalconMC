@@ -13,6 +13,7 @@ use itertools::Itertools;
 pub mod blocks;
 pub mod block_util;
 pub mod chunks;
+pub mod dimension;
 pub mod palette;
 
 #[derive(Debug)]

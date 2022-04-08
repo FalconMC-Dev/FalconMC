@@ -78,6 +78,7 @@ impl ClientConnection {
     }
 
     pub fn send_packet<P: PacketEncode>(&mut self, packet_id: i32, packet_out: &P) {
+        trace!("Sending packet {}", packet_id);
         if self.handler_state.connection_state() == ConnectionState::Disconnected {
             return;
         }
