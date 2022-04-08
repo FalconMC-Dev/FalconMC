@@ -35,6 +35,7 @@ packet_send_fn! {
     }
     LoginSuccessSpec => send_login_success {
         mod v1_8_9::login::login_success;
+        mod v1_16::login::login_success;
     }
 }
 
@@ -48,6 +49,7 @@ packet_send_fn! {
         mod v1_9_1::play::join_game;
         mod v1_14::play::join_game;
         mod v1_15::play::join_game;
+        mod v1_16::play::join_game;
     }
     ServerDifficultySpec => send_server_difficulty {
         mod v1_8_9::play::send_difficulty;
@@ -66,6 +68,7 @@ packet_send_fn! {
         mod v1_13::play::chunk_data;
         mod v1_14::play::chunk_data;
         mod v1_15::play::chunk_data;
+        mod v1_16::play::chunk_data;
     }
     (i32, i32) => send_unload_chunk {
         mod v1_9::play::unload_chunk;

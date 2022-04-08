@@ -21,7 +21,7 @@ mod inner {
         #[var_int]
         view_distance: i32,
         reduced_debug: bool,
-        immediate_respawn: bool,
+        enable_respawn_screen: bool,
     }
 
     impl From<JoinGameSpec> for JoinGamePacket {
@@ -35,7 +35,7 @@ mod inner {
                 level_type: spec.level_type,
                 view_distance: spec.view_distance,
                 reduced_debug: spec.reduced_debug,
-                immediate_respawn: spec.immediate_respawn,
+                enable_respawn_screen: spec.enable_respawn_screen,
             }
         }
     }

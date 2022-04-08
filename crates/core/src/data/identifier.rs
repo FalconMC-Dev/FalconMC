@@ -6,6 +6,8 @@ use nom::character::complete::char;
 use nom::combinator::map;
 use nom::error::Error;
 use nom::sequence::separated_pair;
+use crate::network::buffer::PacketBufferWrite;
+use crate::network::packet::PacketEncode;
 
 #[derive(Debug, PartialEq)]
 pub struct Identifier {
@@ -110,6 +112,12 @@ impl<'a> TryFrom<&'a str> for Identifier {
                 location,
             })
         }
+    }
+}
+
+impl PacketEncode for Identifier {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        buf.write_string(&self.to_string());
     }
 }
 
