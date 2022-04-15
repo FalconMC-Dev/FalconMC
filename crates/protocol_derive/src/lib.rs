@@ -6,7 +6,7 @@ use proc_macro2::Span;
 use syn::parse::{Nothing, Parse, ParseStream};
 use syn::{Item, ItemMod, parse_macro_input, Ident, ItemStruct, Token, Error, LitInt, LitStr};
 use syn::punctuated::Punctuated;
-use crate::FalconArg::{ExcludeReceive, Outgoing, VersionToId};
+use crate::FalconArg::{Batched, ExcludeReceive, Outgoing, VersionToId};
 use crate::packet_mod::{packet_structs_to_version_outgoing_list, packet_structs_to_version_receive_list};
 
 mod packet_mod;
@@ -112,33 +112,51 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
         // Sending
         let version_to_packet_id = packet_structs_to_version_outgoing_list(&packet_structs);
         let mut functions_outgoing = Vec::new();
-        for (packet_ident, (name, packet_map)) in version_to_packet_id {
-            let mut all_tokens = None;
-            let mut inner_match_arms = Vec::new();
+        for ((packet_ident, batched), (name, packet_map)) in version_to_packet_id {
+            let mut all_tokens_send = None;
+            let mut all_tokens_build = None;
+            let mut inner_match_arms_send = Vec::new();
+            let mut inner_match_arms_build = Vec::new();
             let span = packet_ident.span();
             for (packet_id, versions) in packet_map {
                 if versions.contains(&-1) {
-                    all_tokens = Some(quote_spanned!(span=>
+                    all_tokens_send = Some(quote_spanned!(span=>
                         let packet: #packet_ident = packet.take().unwrap().into();
                         connection.send_packet(#packet_id, &packet);
                     ));
+                    all_tokens_build = Some(quote_spanned!(span=>
+                        let packet: #packet_ident = packet.take().unwrap().into();
+                        let mut buffer = ::bytes::BytesMut::new();
+                        ::falcon_core::network::buffer::PacketBufferWrite::write_var_i32(&mut buffer, #packet_id);
+                        ::falcon_core::network::packet::PacketEncode::to_buf(&packet, &mut buffer);
+                        Some(buffer.freeze())
+                    ));
                 } else {
-                    inner_match_arms.push(quote_spanned!(span=>
+                    inner_match_arms_send.push(quote_spanned!(span=>
                         #(#versions)|* => {
                             let packet: #packet_ident = packet.take().unwrap().into();
                             connection.send_packet(#packet_id, &packet)
                         }
                     ));
+                    inner_match_arms_build.push(quote_spanned!(span=>
+                        #(#versions)|* => {
+                            let packet: #packet_ident = packet.take().unwrap().into();
+                            let mut buffer = ::bytes::BytesMut::new();
+                            ::falcon_core::network::buffer::PacketBufferWrite::write_var_i32(&mut buffer, #packet_id);
+                            ::falcon_core::network::packet::PacketEncode::to_buf(&packet, &mut buffer);
+                            Some(buffer.freeze())
+                        }
+                    ));
                 }
             }
             let name_spanned = Ident::new(&name.value().to_string(), name.span());
-            let tokens = if let Some(tokens) = all_tokens {
+            let tokens = if let Some(tokens) = all_tokens_send {
                 tokens
             } else {
                 quote!(
                     let protocol_version = connection.handler_state().protocol_id();
                     match protocol_version {
-                        #(#inner_match_arms,)*
+                        #(#inner_match_arms_send,)*
                         _ => return false,
                     }
                 )
@@ -155,6 +173,30 @@ pub fn packet_module(attr: TokenStream2, item: TokenStream2) -> TokenStream2 {
                     true
                 }
             ));
+            if batched {
+                let tokens = if let Some(tokens) = all_tokens_build {
+                    tokens
+                } else {
+                    quote!(
+                        match protocol_id {
+                            #(#inner_match_arms_build,)*
+                            _ => None,
+                        })
+                };
+                let name_spanned = Ident::new(&name.value().to_string(), name.span());
+                let name_spanned = format_ident!("build_{}", name_spanned);
+                functions_outgoing.push(quote!(
+                    pub fn #name_spanned<T>(packet: &mut Option<T>, protocol_id: i32) -> Option<::bytes::Bytes>
+                    where
+                        #packet_ident: ::std::convert::From<T>,
+                    {
+                        if packet.is_none() {
+                            return None;
+                        }
+                        #tokens
+                    }
+                ));
+            }
         }
 
         content.push(Item::Verbatim(quote!(
@@ -171,6 +213,7 @@ fn try_into_packet_struct(item: &mut ItemStruct) -> syn::Result<PacketStruct> {
     let mut versions: Vec<(i32, Vec<i32>)> = Vec::new();
     let mut outgoing = None;
     let mut incoming = true;
+    let mut batched = false;
     for attr in &item.attrs {
         if attr.path.is_ident("falcon_packet") {
             let falcon_args = attr.parse_args::<FalconAttrArgs>()?;
@@ -196,6 +239,9 @@ fn try_into_packet_struct(item: &mut ItemStruct) -> syn::Result<PacketStruct> {
             if !falcon_args.incoming {
                 incoming = false
             }
+            if falcon_args.batched {
+                batched = true
+            }
         }
     }
     item.attrs.retain(|attr| !attr.path.is_ident("falcon_packet"));
@@ -204,6 +250,7 @@ fn try_into_packet_struct(item: &mut ItemStruct) -> syn::Result<PacketStruct> {
         versions,
         outgoing,
         incoming,
+        batched,
     })
 }
 
@@ -212,12 +259,14 @@ struct PacketStruct {
     versions: Vec<(i32, Vec<i32>)>,
     outgoing: Option<LitStr>,
     incoming: bool,
+    batched: bool,
 }
 
 struct FalconAttrArgs {
     versions: Vec<VersionToPacketId>,
     outgoing: Option<(Span, LitStr)>,
     incoming: bool,
+    batched: bool,
 }
 
 impl Parse for FalconAttrArgs {
@@ -225,6 +274,7 @@ impl Parse for FalconAttrArgs {
         let mut versions = Vec::new();
         let mut outgoing = None;
         let mut incoming = true;
+        let mut batched = false;
         let falcon_args = Punctuated::<FalconArg, Token![;]>::parse_terminated(input)?;
         for arg in falcon_args {
             match arg {
@@ -249,12 +299,14 @@ impl Parse for FalconAttrArgs {
                 }
                 Outgoing(name) => outgoing = Some(name),
                 ExcludeReceive => incoming = false,
+                Batched => batched = true,
             }
         }
         Ok(FalconAttrArgs {
             versions,
             outgoing,
             incoming,
+            batched,
         })
     }
 }
@@ -263,6 +315,7 @@ enum FalconArg {
     VersionToId(VersionToPacketId),
     Outgoing((Span, LitStr)),
     ExcludeReceive,
+    Batched,
 }
 
 impl Parse for FalconArg {
@@ -275,6 +328,9 @@ impl Parse for FalconArg {
             input.parse::<Token![=]>()?;
             let spec_name = input.parse::<LitStr>()?;
             Ok(Outgoing((outgoing.span, spec_name)))
+        } else if input.peek(kw::batched) {
+            input.parse::<kw::batched>()?;
+            Ok(Batched)
         } else {
             match input.parse::<VersionToPacketId>() {
                 Ok(data) => Ok(VersionToId(data)),
