@@ -33,7 +33,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735 = 0x1D; 393, 401, 404 = 0x1F; 573, 575, 578 = 0x1E; no_receive; outgoing = "unload_chunk")]
+    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735 = 0x1D; 393, 401, 404 = 0x1F; 573, 575, 578 = 0x1E; no_receive; outgoing = "unload_chunk"; batched)]
     pub struct UnloadChunkPacket {
         chunk_x: i32,
         chunk_z: i32,

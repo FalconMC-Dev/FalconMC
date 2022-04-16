@@ -6,7 +6,6 @@ mod chunk;
 
 #[falcon_protocol_derive::packet_module]
 mod inner {
-    use std::path::PathBuf;
     use falcon_core::data::Identifier;
     use falcon_core::network::buffer::PacketBufferWrite;
     use falcon_core::network::packet::PacketEncode;
