@@ -8,10 +8,10 @@ use falcon_core::player::Player;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::{Difficulty, ServerVersion};
 use falcon_core::server::MainServer;
-use falcon_core::world::chunks::Chunk;
 use falcon_send::specs::login::LoginSuccessSpec;
-use falcon_send::specs::play::{ChunkDataSpec, JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
+use falcon_send::specs::play::{JoinGameSpec, PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
 use falcon_send::specs::status::{PlayerData, StatusResponseSpec};
+use crate::world::{send_chunks_for_player, update_player_pos, update_view_distance};
 
 mod wrapper;
 
@@ -54,7 +54,7 @@ pub fn login_success(server: &mut MainServer, username: String, uuid: Uuid, prot
         player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);
         let player_abilities = PlayerAbilitiesSpec::new(player, 0.05, 0.1);
         player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
-        server.world.send_chunks_for_player(player, CHUNK_FN, CHUNK_AIR_FN);
+        send_chunks_for_player(&server.world, player);
         let position_look = PositionAndLookSpec::new(player, 0, 1);
         player.connection().build_send_packet(position_look, falcon_send::send_position_look);
     }
@@ -92,7 +92,7 @@ pub fn player_update_pos_look(server: &mut MainServer, uuid: Uuid, x: Option<f64
         let (chunk_x, chunk_z) = (position.chunk_x(), position.chunk_z());
         if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
             update_viewpos = true;
-            server.world.update_player_pos(player, old_chunk_x, old_chunk_z, chunk_x, chunk_z, CHUNK_FN, CHUNK_AIR_FN, UNLOAD_FN);
+            update_player_pos(&server.world, player, old_chunk_x, old_chunk_z, chunk_x, chunk_z);
         }
         if update_viewpos {
             player.connection().build_send_packet((chunk_x, chunk_z), falcon_send::send_update_viewpos);
@@ -103,19 +103,7 @@ pub fn player_update_pos_look(server: &mut MainServer, uuid: Uuid, x: Option<f64
 pub fn player_update_view_distance(server: &mut MainServer, uuid: Uuid, view_distance: u8) {
     if let Entry::Occupied(mut entry) = server.players.entry(uuid) {
         let player = entry.get_mut();
-        server.world.update_view_distance(player, view_distance, CHUNK_FN, CHUNK_AIR_FN, UNLOAD_FN);
+        update_view_distance(&server.world, player, view_distance);
         player.set_view_distance(view_distance);
     }
 }
-
-const CHUNK_FN: fn(&Player, &Chunk) = |player: &Player, chunk: &Chunk| {
-    let packet = ChunkDataSpec::new(chunk, player.protocol_version());
-    player.connection().build_send_packet(packet, falcon_send::send_chunk_data);
-};
-const CHUNK_AIR_FN: fn(&Player, i32, i32) = |player: &Player, x: i32, z: i32| {
-    let packet = ChunkDataSpec::empty(x, z);
-    player.connection().build_send_packet(packet, falcon_send::send_chunk_data);
-};
-const UNLOAD_FN: fn(&Player, i32, i32) = |player: &Player, x: i32, z: i32| {
-    player.connection().build_send_packet((x, z),  falcon_send::send_unload_chunk);
-};

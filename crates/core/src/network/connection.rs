@@ -77,6 +77,7 @@ impl ClientConnection {
         ConnectionWrapper::new(self.connection_sync.0.clone())
     }
 
+    /// TODO: make dependent on [`ClientConnection::send_data`].
     pub fn send_packet<P: PacketEncode>(&mut self, packet_id: i32, packet_out: &P) {
         trace!("Sending packet {}", packet_id);
         if self.handler_state.connection_state() == ConnectionState::Disconnected {
@@ -85,6 +86,17 @@ impl ClientConnection {
         let old_len = self.out_buffer.len();
         self.out_buffer.write_var_i32(packet_id);
         packet_out.to_buf(&mut self.out_buffer);
+        let temp_buf = self.out_buffer.split_off(old_len);
+        self.out_buffer.write_var_i32(temp_buf.len() as i32);
+        self.out_buffer.unsplit(temp_buf);
+    }
+
+    pub fn send_data<P: PacketEncode>(&mut self, data: &P) {
+        if self.handler_state.connection_state() == ConnectionState::Disconnected {
+            return;
+        }
+        let old_len = self.out_buffer.len();
+        data.to_buf(&mut self.out_buffer);
         let temp_buf = self.out_buffer.split_off(old_len);
         self.out_buffer.write_var_i32(temp_buf.len() as i32);
         self.out_buffer.unsplit(temp_buf);

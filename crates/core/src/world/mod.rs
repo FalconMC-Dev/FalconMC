@@ -1,7 +1,6 @@
 use crate::error::FalconCoreError;
 
 use crate::network::buffer::read_var_i32_from_iter;
-use crate::player::Player;
 use crate::player::data::Position;
 use crate::schematic::SchematicData;
 use crate::world::blocks::Blocks;
@@ -26,7 +25,7 @@ pub struct World {
 }
 
 impl World {
-    fn new(capacity: usize, min_x: i32, min_z: i32, max_x: i32, max_z: i32) -> Self {
+    pub fn new(capacity: usize, min_x: i32, min_z: i32, max_x: i32, max_z: i32) -> Self {
         World {
             min_x,
             min_z,
@@ -36,115 +35,15 @@ impl World {
         }
     }
 
-    fn get_chunk(&self, pos: ChunkPos) -> Option<&Chunk> {
+    pub fn get_chunk(&self, pos: ChunkPos) -> Option<&Chunk> {
         if pos.x > self.max_x || pos.x < self.min_x || pos.z > self.max_z || pos.z < self.min_z {
             return None;
         }
         self.chunks.get(&pos)
     }
 
-    fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
+    pub fn get_chunk_mut(&mut self, pos: ChunkPos) -> &mut Chunk {
         self.chunks.entry(pos).or_insert_with(|| Chunk::empty(pos))
-    }
-
-    /// Initialize terrain when player spawns
-    pub fn send_chunks_for_player<C, A>(
-        &self,
-        player: &Player,
-        chunk_fn: C,
-        air_fn: A,
-    )
-    where
-        C: Fn(&Player, &Chunk),
-        A: Fn(&Player, i32, i32),
-    {
-        let (chunk_x, chunk_z) = player.position().chunk_coords();
-        let view_distance = player.view_distance();
-
-        for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
-            for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
-                match self.get_chunk(ChunkPos::new(x, z)) {
-                    None => air_fn(player, x, z),
-                    Some(chunk) => chunk_fn(player, chunk),
-                }
-            }
-        }
-    }
-
-    pub fn update_player_pos<C, A, U>(
-        &self,
-        player: &Player,
-        old_chunk_x: i32,
-        old_chunk_z: i32,
-        chunk_x: i32,
-        chunk_z: i32,
-        chunk_fn: C,
-        air_fn: A,
-        unload_fn: U,
-    )
-    where
-        C: Fn(&Player, &Chunk),
-        A: Fn(&Player, i32, i32),
-        U: Fn(&Player, i32, i32),
-    {
-        let view_distance = player.view_distance();
-        // unload old chunks
-        for x in old_chunk_x - view_distance as i32..=old_chunk_x + view_distance as i32 {
-            for z in old_chunk_z - view_distance as i32..=old_chunk_z + view_distance as i32 {
-                if (chunk_x - x).abs() > view_distance as i32 || (chunk_z - z).abs() > view_distance as i32 {
-                    unload_fn(player, x, z);
-                }
-            }
-        }
-        // load new chunks
-        for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
-            for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
-                if (old_chunk_x - x).abs() > view_distance as i32 || (old_chunk_z - z).abs() > view_distance as i32 {
-                    match self.get_chunk(ChunkPos::new(x, z)) {
-                        None => air_fn(player, x, z),
-                        Some(chunk) => chunk_fn(player, chunk),
-                    }
-                }
-            }
-        }
-    }
-
-    #[allow(clippy::comparison_chain)]
-    pub fn update_view_distance<C, A, U>(
-        &self,
-        player: &Player,
-        view_distance: u8,
-        chunk_fn: C,
-        air_fn: A,
-        unload_fn: U
-    )
-    where
-        C: Fn(&Player, &Chunk),
-        A: Fn(&Player, i32, i32),
-        U: Fn(&Player, i32, i32),
-    {
-        let old_view_distance = player.view_distance();
-        let (chunk_x, chunk_z) = player.position().chunk_coords();
-        if old_view_distance < view_distance {
-            for x in -(view_distance as i8)..=view_distance as i8 {
-                for z in -(view_distance as i8)..=view_distance as i8 {
-                    if x.abs() as u8 > old_view_distance || z.abs() as u8 > old_view_distance {
-                        match self.get_chunk(ChunkPos::new(chunk_x + x as i32, chunk_z + z as i32)) {
-                            None => air_fn(player, chunk_x + x as i32, chunk_z + z as i32),
-                            Some(chunk) => chunk_fn(player, chunk),
-                        }
-                    }
-                }
-            }
-        } else if old_view_distance > view_distance {
-            for x in -(old_view_distance as i8)..=old_view_distance as i8 {
-                for z in -(old_view_distance as i8)..=old_view_distance as i8 {
-                    if x.abs() as u8 > view_distance || z.abs() as u8 > view_distance {
-                        unload_fn(player, chunk_x + x as i32, chunk_z + z as i32);
-                    }
-                }
-            }
-        }
     }
 }
 

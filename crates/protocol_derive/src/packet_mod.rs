@@ -2,6 +2,9 @@ use std::collections::HashMap;
 use syn::{Ident, LitStr};
 use crate::PacketStruct;
 
+pub(crate) type SendMapKey = (Ident, bool);
+pub(crate) type SendMapData = (LitStr, HashMap<i32, Vec<i32>>);
+
 pub(crate) fn packet_structs_to_version_receive_list(packet_structs: &[PacketStruct]) -> HashMap<i32, Vec<(Ident, i32)>> {
     let mut map = HashMap::new();
     for packet_struct in packet_structs {
@@ -19,7 +22,7 @@ pub(crate) fn packet_structs_to_version_receive_list(packet_structs: &[PacketStr
     map
 }
 
-pub(crate) fn packet_structs_to_version_outgoing_list(packet_structs: &[PacketStruct]) -> HashMap<(Ident, bool), (LitStr, HashMap<i32, Vec<i32>>)> {
+pub(crate) fn packet_structs_to_version_outgoing_list(packet_structs: &[PacketStruct]) -> HashMap<SendMapKey, SendMapData> {
     let mut map = HashMap::new();
     for packet_struct in packet_structs {
         if let Some(name) = &packet_struct.outgoing {

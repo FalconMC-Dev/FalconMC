@@ -15,7 +15,7 @@ mod inner {
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
     const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
-    #[falcon_packet(393, 401, 404 = 0x22; no_receive; outgoing = "chunk_data")]
+    #[falcon_packet(393, 401, 404 = 0x22; no_receive; outgoing = "chunk_data"; batched)]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,

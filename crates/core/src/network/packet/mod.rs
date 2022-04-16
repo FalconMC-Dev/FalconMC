@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use bytes::Bytes;
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use uuid::Uuid;
 
@@ -51,6 +52,12 @@ impl_packet_decode_primitive_self!(::uuid::Uuid, read_uuid);
 impl PacketEncode for Uuid {
     fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
         buf.write_uuid(self)
+    }
+}
+
+impl PacketEncode for Bytes {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        buf.write_u8_array(self.as_ref())
     }
 }
 

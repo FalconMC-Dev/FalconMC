@@ -6,6 +6,7 @@ use specs::login::*;
 use specs::play::*;
 use mc_chat::ChatComponent;
 
+pub mod batch;
 pub mod macros;
 pub mod specs;
 pub mod util;
@@ -75,5 +76,17 @@ packet_send_fn! {
     }
     (i32, i32) => send_update_viewpos {
         mod v1_14::play::update_viewpos;
+    }
+}
+
+build_send_fn! {
+    ChunkDataSpec => build_chunk_data {
+        mod v1_13::play::build_chunk_data;
+        mod v1_14::play::build_chunk_data;
+        mod v1_15::play::build_chunk_data;
+        mod v1_16::play::build_chunk_data;
+    }
+    (i32, i32) => build_unload_chunk {
+        mod v1_9::play::build_unload_chunk;
     }
 }
