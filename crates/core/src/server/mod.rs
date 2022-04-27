@@ -43,7 +43,7 @@ impl MainServer {
             server_rx,
             entity_id_count: 0,
             players,
-            world
+            world,
         }
     }
 

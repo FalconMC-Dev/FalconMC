@@ -2,14 +2,13 @@ use bytes::Bytes;
 use falcon_core::network::connection::ConnectionWrapper;
 
 
-pub fn send_batch<B, S, C, F>(batch: Vec<B>, mut convert: C, packet_fn: F, protocol_id: i32, connection: &ConnectionWrapper)
+pub fn send_batch<B, C>(batch: Vec<B>, mut convert: C, connection: &ConnectionWrapper)
 where
-    C: FnMut(B) -> S,
-    F: Fn(S, i32) -> Option<Bytes>,
+    C: FnMut(B) -> Option<Bytes>,
 {
     let mut packets = Vec::with_capacity(batch.len());
     for item in batch {
-        if let Some(data) = packet_fn(convert(item), protocol_id) {
+        if let Some(data) = convert(item) {
             packets.push(data);
         }
     }

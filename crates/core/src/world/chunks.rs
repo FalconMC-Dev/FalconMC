@@ -11,6 +11,7 @@ pub struct Chunk {
     sections: [Option<ChunkSection>; SECTIONS_NUM as usize],
     bitmask: i32,
     pos: ChunkPos,
+    dirty: bool,
 }
 
 impl Chunk {
@@ -19,6 +20,7 @@ impl Chunk {
             sections: Default::default(),
             bitmask: 0,
             pos,
+            dirty: true,
         }
     }
 
@@ -44,6 +46,14 @@ impl Chunk {
 
     pub fn get_position(&self) -> &ChunkPos {
         &self.pos
+    }
+
+    pub fn mark_dirty(&mut self, dirty: bool) {
+        self.dirty = dirty;
+    }
+
+    pub fn is_dirty(&self) -> bool {
+        self.dirty
     }
 
     pub fn get_chunk_sections(&self) -> &[Option<ChunkSection>; SECTIONS_NUM as usize] {
@@ -141,5 +151,11 @@ impl From<ChunkPos> for (i32, i32) {
 impl From<&ChunkPos> for (i32, i32) {
     fn from(pos: &ChunkPos) -> Self {
         (pos.x, pos.z)
+    }
+}
+
+impl From<(i32, i32)> for ChunkPos {
+    fn from((x, z): (i32, i32)) -> Self {
+        ChunkPos::new(x, z)
     }
 }

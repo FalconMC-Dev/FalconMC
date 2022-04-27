@@ -1,10 +1,15 @@
+use once_cell::sync::Lazy;
+use parking_lot::Mutex;
 use falcon_core::player::Player;
-use falcon_core::world::chunks::ChunkPos;
 use falcon_core::world::World;
-use falcon_send::specs::play::ChunkDataSpec;
+use crate::world::cache::WorldPacketCache;
+
+mod cache;
+
+static PACKET_CACHE: Lazy<Mutex<WorldPacketCache>> = Lazy::new(|| Mutex::new(Default::default()));
 
 /// Initialize terrain when player spawns
-pub fn send_chunks_for_player(world: &World, player: &Player) {
+pub fn send_chunks_for_player(world: &mut World, player: &Player) {
     let (chunk_x, chunk_z) = player.position().chunk_coords();
     let view_distance = player.view_distance();
     let capacity = (2 * view_distance as usize + 1).pow(2);
@@ -12,17 +17,21 @@ pub fn send_chunks_for_player(world: &World, player: &Player) {
 
     for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
         for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
-            match world.get_chunk(ChunkPos::new(x, z)) {
-                None => chunks.push(ChunkDataSpec::empty(x, z)),
-                Some(chunk) => chunks.push(ChunkDataSpec::new(chunk, player.protocol_version())),
-            }
+            chunks.push((x, z));
         }
     }
-    falcon_send::batch::send_batch(chunks, |s| s, falcon_send::build_chunk_data, player.protocol_version(), player.connection());
+    let protocol_id = player.protocol_version();
+    let coords_to_packet = {
+        |coords: (i32, i32)| {
+            let mut cache = PACKET_CACHE.lock();
+            cache.build_chunk_data(world, coords, protocol_id)
+        }
+    };
+    falcon_send::batch::send_batch(chunks, coords_to_packet, player.connection());
 }
 
 pub fn update_player_pos(
-    world: &World,
+    world: &mut World,
     player: &Player,
     old_chunk_x: i32,
     old_chunk_z: i32,
@@ -47,19 +56,23 @@ pub fn update_player_pos(
     for x in chunk_x - view_distance as i32..=chunk_x + view_distance as i32 {
         for z in chunk_z - view_distance as i32..=chunk_z + view_distance as i32 {
             if old_chunk_x.abs_diff(x) > view_distance as u32 || old_chunk_z.abs_diff(z) > view_distance as u32 {
-                match world.get_chunk(ChunkPos::new(x, z)) {
-                    None => should_load.push(ChunkDataSpec::empty(x, z)),
-                    Some(chunk) => should_load.push(ChunkDataSpec::new(chunk, player.protocol_version())),
-                }
+                should_load.push((x, z));
             }
         }
     }
-    falcon_send::batch::send_batch(should_load, |s| s, falcon_send::build_chunk_data, player.protocol_version(), player.connection());
-    falcon_send::batch::send_batch(should_unload, |s| s, falcon_send::build_unload_chunk, player.protocol_version(), player.connection());
+    let protocol_id = player.protocol_version();
+    let coords_to_packet = {
+        |coords: (i32, i32)| {
+            let mut cache = PACKET_CACHE.lock();
+            cache.build_chunk_data(world, coords, protocol_id)
+        }
+    };
+    falcon_send::batch::send_batch(should_load, coords_to_packet, player.connection());
+    falcon_send::batch::send_batch(should_unload, |s| falcon_send::build_unload_chunk(s, protocol_id), player.connection());
 }
 
 #[allow(clippy::comparison_chain)]
-pub fn update_view_distance(world: &World, player: &Player, view_distance: u8) {
+pub fn update_view_distance(world: &mut World, player: &Player, view_distance: u8) {
     let old_view_distance = player.view_distance();
     let (chunk_x, chunk_z) = player.position().chunk_coords();
     let capacity = 4 * (old_view_distance.abs_diff(view_distance) as usize * (old_view_distance + view_distance + 1) as usize);
@@ -68,14 +81,18 @@ pub fn update_view_distance(world: &World, player: &Player, view_distance: u8) {
         for x in -(view_distance as i8)..=view_distance as i8 {
             for z in -(view_distance as i8)..=view_distance as i8 {
                 if x.abs() as u8 > old_view_distance || z.abs() as u8 > old_view_distance {
-                    match world.get_chunk(ChunkPos::new(chunk_x + x as i32, chunk_z + z as i32)) {
-                        None => chunks.push(ChunkDataSpec::empty(chunk_x + x as i32, chunk_z + z as i32)),
-                        Some(chunk) => chunks.push(ChunkDataSpec::new(chunk, player.protocol_version())),
-                    }
+                    chunks.push((chunk_x + x as i32, chunk_z + z as i32));
                 }
             }
         }
-        falcon_send::batch::send_batch(chunks, |s| s, falcon_send::build_chunk_data, player.protocol_version(), player.connection());
+        let protocol_id = player.protocol_version();
+        let coords_to_packet = {
+            |coords: (i32, i32)| {
+                let mut cache = PACKET_CACHE.lock();
+                cache.build_chunk_data(world, coords, protocol_id)
+            }
+        };
+        falcon_send::batch::send_batch(chunks, coords_to_packet, player.connection());
     } else if old_view_distance > view_distance {
         let mut chunks = Vec::with_capacity(capacity);
         for x in -(old_view_distance as i8)..=old_view_distance as i8 {
@@ -85,6 +102,7 @@ pub fn update_view_distance(world: &World, player: &Player, view_distance: u8) {
                 }
             }
         }
-        falcon_send::batch::send_batch(chunks, |s| s, falcon_send::build_unload_chunk, player.protocol_version(), player.connection());
+        let protocol_id = player.protocol_version();
+        falcon_send::batch::send_batch(chunks, |s| falcon_send::build_unload_chunk(s, protocol_id), player.connection());
     }
 }

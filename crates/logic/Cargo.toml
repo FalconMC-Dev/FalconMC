@@ -14,4 +14,8 @@ mc_chat = "0.3.0"
 tracing = "0.1.32"
 
 uuid = { version = "0.8.2", features = [ "v3" ] }
+bytes = "1.1.0"
 ignore-result = "0.2.0"
+parking_lot = "0.12.0"
+once_cell = "1.10.0"
+ahash = "0.7.6"
