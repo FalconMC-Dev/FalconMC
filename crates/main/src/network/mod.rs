@@ -1,6 +1,7 @@
 mod connection;
 
 use anyhow::Context;
+use ignore_result::Ignore;
 use falcon_core::network::connection::ClientConnection;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::McTask;
@@ -53,6 +54,7 @@ impl NetworkListener {
                     match connection {
                         Ok((socket, addr)) => {
                             debug!(address = %addr, "Accepted connection");
+                            socket.set_nodelay(true).ignore();
                             tokio::spawn(connection::new_connection(self.shutdown_handle.clone(), socket, addr, self.server_tx.clone()));
                         },
                         Err(e) => {
