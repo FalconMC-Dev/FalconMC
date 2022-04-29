@@ -119,10 +119,10 @@ pub fn player_update_pos_look(server: &mut MainServer, uuid: Uuid, x: Option<f64
 }
 
 pub fn player_update_view_distance(server: &mut MainServer, uuid: Uuid, view_distance: u8) {
-    if let Some(player) = server.players.get_mut(&uuid) {
-        player.set_view_distance(view_distance);
-    }
     if let Some(player) = server.players.get(&uuid) {
         update_view_distance(&mut server.world, player, view_distance);
+    }
+    if let Some(player) = server.players.get_mut(&uuid) {
+        player.set_view_distance(view_distance);
     }
 }
