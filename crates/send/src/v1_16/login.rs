@@ -7,7 +7,7 @@ mod inner {
     use crate::LoginSuccessSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(735 = 0x02; no_receive; outgoing = "login_success")]
+    #[falcon_packet(735, 736 = 0x02; no_receive; outgoing = "login_success")]
     pub struct LoginSuccessPacket {
         uuid: Uuid,
         #[max_length(16)]

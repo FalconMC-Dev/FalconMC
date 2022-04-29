@@ -13,7 +13,7 @@ mod inner {
     use crate::JoinGameSpec;
     use crate::v1_16::play::dimension::{Codec, DimensionData};
 
-    #[falcon_packet(735 = 0x25; no_receive; outgoing = "join_game")]
+    #[falcon_packet(735, 736 = 0x25; no_receive; outgoing = "join_game")]
     pub struct JoinGamePacket {
         spec: JoinGameSpec,
     }
