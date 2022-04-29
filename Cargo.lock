@@ -300,8 +300,6 @@ dependencies = [
  "falcon_send",
  "ignore-result",
  "mc_chat",
- "once_cell",
- "parking_lot 0.12.0",
  "tracing",
  "uuid",
 ]
