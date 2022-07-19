@@ -10,11 +10,11 @@ falcon_core = { path = "../core" }
 falcon_protocol_derive = { path = "../protocol_derive" }
 
 mc_chat = { version = "0.3.0", features = [ "serde" ] }
-fastnbt = { version = "2.2.0" }
+fastnbt = "2.2.0"
 serde = "1.0.139"
 serde_json = "1.0.82"
 
 tracing = "0.1.35"
 
 uuid = "1.1.2"
-bytes = "1.1.0"
+bytes = "1.2.0"
