@@ -46,90 +46,90 @@ pub(crate) async fn new_connection(
 pub(crate) async fn connection_loop(mut connection: ClientConnection) {
     loop {
         tokio::select! {
-                _ = connection.shutdown_handle.wait_for_shutdown() => {
+            _ = connection.shutdown_handle.wait_for_shutdown() => {
+                break;
+            }
+            _ = connection.time_out.tick() => {
+                let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
+                disconnect(&mut connection, ChatComponent::from_text(
+                    "Did not receive Keep alive packet!",
+                    style
+                ));
+            }
+            readable = connection.socket.readable(), if connection.handler_state().connection_state() != ConnectionState::Disconnected => {
+                let span = trace_span!("incoming_data", state = %connection.handler_state());
+                let _enter = span.enter();
+                if let Err(e) = readable {
+                    error!("Error on read: {}", e);
+                    connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
                     break;
                 }
-                _ = connection.time_out.tick() => {
-                    let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
-                    disconnect(&mut connection, ChatComponent::from_text(
-                        "Did not receive Keep alive packet!",
-                        style
-                    ));
-                }
-                readable = connection.socket.readable(), if connection.handler_state().connection_state() != ConnectionState::Disconnected => {
-                    let span = trace_span!("incoming_data", state = %connection.handler_state());
-                    let _enter = span.enter();
-                    if let Err(e) = readable {
-                        error!("Error on read: {}", e);
+                match connection.socket.try_read_buf(&mut connection.in_buffer) {
+                    Ok(0) => {
+                        trace!("Connection lost!");
                         connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
-                    match connection.socket.try_read_buf(&mut connection.in_buffer) {
-                        Ok(0) => {
-                            trace!("Connection lost!");
-                            connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
-                            break;
-                        }
-                        Ok(n) => {
-                            trace!(length = n, "Data received!");
-                            if let Err(e) = read_packets(&mut connection) {
-                                debug!("Read error: {}", e);
-                                let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
-                                disconnect(&mut connection, ChatComponent::from_text(
-                                    "Error while reading packet",
-                                    style
-                                ));
-                            }
-                        }
-                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                            continue;
-                        }
-                        Err(e) => {
-                            if connection.handler_state().connection_state() == ConnectionState::Play {
-                                error!("Unexpected error ocurred on read: {}", e);
-                            }
+                    Ok(n) => {
+                        trace!(length = n, "Data received!");
+                        if let Err(e) = read_packets(&mut connection) {
+                            debug!("Read error: {}", e);
                             let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
                             disconnect(&mut connection, ChatComponent::from_text(
-                                format!("Unexpected error ocurred on read: {}", e),
+                                "Error while reading packet",
                                 style
                             ));
                         }
                     }
+                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        continue;
+                    }
+                    Err(e) => {
+                        if connection.handler_state().connection_state() == ConnectionState::Play {
+                            error!("Unexpected error ocurred on read: {}", e);
+                        }
+                        let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
+                        disconnect(&mut connection, ChatComponent::from_text(
+                            format!("Unexpected error ocurred on read: {}", e),
+                            style
+                        ));
+                    }
                 }
-                writable = connection.socket.writable(), if !connection.out_buffer.is_empty() => {
-                    let span = trace_span!("outgoing_data", state = %connection.handler_state());
-                    let _enter = span.enter();
-                    if let Err(e) = writable {
-                        error!("Error on write: {}", e);
+            }
+            writable = connection.socket.writable(), if !connection.out_buffer.is_empty() => {
+                let span = trace_span!("outgoing_data", state = %connection.handler_state());
+                let _enter = span.enter();
+                if let Err(e) = writable {
+                    error!("Error on write: {}", e);
+                    connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
+                    break;
+                }
+                match connection.socket.try_write(&connection.out_buffer) {
+                    Ok(n) => {
+                        trace!(length = n, "Outgoing data");
+                        connection.out_buffer.advance(n);
+                    }
+                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        continue;
+                    }
+                    Err(e) => {
+                        if connection.handler_state().connection_state() == ConnectionState::Play {
+                            error!("Unexpected error ocurred on write: {}", e);
+                        }
                         connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
-                    match connection.socket.try_write(&connection.out_buffer) {
-                        Ok(n) => {
-                            trace!(length = n, "Outgoing data");
-                            connection.out_buffer.advance(n);
-                        }
-                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                            continue;
-                        }
-                        Err(e) => {
-                            if connection.handler_state().connection_state() == ConnectionState::Play {
-                                error!("Unexpected error ocurred on write: {}", e);
-                            }
-                            connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
-                            break;
-                        }
-                    }
-                    if connection.out_buffer.is_empty() && connection.handler_state().connection_state() == ConnectionState::Disconnected {
-                        break;
-                    }
                 }
-                Some(task) = connection.connection_sync.1.recv() => {
-                    let span = trace_span!("connection_task", state = %connection.handler_state());
-                    let _enter = span.enter();
-                    task(&mut connection);
+                if connection.out_buffer.is_empty() && connection.handler_state().connection_state() == ConnectionState::Disconnected {
+                    break;
                 }
             }
+            Some(task) = connection.connection_sync.1.recv() => {
+                let span = trace_span!("connection_task", state = %connection.handler_state());
+                let _enter = span.enter();
+                task(&mut connection);
+            }
+        }
     }
     if connection.handler_state().connection_state() == ConnectionState::Disconnected {
         if let Some(uuid) = connection.handler_state().player_uuid() {
