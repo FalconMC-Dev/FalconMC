@@ -10,11 +10,11 @@ falcon_core = { path = "../core" }
 falcon_protocol_derive = { path = "../protocol_derive" }
 
 mc_chat = { version = "0.3.0", features = [ "serde" ] }
-fastnbt = { git = "https://github.com/owengage/fastnbt", branch = "dev/serializer" }
-serde = "1.0.136"
-serde_json = "1.0.79"
+fastnbt = { version = "2.2.0" }
+serde = "1.0.139"
+serde_json = "1.0.82"
 
-tracing = "0.1.32"
+tracing = "0.1.35"
 
-uuid = "0.8.2"
+uuid = "1.1.2"
 bytes = "1.1.0"

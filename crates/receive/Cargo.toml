@@ -13,5 +13,5 @@ falcon_send = { path = "../send" }
 
 mc_chat = "0.3.0"
 
-tracing = "0.1.32"
-thiserror = "1.0.30"
+tracing = "0.1.35"
+thiserror = "1.0.31"
