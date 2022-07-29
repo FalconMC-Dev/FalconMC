@@ -7,7 +7,6 @@ use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
 
 use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
-use crate::network::connection::ClientConnection;
 
 mod packet_macros;
 
@@ -24,7 +23,7 @@ pub trait PacketDecode: Sized {
 /// This trait defines the packet logic when a packet gets received.
 pub trait PacketHandler<D: ConnectionDriver<L>, L: ConnectionLogic> {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut ClientConnection<D, L>) -> TaskScheduleResult;
+    fn handle_packet(self, connection: &mut D) -> TaskScheduleResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;

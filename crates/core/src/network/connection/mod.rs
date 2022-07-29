@@ -1,32 +1,29 @@
-use std::fmt::Debug;
+use std::convert::Infallible;
+use std::fmt::{Debug, Display};
 use std::future::Future;
 use std::io::Error;
+use std::marker::PhantomData;
 use std::net::SocketAddr;
 use std::ops::{Deref, DerefMut};
 use std::pin::Pin;
-use futures::StreamExt;
 use mc_chat::ChatComponent;
 
-use tokio::net::TcpStream;
-use tokio::sync::mpsc;
 use tokio::sync::mpsc::UnboundedReceiver;
-use tokio::time::Interval;
-use tokio_util::codec::{Decoder, Encoder, Framed};
 
-use falcon_core::network::{ConnectionState, PacketHandlerState};
-use falcon_core::server::ServerWrapper;
+use falcon_core::network::PacketHandlerState;
 use falcon_core::ShutdownHandle;
 pub use wrapper::ConnectionWrapper;
 use crate::network::buffer::PacketBufferWrite;
 
 mod wrapper;
 
-pub type SyncConnectionTask<D, L> = dyn FnOnce(&mut ClientConnection<D, L>) + Send + Sync;
-pub type AsyncConnectionTask<D, L> = dyn (FnOnce(&mut ClientConnection<D, L>) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
+pub type SyncConnectionTask<D> = dyn FnOnce(&mut D) + Send + Sync;
+pub type AsyncConnectionTask<D> = dyn (FnOnce(&mut D) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
 
 pub enum ConnectionTask<D: ConnectionDriver<L>, L: ConnectionLogic> {
-    Sync(Box<SyncConnectionTask<D, L>>),
-    Async(Box<AsyncConnectionTask<D, L>>),
+    Sync(Box<SyncConnectionTask<D>>),
+    Async(Box<AsyncConnectionTask<D>>),
+    _Prohibited(Infallible, PhantomData<L>),
 }
 
 #[async_trait::async_trait]
@@ -36,10 +33,11 @@ pub trait ConnectionLogic: Debug {
 
 #[async_trait::async_trait]
 pub trait ConnectionDriver<L: ConnectionLogic>: Debug {
-    type PacketIn;
-    type PacketOut;
-    type Error: From<Error>;
-    type PacketCodec: Decoder<Item=Self::PacketIn, Error=Self::Error> + Encoder<Self::PacketOut, Error=Self::Error>;
+    type Error: Display + From<Error>;
+
+    fn logic(&self) -> &L;
+
+    fn logic_mut(&mut self) -> &mut L;
 
     fn addr(&self) -> &SocketAddr;
 
@@ -47,49 +45,40 @@ pub trait ConnectionDriver<L: ConnectionLogic>: Debug {
 
     fn handler_state_mut(&self) -> &mut PacketHandlerState;
 
-    fn network_io(&mut self) -> &mut Framed<TcpStream, Self::PacketCodec>;
-
-    async fn on_receive(&mut self, packet_in: Self::PacketIn) -> Result<(), Self::Error>;
+    async fn receive(&mut self) -> Result<(), Self::Error>;
 
     async fn send<P: PacketBufferWrite + ?Sized>(&mut self, packet_out: P) -> Result<(), Self::Error>;
 
-    fn server(&mut self) -> &mut ServerWrapper<Self, L> where Self: Sized, Self: Debug;
+    fn on_disconnect(&mut self);
 }
 
 #[derive(Debug)]
 pub struct ClientConnection<D: ConnectionDriver<L>, L: ConnectionLogic> {
     shutdown: ShutdownHandle,
     driver: D,
-    logic: L,
-    timeout: Interval,
     task_rx: UnboundedReceiver<ConnectionTask<D, L>>,
-    wrapper: ConnectionWrapper<D, L>,
 }
 
 impl<D: ConnectionDriver<L>, L: ConnectionLogic> Deref for ClientConnection<D, L> {
-    type Target = D;
+    type Target = L;
 
     fn deref(&self) -> &Self::Target {
-        &self.driver
+        self.driver.logic()
     }
 }
 
 impl<D: ConnectionDriver<L>, L: ConnectionLogic> DerefMut for ClientConnection<D, L> {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.driver
+        self.driver.logic_mut()
     }
 }
 
 impl<D: ConnectionDriver<L>, L: ConnectionLogic> ClientConnection<D, L> {
-    pub fn new(shutdown: ShutdownHandle, driver: D, logic: L, timeout: Interval) -> Self {
-        let (sender, receiver) = mpsc::unbounded_channel();
+    pub fn new(shutdown: ShutdownHandle, driver: D, task_rx: UnboundedReceiver<ConnectionTask<D, L>>) -> Self {
         Self {
             shutdown,
             driver,
-            logic,
-            timeout,
-            task_rx: receiver,
-            wrapper: ConnectionWrapper::new(sender),
+            task_rx,
         }
     }
 
@@ -97,16 +86,12 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> ClientConnection<D, L> {
         &mut self.shutdown
     }
 
-    pub fn wrapper(&self) -> ConnectionWrapper<D, L> {
-        self.wrapper.clone()
+    pub fn driver(&self) -> &D {
+        &self.driver
     }
 
-    pub fn logic(&self) -> &L {
-        &self.logic
-    }
-
-    pub fn logic_mut(&mut self) -> &mut L {
-        &mut self.logic
+    pub fn driver_mut(&mut self) -> &mut D {
+        &mut self.driver
     }
 
     pub async fn start(mut self) {
@@ -115,7 +100,12 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> ClientConnection<D, L> {
                 _ = self.shutdown.wait_for_shutdown() => {
                     break;
                 }
-                _ = self.timeout.tick() => {
+                res = self.driver.receive() => {
+                    if let Err(error) = res {
+                        // do something error
+                    }
+                }
+                /*_ = self.driver.timeout().tick() => {
                     /*let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs());
                     disconnect(&mut connection, ChatComponent::from_text(
                         "Did not receive Keep alive packet!",
@@ -139,29 +129,33 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> ClientConnection<D, L> {
                             }
                         }
                     }
-                }
+                }*/
                 task = self.task_rx.recv() => {
                     let task = match task {
                         Some(task) => task,
                         None => continue,
                     };
-                    let span = trace_span!("connection_task", state = %self.handler_state());
+                    let span = trace_span!("connection_task", state = %self.driver.handler_state());
                     let _enter = span.enter();
                     match task {
                         ConnectionTask::Sync(task) => {
-                            task(&mut self)
+                            task(&mut self.driver)
                         }
                         ConnectionTask::Async(task) => {
-                            task(&mut self).await
+                            task(&mut self.driver).await
+                        }
+                        ConnectionTask::_Prohibited(..) => {
+                            panic!("Using a phantom variant of `ConnectionTask` is prohibited!");
                         }
                     }
                 }
             }
         }
-        if self.handler_state().connection_state() == ConnectionState::Disconnected {
-            if let Some(uuid) = self.handler_state().player_uuid() {
+        self.driver.on_disconnect();
+        /*if self.driver.handler_state().connection_state() == ConnectionState::Disconnected {
+            if let Some(uuid) = self.driver.handler_state().player_uuid() {
                 // self.server().player_leave(uuid);
             }
-        }
+        }*/
     }
 }
