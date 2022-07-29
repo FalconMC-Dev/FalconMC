@@ -53,13 +53,13 @@ pub trait ConnectionDriver<L: ConnectionLogic>: Debug {
 }
 
 #[derive(Debug)]
-pub struct ClientConnection<D: ConnectionDriver<L>, L: ConnectionLogic> {
+pub struct MinecraftConnection<D: ConnectionDriver<L>, L: ConnectionLogic> {
     shutdown: ShutdownHandle,
     driver: D,
     task_rx: UnboundedReceiver<ConnectionTask<D, L>>,
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> Deref for ClientConnection<D, L> {
+impl<D: ConnectionDriver<L>, L: ConnectionLogic> Deref for MinecraftConnection<D, L> {
     type Target = L;
 
     fn deref(&self) -> &Self::Target {
@@ -67,13 +67,13 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> Deref for ClientConnection<D, L
     }
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> DerefMut for ClientConnection<D, L> {
+impl<D: ConnectionDriver<L>, L: ConnectionLogic> DerefMut for MinecraftConnection<D, L> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.driver.logic_mut()
     }
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> ClientConnection<D, L> {
+impl<D: ConnectionDriver<L>, L: ConnectionLogic> MinecraftConnection<D, L> {
     pub fn new(shutdown: ShutdownHandle, driver: D, task_rx: UnboundedReceiver<ConnectionTask<D, L>>) -> Self {
         Self {
             shutdown,
