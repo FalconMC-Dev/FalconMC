@@ -43,7 +43,7 @@ pub trait ConnectionDriver<L: ConnectionLogic>: Debug {
 
     fn handler_state(&self) -> &PacketHandlerState;
 
-    fn handler_state_mut(&self) -> &mut PacketHandlerState;
+    fn handler_state_mut(&mut self) -> &mut PacketHandlerState;
 
     async fn receive(&mut self) -> Result<(), Self::Error>;
 
@@ -145,7 +145,7 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> MinecraftConnection<D, L> {
                             task(&mut self.driver).await
                         }
                         ConnectionTask::_Prohibited(..) => {
-                            panic!("Using a phantom variant of `ConnectionTask` is prohibited!");
+                            unreachable!("This enum variant of `ConnectionTask` should never be used");
                         }
                     }
                 }

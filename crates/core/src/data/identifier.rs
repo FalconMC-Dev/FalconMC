@@ -72,7 +72,7 @@ impl Identifier {
             |o: &'static str| ("minecraft", o)
         );
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
-        if input != "" {
+        if !input.is_empty() {
             Err(location.len())
         } else {
             Ok(Identifier {
@@ -104,7 +104,7 @@ impl<'a> TryFrom<&'a str> for Identifier {
             |o: &'a str| ("minecraft".into(), Cow::from(o.to_string()))
         );
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
-        if input != "" {
+        if !input.is_empty() {
             Err(location.len())
         } else {
             Ok(Identifier {
