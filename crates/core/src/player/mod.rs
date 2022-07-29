@@ -1,8 +1,10 @@
+use std::fmt::Debug;
 use std::time::Instant;
 
 use uuid::Uuid;
 
 use data::*;
+use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
 
 use crate::network::connection::ConnectionWrapper;
 use crate::server::config::FalconConfig;
@@ -10,7 +12,7 @@ use crate::server::config::FalconConfig;
 pub mod data;
 
 #[derive(Debug)]
-pub struct Player {
+pub struct Player<D: ConnectionDriver<L>, L: ConnectionLogic> {
     // identity
     username: String,
     uuid: Uuid,
@@ -25,10 +27,10 @@ pub struct Player {
     // connection data
     pub time: Instant,
     protocol_version: i32,
-    connection: ConnectionWrapper,
+    connection: ConnectionWrapper<D, L>,
 }
 
-impl Player {
+impl<D: ConnectionDriver<L>, L: ConnectionLogic> Player<D, L> {
     pub fn new(
         username: String,
         uuid: Uuid,
@@ -36,7 +38,7 @@ impl Player {
         spawn_pos: Position,
         spawn_look: LookAngles,
         protocol_version: i32,
-        connection: ConnectionWrapper,
+        connection: ConnectionWrapper<D, L>,
     ) -> Self {
         Player {
             username,
@@ -106,11 +108,11 @@ impl Player {
         self.protocol_version
     }
 
-    pub fn connection(&self) -> &ConnectionWrapper {
+    pub fn connection(&self) -> &ConnectionWrapper<D, L> {
         &self.connection
     }
 
-    pub fn connection_mut(&mut self) -> &mut ConnectionWrapper {
+    pub fn connection_mut(&mut self) -> &mut ConnectionWrapper<D, L> {
         &mut self.connection
     }
 }
