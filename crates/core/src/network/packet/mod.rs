@@ -21,9 +21,9 @@ pub trait PacketDecode: Sized {
 }
 
 /// This trait defines the packet logic when a packet gets received.
-pub trait PacketHandler<D: ConnectionDriver<L>, L: ConnectionLogic> {
+pub trait PacketHandler<D: ConnectionDriver, L: ConnectionLogic<D>> {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut D) -> TaskScheduleResult;
+    fn handle_packet(self, connection: &mut L) -> TaskScheduleResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;

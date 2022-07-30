@@ -12,7 +12,7 @@ use crate::server::config::FalconConfig;
 pub mod data;
 
 #[derive(Debug)]
-pub struct Player<D: ConnectionDriver<L>, L: ConnectionLogic> {
+pub struct Player<D: ConnectionDriver, L: ConnectionLogic<D>> {
     // identity
     username: String,
     uuid: Uuid,
@@ -30,7 +30,7 @@ pub struct Player<D: ConnectionDriver<L>, L: ConnectionLogic> {
     connection: ConnectionWrapper<D, L>,
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> Player<D, L> {
+impl<D: ConnectionDriver, L: ConnectionLogic<D>> Player<D, L> {
     pub fn new(
         username: String,
         uuid: Uuid,

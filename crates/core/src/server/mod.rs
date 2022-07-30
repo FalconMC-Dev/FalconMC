@@ -17,7 +17,7 @@ pub mod data;
 
 pub type McTask<D, L> = dyn FnOnce(&mut MainServer<D, L>) + Send + Sync;
 
-pub struct MainServer<D: ConnectionDriver<L>, L: ConnectionLogic> {
+pub struct MainServer<D: ConnectionDriver, L: ConnectionLogic<D>> {
     // threads
     shutdown_handle: ShutdownHandle,
     pub should_stop: bool,
@@ -30,7 +30,7 @@ pub struct MainServer<D: ConnectionDriver<L>, L: ConnectionLogic> {
     pub world: World,
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> MainServer<D, L> {
+impl<D: ConnectionDriver, L: ConnectionLogic<D>> MainServer<D, L> {
     pub fn new(
         shutdown_handle: ShutdownHandle,
         console_rx: UnboundedReceiver<String>,
@@ -72,11 +72,11 @@ impl<D: ConnectionDriver<L>, L: ConnectionLogic> MainServer<D, L> {
 }
 
 #[derive(Debug)]
-pub struct ServerWrapper<D: ConnectionDriver<L>, L: ConnectionLogic> {
+pub struct ServerWrapper<D: ConnectionDriver, L: ConnectionLogic<D>> {
     link: UnboundedSender<Box<McTask<D, L>>>,
 }
 
-impl<D: ConnectionDriver<L>, L: ConnectionLogic> ServerWrapper<D, L> {
+impl<D: ConnectionDriver, L: ConnectionLogic<D>> ServerWrapper<D, L> {
     pub fn new(link: UnboundedSender<Box<McTask<D, L>>>) -> Self {
         ServerWrapper {
             link,
