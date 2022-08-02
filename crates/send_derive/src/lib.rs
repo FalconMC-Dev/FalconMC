@@ -162,18 +162,16 @@ pub(crate) fn generate_fn_body(packet_ident: &Ident, exclude: Option<&LitInt>, m
                 }
             }
         }
+    } else if match_arms.is_empty() {
+        parse_quote_spanned! {span=>
+            compile_error!("no version mappings provided on a \"falcon_packet\" struct")
+        }
     } else {
-        if match_arms.is_empty() {
-            parse_quote_spanned! {span=>
-                compile_error!("no version mappings provided on a \"falcon_packet\" struct");
-            }
-        } else {
-            parse_quote_spanned! {span=>
-                let protocol_version = #protocol_expr;
-                match protocol_version {
-                    #(#match_arms,)*
-                    _ => return #default,
-                }
+        parse_quote_spanned! {span=>
+            let protocol_version = #protocol_expr;
+            match protocol_version {
+                #(#match_arms,)*
+                _ => return #default,
             }
         }
     }
