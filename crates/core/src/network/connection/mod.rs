@@ -10,10 +10,11 @@ use mc_chat::ChatComponent;
 
 use tokio::sync::mpsc::UnboundedReceiver;
 
-use falcon_core::network::PacketHandlerState;
 use falcon_core::ShutdownHandle;
+use falcon_core::network::PacketHandlerState;
+use falcon_core::network::packet::PacketEncode;
+
 pub use wrapper::ConnectionWrapper;
-use crate::network::buffer::PacketBufferWrite;
 
 mod wrapper;
 
@@ -48,7 +49,9 @@ pub trait ConnectionDriver: Debug {
 
     async fn receive(&mut self) -> Result<(), Self::Error>;
 
-    fn send<P: PacketBufferWrite + ?Sized>(&mut self, packet_out: P) -> Result<(), Self::Error>;
+    fn send_packet<P: PacketEncode + ?Sized>(&mut self, packet_id: i32, data: P);
+
+    fn send<P: PacketEncode + ?Sized>(&mut self, data: P);
 
     fn on_disconnect(&mut self);
 }
