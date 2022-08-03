@@ -41,7 +41,6 @@ pub fn falcon_send(contents: TokenStream) -> TokenStream {
         });
 
     let mut result = contents.into_token_stream();
-    // println!("data: {:?}", packet_data);
 
     if let Some(error) = error {
         result.extend(once(error.to_compile_error()));
@@ -88,7 +87,7 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
     };
 
     parse_quote_spanned! {fn_name.span()=>
-        pub fn #fn_name<T, D, L>(packet: &mut Option<T>, connection: &mut ::falcon_core::network::connection::MinecraftConnection<D, L>) -> bool
+        pub fn #fn_name<T, D, L>(packet: &mut Option<T>, connection: &mut L) -> bool
         where
             #packet_ident: ::std::convert::From<T>,
             D: ::falcon_core::network::connection::ConnectionDriver,

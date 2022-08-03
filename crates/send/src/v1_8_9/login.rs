@@ -33,7 +33,7 @@ falcon_send_derive::falcon_send! {
     impl From<LoginSuccessSpec> for LoginSuccess {
         fn from(spec: LoginSuccessSpec) -> Self {
             LoginSuccess {
-                uuid: spec.uuid.to_hyphenated_ref().to_string(),
+                uuid: spec.uuid.as_hyphenated().to_string(),
                 username: spec.username,
             }
         }

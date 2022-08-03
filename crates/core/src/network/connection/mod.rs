@@ -32,7 +32,7 @@ pub trait ConnectionLogic<D: ConnectionDriver>: Debug {
 
     fn driver_mut(&mut self) -> &mut D;
 
-    fn disconnect(&self, reason: ChatComponent);
+    fn disconnect(&mut self, reason: ChatComponent);
 }
 
 #[async_trait::async_trait]

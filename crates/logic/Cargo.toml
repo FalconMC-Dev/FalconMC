@@ -17,3 +17,5 @@ uuid = { version = "1.1.2", features = [ "v3" ] }
 bytes = "1.2.0"
 ignore-result = "0.2.0"
 ahash = "0.7.6"
+
+tokio = { version = "1.20.1", features = [ "net", "time" ]}

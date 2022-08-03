@@ -78,3 +78,10 @@ impl<T: PacketEncode> PacketEncode for Option<T> {
         }
     }
 }
+
+impl<'a, T> PacketEncode for &'a T where T: PacketEncode {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        (*self).to_buf(buf);
+    }
+}
+

@@ -6,6 +6,8 @@ pub mod player;
 pub mod server;
 pub mod world;
 
-pub use connection::ConnectionLogic;
-pub use player::PlayerLogic;
-pub use server::ServerLogic;
+pub use connection::FalconConnection;
+pub use player::FalconPlayer;
+pub use server::FalconServer;
+pub use world::FalconWorld;
+
