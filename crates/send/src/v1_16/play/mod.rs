@@ -1,11 +1,9 @@
-pub use inner::*;
-pub use chunk::*;
-
 pub mod dimension;
 mod chunk;
 
-#[falcon_protocol_derive::packet_module]
-mod inner {
+pub use chunk::*;
+
+falcon_send_derive::falcon_send! {
     use falcon_core::data::Identifier;
     use falcon_core::network::buffer::PacketBufferWrite;
     use falcon_core::network::packet::PacketEncode;
@@ -13,7 +11,9 @@ mod inner {
     use crate::JoinGameSpec;
     use crate::v1_16::play::dimension::{Codec, DimensionData};
 
-    #[falcon_packet(735, 736 = 0x25; no_receive; outgoing = "join_game")]
+    #[falcon_packet(versions = {
+        735, 736 = 0x25;
+    }, name = "join_game")]
     pub struct JoinGamePacket {
         spec: JoinGameSpec,
     }
@@ -37,7 +37,7 @@ mod inner {
             let codec = Codec::new(vec![
                 DimensionData::new(Dimension::new("minecraft:overworld", 0)),
             ]);
-            buf.write_u8_array(&fastnbt::ser::to_bytes(&codec).unwrap()); // Dimension codec
+            buf.write_u8_array(&fastnbt::to_bytes(&codec).unwrap()); // Dimension codec
             Identifier::from_static("minecraft", "overworld").to_buf(buf); // dimension
             world_name.to_buf(buf); // world name
             self.spec.hashed_seed.to_buf(buf);

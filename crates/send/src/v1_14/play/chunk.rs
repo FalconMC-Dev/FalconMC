@@ -1,7 +1,4 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use serde::Serialize;
     use fastnbt::LongArray;
     use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
@@ -18,7 +15,9 @@ mod inner {
     const BIOME_COUNT: u16 = SECTION_WIDTH * SECTION_LENGTH;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
 
-    #[falcon_packet(477, 480, 485, 490, 498 = 0x21; no_receive; outgoing = "chunk_data"; batched)]
+    #[falcon_packet(versions = {
+        477, 480, 485, 490, 498 = 0x21;
+    }, name = "chunk_data", batching = "build_chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
@@ -53,7 +52,7 @@ mod inner {
             buf.write_i32(self.chunk_z);
             buf.write_bool(true); // We only send full chunks currently!
             buf.write_var_i32(self.bit_mask);
-            buf.write_u8_array(fastnbt::ser::to_bytes(&self.heightmap).unwrap().as_slice());
+            buf.write_u8_array(fastnbt::to_bytes(&self.heightmap).unwrap().as_slice());
             let mut data_size: i32 = BIOME_COUNT as i32 * 4; // biomes get sent because of full chunk
             for chunk in &self.chunk_sections {
                 data_size += chunk.get_data_size();

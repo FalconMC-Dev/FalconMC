@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 
 use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic, ConnectionTask};
@@ -13,6 +14,19 @@ impl<D: ConnectionDriver, L: ConnectionLogic<D>> ConnectionWrapper<D, L> {
         ConnectionWrapper {
             link,
         }
+    }
+
+    pub fn reset_keep_alive(&mut self) {
+        self.link.send(ConnectionTask::Sync(Box::new(|conn| {
+            conn.driver_mut().reset_timeout();
+        }))).ignore();
+    }
+
+    pub fn execute_sync<T>(&self, task: T)
+        where
+            T: FnOnce(&mut L) + Send + Sync + 'static,
+    {
+        self.link.send(ConnectionTask::Sync(Box::new(task))).ignore();
     }
 }
 

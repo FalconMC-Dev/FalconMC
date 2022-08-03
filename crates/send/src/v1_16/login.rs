@@ -1,13 +1,12 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use uuid::Uuid;
     use falcon_core::network::packet::PacketEncode;
     use crate::LoginSuccessSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(735, 736 = 0x02; no_receive; outgoing = "login_success")]
+    #[falcon_packet(versions = {
+        735, 736 = 0x02;
+    }, name = "login_success")]
     pub struct LoginSuccessPacket {
         uuid: Uuid,
         #[max_length(16)]

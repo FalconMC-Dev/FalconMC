@@ -1,7 +1,4 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::buffer::PacketBufferWrite;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
@@ -12,7 +9,9 @@ mod inner {
     const BIOME_COUNT: u16 = 1024;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
 
-    #[falcon_packet(573, 575, 578 = 0x22; no_receive; outgoing = "chunk_data"; batched)]
+    #[falcon_packet(versions = {
+        573, 575, 578 = 0x22;
+    }, name = "chunk_data", batching = "build_chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
@@ -27,7 +26,7 @@ mod inner {
             buf.write_i32(self.chunk_z);
             buf.write_bool(true); // We only send full chunks currently!
             buf.write_var_i32(self.bit_mask);
-            buf.write_u8_array(fastnbt::ser::to_bytes(&self.heightmap).unwrap().as_slice());
+            buf.write_u8_array(fastnbt::to_bytes(&self.heightmap).unwrap().as_slice());
             for x in BIOMES {
                 buf.write_i32(x);
             }

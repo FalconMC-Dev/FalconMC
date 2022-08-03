@@ -1,7 +1,4 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
@@ -15,7 +12,9 @@ mod inner {
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
     const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
-    #[falcon_packet(393, 401, 404 = 0x22; no_receive; outgoing = "chunk_data"; batched)]
+    #[falcon_packet(versions = {
+        393, 401, 404 = 0x22;
+    }, name = "chunk_data", batching = "build_chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,

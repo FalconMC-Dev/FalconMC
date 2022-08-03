@@ -1,12 +1,9 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
     use crate::specs::status::StatusResponseSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(-1 = 0x00; no_receive; outgoing = "status_response")]
+    #[falcon_packet(versions = { -1 = 0x00 }, name = "status_response")]
     pub struct StatusResponsePacket {
         #[max_length(32767)]
         response: String,
@@ -21,7 +18,7 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(-1 = 0x01; no_receive; outgoing = "status_pong")]
+    #[falcon_packet(versions = { -1 = 0x01 }, name = "status_pong")]
     pub struct StatusPongPacket {
         payload: i64,
     }

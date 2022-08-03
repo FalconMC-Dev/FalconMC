@@ -1,15 +1,14 @@
-pub use inner::*;
-pub use chunk::*;
-
 mod chunk;
 
-#[falcon_protocol_derive::packet_module]
-mod inner {
+pub use chunk::*;
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
     use crate::JoinGameSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(573, 575, 578 = 0x26; no_receive; outgoing = "join_game")]
+    #[falcon_packet(versions = {
+        573, 575, 578 = 0x26;
+    }, name = "join_game")]
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,

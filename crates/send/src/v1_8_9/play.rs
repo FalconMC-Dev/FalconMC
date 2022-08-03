@@ -1,7 +1,4 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use mc_chat::ChatComponent;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::player::data::PlayerAbilityFlags;
@@ -9,7 +6,10 @@ mod inner {
     use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x01; 107 = 0x23; no_receive; outgoing = "join_game")]
+    #[falcon_packet(versions = {
+        47 = 0x01;
+        107 = 0x23;
+    }, name = "join_game")]
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,
@@ -35,7 +35,14 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x39; 107, 108, 109, 110, 210, 315, 316, 335 = 0x2B; 338, 340 = 0x2C; 393, 401, 404 = 0x2E; 477, 480, 485, 490, 498, 735, 736 = 0x31; 573, 575, 578 = 0x32; no_receive; outgoing = "player_abilities")]
+    #[falcon_packet(versions = {
+        47 = 0x39;
+        107, 108, 109, 110, 210, 315, 316, 335 = 0x2B;
+        338, 340 = 0x2C;
+        393, 401, 404 = 0x2E;
+        477, 480, 485, 490, 498, 735, 736 = 0x31;
+        573, 575, 578 = 0x32;
+    }, name = "player_abilities")]
     pub struct PlayerAbilityPacket {
         flags: PlayerAbilityFlags,
         fly_speed: f32,
@@ -53,7 +60,11 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x40; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735, 736 = 0x1A; 393, 401, 404, 573, 575, 578 = 0x1B; no_receive; outgoing = "disconnect")]
+    #[falcon_packet(versions = {
+        47 = 0x40;
+        107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735, 736 = 0x1A;
+        393, 401, 404, 573, 575, 578 = 0x1B;
+    }, name = "disconnect")]
     pub struct DisconnectPacket {
         #[max_length(262144)]
         reason: String,
@@ -68,7 +79,10 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47 = 0x41; 107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 393, 401, 404 = 0x0D; no_receive; outgoing = "send_difficulty")]
+    #[falcon_packet(versions = {
+        47 = 0x41;
+        107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 393, 401, 404 = 0x0D;
+    }, name = "send_difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
     }

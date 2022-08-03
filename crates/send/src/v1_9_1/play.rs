@@ -1,12 +1,12 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
     use crate::specs::play::JoinGameSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(108, 109, 110, 210, 315, 316, 335, 338, 340 = 0x23; 393, 401, 404 = 0x25; no_receive; outgoing = "join_game")]
+    #[falcon_packet(versions = {
+        108, 109, 110, 210, 315, 316, 335, 338, 340 = 0x23;
+        393, 401, 404 = 0x25;
+    }, name = "join_game")]
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,

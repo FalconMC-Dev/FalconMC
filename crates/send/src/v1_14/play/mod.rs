@@ -1,15 +1,15 @@
-pub use inner::*;
-pub use chunk::*;
-
 mod chunk;
 
-#[falcon_protocol_derive::packet_module]
-mod inner {
+pub use chunk::*;
+
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
     use crate::{JoinGameSpec, ServerDifficultySpec};
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477, 480, 485, 490, 498 = 0x25; no_receive; outgoing = "join_game")]
+    #[falcon_packet(versions = {
+        477, 480, 485, 490, 498 = 0x25;
+    }, name = "join_game")]
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,
@@ -37,7 +37,10 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477, 480, 485, 490, 498, 735, 736 = 0x0D; 573, 575, 578 = 0x0E; no_receive; outgoing = "send_difficulty")]
+    #[falcon_packet(versions = {
+        477, 480, 485, 490, 498, 735, 736 = 0x0D;
+        573, 575, 578 = 0x0E;
+    }, name = "send_difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
         locked: bool,
@@ -53,7 +56,10 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(477, 480, 485, 490, 498, 735, 736 = 0x40; 573, 575, 578 = 0x41; no_receive; outgoing = "update_viewpos")]
+    #[falcon_packet(versions = {
+        477, 480, 485, 490, 498, 735, 736 = 0x40;
+        573, 575, 578 = 0x41;
+    }, name = "update_viewpos")]
     pub struct UpdateViewPosition {
         #[var_int]
         chunk_x: i32,

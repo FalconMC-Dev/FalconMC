@@ -1,12 +1,15 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
     use crate::specs::play::PositionAndLookSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335 = 0x2E; 338, 340 = 0x2F; 393, 401, 404 = 0x32; 477, 480, 485, 490, 498, 735, 736 = 0x35; 573, 575, 578 = 0x36; no_receive; outgoing = "position_look")]
+    #[falcon_packet(versions = {
+        107, 108, 109, 110, 210, 315, 316, 335 = 0x2E;
+        338, 340 = 0x2F;
+        393, 401, 404 = 0x32;
+        477, 480, 485, 490, 498, 735, 736 = 0x35;
+        573, 575, 578 = 0x36;
+    }, name = "position_look")]
     pub struct PositionLookPacket {
         x: f64,
         y: f64,
@@ -33,7 +36,11 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735, 736 = 0x1D; 393, 401, 404 = 0x1F; 573, 575, 578 = 0x1E; no_receive; outgoing = "unload_chunk"; batched)]
+    #[falcon_packet(versions = {
+        107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735, 736 = 0x1D;
+        393, 401, 404 = 0x1F;
+        573, 575, 578 = 0x1E;
+    }, name = "unload_chunk", batching = "build_unload_chunk")]
     pub struct UnloadChunkPacket {
         chunk_x: i32,
         chunk_z: i32,

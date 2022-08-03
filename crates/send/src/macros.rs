@@ -31,7 +31,10 @@ macro_rules! packet_send_fn {
         }$(,)?)*
     ) => {
         $(
-        pub fn $fn_name(packet: $spec_name, connection: &mut ::falcon_core::network::connection::ClientConnection)
+        pub fn $fn_name<D, L>(packet: $spec_name, connection: &mut ::falcon_core::network::connection::MinecraftConnection<D, L>)
+        where
+                D: ::falcon_core::network::connection::ConnectionDriver,
+                L: ::falcon_core::network::connection::ConnectionLogic<D>,
         {
             let mut packet = Some(packet);
             $(
