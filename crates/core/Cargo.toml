@@ -16,7 +16,6 @@ fastnbt = "2.2.0"
 serde = { version = "1.0.139", features = [ "derive" ] }
 confy = "0.4.0"
 
-itertools = "0.10.3"
 ignore-result = "0.2.0"
 
 once_cell = "1.13.0"

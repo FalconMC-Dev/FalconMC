@@ -12,6 +12,7 @@ falcon_send = { path = "../send" }
 mc_chat = "0.3.0"
 
 tracing = "0.1.35"
+itertools = "0.10.3"
 
 uuid = { version = "1.1.2", features = [ "v3" ] }
 bytes = "1.2.0"

@@ -2,9 +2,14 @@ use crate::player::FalconPlayer;
 use crate::world::cache::WorldPacketCache;
 use ahash::AHashMap;
 use bytes::Bytes;
+use falcon_core::error::FalconCoreError;
+use falcon_core::network::buffer::read_var_i32_from_iter;
 use falcon_core::network::connection::ConnectionDriver;
-use falcon_core::world::chunks::{ChunkPos, Chunk};
+use falcon_core::schematic::SchematicData;
+use falcon_core::world::blocks::Blocks;
+use falcon_core::world::chunks::{ChunkPos, Chunk, SECTION_WIDTH, SECTION_LENGTH};
 use falcon_send::specs::play::ChunkDataSpec;
+use itertools::Itertools;
 
 mod cache;
 
@@ -192,3 +197,47 @@ impl FalconWorld {
     }
 }
 
+impl<'a> TryFrom<SchematicData<'a>> for FalconWorld {
+    type Error = FalconCoreError;
+
+    #[tracing::instrument(name = "world_loading", skip_all)]
+    fn try_from(schematic: SchematicData<'a>) -> Result<Self, Self::Error> {
+        let rest_x = schematic.width % 16;
+        let rest_z = schematic.length % 16;
+        let count_x = ((schematic.width - rest_x) / 16) as usize + if rest_x > 0 { 1 } else { 0 };
+        let count_z = ((schematic.length - rest_z) / 16) as usize + if rest_z > 0 { 1 } else { 0 };
+        debug!(x = count_x, z = count_z, "World size");
+
+        let air_value = schematic.palette
+            .iter()
+            .find(|(_, value)| *value == &Blocks::Air)
+            .map(|(index, _)| *index);
+        let mut schematic_blocks = schematic.block_data
+            .iter()
+            .map(|b| b as u8)
+            .batching(|iter| read_var_i32_from_iter(iter));
+
+        let mut world = FalconWorld::new(count_x * count_z, 0, 0, count_x as i32, count_z as i32);
+        for y in 0..schematic.height as usize {
+            for z in 0..schematic.length as usize {
+                for x in 0..schematic.width as usize {
+                    let schematic_block = schematic_blocks.next().ok_or_else(|| FalconCoreError::InvalidData(String::from("Invalid world data, fewer blocks than size given!!")))?;
+                    match air_value {
+                        Some(value) if value == schematic_block => {}
+                        _ => {
+                            let chunk_pos = ChunkPos::new(
+                                (x / SECTION_WIDTH as usize) as i32,
+                                (z / SECTION_LENGTH as usize) as i32,
+                            );
+                            let palette_entry = *schematic.palette.get(&schematic_block).ok_or_else(|| FalconCoreError::InvalidData(String::from("Invalid schematic data, could not find corresponding palette entry!!")))?;
+                            let chunk = world.get_chunk_mut(chunk_pos);
+                            chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, palette_entry);
+                        }
+                    }
+                }
+            }
+        }
+        debug!(count = world.chunks.len(), "Loaded chunks.");
+        Ok(world)
+    }
+}
