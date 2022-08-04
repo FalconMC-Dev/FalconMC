@@ -464,7 +464,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "falcon_core",
- "falcon_send_derive",
+ "falcon_receive_derive",
 ]
 
 [[package]]
