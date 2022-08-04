@@ -1,17 +1,15 @@
 
 use std::iter::once;
 
+use falcon_proc_util::ItemListing;
 use proc_macro::TokenStream;
 
 use quote::ToTokens;
 use syn::{Item, parse_macro_input, Arm, parse_quote_spanned, Stmt, Ident, LitInt, ItemFn, LitStr, Expr};
 use crate::data::PacketData;
 
-use crate::util::ItemListing;
-
 mod data;
 mod kw;
-mod util;
 
 #[proc_macro]
 pub fn falcon_send(contents: TokenStream) -> TokenStream {
