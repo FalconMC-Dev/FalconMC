@@ -1,20 +1,22 @@
 use std::iter::once;
 
-use falcon_proc_util::ItemListing;
+use falcon_proc_util::{ItemListing, ErrorCatcher};
 use proc_macro::TokenStream;
 use quote::ToTokens;
-use syn::{parse_macro_input, Item, parse_quote_spanned, Arm, Ident, LitInt, Stmt, ItemFn};
+use syn::{parse_macro_input, Item, parse_quote_spanned, Arm, ItemFn, parse_quote};
 
 use self::data::PacketData;
+use self::util::ReceiveMatchMappings;
 
 mod data;
 mod kw;
+mod util;
 
 #[proc_macro]
 pub fn falcon_receive(contents: TokenStream) -> TokenStream {
     let mut contents = parse_macro_input!(contents as ItemListing);
 
-    let (packet_data, error): (Vec<PacketData>, Option<syn::Error>) = contents.content
+    let (packet_data, error): (ReceiveMatchMappings, ErrorCatcher) = contents.content
         .iter_mut()
         .filter_map(|item| {
             match item {
@@ -24,97 +26,82 @@ pub fn falcon_receive(contents: TokenStream) -> TokenStream {
                 _ => None,
             }
         })
-        .fold((vec![], None), |(mut res, mut err), item| {
+        .fold((ReceiveMatchMappings::new(), ErrorCatcher::new()), |(mut res, mut err), item| {
             match item {
-                Ok(item) => res.push(item),
-                Err(error) => {
-                    match err {
-                        None => err = Some(error),
-                        Some(ref mut err) => err.combine(error),
-                    }
+                Ok(item) => {
+                    let (exclude, mappings) = item.mappings().to_inner();
+                    let name = Some(item.struct_name().clone()).and_then(|n| exclude.map(|v| (v, n)));
+                    err.extend_error(res.add_packet(item.struct_name().clone(), (name, mappings)));
                 }
+                Err(error) => err.add_error(error),
             }
             (res, err)
         });
 
     let mut result = contents.into_token_stream();
 
-    if let Some(error) = error {
+    if let Err(error) = error.emit() {
         result.extend(once(error.to_compile_error()));
     } else {
-        result.extend(once(generate(packet_data)));
+        result.extend(once(generate(packet_data).into_token_stream()));
     }
 
     result.into()
 }
 
-pub(crate) fn generate(data: Vec<PacketData>) -> proc_macro2::TokenStream {
-    let mut result = proc_macro2::TokenStream::new();
-    for data in data {
-        let packet_ident = data.struct_name();
-        let span = packet_ident.span();
-        let match_arms: Vec<Arm> = data.mappings().versions()
-            .map(|(packet_id, versions)| parse_quote_spanned! {span=>
-                #packet_id => {
-                    match protocol_id {
-                        #(#versions)|* => ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?,
-                        _ => return Ok(None),
+pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
+    let match_arms: Vec<Arm> = data.mappings.into_iter()
+        .map(|(id, mappings)| {
+            let packet_id = id.packet_id;
+            match id.exclude {
+                Some(struct_name) => parse_quote_spanned! {struct_name.span()=>
+                    #packet_id => {
+                        let packet: #struct_name = ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?;
+                        let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
+                        let span = ::tracing::trace_span!(%packet_name, "handle_packet");
+                        let _enter = span.enter();
+                        Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
+                    }
+                },
+                None => {
+                    let inner_arms: Vec<Arm> = mappings.versions.into_iter()
+                        .map(|(struct_name, versions)| {
+                            let versions = versions.iter().map(|(v, _)| v);
+                            parse_quote_spanned! {struct_name.span()=>
+                                #(#versions)|* => {
+                                    let packet: #struct_name = ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?;
+                                    let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
+                                    let span = ::tracing::trace_span!(%packet_name, "handle_packet");
+                                    let _enter = span.enter();
+                                    Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
+                                }
+                            }
+                        }).collect();
+                    parse_quote! {
+                        #packet_id => {
+                            match protocol_id {
+                                #(#inner_arms,)*
+                                _ => Ok(None),
+                            }
+                        }
                     }
                 }
-            }).collect();
-
-        let fn_body = generate_fn_body(packet_ident, data.mappings().is_exclude(), match_arms);
-
-        let fn_item: ItemFn = parse_quote_spanned! {span=>
-            pub fn falcon_process_packet<R, D, L>(packet_id: i32, buffer: &mut R, connection: &mut L) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
-            where
-                R: ::falcon_core::network::buffer::PacketBufferRead,
-                D: ::falcon_core::network::connection::ConnectionDriver,
-                L: ::falcon_core::network::connection::ConnectionLogic<D>,
-            {
-                let protocol_id = connection.driver().handler_state().protocol_id();
-                let packet: #packet_ident = { #(#fn_body)* };
-                let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
-                let span = ::tracing::trace_span!("handle_packet", %packet_name);
-                let _enter = span.enter();
-                Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
             }
-        };
-        result.extend(once(fn_item.into_token_stream()));
-    }
+        }).collect();
 
-    result
-}
-
-pub(crate) fn generate_fn_body(packet_ident: &Ident, exclude: Option<&LitInt>, match_arms: Vec<Arm>)-> Vec<Stmt> {
-    let span = packet_ident.span();
-    if let Some(version) = exclude {
-        if match_arms.is_empty() {
-            parse_quote_spanned! {span=>
-                match packet_id {
-                    #version => ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?,
-                    _ => return Ok(None),
-                }
-            }
-        } else {
-            parse_quote_spanned! {span=>
-                match packet_id {
-                    #(#match_arms,)*
-                    #version => ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?,
-                    _ => return Ok(None),
-                }
-            }
-        }
-    } else if match_arms.is_empty() {
-        parse_quote_spanned! {span=>
-            compile_error!("no version mappings provided on a \"falcon_packet\" struct")
-        }
-    } else {
-        parse_quote_spanned! {span=>
+    parse_quote! {
+        pub fn falcon_process_packet<R, D>(packet_id: i32, buffer: &mut R, connection: &mut ::falcon_logic::connection::FalconConnection<D>) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
+        where
+            R: ::falcon_core::network::buffer::PacketBufferRead,
+            D: ::falcon_core::network::connection::ConnectionDriver,
+        {
+            use ::falcon_core::network::connection::ConnectionLogic;
+            let protocol_id = connection.driver().handler_state().protocol_id();
             match packet_id {
-                #(#match_arms,)*
-                _ => return Ok(None),
+                #(#match_arms)*
+                _ => Ok(None)
             }
         }
     }
 }
+

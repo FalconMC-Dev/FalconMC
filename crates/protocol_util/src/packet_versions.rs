@@ -81,6 +81,13 @@ impl PacketVersionMappings {
     pub fn is_exclude(&self) -> Option<&LitInt> {
         self.is_exclude.as_ref()
     }
+
+    pub fn to_inner(&self) -> (Option<LitInt>, Vec<(LitInt, Vec<(LitInt, bool)>)>) {
+        (
+            self.is_exclude.clone(),
+            self.versions.clone(),
+        )
+    }
 }
 
 #[derive(Debug)]
