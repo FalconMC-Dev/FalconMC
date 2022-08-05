@@ -36,7 +36,7 @@ pub trait ConnectionLogic<D: ConnectionDriver>: Debug {
 }
 
 #[async_trait::async_trait]
-pub trait ConnectionDriver: Debug {
+pub trait ConnectionDriver: Debug + Send + Sync {
     type Error: Display + From<Error>;
 
     fn addr(&self) -> &SocketAddr;

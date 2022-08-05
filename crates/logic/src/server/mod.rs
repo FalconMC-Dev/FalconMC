@@ -1,3 +1,6 @@
+use std::future::Future;
+use std::pin::Pin;
+
 use ahash::AHashMap;
 use falcon_core::ShutdownHandle;
 use tokio::sync::mpsc::UnboundedReceiver;
@@ -7,25 +10,38 @@ use falcon_core::network::connection::ConnectionDriver;
 use crate::player::FalconPlayer;
 use crate::world::FalconWorld;
 
+pub use wrapper::ServerWrapper;
+
 mod status;
 mod login;
 mod play;
+mod wrapper;
+
+pub type SyncServerTask<D> = dyn FnOnce(&mut FalconServer<D>) + Send + Sync;
+pub type AsyncServerTask<D> = dyn (FnOnce(&mut FalconServer<D>) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
+
+pub enum ServerTask<D: ConnectionDriver> {
+    Sync(Box<SyncServerTask<D>>),
+    Async(Box<AsyncServerTask<D>>),
+}
 
 pub struct FalconServer<D: ConnectionDriver> {
     shutdown: ShutdownHandle,
     should_stop: bool,
     console_rx: UnboundedReceiver<String>,
+    receiver: UnboundedReceiver<ServerTask<D>>,
     eid_count: i32,
     players: AHashMap<Uuid, FalconPlayer<D>>,
     world: FalconWorld,
 }
 
 impl<D: ConnectionDriver> FalconServer<D> {
-    pub fn new(shutdown: ShutdownHandle, console_rx: UnboundedReceiver<String>, world: FalconWorld) -> Self {
+    pub fn new(shutdown: ShutdownHandle, console_rx: UnboundedReceiver<String>, receiver: UnboundedReceiver<ServerTask<D>>, world: FalconWorld) -> Self {
         Self {
             shutdown,
             should_stop: false,
             console_rx,
+            receiver,
             eid_count: 0,
             players: AHashMap::new(),
             world,

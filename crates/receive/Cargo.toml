@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 falcon_core = { path = "../core" }
-falcon_protocol_derive = { path = "../protocol_derive" }
+falcon_receive_derive = { path = "../receive_derive" }
 falcon_logic = { path = "../logic" }
 falcon_send = { path = "../send" }
 
