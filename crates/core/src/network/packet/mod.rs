@@ -1,10 +1,12 @@
 use std::borrow::Cow;
+use std::fmt::Debug;
+use bytes::Bytes;
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use uuid::Uuid;
+use falcon_core::network::connection::ConnectionLogic;
 
 use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
-use crate::network::connection::ClientConnection;
 
 mod packet_macros;
 
@@ -19,9 +21,9 @@ pub trait PacketDecode: Sized {
 }
 
 /// This trait defines the packet logic when a packet gets received.
-pub trait PacketHandler {
+pub trait PacketHandler<L: ConnectionLogic> {
     /// Executes packet logic.
-    fn handle_packet(self, connection: &mut ClientConnection) -> TaskScheduleResult;
+    fn handle_packet(self, connection: &mut L) -> TaskScheduleResult;
 
     /// Human-readable identifier of the packet type
     fn get_name(&self) -> &'static str;
@@ -54,6 +56,13 @@ impl PacketEncode for Uuid {
     }
 }
 
+impl PacketEncode for Bytes {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        buf.write_u8_array(self.as_ref())
+    }
+}
+
+/// Vec<u8> can be more efficient than this
 impl<T: PacketEncode> PacketEncode for Vec<T> {
     fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
         for element in self {
@@ -69,3 +78,10 @@ impl<T: PacketEncode> PacketEncode for Option<T> {
         }
     }
 }
+
+impl<'a, T> PacketEncode for &'a T where T: PacketEncode {
+    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
+        (*self).to_buf(buf);
+    }
+}
+

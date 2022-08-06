@@ -1,17 +1,17 @@
 [package]
 name = "falcon_receive"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 falcon_core = { path = "../core" }
-falcon_protocol_derive = { path = "../protocol_derive" }
+falcon_receive_derive = { path = "../receive_derive" }
 falcon_logic = { path = "../logic" }
 falcon_send = { path = "../send" }
 
 mc_chat = "0.3.0"
 
-tracing = "0.1.32"
-thiserror = "1.0.30"
+tracing = "0.1.35"
+thiserror = "1.0.31"

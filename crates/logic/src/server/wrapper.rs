@@ -1,57 +1,70 @@
+use falcon_core::player::data::Position;
 use ignore_result::Ignore;
+use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
-use falcon_core::network::connection::ConnectionWrapper;
-use falcon_core::server::ServerWrapper;
 
-pub trait ServerLogic {
-    fn request_status(&self, protocol: i32, connection: ConnectionWrapper);
+use crate::connection::ConnectionWrapper;
+use crate::FalconServer;
 
-    fn player_login(&self, username: String, protocol: i32, connection: ConnectionWrapper);
+use super::ServerTask;
 
-    fn login_success(&self, username: String, uuid: Uuid, protocol: i32, connection: ConnectionWrapper);
-
-    fn player_leave(&self, uuid: Uuid);
-
-    #[allow(clippy::too_many_arguments)]
-    fn player_update_pos_look(&self, uuid: Uuid, x: Option<f64>, y: Option<f64>, z: Option<f64>, yaw: Option<f32>, pitch: Option<f32>, on_ground: bool);
-
-    fn player_update_view_distance(&self, uuid: Uuid, view_distance: u8);
+#[derive(Debug)]
+pub struct ServerWrapper {
+    link: UnboundedSender<ServerTask>,
 }
 
-impl ServerLogic for ServerWrapper {
-    fn request_status(&self, protocol: i32, connection: ConnectionWrapper) {
-        self.link().send(Box::new(move |server| {
-            super::request_status(server, protocol, connection);
-        })).ignore();
+impl ServerWrapper {
+    pub fn new(link: UnboundedSender<ServerTask>) -> Self {
+        Self {
+            link,
+        }
     }
 
-    fn player_login(&self, username: String, protocol_version: i32, client_connection: ConnectionWrapper) {
-        self.link().send(Box::new(move |server| {
-            super::player_login(server, username, protocol_version, client_connection);
-        })).ignore();
-    }
-
-    fn login_success(&self, username: String, uuid: Uuid, protocol_version: i32, client_connection: ConnectionWrapper) {
-        self.link().send(Box::new(move |server| {
-            super::login_success(server, username, uuid, protocol_version, client_connection);
-        })).ignore();
-    }
-
-    fn player_leave(&self, uuid: Uuid) {
-        self.link().send(Box::new(move |server| {
-            super::player_leave(server, uuid);
-        })).ignore();
-    }
-
-    fn player_update_pos_look(&self, uuid: Uuid, x: Option<f64>, y: Option<f64>, z: Option<f64>, yaw: Option<f32>, pitch: Option<f32>, on_ground: bool) {
-        self.link().send(Box::new(move |server| {
-            super::player_update_pos_look(server, uuid, x, y, z, yaw, pitch, on_ground);
-        })).ignore()
-    }
-
-    fn player_update_view_distance(&self, uuid: Uuid, view_distance: u8) {
-        self.link().send(Box::new(move |server| {
-            super::player_update_view_distance(server, uuid, view_distance);
-        })).ignore();
+    /// Do not pass a `Box` to this function.
+    pub fn execute_sync<T>(&self, task: T)
+        where
+            T: FnOnce(&mut FalconServer) + Send + Sync + 'static,
+    {
+        self.link.send(ServerTask::Sync(Box::new(task))).ignore();
     }
 }
+
+impl ServerWrapper {
+    pub fn request_status(&self, protocol: i32, connection: ConnectionWrapper) {
+        self.execute_sync(move |server| {
+            server.request_status(protocol, connection);
+        })
+    }
+
+    pub fn player_login(&self, username: String, protocol: i32, connection: ConnectionWrapper) {
+        self.execute_sync(move |server| {
+            server.player_login(username, protocol, connection);
+        })
+    }
+
+    pub fn player_update_pos_look(&self, uuid: Uuid, pos: Option<Position>, facing: Option<(f32, f32)>, on_ground: bool) {
+        self.execute_sync(move |server| {
+            server.player_update_pos_look(uuid, pos, facing, on_ground);
+        })
+    }
+
+    pub fn player_update_view_distance(&self, uuid: Uuid, view_distance: u8) {
+        self.execute_sync(move |server| {
+            server.player_update_view_distance(uuid, view_distance);
+        })
+    }
+
+    pub fn player_leave(&self, uuid: Uuid) {
+        self.execute_sync(move |server| {
+            server.player_leave(uuid);
+        })
+    }
+}
+
+impl Clone for ServerWrapper {
+    fn clone(&self) -> Self {
+        Self { link: self.link.clone() }
+    }
+}
+
+

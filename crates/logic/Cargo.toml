@@ -1,6 +1,6 @@
 [package]
 name = "falcon_logic"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,7 +11,14 @@ falcon_send = { path = "../send" }
 
 mc_chat = "0.3.0"
 
-tracing = "0.1.32"
+tracing = "0.1.35"
+itertools = "0.10.3"
 
-uuid = { version = "0.8.2", features = [ "v3" ] }
+uuid = { version = "1.1.2", features = [ "v3" ] }
+bytes = "1.2.0"
 ignore-result = "0.2.0"
+ahash = "0.7.6"
+
+tokio = { version = "1.20.1", features = [ "net", "time" ]}
+tokio-util = { version = "0.7.3", features = [ "codec" ] }
+futures = "0.3.21"

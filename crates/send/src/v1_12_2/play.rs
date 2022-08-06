@@ -1,11 +1,12 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(340 = 0x1F; 393, 401, 404 = 0x21; no_receive; outgoing = "keep_alive")]
+    #[falcon_packet(versions = {
+        340 = 0x1F;
+        393, 401, 404, 573, 575, 578 = 0x21;
+        477, 480, 485, 490, 498, 735, 736 = 0x20;
+    }, name = "keep_alive")]
     pub struct KeepAlivePacket {
         id: i64,
     }

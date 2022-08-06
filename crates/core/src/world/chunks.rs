@@ -11,6 +11,7 @@ pub struct Chunk {
     sections: [Option<ChunkSection>; SECTIONS_NUM as usize],
     bitmask: i32,
     pos: ChunkPos,
+    dirty: bool,
 }
 
 impl Chunk {
@@ -19,6 +20,7 @@ impl Chunk {
             sections: Default::default(),
             bitmask: 0,
             pos,
+            dirty: true,
         }
     }
 
@@ -44,6 +46,14 @@ impl Chunk {
 
     pub fn get_position(&self) -> &ChunkPos {
         &self.pos
+    }
+
+    pub fn mark_dirty(&mut self, dirty: bool) {
+        self.dirty = dirty;
+    }
+
+    pub fn is_dirty(&self) -> bool {
+        self.dirty
     }
 
     pub fn get_chunk_sections(&self) -> &[Option<ChunkSection>; SECTIONS_NUM as usize] {
@@ -90,6 +100,10 @@ impl ChunkSection {
         }
     }
 
+    pub fn block_at(&self, x: u16, y: u16, z: u16) -> &Blocks {
+        self.palette.at(self.blocks[ChunkSection::calculate_index(x, y, z)] as usize).unwrap()
+    }
+
     /// This is the block-count internal to `FalconMC`. Depending on the version
     /// this count will not be correct due to missing blocks. Do not depend on this number when working
     /// on networking synchronization!!
@@ -105,7 +119,7 @@ impl ChunkSection {
         &self.blocks
     }
 
-    fn calculate_index(x: u16, y: u16, z: u16) -> usize {
+    pub fn calculate_index(x: u16, y: u16, z: u16) -> usize {
         (x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize
     }
 }
@@ -125,5 +139,23 @@ pub struct ChunkPos {
 impl ChunkPos {
     pub fn new(x: i32, z: i32) -> Self {
         ChunkPos { x, z }
+    }
+}
+
+impl From<ChunkPos> for (i32, i32) {
+    fn from(pos: ChunkPos) -> Self {
+        (pos.x, pos.z)
+    }
+}
+
+impl From<&ChunkPos> for (i32, i32) {
+    fn from(pos: &ChunkPos) -> Self {
+        (pos.x, pos.z)
+    }
+}
+
+impl From<(i32, i32)> for ChunkPos {
+    fn from((x, z): (i32, i32)) -> Self {
+        ChunkPos::new(x, z)
     }
 }

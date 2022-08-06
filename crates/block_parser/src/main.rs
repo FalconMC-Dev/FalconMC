@@ -13,11 +13,14 @@ use util::raw::RawBlockData;
 
 pub mod functionality;
 pub mod util;
+pub mod extension;
 
 fn main() {
     if let Some(arg) = env::args().nth(1) {
         if arg == "props" {
             print_properties();
+        } else if arg == "util" {
+            extension::generate_function(env::args().nth(2).unwrap());
         } else {
             println!("Unrecognized option!");
         }

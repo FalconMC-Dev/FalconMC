@@ -31,7 +31,9 @@ macro_rules! packet_send_fn {
         }$(,)?)*
     ) => {
         $(
-        pub fn $fn_name(packet: $spec_name, connection: &mut ::falcon_core::network::connection::ClientConnection)
+        pub fn $fn_name<L>(packet: $spec_name, connection: &mut L)
+        where
+                L: ::falcon_core::network::connection::ConnectionLogic,
         {
             let mut packet = Some(packet);
             $(
@@ -39,6 +41,31 @@ macro_rules! packet_send_fn {
                 return;
             }
             )+
+            ::tracing::trace!("Unresolved packet!");
+        }
+        )*
+    }
+}
+
+#[macro_export]
+macro_rules! build_send_fn {
+    (
+        $($spec_name:ty => $fn_name:ident {
+            $(mod $mod_name:path;)+
+        }$(,)?)*
+    ) => {
+        $(
+        pub fn $fn_name(packet: $spec_name, protocol_id: i32) -> Option<::bytes::Bytes>
+        {
+            let mut packet = Some(packet);
+            $(
+            let data = $mod_name(&mut packet, protocol_id);
+            if data.is_some() {
+                return data;
+            }
+            )+
+            ::tracing::debug!(protocol = protocol_id, "Unresolved packet!");
+            None
         }
         )*
     }

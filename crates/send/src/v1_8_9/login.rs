@@ -1,13 +1,10 @@
-pub use inner::*;
-
-#[falcon_protocol_derive::packet_module]
-mod inner {
+falcon_send_derive::falcon_send! {
     use mc_chat::ChatComponent;
     use falcon_core::network::packet::PacketEncode;
     use crate::specs::login::LoginSuccessSpec;
 
     #[derive(PacketEncode)]
-    #[falcon_packet(-1 = 0x00; no_receive; outgoing = "disconnect")]
+    #[falcon_packet(versions = { -1 = 0x00 }, name = "disconnect")]
     pub struct DisconnectPacket {
         #[max_length(262144)]
         reason: String,
@@ -22,7 +19,11 @@ mod inner {
     }
 
     #[derive(PacketEncode)]
-    #[falcon_packet(47, 393, 401, 404 = 0x02; outgoing = "login_success"; no_receive)]
+    #[falcon_packet(
+        versions = {
+            47, 393, 401, 404, 477, 480, 485, 490, 498, 573, 575, 578 = 0x02;
+        }, name = "login_success"
+    )]
     pub struct LoginSuccess {
         uuid: String,
         #[max_length(16)]
@@ -32,7 +33,7 @@ mod inner {
     impl From<LoginSuccessSpec> for LoginSuccess {
         fn from(spec: LoginSuccessSpec) -> Self {
             LoginSuccess {
-                uuid: spec.uuid.to_hyphenated_ref().to_string(),
+                uuid: spec.uuid.as_hyphenated().to_string(),
                 username: spec.username,
             }
         }

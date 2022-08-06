@@ -29,6 +29,10 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
             .map(|(i, _)| i)
     }
 
+    pub fn at(&self, index: usize) -> Option<&T> {
+        self.items.get(index)
+    }
+
     pub fn remove(&mut self, index: usize) -> usize {
         self.items.swap_remove(index);
         self.items.len()
