@@ -48,17 +48,5 @@ impl FalconServer {
             let position_look = PositionAndLookSpec::new(player.position(), player.look_angles(), 0, 1);
             player.connection().build_send_packet(position_look, falcon_send::send_position_look);
         }
-        /* if let Entry::Occupied(entry) = server.players.entry(uuid) {
-            let player = entry.get();
-            let join_game_spec = JoinGameSpec::new(player, Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 0, FalconConfig::global().max_view_distance() as i32, false, false);
-            player.connection().build_send_packet(join_game_spec, falcon_send::send_join_game);
-            let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);
-            player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);
-            let player_abilities = PlayerAbilitiesSpec::new(player, 0.05, 0.1);
-            player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
-            send_chunks_for_player(&server.world, player);
-            let position_look = PositionAndLookSpec::new(player, 0, 1);
-            player.connection().build_send_packet(position_look, falcon_send::send_position_look);
-        }*/
     }
 }
