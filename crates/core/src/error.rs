@@ -7,6 +7,10 @@ pub type Result<T> = std::result::Result<T, FalconCoreError>;
 
 #[derive(Error, Debug)]
 pub enum FalconCoreError {
+    #[error("Error while doing IO")]
+    IoError(#[from] std::io::Error),
+    #[error("The packet length was longer than 21 bits")]
+    PacketTooLong,
     #[error("PacketBuffer reached EOF")]
     NoMoreBytes,
     #[error("Variable i32 was longer than 5 bytes")]

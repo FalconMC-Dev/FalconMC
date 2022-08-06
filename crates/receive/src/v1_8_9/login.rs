@@ -1,5 +1,5 @@
 use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_logic::connection::FalconConnection;
 use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 use falcon_core::server::config::FalconConfig;
@@ -14,9 +14,9 @@ falcon_receive_derive::falcon_receive! {
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for LoginStartPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        let version = connection.driver().handler_state().protocol_id();
+impl PacketHandler<FalconConnection> for LoginStartPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        let version = connection.handler_state().protocol_id();
         if FalconConfig::global().excluded_versions().contains(&version.unsigned_abs()) {
             connection.disconnect(ChatComponent::from_text(
                 "Disabled version",

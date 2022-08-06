@@ -1,4 +1,4 @@
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 use falcon_core::player::data::Position;
 use falcon_logic::FalconConnection;
@@ -57,9 +57,9 @@ falcon_receive_derive::falcon_receive! {
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for PlayerPositionPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        if let Some(uuid) = connection.driver().handler_state().player_uuid() {
+impl PacketHandler<FalconConnection> for PlayerPositionPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        if let Some(uuid) = connection.handler_state().player_uuid() {
             connection.server()
                 .player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), None, self.on_ground);
         }
@@ -71,9 +71,9 @@ impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for Pl
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for PlayerLookPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        let uuid = connection.driver().handler_state().player_uuid().expect("Something impossible happened");
+impl PacketHandler<FalconConnection> for PlayerLookPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        let uuid = connection.handler_state().player_uuid().expect("Something impossible happened");
         connection.server()
             .player_update_pos_look(uuid, None, Some((self.yaw, self.pitch)), self.on_ground);
         Ok(())
@@ -84,9 +84,9 @@ impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for Pl
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for PositionLookPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        let uuid = connection.driver().handler_state().player_uuid().expect("Something impossible happened");
+impl PacketHandler<FalconConnection> for PositionLookPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        let uuid = connection.handler_state().player_uuid().expect("Something impossible happened");
         connection.server()
             .player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), Some((self.yaw, self.pitch)), self.on_ground);
         Ok(())

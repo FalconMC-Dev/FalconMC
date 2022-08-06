@@ -1,10 +1,9 @@
-use falcon_core::network::connection::ConnectionDriver;
 use falcon_core::player::data::Position;
 use uuid::Uuid;
 
-use super::FalconServer;
+use crate::server::FalconServer;
 
-impl<D: ConnectionDriver + 'static> FalconServer<D> {
+impl FalconServer {
     pub fn player_leave(&mut self, uuid: Uuid) {
         let player = self.players.remove(&uuid);
         if let Some(player) = player {

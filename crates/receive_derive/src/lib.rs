@@ -57,10 +57,10 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                 Some(struct_name) => parse_quote_spanned! {struct_name.span()=>
                     #packet_id => {
                         let packet: #struct_name = ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?;
-                        let packet_name = ::falcon_core::network::packet::PacketHandler::<D, ::falcon_logic::connection::FalconConnection<D>>::get_name(&packet);
+                        let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
                         let span = ::tracing::trace_span!("handle_packet", %packet_name);
                         let _enter = span.enter();
-                        Ok(Some(::falcon_core::network::packet::PacketHandler::<D, ::falcon_logic::connection::FalconConnection<D>>::handle_packet(packet, connection)?))
+                        Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
                     }
                 },
                 None => {
@@ -70,10 +70,10 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                             parse_quote_spanned! {struct_name.span()=>
                                 #(#versions)|* => {
                                     let packet: #struct_name = ::falcon_core::network::packet::PacketDecode::from_buf(buffer)?;
-                                    let packet_name = ::falcon_core::network::packet::PacketHandler::<D, ::falcon_logic::connection::FalconConnection<D>>::get_name(&packet);
+                                    let packet_name = ::falcon_core::network::packet::PacketHandler::get_name(&packet);
                                     let span = ::tracing::trace_span!("handle_packet", %packet_name);
                                     let _enter = span.enter();
-                                    Ok(Some(::falcon_core::network::packet::PacketHandler::<D, ::falcon_logic::connection::FalconConnection<D>>::handle_packet(packet, connection)?))
+                                    Ok(Some(::falcon_core::network::packet::PacketHandler::handle_packet(packet, connection)?))
                                 }
                             }
                         }).collect();
@@ -90,13 +90,12 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
         }).collect();
 
     parse_quote! {
-        pub fn falcon_process_packet<R, D>(packet_id: i32, buffer: &mut R, connection: &mut ::falcon_logic::connection::FalconConnection<D>) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
+        pub fn falcon_process_packet<R>(packet_id: i32, buffer: &mut R, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
         where
             R: ::falcon_core::network::buffer::PacketBufferRead,
-            D: ::falcon_core::network::connection::ConnectionDriver + 'static,
         {
             use ::falcon_core::network::connection::ConnectionLogic;
-            let protocol_id = connection.driver().handler_state().protocol_id();
+            let protocol_id = connection.handler_state().protocol_id();
             match packet_id {
                 #(#match_arms)*
                 _ => Ok(None)

@@ -73,22 +73,21 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
         packet_ident,
         data.mappings().is_exclude(),
         match_arms,
-        parse_quote_spanned! {span=> connection.driver().handler_state().protocol_id()},
+        parse_quote_spanned! {span=> connection.handler_state().protocol_id()},
         parse_quote_spanned! {span=> false}
     );
 
     let fn_name = data.fn_name();
     let fn_name = Ident::new(&fn_name.value(), fn_name.span());
     let write: Stmt = parse_quote_spanned! {span=>
-        connection.driver_mut().send_packet(packet_id, &packet);
+        connection.send_packet(packet_id, &packet);
     };
 
     parse_quote_spanned! {fn_name.span()=>
-        pub fn #fn_name<T, D, L>(packet: &mut Option<T>, connection: &mut L) -> bool
+        pub fn #fn_name<T, L>(packet: &mut Option<T>, connection: &mut L) -> bool
         where
             #packet_ident: ::std::convert::From<T>,
-            D: ::falcon_core::network::connection::ConnectionDriver,
-            L: ::falcon_core::network::connection::ConnectionLogic<D>,
+            L: ::falcon_core::network::connection::ConnectionLogic,
         {
             if packet.is_none() {
                 return false;

@@ -1,4 +1,4 @@
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_logic::FalconConnection;
 
 falcon_receive_derive::falcon_receive! {
@@ -16,9 +16,9 @@ falcon_receive_derive::falcon_receive! {
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for StatusRequestPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        let version = connection.driver().handler_state().protocol_id();
+impl PacketHandler<FalconConnection> for StatusRequestPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        let version = connection.handler_state().protocol_id();
         let wrapper = connection.wrapper();
         connection.server().request_status(version, wrapper);
         Ok(())
@@ -29,11 +29,10 @@ impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for St
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for StatusPingPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
+impl PacketHandler<FalconConnection> for StatusPingPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
         falcon_send::send_status_pong(self.payload, connection);
         connection
-            .driver_mut()
             .handler_state_mut()
             .set_connection_state(ConnectionState::Disconnected);
         Ok(())

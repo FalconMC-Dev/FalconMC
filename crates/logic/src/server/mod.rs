@@ -6,37 +6,35 @@ use falcon_core::ShutdownHandle;
 use tokio::sync::mpsc::UnboundedReceiver;
 use uuid::Uuid;
 
-use falcon_core::network::connection::ConnectionDriver;
 use crate::player::FalconPlayer;
 use crate::world::FalconWorld;
 
 pub use wrapper::ServerWrapper;
 
-mod status;
-mod login;
-mod play;
+mod network;
+mod tick;
 mod wrapper;
 
-pub type SyncServerTask<D> = dyn FnOnce(&mut FalconServer<D>) + Send + Sync;
-pub type AsyncServerTask<D> = dyn (FnOnce(&mut FalconServer<D>) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
+pub type SyncServerTask = dyn FnOnce(&mut FalconServer) + Send + Sync;
+pub type AsyncServerTask = dyn (FnOnce(&mut FalconServer) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
 
-pub enum ServerTask<D: ConnectionDriver> {
-    Sync(Box<SyncServerTask<D>>),
-    Async(Box<AsyncServerTask<D>>),
+pub enum ServerTask {
+    Sync(Box<SyncServerTask>),
+    Async(Box<AsyncServerTask>),
 }
 
-pub struct FalconServer<D: ConnectionDriver> {
+pub struct FalconServer {
     shutdown: ShutdownHandle,
     should_stop: bool,
     console_rx: UnboundedReceiver<String>,
-    receiver: UnboundedReceiver<ServerTask<D>>,
+    receiver: UnboundedReceiver<ServerTask>,
     eid_count: i32,
-    players: AHashMap<Uuid, FalconPlayer<D>>,
+    players: AHashMap<Uuid, FalconPlayer>,
     world: FalconWorld,
 }
 
-impl<D: ConnectionDriver> FalconServer<D> {
-    pub fn new(shutdown: ShutdownHandle, console_rx: UnboundedReceiver<String>, receiver: UnboundedReceiver<ServerTask<D>>, world: FalconWorld) -> Self {
+impl FalconServer {
+    pub fn new(shutdown: ShutdownHandle, console_rx: UnboundedReceiver<String>, receiver: UnboundedReceiver<ServerTask>, world: FalconWorld) -> Self {
         Self {
             shutdown,
             should_stop: false,
@@ -56,11 +54,11 @@ impl<D: ConnectionDriver> FalconServer<D> {
         self.players.len()
     }
 
-    pub fn player(&self, uuid: Uuid) -> Option<&FalconPlayer<D>> {
+    pub fn player(&self, uuid: Uuid) -> Option<&FalconPlayer> {
         self.players.get(&uuid)
     }
 
-    pub fn player_mut(&mut self, uuid: Uuid) -> Option<&mut FalconPlayer<D>> {
+    pub fn player_mut(&mut self, uuid: Uuid) -> Option<&mut FalconPlayer> {
         self.players.get_mut(&uuid)
     }
 

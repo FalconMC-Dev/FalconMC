@@ -1,6 +1,6 @@
 use falcon_logic::FalconConnection;
 use mc_chat::{ChatComponent, ComponentStyle};
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::ConnectionState;
 use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 
@@ -17,21 +17,18 @@ falcon_receive_derive::falcon_receive! {
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for HandshakePacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
+impl PacketHandler<FalconConnection> for HandshakePacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
         match self.next_state {
             1 => connection
-                .driver_mut()
                 .handler_state_mut()
                 .set_connection_state(ConnectionState::Status),
             2 => connection
-                .driver_mut()
                 .handler_state_mut()
                 .set_connection_state(ConnectionState::Login),
             _ => connection.disconnect(ChatComponent::from_text("Impossible next state!", ComponentStyle::with_version(self.version.unsigned_abs()))),
         }
         connection
-            .driver_mut()
             .handler_state_mut()
             .set_protocol_id(self.version);
         Ok(())

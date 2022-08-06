@@ -4,7 +4,6 @@ use ahash::AHashMap;
 use bytes::Bytes;
 use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::read_var_i32_from_iter;
-use falcon_core::network::connection::ConnectionDriver;
 use falcon_core::schematic::SchematicData;
 use falcon_core::world::blocks::Blocks;
 use falcon_core::world::chunks::{ChunkPos, Chunk, SECTION_WIDTH, SECTION_LENGTH};
@@ -46,7 +45,7 @@ impl FalconWorld {
         self.chunks.entry(pos).or_insert_with(|| Chunk::empty(pos))
     }
 
-    pub fn send_chunks_for_player<D: ConnectionDriver>(&mut self, player: &FalconPlayer<D>) {
+    pub fn send_chunks_for_player(&mut self, player: &FalconPlayer) {
         let (chunk_x, chunk_z) = player.position().chunk_coords();
         let view_distance = player.view_distance();
         let capacity = (2 * view_distance as usize + 1).pow(2);
@@ -63,12 +62,12 @@ impl FalconWorld {
                 self.build_chunk_data(coords, protocol_id)
             }
         };
-        falcon_send::batch::send_batch(chunks, coords_to_packet, player.connection());
+        player.connection().send_batch(chunks, coords_to_packet);
     }
 
-    pub fn update_player_pos<D: ConnectionDriver>(
+    pub fn update_player_pos(
         &mut self,
-        player: &FalconPlayer<D>,
+        player: &FalconPlayer,
         old_chunk_x: i32,
         old_chunk_z: i32,
         chunk_x: i32,
@@ -108,15 +107,11 @@ impl FalconWorld {
             }
         };
 
-        falcon_send::batch::send_batch(should_load, coords_to_packet, player.connection());
-        falcon_send::batch::send_batch(
-            should_unload,
-            |s| falcon_send::build_unload_chunk(s, protocol_id),
-            player.connection(),
-        );
+        player.connection().send_batch(should_load, coords_to_packet);
+        player.connection().send_batch(should_unload, |s| falcon_send::build_unload_chunk(s, protocol_id));
     }
 
-    pub fn update_view_distance<D: ConnectionDriver>(&mut self, player: &FalconPlayer<D>, view_distance: u8) {
+    pub fn update_view_distance(&mut self, player: &FalconPlayer, view_distance: u8) {
         let old_view_distance = player.view_distance();
         let (chunk_x, chunk_z) = player.position().chunk_coords();
         let capacity = 4
@@ -139,7 +134,7 @@ impl FalconWorld {
                     }
                 };
 
-                falcon_send::batch::send_batch(chunks, coords_to_packet, player.connection());
+                player.connection().send_batch(chunks, coords_to_packet);
             },
             std::cmp::Ordering::Greater => {
                 let mut chunks = Vec::with_capacity(capacity);
@@ -151,11 +146,7 @@ impl FalconWorld {
                     }
                 }
                 let protocol_id = player.protocol_version();
-                falcon_send::batch::send_batch(
-                    chunks,
-                    |s| falcon_send::build_unload_chunk(s, protocol_id),
-                    player.connection(),
-                );
+                player.connection().send_batch(chunks, |s| falcon_send::build_unload_chunk(s, protocol_id));
             },
             std::cmp::Ordering::Equal => {},
         }

@@ -1,32 +1,32 @@
 use falcon_core::network::ConnectionState;
-use falcon_core::network::connection::{ConnectionDriver, ConnectionWrapper, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::login::LoginSuccessSpec;
 use falcon_send::specs::play::{ServerDifficultySpec, PlayerAbilitiesSpec, PositionAndLookSpec};
 use uuid::Uuid;
 
-use crate::connection::FalconConnection;
+use crate::connection::ConnectionWrapper;
 use crate::player::FalconPlayer;
 
-use super::FalconServer;
+use crate::server::FalconServer;
 
-impl<D: ConnectionDriver + 'static> FalconServer<D> {
-    pub fn player_login(&mut self, username: String, protocol: i32, connection: ConnectionWrapper<D, FalconConnection<D>>) {
+impl FalconServer {
+    pub fn player_login(&mut self, username: String, protocol: i32, connection: ConnectionWrapper) {
         debug!(player_name = %username);
         // create correct uuids
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
         let username2 = username.clone();
         connection.execute_sync(move |connection| {
             falcon_send::send_login_success(LoginSuccessSpec::new(player_uuid, username2), connection);
-            let handler_state = connection.driver_mut().handler_state_mut();
+            let handler_state = connection.handler_state_mut();
             handler_state.set_connection_state(ConnectionState::Play);
             handler_state.set_player_uuid(player_uuid);
         });
         self.login_success(username, player_uuid, protocol, connection);
     }
 
-    pub fn login_success(&mut self, username: String, uuid: Uuid, protocol: i32, connection: ConnectionWrapper<D, FalconConnection<D>>) {
+    pub fn login_success(&mut self, username: String, uuid: Uuid, protocol: i32, connection: ConnectionWrapper) {
         if self.players.contains_key(&uuid) {
             // TODO: Kick duplicqted playeers
             error!(%uuid, %username, "Duplicate player joining");

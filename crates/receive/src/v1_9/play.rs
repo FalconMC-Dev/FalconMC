@@ -1,4 +1,4 @@
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 use falcon_logic::FalconConnection;
 
@@ -21,9 +21,9 @@ falcon_receive_derive::falcon_receive! {
     }
 }
 
-impl<D: ConnectionDriver + 'static> PacketHandler<D, FalconConnection<D>> for ClientSettingsPacket {
-    fn handle_packet(self, connection: &mut FalconConnection<D>) -> TaskScheduleResult {
-        if let Some(uuid) = connection.driver().handler_state().player_uuid() {
+impl PacketHandler<FalconConnection> for ClientSettingsPacket {
+    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        if let Some(uuid) = connection.handler_state().player_uuid() {
             connection.server()
                 .player_update_view_distance(uuid, self.view_distance);
         }

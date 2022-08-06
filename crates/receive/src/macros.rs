@@ -25,16 +25,15 @@ macro_rules! packet_modules {
         $($($visi_login mod $mod_name_login;)*)?
         $($($visi_play mod $mod_name_play;)*)?
 
-        pub fn falcon_process_packet<R, D>(packet_id: i32, buffer: &mut R, connection: &mut ::falcon_logic::connection::FalconConnection<D>) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
+        pub fn falcon_process_packet<R>(packet_id: i32, buffer: &mut R, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::core::result::Result<::core::option::Option<()>, ::falcon_core::error::FalconCoreError>
         where
             R: ::falcon_core::network::buffer::PacketBufferRead,
-            D: ::falcon_core::network::connection::ConnectionDriver + 'static,
         {
             $(if $mod_name_rest::falcon_process_packet(packet_id, buffer, connection)?.is_some() {
                 return Ok(Some(()));
             })*
             use ::falcon_core::network::connection::ConnectionLogic;
-            let connection_state = connection.driver().handler_state().connection_state();
+            let connection_state = connection.handler_state().connection_state();
             match connection_state {
                 $(::falcon_core::network::ConnectionState::Handshake => {
                     $(match $mod_name_handshake::falcon_process_packet(packet_id, buffer, connection)? {

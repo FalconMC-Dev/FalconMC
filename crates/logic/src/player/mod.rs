@@ -1,4 +1,4 @@
-use falcon_core::network::connection::{ConnectionWrapper, ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::player::data::{GameMode, PlayerAbilityFlags, Position, LookAngles};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
@@ -8,10 +8,10 @@ use uuid::Uuid;
 
 use mc_chat::ChatComponent;
 
-use crate::connection::FalconConnection;
+use crate::connection::ConnectionWrapper;
 
 #[derive(Debug)]
-pub struct FalconPlayer<D: ConnectionDriver> {
+pub struct FalconPlayer {
     // identity
     username: String,
     uuid: Uuid,
@@ -26,11 +26,11 @@ pub struct FalconPlayer<D: ConnectionDriver> {
     // network
     time: Instant,
     protocol: i32,
-    connection: ConnectionWrapper<D, FalconConnection<D>>,
+    connection: ConnectionWrapper,
 }
 
-impl<D: ConnectionDriver> FalconPlayer<D> {
-    pub fn new(username: String, uuid: Uuid, eid: i32, pos: Position, facing: LookAngles, protocol: i32, connection: ConnectionWrapper<D, FalconConnection<D>>) -> Self {
+impl FalconPlayer {
+    pub fn new(username: String, uuid: Uuid, eid: i32, pos: Position, facing: LookAngles, protocol: i32, connection: ConnectionWrapper) -> Self {
         FalconPlayer {
             username,
             uuid,
@@ -99,12 +99,12 @@ impl<D: ConnectionDriver> FalconPlayer<D> {
         self.protocol
     }
 
-    pub fn connection(&self) -> &ConnectionWrapper<D, FalconConnection<D>> {
+    pub fn connection(&self) -> &ConnectionWrapper {
         &self.connection
     }
 }
 
-impl<D: ConnectionDriver> FalconPlayer<D> {
+impl FalconPlayer {
     pub fn disconnect(&mut self, reason: ChatComponent) {
         self.connection.execute_sync(move |connection| {
             connection.disconnect(reason);
@@ -115,7 +115,7 @@ impl<D: ConnectionDriver> FalconPlayer<D> {
     pub fn send_keep_alive(&self) {
         let elapsed = self.time.elapsed().as_secs();
         self.connection.execute_sync(move |connection| {
-            connection.driver_mut().handler_state_mut().set_last_keep_alive(elapsed);
+            connection.handler_state_mut().set_last_keep_alive(elapsed);
             falcon_send::send_keep_alive(elapsed as i64, connection);
         });
     }

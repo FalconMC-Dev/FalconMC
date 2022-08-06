@@ -1,12 +1,11 @@
 use bytes::Bytes;
-use falcon_core::network::connection::{ConnectionWrapper, ConnectionLogic, ConnectionDriver};
+use falcon_core::network::connection::ConnectionLogic;
 
 
-pub fn send_batch<B, C, D, L>(batch: Vec<B>, mut convert: C, connection: &ConnectionWrapper<D, L>)
+pub fn send_batch<B, C, L>(batch: Vec<B>, mut convert: C, connection: &mut L)
 where
     C: FnMut(B) -> Option<Bytes>,
-    D: ConnectionDriver,
-    L: ConnectionLogic<D>,
+    L: ConnectionLogic,
 {
     let mut packets = Vec::with_capacity(batch.len());
     for item in batch {
@@ -14,11 +13,9 @@ where
             packets.push(data);
         }
     }
-    connection.execute_sync(move |connection| {
-        // trace!("Writing batch");
-        for packet in packets {
-            connection.driver_mut().send(&packet);
-        }
-        // trace!("Batch written, flushing now");
-    })
+    // trace!("Writing batch");
+    for packet in packets {
+        connection.send(&packet);
+    }
+    // trace!("Batch written, flushing now");
 }

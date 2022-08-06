@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use bytes::Bytes;
 pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use uuid::Uuid;
-use falcon_core::network::connection::{ConnectionDriver, ConnectionLogic};
+use falcon_core::network::connection::ConnectionLogic;
 
 use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
@@ -21,7 +21,7 @@ pub trait PacketDecode: Sized {
 }
 
 /// This trait defines the packet logic when a packet gets received.
-pub trait PacketHandler<D: ConnectionDriver, L: ConnectionLogic<D>> {
+pub trait PacketHandler<L: ConnectionLogic> {
     /// Executes packet logic.
     fn handle_packet(self, connection: &mut L) -> TaskScheduleResult;
 

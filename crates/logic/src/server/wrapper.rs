@@ -1,20 +1,20 @@
-use falcon_core::network::connection::{ConnectionDriver, ConnectionWrapper};
 use falcon_core::player::data::Position;
 use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
-use crate::{FalconServer, FalconConnection};
+use crate::connection::ConnectionWrapper;
+use crate::FalconServer;
 
 use super::ServerTask;
 
 #[derive(Debug)]
-pub struct ServerWrapper<D: ConnectionDriver> {
-    link: UnboundedSender<ServerTask<D>>,
+pub struct ServerWrapper {
+    link: UnboundedSender<ServerTask>,
 }
 
-impl<D: ConnectionDriver> ServerWrapper<D> {
-    pub fn new(link: UnboundedSender<ServerTask<D>>) -> Self {
+impl ServerWrapper {
+    pub fn new(link: UnboundedSender<ServerTask>) -> Self {
         Self {
             link,
         }
@@ -23,20 +23,20 @@ impl<D: ConnectionDriver> ServerWrapper<D> {
     /// Do not pass a `Box` to this function.
     pub fn execute_sync<T>(&self, task: T)
         where
-            T: FnOnce(&mut FalconServer<D>) + Send + Sync + 'static,
+            T: FnOnce(&mut FalconServer) + Send + Sync + 'static,
     {
         self.link.send(ServerTask::Sync(Box::new(task))).ignore();
     }
 }
 
-impl<D: ConnectionDriver + 'static> ServerWrapper<D> {
-    pub fn request_status(&self, protocol: i32, connection: ConnectionWrapper<D, FalconConnection<D>>) {
+impl ServerWrapper {
+    pub fn request_status(&self, protocol: i32, connection: ConnectionWrapper) {
         self.execute_sync(move |server| {
             server.request_status(protocol, connection);
         })
     }
 
-    pub fn player_login(&self, username: String, protocol: i32, connection: ConnectionWrapper<D, FalconConnection<D>>) {
+    pub fn player_login(&self, username: String, protocol: i32, connection: ConnectionWrapper) {
         self.execute_sync(move |server| {
             server.player_login(username, protocol, connection);
         })
@@ -53,9 +53,15 @@ impl<D: ConnectionDriver + 'static> ServerWrapper<D> {
             server.player_update_view_distance(uuid, view_distance);
         })
     }
+
+    pub fn player_leave(&self, uuid: Uuid) {
+        self.execute_sync(move |server| {
+            server.player_leave(uuid);
+        })
+    }
 }
 
-impl<D: ConnectionDriver> Clone for ServerWrapper<D> {
+impl Clone for ServerWrapper {
     fn clone(&self) -> Self {
         Self { link: self.link.clone() }
     }
