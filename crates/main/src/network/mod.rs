@@ -1,31 +1,29 @@
-mod connection;
-
 use anyhow::Context;
+use falcon_logic::FalconConnection;
+use falcon_logic::connection::ConnectionReceiver;
+use falcon_logic::server::ServerWrapper;
 use ignore_result::Ignore;
-use falcon_core::network::connection::ClientConnection;
 use falcon_core::server::config::FalconConfig;
-use falcon_core::server::McTask;
 use falcon_core::ShutdownHandle;
 use tokio::net::TcpListener;
-use tokio::sync::mpsc::UnboundedSender;
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
     /// Used to clone for every client handler per connection
-    server_tx: UnboundedSender<Box<McTask>>,
+    server: ServerWrapper,
 }
 
 impl NetworkListener {
     pub async fn start_network_listening(
         shutdown_handle: ShutdownHandle,
-        server_tx: UnboundedSender<Box<McTask>>,
+        server: ServerWrapper,
     ) {
         info!("Starting network listening...");
-        debug!("Connection size: {}", std::mem::size_of::<ClientConnection>());
+        debug!("Connection size: {}", std::mem::size_of::<FalconConnection>());
 
         let network_listener = NetworkListener {
             shutdown_handle,
-            server_tx,
+            server,
         };
 
         network_listener.start_listening().await;
@@ -55,7 +53,13 @@ impl NetworkListener {
                         Ok((socket, addr)) => {
                             debug!(address = %addr, "Accepted connection");
                             socket.set_nodelay(true).ignore();
-                            tokio::spawn(connection::new_connection(self.shutdown_handle.clone(), socket, addr, self.server_tx.clone()));
+                            let connection = FalconConnection::new(
+                                self.shutdown_handle.clone(),
+                                addr,
+                                socket,
+                                self.server.clone(),
+                            ).await;
+                            tokio::spawn(connection.start(FalconReceiver));
                         },
                         Err(e) => {
                             print_error!(anyhow!("Connection broke due to {}", e));
@@ -67,3 +71,12 @@ impl NetworkListener {
         info!("Stopped network listening!");
     }
 }
+
+struct FalconReceiver;
+
+impl ConnectionReceiver for FalconReceiver {
+    fn receive(&mut self, packet_id: i32, bytes: &mut bytes::Bytes, connection: &mut FalconConnection) -> Result<Option<()>, falcon_core::error::FalconCoreError> {
+        falcon_receive::falcon_process_packet(packet_id, bytes, connection)
+    }
+}
+

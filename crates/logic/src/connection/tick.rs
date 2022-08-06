@@ -1,15 +1,15 @@
 use crate::FalconConnection;
 use crate::connection::ConnectionTask;
-use bytes::Bytes;
-use falcon_core::error::FalconCoreError;
 use falcon_core::network::ConnectionState;
 use falcon_core::network::connection::ConnectionLogic;
 use futures::{StreamExt, SinkExt};
 use mc_chat::{ComponentStyle, ChatComponent, ChatColor};
 
+use super::ConnectionReceiver;
+
 impl FalconConnection {
     #[tracing::instrument(name = "client", skip_all, fields(address = %self.address()))]
-    pub async fn start(mut self, receive_fn: fn(i32, &mut Bytes, &mut FalconConnection) -> Result<Option<()>, FalconCoreError>) {
+    pub async fn start<R: ConnectionReceiver>(mut self, mut receiver: R) {
         loop {
             tokio::select! {
                 _ = self.shutdown.wait_for_shutdown() => {
@@ -49,13 +49,14 @@ impl FalconConnection {
                     let span = trace_span!("incoming_data", state = %self.state);
                     let _enter = span.enter();
                     if packet.is_none() {
+                        self.state.set_connection_state(ConnectionState::Disconnected);
                         break;
                     }
                     let packet = packet.unwrap();
                     if let Err(error) = packet.and_then(|(packet_id, mut packet)| {
                         let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
                         let _enter = span.enter();
-                        if receive_fn(packet_id, &mut packet, &mut self)?.is_none() {
+                        if receiver.receive(packet_id, &mut packet, &mut self)?.is_none() {
                             let state = self.state.connection_state();
                             if state == ConnectionState::Login || state == ConnectionState::Status {
                                 let style = ComponentStyle::with_version(self.state.protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red);

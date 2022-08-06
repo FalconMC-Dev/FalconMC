@@ -3,7 +3,9 @@ use std::net::SocketAddr;
 use std::pin::Pin;
 use std::time::Duration;
 
+use bytes::Bytes;
 use falcon_core::ShutdownHandle;
+use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::PacketBufferWrite;
 use falcon_core::network::packet::PacketEncode;
 use mc_chat::ChatComponent;
@@ -26,12 +28,16 @@ mod tick;
 mod wrapper;
 
 pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;
-pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output=()>>>) + Send + Sync;
+pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output=()> + Send>>) + Send + Sync;
 
 pub enum ConnectionTask {
     Sync(Box<SyncConnectionTask>),
     Async(Box<AsyncConnectionTask>),
     Flush,
+}
+
+pub trait ConnectionReceiver {
+    fn receive(&mut self, packet_id: i32, bytes: &mut Bytes, connection: &mut FalconConnection) -> Result<Option<()>, FalconCoreError>;
 }
 
 #[derive(Debug)]

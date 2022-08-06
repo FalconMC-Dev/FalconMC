@@ -9,7 +9,7 @@ use super::ServerTask;
 
 impl FalconServer {
     #[tracing::instrument(name = "server", skip(self))]
-    fn start_server_logic(&mut self) {
+    pub fn start(&mut self) {
         debug!("Starting server logic!");
         let rt = Builder::new_current_thread().enable_all().build().unwrap();
 
