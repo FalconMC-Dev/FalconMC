@@ -172,7 +172,7 @@ fn search_for_nbt<T: ToTokens + Sized>(
     field: &Field,
     name: &Option<T>,
     ty: &Type,
-    is_encode: bool
+    is_encode: bool,
 ) -> Result<Option<TokenStream>, TokenStream> {
     match field.attrs.iter().find(|a| a.path.is_ident("nbt")) {
         Some(attr) => match attr.parse_meta() {

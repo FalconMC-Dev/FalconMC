@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use crate::network::buffer::PacketBufferWrite;
 use crate::network::packet::PacketEncode;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GameMode {

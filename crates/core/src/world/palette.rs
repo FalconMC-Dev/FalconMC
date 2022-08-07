@@ -58,9 +58,8 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
         I: Iterator<Item = u16> + 'a,
     {
         let default_value = to_i32(&default).unwrap();
-        data_iterator.map(move |value| {
-            to_i32(&self.items[value as usize]).unwrap_or(default_value) as u64
-        })
+        data_iterator
+            .map(move |value| to_i32(&self.items[value as usize]).unwrap_or(default_value) as u64)
     }
 
     pub fn build_indirect_palette<'a, I>(
@@ -75,8 +74,7 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
         let default_value = to_i32(&default).unwrap() as u64;
         let mut palette_missing = 0;
         let modified_palette: Vec<i32> = {
-            let mut section_palette: Vec<Option<i32>> =
-                self.items.iter().map(to_i32).collect();
+            let mut section_palette: Vec<Option<i32>> = self.items.iter().map(to_i32).collect();
             let mut i = 0;
             while i < section_palette.len() - palette_missing {
                 if section_palette[i].is_none() {

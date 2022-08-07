@@ -1,7 +1,7 @@
-use std::string::FromUtf8Error;
-use thiserror::Error;
 use crate::network::packet::TaskScheduleError;
 use crate::world::blocks::ParseBlockError;
+use std::string::FromUtf8Error;
+use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, FalconCoreError>;
 

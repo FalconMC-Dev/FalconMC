@@ -1,9 +1,9 @@
+use mc_chat::ChatComponent;
 use std::fmt::Debug;
 use std::net::SocketAddr;
-use mc_chat::ChatComponent;
 
-use falcon_core::network::PacketHandlerState;
 use falcon_core::network::packet::PacketEncode;
+use falcon_core::network::PacketHandlerState;
 
 pub trait ConnectionLogic: Debug {
     fn address(&self) -> &SocketAddr;
@@ -18,4 +18,3 @@ pub trait ConnectionLogic: Debug {
 
     fn disconnect(&mut self, reason: ChatComponent);
 }
-

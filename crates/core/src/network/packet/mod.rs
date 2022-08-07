@@ -1,9 +1,9 @@
+use bytes::Bytes;
+use falcon_core::network::connection::ConnectionLogic;
+pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use std::borrow::Cow;
 use std::fmt::Debug;
-use bytes::Bytes;
-pub use falcon_core_derive::{PacketDecode, PacketEncode};
 use uuid::Uuid;
-use falcon_core::network::connection::ConnectionLogic;
 
 use crate::error::Result;
 use crate::network::buffer::{PacketBufferRead, PacketBufferWrite};
@@ -79,9 +79,11 @@ impl<T: PacketEncode> PacketEncode for Option<T> {
     }
 }
 
-impl<'a, T> PacketEncode for &'a T where T: PacketEncode {
+impl<'a, T> PacketEncode for &'a T
+where
+    T: PacketEncode,
+{
     fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
         (*self).to_buf(buf);
     }
 }
-

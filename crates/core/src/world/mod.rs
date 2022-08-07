@@ -1,7 +1,7 @@
 use crate::player::data::Position;
 
-pub mod blocks;
 pub mod block_util;
+pub mod blocks;
 pub mod chunks;
 pub mod dimension;
 pub mod palette;

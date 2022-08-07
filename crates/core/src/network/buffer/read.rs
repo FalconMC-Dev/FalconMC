@@ -1,7 +1,7 @@
 use bytes::Buf;
 use uuid::Uuid;
 
-use crate::error::{Result, FalconCoreError};
+use crate::error::{FalconCoreError, Result};
 
 pub trait PacketBufferRead {
     /// Reads an [`i8`] from the underlying buffer.

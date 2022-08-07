@@ -1,13 +1,13 @@
-use std::borrow::Cow;
-use std::fmt::{Display, Formatter};
+use crate::network::buffer::PacketBufferWrite;
+use crate::network::packet::PacketEncode;
 use nom::branch::alt;
 use nom::bytes::complete::take_while;
 use nom::character::complete::char;
 use nom::combinator::map;
 use nom::error::Error;
 use nom::sequence::separated_pair;
-use crate::network::buffer::PacketBufferWrite;
-use crate::network::packet::PacketEncode;
+use std::borrow::Cow;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, PartialEq)]
 pub struct Identifier {
@@ -64,12 +64,18 @@ impl Identifier {
     }
 
     pub fn parse_static(input: &'static str) -> Result<Self, usize> {
-        let namespace_domain = take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i));
-        let location_domain = take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i));
+        let namespace_domain = take_while::<_, _, Error<&'static str>>(|i| {
+            "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i)
+        });
+        let location_domain = take_while::<_, _, Error<&'static str>>(|i| {
+            "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
+        });
         let namespace_location = separated_pair(namespace_domain, char(':'), location_domain);
         let location_only = map(
-            take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)),
-            |o: &'static str| ("minecraft", o)
+            take_while::<_, _, Error<&'static str>>(|i| {
+                "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
+            }),
+            |o: &'static str| ("minecraft", o),
         );
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
         if !input.is_empty() {
@@ -87,21 +93,30 @@ impl<'a> TryFrom<&'a str> for Identifier {
     type Error = usize;
 
     fn try_from(input: &'a str) -> Result<Self, Self::Error> {
-        let namespace_domain = take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i));
-        let location_domain = take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i));
+        let namespace_domain = take_while::<_, _, Error<&'a str>>(|i| {
+            "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i)
+        });
+        let location_domain = take_while::<_, _, Error<&'a str>>(|i| {
+            "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
+        });
         let namespace_location = map(
             separated_pair(namespace_domain, char(':'), location_domain),
             |(namespace, location)| {
-                (if namespace == "minecraft" {
-                    "minecraft".into()
-                } else {
-                    Cow::from(namespace.to_string())
-                }, Cow::from(location.to_string()))
-            }
+                (
+                    if namespace == "minecraft" {
+                        "minecraft".into()
+                    } else {
+                        Cow::from(namespace.to_string())
+                    },
+                    Cow::from(location.to_string()),
+                )
+            },
         );
         let location_only = map(
-            take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)),
-            |o: &'a str| ("minecraft".into(), Cow::from(o.to_string()))
+            take_while::<_, _, Error<&'a str>>(|i| {
+                "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
+            }),
+            |o: &'a str| ("minecraft".into(), Cow::from(o.to_string())),
         );
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
         if !input.is_empty() {
@@ -123,8 +138,8 @@ impl PacketEncode for Identifier {
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Cow;
     use super::Identifier;
+    use std::borrow::Cow;
 
     #[test]
     fn it_works() {

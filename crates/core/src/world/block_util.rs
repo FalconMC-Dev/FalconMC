@@ -209,5 +209,3 @@ pub fn blocks_movement(block: &Blocks) -> bool {
             | Blocks::FireCoral(_)
     )
 }
-
-
