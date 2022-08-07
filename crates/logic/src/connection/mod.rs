@@ -4,17 +4,17 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use bytes::Bytes;
-use falcon_core::ShutdownHandle;
 use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::PacketBufferWrite;
 use falcon_core::network::packet::PacketEncode;
+use falcon_core::ShutdownHandle;
 use mc_chat::ChatComponent;
 
 use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use tokio::net::TcpStream;
-use tokio::sync::mpsc::{UnboundedReceiver, unbounded_channel};
-use tokio::time::{Interval, MissedTickBehavior, interval};
+use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
+use tokio::time::{interval, Interval, MissedTickBehavior};
 use tokio_util::codec::Framed;
 
 use crate::server::ServerWrapper;
@@ -37,7 +37,12 @@ pub enum ConnectionTask {
 }
 
 pub trait ConnectionReceiver {
-    fn receive(&mut self, packet_id: i32, bytes: &mut Bytes, connection: &mut FalconConnection) -> Result<Option<()>, FalconCoreError>;
+    fn receive(
+        &mut self,
+        packet_id: i32,
+        bytes: &mut Bytes,
+        connection: &mut FalconConnection,
+    ) -> Result<Option<()>, FalconCoreError>;
 }
 
 #[derive(Debug)]
@@ -54,7 +59,12 @@ pub struct FalconConnection {
 }
 
 impl FalconConnection {
-    pub async fn new(shutdown: ShutdownHandle, addr: SocketAddr, socket: TcpStream, server: ServerWrapper) -> Self {
+    pub async fn new(
+        shutdown: ShutdownHandle,
+        addr: SocketAddr,
+        socket: TcpStream,
+        server: ServerWrapper,
+    ) -> Self {
         let mut timeout = interval(Duration::from_secs(30));
         timeout.set_missed_tick_behavior(MissedTickBehavior::Delay);
         timeout.tick().await;
@@ -98,7 +108,11 @@ impl ConnectionLogic for FalconConnection {
         &mut self.state
     }
 
-    fn send_packet<P: falcon_core::network::packet::PacketEncode>(&mut self, packet_id: i32, data: P) {
+    fn send_packet<P: falcon_core::network::packet::PacketEncode>(
+        &mut self,
+        packet_id: i32,
+        data: P,
+    ) {
         self.send(PacketIdAndData::new(packet_id, data));
     }
 
@@ -134,10 +148,7 @@ struct PacketIdAndData<P: PacketEncode> {
 
 impl<P: PacketEncode> PacketIdAndData<P> {
     pub fn new(packet_id: i32, data: P) -> Self {
-        Self {
-            packet_id,
-            data,
-        }
+        Self { packet_id, data }
     }
 }
 
@@ -147,5 +158,3 @@ impl<P: PacketEncode> PacketEncode for PacketIdAndData<P> {
         self.data.to_buf(buf);
     }
 }
-
-

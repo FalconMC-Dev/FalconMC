@@ -1,10 +1,10 @@
 use anyhow::Context;
-use falcon_logic::FalconConnection;
-use falcon_logic::connection::ConnectionReceiver;
-use falcon_logic::server::ServerWrapper;
-use ignore_result::Ignore;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
+use falcon_logic::connection::ConnectionReceiver;
+use falcon_logic::server::ServerWrapper;
+use falcon_logic::FalconConnection;
+use ignore_result::Ignore;
 use tokio::net::TcpListener;
 
 pub struct NetworkListener {
@@ -14,12 +14,12 @@ pub struct NetworkListener {
 }
 
 impl NetworkListener {
-    pub async fn start_network_listening(
-        shutdown_handle: ShutdownHandle,
-        server: ServerWrapper,
-    ) {
+    pub async fn start_network_listening(shutdown_handle: ShutdownHandle, server: ServerWrapper) {
         info!("Starting network listening...");
-        debug!("Connection size: {}", std::mem::size_of::<FalconConnection>());
+        debug!(
+            "Connection size: {}",
+            std::mem::size_of::<FalconConnection>()
+        );
 
         let network_listener = NetworkListener {
             shutdown_handle,
@@ -75,8 +75,12 @@ impl NetworkListener {
 struct FalconReceiver;
 
 impl ConnectionReceiver for FalconReceiver {
-    fn receive(&mut self, packet_id: i32, bytes: &mut bytes::Bytes, connection: &mut FalconConnection) -> Result<Option<()>, falcon_core::error::FalconCoreError> {
+    fn receive(
+        &mut self,
+        packet_id: i32,
+        bytes: &mut bytes::Bytes,
+        connection: &mut FalconConnection,
+    ) -> Result<Option<()>, falcon_core::error::FalconCoreError> {
         falcon_receive::falcon_process_packet(packet_id, bytes, connection)
     }
 }
-

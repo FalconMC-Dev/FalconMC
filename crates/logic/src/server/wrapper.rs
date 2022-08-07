@@ -15,15 +15,13 @@ pub struct ServerWrapper {
 
 impl ServerWrapper {
     pub fn new(link: UnboundedSender<ServerTask>) -> Self {
-        Self {
-            link,
-        }
+        Self { link }
     }
 
     /// Do not pass a `Box` to this function.
     pub fn execute_sync<T>(&self, task: T)
-        where
-            T: FnOnce(&mut FalconServer) + Send + Sync + 'static,
+    where
+        T: FnOnce(&mut FalconServer) + Send + Sync + 'static,
     {
         self.link.send(ServerTask::Sync(Box::new(task))).ignore();
     }
@@ -42,7 +40,13 @@ impl ServerWrapper {
         })
     }
 
-    pub fn player_update_pos_look(&self, uuid: Uuid, pos: Option<Position>, facing: Option<(f32, f32)>, on_ground: bool) {
+    pub fn player_update_pos_look(
+        &self,
+        uuid: Uuid,
+        pos: Option<Position>,
+        facing: Option<(f32, f32)>,
+        on_ground: bool,
+    ) {
         self.execute_sync(move |server| {
             server.player_update_pos_look(uuid, pos, facing, on_ground);
         })
@@ -63,8 +67,8 @@ impl ServerWrapper {
 
 impl Clone for ServerWrapper {
     fn clone(&self) -> Self {
-        Self { link: self.link.clone() }
+        Self {
+            link: self.link.clone(),
+        }
     }
 }
-
-

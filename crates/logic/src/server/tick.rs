@@ -21,16 +21,16 @@ impl FalconServer {
 
             while !self.should_stop {
                 tokio::select! {
-                        _ = tick_interval.tick() => {
-                            self.tick().await;
-                        }
-                        _ = keep_alive_interval.tick() => {
-                            self.keep_alive();
-                        }
-                        _ = self.shutdown_handle().wait_for_shutdown() => {
-                            break;
-                        }
+                    _ = tick_interval.tick() => {
+                        self.tick().await;
                     }
+                    _ = keep_alive_interval.tick() => {
+                        self.keep_alive();
+                    }
+                    _ = self.shutdown_handle().wait_for_shutdown() => {
+                        break;
+                    }
+                }
             }
             debug!("Stopping server logic!");
         });
@@ -43,12 +43,8 @@ impl FalconServer {
             let span = debug_span!("server_task");
             let _enter = span.enter();
             match task {
-                ServerTask::Sync(task) => {
-                    task(self)
-                }
-                ServerTask::Async(task) => {
-                    task(self).await
-                }
+                ServerTask::Sync(task) => task(self),
+                ServerTask::Async(task) => task(self).await,
             }
         }
         while let Ok(command) = self.console_rx.try_recv() {
@@ -65,6 +61,8 @@ impl FalconServer {
 
     #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
     fn keep_alive(&mut self) {
-        self.players.values().for_each(|player| player.send_keep_alive());
+        self.players
+            .values()
+            .for_each(|player| player.send_keep_alive());
     }
 }

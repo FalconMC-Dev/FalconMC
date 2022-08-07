@@ -3,14 +3,14 @@ extern crate anyhow;
 #[macro_use]
 extern crate tracing;
 
+use anyhow::Context;
 use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;
-use anyhow::Context;
 use tracing::metadata::LevelFilter;
-use tracing_subscriber::Layer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::Layer;
 
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
@@ -24,15 +24,19 @@ async fn main() {
     // TODO: Link config to logging level
     let log_file = load_log_file().unwrap();
     tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(false)
-            .with_ansi(false)
-            .with_writer(log_file)
-            .with_filter(LevelFilter::DEBUG))
-        .with(tracing_subscriber::fmt::layer()
-            .with_target(false)
-            .with_writer(std::io::stdout)
-            .with_filter(LevelFilter::DEBUG))
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_target(false)
+                .with_ansi(false)
+                .with_writer(log_file)
+                .with_filter(LevelFilter::DEBUG),
+        )
+        .with(
+            tracing_subscriber::fmt::layer()
+                .with_target(false)
+                .with_writer(std::io::stdout)
+                .with_filter(LevelFilter::DEBUG),
+        )
         .init();
 
     info!("Launching Falcon Server!");
@@ -66,13 +70,20 @@ async fn main() {
 
 fn load_log_file() -> std::io::Result<File> {
     let path = Path::new("./logs/debug.log");
-    match OpenOptions::new().append(true).create(true).open("./logs/debug.log") {
+    match OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open("./logs/debug.log")
+    {
         Ok(log_file) => Ok(log_file),
         Err(ref e) if e.kind() == NotFound => {
             if let Some(parent) = path.parent() {
                 std::fs::create_dir_all(parent)?;
             }
-            OpenOptions::new().append(true).create(true).open("./logs/debug.log")
+            OpenOptions::new()
+                .append(true)
+                .create(true)
+                .open("./logs/debug.log")
         }
         Err(e) => Err(e),
     }

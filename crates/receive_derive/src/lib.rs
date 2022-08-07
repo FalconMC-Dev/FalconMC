@@ -1,9 +1,9 @@
 use std::iter::once;
 
-use falcon_proc_util::{ItemListing, ErrorCatcher};
+use falcon_proc_util::{ErrorCatcher, ItemListing};
 use proc_macro::TokenStream;
 use quote::ToTokens;
-use syn::{parse_macro_input, Item, parse_quote_spanned, Arm, ItemFn, parse_quote};
+use syn::{parse_macro_input, parse_quote, parse_quote_spanned, Arm, Item, ItemFn};
 
 use self::data::PacketData;
 use self::util::ReceiveMatchMappings;
@@ -16,27 +16,30 @@ mod util;
 pub fn falcon_receive(contents: TokenStream) -> TokenStream {
     let mut contents = parse_macro_input!(contents as ItemListing);
 
-    let (packet_data, error): (ReceiveMatchMappings, ErrorCatcher) = contents.content
+    let (packet_data, error): (ReceiveMatchMappings, ErrorCatcher) = contents
+        .content
         .iter_mut()
-        .filter_map(|item| {
-            match item {
-                Item::Struct(ref mut item) => {
-                    PacketData::parse_packet(item).transpose()
-                },
-                _ => None,
-            }
+        .filter_map(|item| match item {
+            Item::Struct(ref mut item) => PacketData::parse_packet(item).transpose(),
+            _ => None,
         })
-        .fold((ReceiveMatchMappings::new(), ErrorCatcher::new()), |(mut res, mut err), item| {
-            match item {
-                Ok(item) => {
-                    let (exclude, mappings) = item.mappings().to_inner();
-                    let name = Some(item.struct_name().clone()).and_then(|n| exclude.map(|v| (v, n)));
-                    err.extend_error(res.add_packet(item.struct_name().clone(), (name, mappings)));
+        .fold(
+            (ReceiveMatchMappings::new(), ErrorCatcher::new()),
+            |(mut res, mut err), item| {
+                match item {
+                    Ok(item) => {
+                        let (exclude, mappings) = item.mappings().to_inner();
+                        let name =
+                            Some(item.struct_name().clone()).and_then(|n| exclude.map(|v| (v, n)));
+                        err.extend_error(
+                            res.add_packet(item.struct_name().clone(), (name, mappings)),
+                        );
+                    }
+                    Err(error) => err.add_error(error),
                 }
-                Err(error) => err.add_error(error),
-            }
-            (res, err)
-        });
+                (res, err)
+            },
+        );
 
     let mut result = contents.into_token_stream();
 
@@ -103,4 +106,3 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
         }
     }
 }
-

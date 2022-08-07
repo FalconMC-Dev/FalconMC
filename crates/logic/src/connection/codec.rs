@@ -1,8 +1,8 @@
 use std::io::Cursor;
 
-use bytes::{Bytes, Buf};
+use bytes::{Buf, Bytes};
 use falcon_core::error::FalconCoreError;
-use falcon_core::network::buffer::{PacketBufferRead, ByteLimitCheck};
+use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
 use tokio_util::codec::{Decoder, Encoder};
 
 #[derive(Debug)]
@@ -45,6 +45,4 @@ impl Encoder<()> for FalconCodec {
     fn encode(&mut self, _item: (), _dst: &mut bytes::BytesMut) -> Result<(), Self::Error> {
         Ok(())
     }
-
 }
-

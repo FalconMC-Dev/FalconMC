@@ -6,7 +6,7 @@ use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::read_var_i32_from_iter;
 use falcon_core::schematic::SchematicData;
 use falcon_core::world::blocks::Blocks;
-use falcon_core::world::chunks::{ChunkPos, Chunk, SECTION_WIDTH, SECTION_LENGTH};
+use falcon_core::world::chunks::{Chunk, ChunkPos, SECTION_LENGTH, SECTION_WIDTH};
 use falcon_send::specs::play::ChunkDataSpec;
 use itertools::Itertools;
 
@@ -57,11 +57,7 @@ impl FalconWorld {
             }
         }
         let protocol_id = player.protocol_version();
-        let coords_to_packet = {
-            |coords: (i32, i32)| {
-                self.build_chunk_data(coords, protocol_id)
-            }
-        };
+        let coords_to_packet = { |coords: (i32, i32)| self.build_chunk_data(coords, protocol_id) };
         player.connection().send_batch(chunks, coords_to_packet);
     }
 
@@ -101,11 +97,7 @@ impl FalconWorld {
             }
         }
         let protocol_id = player.protocol_version();
-        let coords_to_packet = {
-            |coords: (i32, i32)| {
-                self.build_chunk_data(coords, protocol_id)
-            }
-        };
+        let coords_to_packet = { |coords: (i32, i32)| self.build_chunk_data(coords, protocol_id) };
 
         player.connection().send_batch(should_load, coords_to_packet);
         player.connection().send_batch(should_unload, |s| falcon_send::build_unload_chunk(s, protocol_id));
@@ -128,14 +120,11 @@ impl FalconWorld {
                     }
                 }
                 let protocol_id = player.protocol_version();
-                let coords_to_packet = {
-                    |coords: (i32, i32)| {
-                        self.build_chunk_data(coords, protocol_id)
-                    }
-                };
+                let coords_to_packet =
+                    { |coords: (i32, i32)| self.build_chunk_data(coords, protocol_id) };
 
                 player.connection().send_batch(chunks, coords_to_packet);
-            },
+            }
             std::cmp::Ordering::Greater => {
                 let mut chunks = Vec::with_capacity(capacity);
                 for x in -(old_view_distance as i8)..=old_view_distance as i8 {
@@ -147,8 +136,8 @@ impl FalconWorld {
                 }
                 let protocol_id = player.protocol_version();
                 player.connection().send_batch(chunks, |s| falcon_send::build_unload_chunk(s, protocol_id));
-            },
-            std::cmp::Ordering::Equal => {},
+            }
+            std::cmp::Ordering::Equal => {}
         }
     }
 }
@@ -163,9 +152,14 @@ impl FalconWorld {
                 if chunk_data.is_dirty() {
                     dirty = true;
                 }
-                non_empty = || falcon_send::build_chunk_data(ChunkDataSpec::new(chunk_data, protocol_id), protocol_id);
+                non_empty = || {
+                    falcon_send::build_chunk_data(
+                        ChunkDataSpec::new(chunk_data, protocol_id),
+                        protocol_id,
+                    )
+                };
                 &non_empty
-            },
+            }
             None => {
                 empty = || falcon_send::build_chunk_data(ChunkDataSpec::empty(x, z), protocol_id);
                 &empty
@@ -222,7 +216,12 @@ impl<'a> TryFrom<SchematicData<'a>> for FalconWorld {
                             );
                             let palette_entry = *schematic.palette.get(&schematic_block).ok_or_else(|| FalconCoreError::InvalidData(String::from("Invalid schematic data, could not find corresponding palette entry!!")))?;
                             let chunk = world.get_chunk_mut(chunk_pos);
-                            chunk.set_block_at((x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16, y as u16, (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16, palette_entry);
+                            chunk.set_block_at(
+                                (x as i32 - (chunk_pos.x * SECTION_WIDTH as i32)) as u16,
+                                y as u16,
+                                (z as i32 - (chunk_pos.z * SECTION_LENGTH as i32)) as u16,
+                                palette_entry,
+                            );
                         }
                     }
                 }

@@ -1,9 +1,9 @@
-use falcon_core::network::ConnectionState;
 use falcon_core::network::connection::ConnectionLogic;
+use falcon_core::network::ConnectionState;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::login::LoginSuccessSpec;
-use falcon_send::specs::play::{ServerDifficultySpec, PlayerAbilitiesSpec, PositionAndLookSpec};
+use falcon_send::specs::play::{PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
 use uuid::Uuid;
 
 use crate::connection::ConnectionWrapper;
@@ -26,7 +26,13 @@ impl FalconServer {
         self.login_success(username, player_uuid, protocol, connection);
     }
 
-    pub fn login_success(&mut self, username: String, uuid: Uuid, protocol: i32, connection: ConnectionWrapper) {
+    pub fn login_success(
+        &mut self,
+        username: String,
+        uuid: Uuid,
+        protocol: i32,
+        connection: ConnectionWrapper,
+    ) {
         if self.players.contains_key(&uuid) {
             // TODO: Kick duplicqted playeers
             error!(%uuid, %username, "Duplicate player joining");

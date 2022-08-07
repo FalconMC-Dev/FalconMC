@@ -1,14 +1,14 @@
 use std::io::Read;
 use std::thread;
 
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use falcon_logic::server::ServerWrapper;
 use flate2::read::GzDecoder;
 use tokio::sync::mpsc::unbounded_channel;
 
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::ShutdownHandle;
-use falcon_logic::{FalconWorld, FalconServer};
+use falcon_logic::{FalconServer, FalconWorld};
 
 use crate::network::NetworkListener;
 use crate::server::console::ConsoleListener;
@@ -29,8 +29,9 @@ pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
         let schematic: SchematicVersionedRaw = fastnbt::from_bytes(&decompressed_world)
             .with_context(|| "Could not parse schematic file, is this valid nbt?")?;
         debug!("Checkpoint - deserialized into raw format");
-        let data = SchematicData::try_from(schematic)
-            .with_context(|| "Invalid schematic, this server cannot use this schematic currently!")?;
+        let data = SchematicData::try_from(schematic).with_context(|| {
+            "Invalid schematic, this server cannot use this schematic currently!"
+        })?;
         debug!("Checkpoint - parsed raw format");
         FalconWorld::try_from(data)?
     };
@@ -38,12 +39,7 @@ pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
 
     let console_rx = ConsoleListener::start_console(shutdown_handle.clone())?;
     let (server_tx, server_rx) = unbounded_channel();
-    let mut server = FalconServer::new(
-        shutdown_handle,
-        console_rx,
-        server_rx,
-        world,
-    );
+    let mut server = FalconServer::new(shutdown_handle, console_rx, server_rx, world);
 
     tokio::spawn(NetworkListener::start_network_listening(
         server.shutdown_handle().clone(),
@@ -57,4 +53,3 @@ pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
 
     Ok(())
 }
-

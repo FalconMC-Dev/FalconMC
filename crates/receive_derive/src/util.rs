@@ -1,5 +1,5 @@
 use falcon_proc_util::ErrorCatcher;
-use syn::{LitInt, Ident, Error};
+use syn::{Error, Ident, LitInt};
 
 #[derive(Debug)]
 pub(crate) struct ReceiveMatchMappings {
@@ -8,12 +8,14 @@ pub(crate) struct ReceiveMatchMappings {
 
 impl ReceiveMatchMappings {
     pub fn new() -> Self {
-        Self {
-            mappings: vec![],
-        }
+        Self { mappings: vec![] }
     }
 
-    pub fn add_packet(&mut self, packet_ident: Ident, (mut exclude, mappings): (Option<(LitInt, Ident)>, Vec<(LitInt, Vec<(LitInt, bool)>)>)) -> syn::Result<()> {
+    pub fn add_packet(
+        &mut self,
+        packet_ident: Ident,
+        (mut exclude, mappings): (Option<(LitInt, Ident)>, Vec<(LitInt, Vec<(LitInt, bool)>)>),
+    ) -> syn::Result<()> {
         let mut error = ErrorCatcher::new();
 
         for (packet_id, mut new_mapping) in mappings {
@@ -80,10 +82,7 @@ pub(crate) struct ReceivePacketID {
 
 impl ReceivePacketID {
     pub fn new(packet_id: LitInt, exclude: Option<Ident>) -> Self {
-        Self {
-            packet_id,
-            exclude,
-        }
+        Self { packet_id, exclude }
     }
 }
 
@@ -94,8 +93,6 @@ pub(crate) struct ReceiveMappings {
 
 impl ReceiveMappings {
     pub fn new(versions: Vec<(Ident, Vec<(LitInt, bool)>)>) -> Self {
-        Self {
-            versions,
-        }
+        Self { versions }
     }
 }

@@ -1,9 +1,9 @@
 use falcon_proc_util::ErrorCatcher;
 use falcon_protocol_util::{PacketVersionMappings, VersionsToID};
 use proc_macro2::Ident;
-use syn::punctuated::Punctuated;
-use syn::{ItemStruct, Token, braced};
 use syn::parse::Parse;
+use syn::punctuated::Punctuated;
+use syn::{braced, ItemStruct, Token};
 
 use crate::kw;
 
@@ -26,9 +26,10 @@ impl PacketData {
             }
         }
 
-        item.attrs.retain(|attr| !attr.path.is_ident("falcon_packet"));
+        item.attrs
+            .retain(|attr| !attr.path.is_ident("falcon_packet"));
         error.emit()?;
-        
+
         if found {
             Ok(Some(PacketData {
                 struct_name: item.ident.clone(),
@@ -59,7 +60,7 @@ impl Parse for VersionsArg {
         let content;
         braced!(content in input);
         Ok(Self {
-            versions: content.parse_terminated(VersionsToID::parse)?
+            versions: content.parse_terminated(VersionsToID::parse)?,
         })
     }
 }

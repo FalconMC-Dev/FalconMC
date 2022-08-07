@@ -11,7 +11,13 @@ impl FalconServer {
         }
     }
 
-    pub fn player_update_pos_look(&mut self, uuid: Uuid, pos: Option<Position>, facing: Option<(f32, f32)>, _on_ground: bool) {
+    pub fn player_update_pos_look(
+        &mut self,
+        uuid: Uuid,
+        pos: Option<Position>,
+        facing: Option<(f32, f32)>,
+        _on_ground: bool,
+    ) {
         let mut update_position = false;
         let mut update_viewpos = false;
         let (old_x, old_z, x, z) = match self.players.get_mut(&uuid) {
@@ -31,7 +37,7 @@ impl FalconServer {
                     }
                     position.set_y(pos.y());
                 }
-                
+
                 let (chunk_x, chunk_z) = (position.chunk_x(), position.chunk_z());
                 if chunk_x != old_chunk_x || chunk_z != old_chunk_z {
                     update_viewpos = true;
@@ -45,7 +51,11 @@ impl FalconServer {
             self.world.update_player_pos(self.players.get(&uuid).unwrap(), old_x, old_z, x, z);
         }
         if update_viewpos {
-            self.players.get(&uuid).unwrap().connection().build_send_packet((x, z), falcon_send::send_update_viewpos);
+            self.players
+                .get(&uuid)
+                .unwrap()
+                .connection()
+                .build_send_packet((x, z), falcon_send::send_update_viewpos);
         }
     }
 
@@ -56,4 +66,3 @@ impl FalconServer {
         }
     }
 }
-

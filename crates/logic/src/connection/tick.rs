@@ -1,9 +1,9 @@
-use crate::FalconConnection;
 use crate::connection::ConnectionTask;
-use falcon_core::network::ConnectionState;
+use crate::FalconConnection;
 use falcon_core::network::connection::ConnectionLogic;
-use futures::{StreamExt, SinkExt};
-use mc_chat::{ComponentStyle, ChatComponent, ChatColor};
+use falcon_core::network::ConnectionState;
+use futures::{SinkExt, StreamExt};
+use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
 
 use super::ConnectionReceiver;
 

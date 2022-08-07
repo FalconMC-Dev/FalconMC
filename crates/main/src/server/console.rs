@@ -6,7 +6,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 
 use falcon_core::ShutdownHandle;
 
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 
 pub struct ConsoleListener {
     shutdown_handle: broadcast::Sender<()>,

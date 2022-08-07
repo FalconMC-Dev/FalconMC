@@ -1,5 +1,5 @@
 use falcon_core::network::connection::ConnectionLogic;
-use falcon_core::player::data::{GameMode, PlayerAbilityFlags, Position, LookAngles};
+use falcon_core::player::data::{GameMode, LookAngles, PlayerAbilityFlags, Position};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::play::JoinGameSpec;
@@ -30,7 +30,15 @@ pub struct FalconPlayer {
 }
 
 impl FalconPlayer {
-    pub fn new(username: String, uuid: Uuid, eid: i32, pos: Position, facing: LookAngles, protocol: i32, connection: ConnectionWrapper) -> Self {
+    pub fn new(
+        username: String,
+        uuid: Uuid,
+        eid: i32,
+        pos: Position,
+        facing: LookAngles,
+        protocol: i32,
+        connection: ConnectionWrapper,
+    ) -> Self {
         FalconPlayer {
             username,
             uuid,
@@ -46,7 +54,7 @@ impl FalconPlayer {
             connection,
         }
     }
-    
+
     pub fn username(&self) -> &str {
         &self.username
     }
@@ -92,7 +100,10 @@ impl FalconPlayer {
     }
 
     pub fn set_view_distance(&mut self, distance: u8) {
-        self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().max_view_distance()));
+        self.view_distance = std::cmp::max(
+            0,
+            std::cmp::min(distance, FalconConfig::global().max_view_distance()),
+        );
     }
 
     pub fn protocol_version(&self) -> i32 {
@@ -120,7 +131,15 @@ impl FalconPlayer {
         });
     }
 
-    pub fn join_spec(&self, difficulty: Difficulty, max_players: u8, level_type: String, seed: i64, reduced_debug: bool, enable_respawn: bool) -> JoinGameSpec {
+    pub fn join_spec(
+        &self,
+        difficulty: Difficulty,
+        max_players: u8,
+        level_type: String,
+        seed: i64,
+        reduced_debug: bool,
+        enable_respawn: bool,
+    ) -> JoinGameSpec {
         JoinGameSpec::new(
             self.eid,
             self.gamemode,
@@ -131,8 +150,7 @@ impl FalconPlayer {
             seed,
             self.view_distance as i32,
             reduced_debug,
-            enable_respawn
+            enable_respawn,
         )
     }
 }
-

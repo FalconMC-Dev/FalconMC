@@ -34,7 +34,12 @@ pub struct FalconServer {
 }
 
 impl FalconServer {
-    pub fn new(shutdown: ShutdownHandle, console_rx: UnboundedReceiver<String>, receiver: UnboundedReceiver<ServerTask>, world: FalconWorld) -> Self {
+    pub fn new(
+        shutdown: ShutdownHandle,
+        console_rx: UnboundedReceiver<String>,
+        receiver: UnboundedReceiver<ServerTask>,
+        world: FalconWorld,
+    ) -> Self {
         Self {
             shutdown,
             should_stop: false,
@@ -66,4 +71,3 @@ impl FalconServer {
         &mut self.world
     }
 }
-
