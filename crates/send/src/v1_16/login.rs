@@ -12,7 +12,7 @@ falcon_send_derive::falcon_send! {
         #[max_length(16)]
         username: String,
     }
-    
+
     impl From<LoginSuccessSpec> for LoginSuccessPacket {
         fn from(spec: LoginSuccessSpec) -> Self {
             LoginSuccessPacket {

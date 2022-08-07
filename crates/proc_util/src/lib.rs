@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::Item;
 use syn::parse::{Parse, ParseStream};
+use syn::Item;
 
 #[derive(Debug)]
 pub struct ErrorCatcher {
@@ -10,15 +10,13 @@ pub struct ErrorCatcher {
 
 impl ErrorCatcher {
     pub fn new() -> Self {
-        Self {
-            error: None,
-        }
+        Self { error: None }
     }
 
     pub fn add_error(&mut self, error: syn::Error) {
         match self.error {
             Some(ref mut err) => err.combine(error),
-            None => self.error = Some(error)
+            None => self.error = Some(error),
         }
     }
 
@@ -48,9 +46,7 @@ impl Parse for ItemListing {
         while !input.is_empty() {
             items.push(input.parse()?);
         }
-        Ok(Self {
-            content: items,
-        })
+        Ok(Self { content: items })
     }
 }
 
@@ -61,4 +57,3 @@ impl ToTokens for ItemListing {
         }
     }
 }
-

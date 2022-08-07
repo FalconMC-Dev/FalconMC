@@ -2,9 +2,9 @@ use std::str::FromStr;
 
 use falcon_proc_util::ErrorCatcher;
 use itertools::Itertools;
-use syn::{LitInt, Token, Error};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::{Error, LitInt, Token};
 
 #[derive(Debug)]
 pub struct PacketVersionMappings {
@@ -22,13 +22,14 @@ impl PacketVersionMappings {
     }
 
     pub fn add_versions<I>(&mut self, versions: I) -> syn::Result<()>
-        where I: Iterator<Item=VersionsToID>,
+    where
+        I: Iterator<Item = VersionsToID>,
     {
         let mut error = ErrorCatcher::new();
 
         for new_version in versions {
             let new_version = new_version.check_duplicates()?;
-            
+
             if let Some(v) = new_version.find_version(-1) {
                 if self.is_exclude.is_some() {
                     error.add_error(Error::new(v.span(), "-1 already used elsewhere"));
@@ -40,12 +41,13 @@ impl PacketVersionMappings {
             let mut entry = None;
             for (i, (packet_id, versions)) in self.versions.iter_mut().enumerate() {
                 if packet_id.base10_digits() == new_version.id.base10_digits() {
-                    entry = Some(i); 
+                    entry = Some(i);
                 }
                 for version in &new_version.versions {
                     if let Some((old_version, has_errored)) = versions
                         .iter_mut()
-                        .find(|(v, _)| v.base10_digits() == version.base10_digits()) {
+                        .find(|(v, _)| v.base10_digits() == version.base10_digits())
+                    {
                         if !*has_errored {
                             *has_errored = true;
                             error.add_error(Error::new(old_version.span(), "duplicate protocol version"));
@@ -70,9 +72,9 @@ impl PacketVersionMappings {
 
         error.emit()?;
         Ok(())
-    } 
+    }
 
-    pub fn versions(&self) -> impl Iterator<Item=(&LitInt, Vec<&LitInt>)> {
+    pub fn versions(&self) -> impl Iterator<Item = (&LitInt, Vec<&LitInt>)> {
         self.versions
             .iter()
             .map(|(id, versions)| (id, versions.iter().map(|(v, _)| v).collect()))
@@ -83,10 +85,7 @@ impl PacketVersionMappings {
     }
 
     pub fn to_inner(&self) -> (Option<LitInt>, Vec<(LitInt, Vec<(LitInt, bool)>)>) {
-        (
-            self.is_exclude.clone(),
-            self.versions.clone(),
-        )
+        (self.is_exclude.clone(), self.versions.clone())
     }
 }
 
@@ -102,7 +101,7 @@ impl VersionsToID {
             .into_iter()
             .sorted_by(|v1, v2| v1.base10_digits().cmp(v2.base10_digits()))
             .collect();
-        
+
         let mut error = ErrorCatcher::new();
 
         let mut started = false;
@@ -131,13 +130,17 @@ impl VersionsToID {
     }
 
     pub fn find_version<N>(&self, version: N) -> Option<&LitInt>
-        where N: FromStr,
-              N: PartialEq<N>,
-              <N as FromStr>::Err: std::fmt::Display
+    where
+        N: FromStr,
+        N: PartialEq<N>,
+        <N as FromStr>::Err: std::fmt::Display,
     {
-        self.versions
-            .iter()
-            .find(|v| v.base10_parse::<N>().ok().map(|n| n == version).unwrap_or(false))
+        self.versions.iter().find(|v| {
+            v.base10_parse::<N>()
+                .ok()
+                .map(|n| n == version)
+                .unwrap_or(false)
+        })
     }
 }
 
@@ -146,10 +149,6 @@ impl Parse for VersionsToID {
         let versions = Punctuated::<LitInt, Token![,]>::parse_separated_nonempty(input)?;
         input.parse::<Token![=]>()?;
         let id = input.parse::<LitInt>()?;
-        Ok(VersionsToID {
-            versions,
-            id,
-        })
+        Ok(VersionsToID { versions, id })
     }
 }
-

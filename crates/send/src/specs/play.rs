@@ -1,4 +1,4 @@
-use falcon_core::player::data::{GameMode, PlayerAbilityFlags, Position, LookAngles};
+use falcon_core::player::data::{GameMode, LookAngles, PlayerAbilityFlags, Position};
 use falcon_core::server::data::Difficulty;
 use falcon_core::world::{
     blocks::Blocks,
@@ -73,7 +73,7 @@ impl ChunkDataSpec {
             chunk_x: x,
             chunk_z: z,
             bitmask: 0,
-            sections: vec![]
+            sections: vec![],
         }
     }
 }

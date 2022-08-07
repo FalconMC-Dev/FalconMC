@@ -1,5 +1,5 @@
-pub mod dimension;
 mod chunk;
+pub mod dimension;
 
 pub use chunk::*;
 

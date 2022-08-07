@@ -1,9 +1,9 @@
 use falcon_core::world::block_util::blocks_movement;
 
+use crate::ChunkSectionDataSpec;
 use falcon_core::world::blocks::Blocks;
 use falcon_core::world::chunks::ChunkSection;
 use falcon_core::world::palette::PaletteToI32;
-use crate::ChunkSectionDataSpec;
 
 pub struct HeightMap {
     motion_blocking: Vec<u16>,
@@ -13,7 +13,7 @@ impl HeightMap {
     pub fn from_sections(sections: &[ChunkSectionDataSpec], to_i32: PaletteToI32<Blocks>) -> HeightMap {
         match sections.len() {
             0 => HeightMap {
-                motion_blocking: vec![0; 16*16]
+                motion_blocking: vec![0; 16 * 16],
             },
             _ => {
                 let mut heightmap = Vec::with_capacity(256);

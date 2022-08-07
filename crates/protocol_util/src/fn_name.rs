@@ -1,5 +1,5 @@
-use syn::LitStr;
 use syn::Error;
+use syn::LitStr;
 
 #[derive(Debug)]
 pub struct SendFnName {

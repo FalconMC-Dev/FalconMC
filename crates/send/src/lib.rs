@@ -1,10 +1,10 @@
 #[macro_use]
 extern crate tracing;
 
-use specs::status::*;
+use mc_chat::ChatComponent;
 use specs::login::*;
 use specs::play::*;
-use mc_chat::ChatComponent;
+use specs::status::*;
 
 pub mod batch;
 pub mod macros;

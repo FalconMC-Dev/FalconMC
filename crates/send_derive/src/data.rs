@@ -1,10 +1,10 @@
+use crate::kw;
 use falcon_proc_util::ErrorCatcher;
-use falcon_protocol_util::{SendFnName, VersionsToID, PacketVersionMappings};
+use falcon_protocol_util::{PacketVersionMappings, SendFnName, VersionsToID};
 use proc_macro2::Ident;
-use syn::{braced, Error, ItemStruct, LitStr, Token};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use crate::kw;
+use syn::{braced, Error, ItemStruct, LitStr, Token};
 
 #[derive(Debug)]
 pub(crate) struct PacketData {
@@ -96,4 +96,3 @@ impl Parse for PacketAttributes {
         }
     }
 }
-

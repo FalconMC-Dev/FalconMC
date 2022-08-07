@@ -31,7 +31,7 @@ falcon_send_derive::falcon_send! {
         #[serde(rename = "MOTION_BLOCKING")]
         motion_blocking: LongArray,
     }
-    
+
     impl From<HeightMap> for PacketHeightMap {
         fn from(map: HeightMap) -> Self {
             PacketHeightMap {

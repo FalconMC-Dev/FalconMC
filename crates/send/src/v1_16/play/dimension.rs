@@ -1,6 +1,6 @@
 use falcon_core::world::dimension::Dimension;
-use serde::{Serialize, Serializer};
 use serde::ser::SerializeStruct;
+use serde::{Serialize, Serializer};
 
 #[derive(Serialize)]
 pub struct Codec {
@@ -9,9 +9,7 @@ pub struct Codec {
 
 impl Codec {
     pub fn new(dimension: Vec<DimensionData>) -> Self {
-        Codec {
-            dimension,
-        }
+        Codec { dimension }
     }
 }
 
@@ -21,14 +19,15 @@ pub struct DimensionData {
 
 impl DimensionData {
     pub fn new(dimension: Dimension) -> Self {
-        DimensionData {
-            dimension,
-        }
+        DimensionData { dimension }
     }
 }
 
 impl Serialize for DimensionData {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
         let mut serializer = serializer.serialize_struct("dimension", 13)?;
         serializer.serialize_field("name", self.dimension.name())?;
         serializer.serialize_field("natural", &true)?;

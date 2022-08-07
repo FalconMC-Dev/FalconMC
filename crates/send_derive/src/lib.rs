@@ -3,9 +3,11 @@ use std::iter::once;
 use falcon_proc_util::ItemListing;
 use proc_macro::TokenStream;
 
-use quote::ToTokens;
-use syn::{Item, parse_macro_input, Arm, parse_quote_spanned, Stmt, Ident, LitInt, ItemFn, LitStr, Expr};
 use crate::data::PacketData;
+use quote::ToTokens;
+use syn::{
+    parse_macro_input, parse_quote_spanned, Arm, Expr, Ident, Item, ItemFn, LitInt, LitStr, Stmt,
+};
 
 mod data;
 mod kw;
@@ -14,25 +16,20 @@ mod kw;
 pub fn falcon_send(contents: TokenStream) -> TokenStream {
     let mut contents = parse_macro_input!(contents as ItemListing);
 
-    let (packet_data, error): (Vec<PacketData>, Option<syn::Error>) = contents.content
+    let (packet_data, error): (Vec<PacketData>, Option<syn::Error>) = contents
+        .content
         .iter_mut()
-        .filter_map(|item| {
-            match item {
-                Item::Struct(ref mut item) => {
-                    PacketData::parse_packet(item).transpose()
-                },
-                _ => None,
-            }
+        .filter_map(|item| match item {
+            Item::Struct(ref mut item) => PacketData::parse_packet(item).transpose(),
+            _ => None,
         })
         .fold((vec![], None), |(mut res, mut err), item| {
             match item {
                 Ok(item) => res.push(item),
-                Err(error) => {
-                    match err {
-                        None => err = Some(error),
-                        Some(ref mut err) => err.combine(error),
-                    }
-                }
+                Err(error) => match err {
+                    None => err = Some(error),
+                    Some(ref mut err) => err.combine(error),
+                },
             }
             (res, err)
         });
@@ -62,19 +59,24 @@ pub(crate) fn generate(data: Vec<PacketData>) -> proc_macro2::TokenStream {
 pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
     let packet_ident = data.struct_name();
     let span = data.struct_name().span();
-    let match_arms: Vec<Arm> = data.mappings().versions()
-        .map(|(packet_id, versions)| parse_quote_spanned! {span=>
-            #(#versions)|* => {
-                #packet_id
+    let match_arms: Vec<Arm> = data
+        .mappings()
+        .versions()
+        .map(|(packet_id, versions)| {
+            parse_quote_spanned! {span=>
+                #(#versions)|* => {
+                    #packet_id
+                }
             }
-        }).collect();
+        })
+        .collect();
 
     let fn_body = generate_fn_body(
         packet_ident,
         data.mappings().is_exclude(),
         match_arms,
         parse_quote_spanned! {span=> connection.handler_state().protocol_id()},
-        parse_quote_spanned! {span=> false}
+        parse_quote_spanned! {span=> false},
     );
 
     let fn_name = data.fn_name();
@@ -103,19 +105,24 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
 pub(crate) fn generate_batched(data: &PacketData, batch: &LitStr) -> ItemFn {
     let packet_ident = data.struct_name();
     let span = data.struct_name().span();
-    let match_arms: Vec<Arm> = data.mappings().versions()
-        .map(|(packet_id, versions)| parse_quote_spanned! {span=>
-            #(#versions)|* => {
-                #packet_id
+    let match_arms: Vec<Arm> = data
+        .mappings()
+        .versions()
+        .map(|(packet_id, versions)| {
+            parse_quote_spanned! {span=>
+                #(#versions)|* => {
+                    #packet_id
+                }
             }
-        }).collect();
+        })
+        .collect();
 
     let fn_body = generate_fn_body(
         packet_ident,
         data.mappings().is_exclude(),
         match_arms,
         parse_quote_spanned! {span=> protocol_id},
-        parse_quote_spanned! {span=> None}
+        parse_quote_spanned! {span=> None},
     );
 
     let fn_name = Ident::new(&batch.value(), batch.span());
@@ -141,7 +148,13 @@ pub(crate) fn generate_batched(data: &PacketData, batch: &LitStr) -> ItemFn {
     }
 }
 
-pub(crate) fn generate_fn_body(packet_ident: &Ident, exclude: Option<&LitInt>, match_arms: Vec<Arm>, protocol_expr: Expr, default: Expr) -> Vec<Stmt> {
+pub(crate) fn generate_fn_body(
+    packet_ident: &Ident,
+    exclude: Option<&LitInt>,
+    match_arms: Vec<Arm>,
+    protocol_expr: Expr,
+    default: Expr,
+) -> Vec<Stmt> {
     let span = packet_ident.span();
     if let Some(version) = exclude {
         if match_arms.is_empty() {
@@ -171,4 +184,3 @@ pub(crate) fn generate_fn_body(packet_ident: &Ident, exclude: Option<&LitInt>, m
         }
     }
 }
-
