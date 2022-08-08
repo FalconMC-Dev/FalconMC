@@ -4,6 +4,7 @@ use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::ConnectionState;
 use futures::{SinkExt, StreamExt};
 use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
+use tracing::{trace_span, debug_span, warn, trace};
 
 use super::ConnectionReceiver;
 
@@ -27,7 +28,7 @@ impl FalconConnection {
                         Some(task) => task,
                         None => continue,
                     };
-                    let span = trace_span!("connection_task", state = %self.handler_state());
+                    let span = debug_span!("connection_task", state = %self.state);
                     let _enter = span.enter();
                     match task {
                         ConnectionTask::Sync(task) => {
@@ -46,7 +47,7 @@ impl FalconConnection {
                     }
                 }
                 packet = self.socket.next() => {
-                    let span = trace_span!("incoming_data", state = %self.state);
+                    let span = debug_span!("incoming_data", state = %self.state);
                     let _enter = span.enter();
                     if packet.is_none() {
                         self.state.set_connection_state(ConnectionState::Disconnected);

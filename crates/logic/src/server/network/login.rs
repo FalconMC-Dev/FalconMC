@@ -4,6 +4,7 @@ use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::login::LoginSuccessSpec;
 use falcon_send::specs::play::{PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
+use tracing::{debug, info, error};
 use uuid::Uuid;
 
 use crate::connection::ConnectionWrapper;
@@ -14,7 +15,7 @@ use crate::server::FalconServer;
 impl FalconServer {
     pub fn player_login(&mut self, username: String, protocol: i32, connection: ConnectionWrapper) {
         debug!(player_name = %username);
-        // create correct uuids
+        // TODO: create minecraft uuids
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
         let username2 = username.clone();
         connection.execute_sync(move |connection| {
@@ -46,11 +47,15 @@ impl FalconServer {
         if let Some(player) = self.players.get(&uuid) {
             let join_game_spec = player.join_spec(Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 0, false, false);
             player.connection().build_send_packet(join_game_spec, falcon_send::send_join_game);
+            
             let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);
             player.connection().build_send_packet(server_difficulty, falcon_send::send_server_difficulty);
+            
             let player_abilities = PlayerAbilitiesSpec::new(player.ability_flags(), 0.05, 0.1);
             player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
+            
             self.world.send_chunks_for_player(player);
+            
             let position_look = PositionAndLookSpec::new(player.position(), player.look_angles(), 0, 1);
             player.connection().build_send_packet(position_look, falcon_send::send_position_look);
         }

@@ -1,4 +1,4 @@
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 use falcon_logic::connection::ConnectionReceiver;
@@ -6,6 +6,7 @@ use falcon_logic::server::ServerWrapper;
 use falcon_logic::FalconConnection;
 use ignore_result::Ignore;
 use tokio::net::TcpListener;
+use tracing::{info, debug};
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,

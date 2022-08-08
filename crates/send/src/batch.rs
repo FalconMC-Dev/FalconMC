@@ -1,6 +1,8 @@
 use bytes::Bytes;
 use falcon_core::network::connection::ConnectionLogic;
+use tracing::{trace, instrument};
 
+#[instrument(level = "trace", target = "metrics::send", skip_all, fields(count = batch.len()))]
 pub fn send_batch<B, C, L>(batch: Vec<B>, mut convert: C, connection: &mut L)
 where
     C: FnMut(B) -> Option<Bytes>,
@@ -12,9 +14,9 @@ where
             packets.push(data);
         }
     }
-    // trace!("Writing batch");
+    trace!(target: "metrics::send::batch", "Writing batch");
     for packet in packets {
         connection.send(&packet);
     }
-    // trace!("Batch written, flushing now");
+    trace!(target: "metrics::send::batch", "Flushing batch");
 }

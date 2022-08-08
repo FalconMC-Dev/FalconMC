@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate tracing;
-
 use mc_chat::ChatComponent;
 use specs::login::*;
 use specs::play::*;

@@ -1,9 +1,5 @@
-#[macro_use]
-extern crate anyhow;
-#[macro_use]
-extern crate tracing;
-
 use anyhow::Context;
+use tracing::{info, debug};
 use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;

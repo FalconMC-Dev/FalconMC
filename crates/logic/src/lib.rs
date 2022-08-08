@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate tracing;
-
 pub mod connection;
 pub mod player;
 pub mod server;

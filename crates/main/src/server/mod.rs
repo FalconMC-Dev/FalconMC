@@ -9,6 +9,7 @@ use tokio::sync::mpsc::unbounded_channel;
 use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::ShutdownHandle;
 use falcon_logic::{FalconServer, FalconWorld};
+use tracing::{info, debug};
 
 use crate::network::NetworkListener;
 use crate::server::console::ConsoleListener;

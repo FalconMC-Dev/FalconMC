@@ -1,5 +1,6 @@
 use falcon_core::network::connection::ConnectionLogic;
 use falcon_logic::FalconConnection;
+use tracing::trace;
 
 falcon_receive_derive::falcon_receive! {
     use falcon_core::network::ConnectionState;
@@ -18,6 +19,7 @@ falcon_receive_derive::falcon_receive! {
 
 impl PacketHandler<FalconConnection> for StatusRequestPacket {
     fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        trace!("Status requested");
         let version = connection.handler_state().protocol_id();
         let wrapper = connection.wrapper();
         connection.server().request_status(version, wrapper);
@@ -31,6 +33,7 @@ impl PacketHandler<FalconConnection> for StatusRequestPacket {
 
 impl PacketHandler<FalconConnection> for StatusPingPacket {
     fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
+        trace!("Sent status pong");
         falcon_send::send_status_pong(self.payload, connection);
         connection
             .handler_state_mut()

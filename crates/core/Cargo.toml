@@ -23,4 +23,4 @@ nom = "7.1.1"
 
 mc_chat = "0.3.0"
 
-tokio = { version = "1.20.1", features = [ "rt-multi-thread", "rt", "time", "net", "sync", "macros" ] }
+tokio = { version = "1.20.1", features = [ "rt-multi-thread", "rt", "time", "net", "sync", "macros", "tracing" ] }

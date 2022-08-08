@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate tracing;
-
 mod macros;
 
 packet_modules! {

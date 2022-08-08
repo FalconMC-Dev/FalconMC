@@ -9,6 +9,7 @@ use falcon_core::world::blocks::Blocks;
 use falcon_core::world::chunks::{Chunk, ChunkPos, SECTION_LENGTH, SECTION_WIDTH};
 use falcon_send::specs::play::ChunkDataSpec;
 use itertools::Itertools;
+use tracing::debug;
 
 mod cache;
 

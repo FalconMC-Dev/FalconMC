@@ -16,6 +16,7 @@ use tokio::net::TcpStream;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::{interval, Interval, MissedTickBehavior};
 use tokio_util::codec::Framed;
+use tracing::{instrument, trace};
 
 use crate::server::ServerWrapper;
 
@@ -116,6 +117,7 @@ impl ConnectionLogic for FalconConnection {
         self.send(PacketIdAndData::new(packet_id, data));
     }
 
+    #[instrument(level = "trace", skip_all)]
     fn send<P: falcon_core::network::packet::PacketEncode>(&mut self, data: P) {
         if self.state.connection_state() == ConnectionState::Disconnected {
             return;
@@ -125,6 +127,7 @@ impl ConnectionLogic for FalconConnection {
         data.to_buf(out_buffer);
         let temp_buf = out_buffer.split_off(old_len);
         out_buffer.write_var_i32(temp_buf.len() as i32);
+        trace!("{} bytes sent", temp_buf.len());
         out_buffer.unsplit(temp_buf);
         if self.flushed {
             self.flushed = false;
@@ -132,12 +135,14 @@ impl ConnectionLogic for FalconConnection {
         }
     }
 
+    #[instrument(level = "trace", skip_all)]
     fn disconnect(&mut self, reason: ChatComponent) {
         match self.state.connection_state() {
             ConnectionState::Play => falcon_send::send_play_disconnect(reason, self),
             _ => falcon_send::send_login_disconnect(reason, self),
         }
         self.state.set_connection_state(ConnectionState::Disconnected);
+        trace!("Player connection marked as disconnected");
     }
 }
 

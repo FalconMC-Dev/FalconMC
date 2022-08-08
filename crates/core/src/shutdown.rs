@@ -1,5 +1,6 @@
 use std::fmt::{Debug, Formatter};
 use tokio::sync::{broadcast, mpsc};
+use tracing::{info, debug};
 
 /// A wrapper around two [Tokio channels](https://docs.rs/tokio/1.13.0/tokio/sync/index.html) to asynchronously control
 /// proper application clean-up upon termination.
@@ -84,6 +85,7 @@ impl ShutdownHandle {
     ///     // now we can wait for everything to have shutdown as explained in `ShutdownHandle::new()`
     /// }
     pub fn send_shutdown(&self) {
+        info!("Shutdown requested!");
         let _ = self.signal_sender.send(());
     }
 
@@ -117,8 +119,7 @@ impl ShutdownHandle {
 
 impl Debug for ShutdownHandle {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut debug = f.debug_struct("ShutdownHandle");
-        debug.finish()
+        f.debug_struct("ShutdownHandle").finish()
     }
 }
 
@@ -134,6 +135,6 @@ impl std::clone::Clone for ShutdownHandle {
 
 impl std::ops::Drop for ShutdownHandle {
     fn drop(&mut self) {
-        debug!("Dropping handle!");
+        debug!("Task terminated");
     }
 }

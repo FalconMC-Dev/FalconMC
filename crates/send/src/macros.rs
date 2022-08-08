@@ -41,7 +41,8 @@ macro_rules! packet_send_fn {
                 return;
             }
             )+
-            ::tracing::trace!("Unresolved packet!");
+            let protocol = connection.handler_state().protocol_id();
+            ::tracing::trace!(protocol, "Unresolved packet!");
         }
         )*
     }
