@@ -35,6 +35,7 @@ make sure you pass `--bin falcon-mc` to cargo.
 
 ## Documentation
 We aim to provide documentation as up-to-date as possible.
+Currently, this is still a work in progress. As of right now it's better to just contact me directly, ideally through discord.
 
 See this [Github's wiki](https://github.com/FalconMC-Dev/FalconMC/wiki) for more information about building, user setup, plugin development, ...
 
