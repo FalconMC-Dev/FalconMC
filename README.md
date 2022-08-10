@@ -3,23 +3,46 @@
 
 
 ## Description
-FalconMC is an afk Minecraft server written in [Rust](https://rust-lang.org/) that aims to support all client versions ranging from 1.13 till 1.17.1 (1.8-12.2 coming soon). Its main priority is performance and the ability to effortlessly hold many players at once. Writing custom plugins is supported.
+FalconMC is an afk Minecraft server written in [Rust](https://rust-lang.org/) that aims to support all client versions ranging from 1.13 till 1.17.1 (1.8-12.2 coming eventually). Its main priority is performance and the ability to effortlessly hold many players at once. Support for writing custom plugins is planned.
+
+Make sure to join us on [Discord](https://discord.com/HC82fwYXW5)!
 
 #### Upcoming features
-Check out our [Trello board](https://trello.com/b/0vSzpAUA/falcon-mc) to see the project's progress!  
-Also make sure to join us on [Discord](https://discord.com/invite/HC82fwYXW5)!
+- Bungeecord and velocity support
+- Plugins
+- As much version overlap as possible
 
+#### Non-goals
+- Complete recreation of every version
+
+## Getting started
+First, clone the repository:
+```git
+git clone https://github.com/FalconMC-Dev/FalconMC.git
+```
+
+To then checkout the stable branch main, do:
+```git
+git checkout main
+```
+Or for users who want the bleeding edge, do:
+```git
+git checkout develop
+```
+
+Then build the project like any other Rust project,
+make sure you pass `--bin falcon-mc` to cargo.
 
 ## Documentation
 We aim to provide documentation as up-to-date as possible.
 
-See this [Github's wiki](https://github.com/GrizzlT/FalconMC/wiki) for more information about building, user setup, plugin development, ...
+See this [Github's wiki](https://github.com/FalconMC-Dev/FalconMC/wiki) for more information about building, user setup, plugin development, ...
 
 ## Contributing
-Please feel free to help out in any way possible, the [wiki](https://github.com/GrizzlT/FalconMC/wiki) includes information on the codebase's layout and architecture.
+Please feel free to help out in any way possible, the [wiki](https://github.com/FalconMC-Dev/FalconMC/wiki) includes information on the codebase's layout and architecture. [Discord](https://discord.com/HC82fwYXW5) is the ideal place to ask questions.
 
-- [Issues](https://github.com/GrizzlT/FalconMC/issues)
-- [Pull requests](https://github.com/GrizzlT/FalconMC/pulls)
+- [Issues](https://github.com/FalconMC-Dev/FalconMC/issues)
+- [Pull requests](https://github.com/FalconMC-Dev/FalconMC/pulls)
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the GNU AGPL v3.0 license, shall be licensed as below, without any additional terms or conditions.
 
