@@ -257,6 +257,7 @@ dependencies = [
  "ignore-result",
  "itertools",
  "mc_chat",
+ "pin-project",
  "tokio",
  "tokio-util",
  "tracing",

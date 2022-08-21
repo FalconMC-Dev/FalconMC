@@ -3,7 +3,7 @@ use std::net::SocketAddr;
 use std::pin::Pin;
 use std::time::Duration;
 
-use bytes::Bytes;
+use bytes::{Bytes, BytesMut};
 use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::PacketBufferWrite;
 use falcon_core::network::packet::PacketEncode;
@@ -12,17 +12,13 @@ use mc_chat::ChatComponent;
 
 use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
-use tokio::net::TcpStream;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::{interval, Interval, MissedTickBehavior};
-use tokio_util::codec::Framed;
 use tracing::{instrument, trace};
 
 use crate::server::ServerWrapper;
 
 pub use wrapper::ConnectionWrapper;
-
-use self::codec::FalconCodec;
 
 mod codec;
 mod tick;
@@ -34,7 +30,6 @@ pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn
 pub enum ConnectionTask {
     Sync(Box<SyncConnectionTask>),
     Async(Box<AsyncConnectionTask>),
-    Flush,
 }
 
 pub trait ConnectionReceiver {
@@ -54,8 +49,7 @@ pub struct FalconConnection {
     wrapper: ConnectionWrapper,
     timeout: Interval,
     addr: SocketAddr,
-    socket: Framed<TcpStream, FalconCodec>,
-    flushed: bool,
+    write_buffer: BytesMut,
     state: PacketHandlerState,
 }
 
@@ -63,7 +57,6 @@ impl FalconConnection {
     pub async fn new(
         shutdown: ShutdownHandle,
         addr: SocketAddr,
-        socket: TcpStream,
         server: ServerWrapper,
     ) -> Self {
         let mut timeout = interval(Duration::from_secs(30));
@@ -77,8 +70,7 @@ impl FalconConnection {
             task_rx: receiver,
             timeout,
             addr,
-            socket: Framed::with_capacity(socket, FalconCodec, 4096),
-            flushed: true,
+            write_buffer: BytesMut::with_capacity(4096),
             state: PacketHandlerState::new(UNKNOWN_PROTOCOL),
         }
     }
@@ -122,17 +114,12 @@ impl ConnectionLogic for FalconConnection {
         if self.state.connection_state() == ConnectionState::Disconnected {
             return;
         }
-        let out_buffer = self.socket.write_buffer_mut();
-        let old_len = out_buffer.len();
-        data.to_buf(out_buffer);
-        let temp_buf = out_buffer.split_off(old_len);
-        out_buffer.write_var_i32(temp_buf.len() as i32);
+        let old_len = self.write_buffer.len();
+        data.to_buf(&mut self.write_buffer);
+        let temp_buf = self.write_buffer.split_off(old_len);
+        self.write_buffer.write_var_i32(temp_buf.len() as i32);
         trace!("{} bytes sent", temp_buf.len());
-        out_buffer.unsplit(temp_buf);
-        if self.flushed {
-            self.flushed = false;
-            self.wrapper.flush_connection();
-        }
+        self.write_buffer.unsplit(temp_buf);
     }
 
     #[instrument(level = "trace", skip_all)]
