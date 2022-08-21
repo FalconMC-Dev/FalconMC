@@ -1,9 +1,14 @@
 use std::io::Cursor;
+use std::task::Poll;
 
-use bytes::{Buf, Bytes};
+use bytes::{Buf, Bytes, BytesMut};
 use falcon_core::error::FalconCoreError;
 use falcon_core::network::buffer::{ByteLimitCheck, PacketBufferRead};
-use tokio_util::codec::{Decoder, Encoder};
+use futures::{Future, ready};
+use tokio::io::AsyncWrite;
+use tokio::net::tcp::WriteHalf;
+use tokio_util::codec::Decoder;
+use tokio_util::io::poll_write_buf;
 
 #[derive(Debug)]
 pub struct FalconCodec;
@@ -39,10 +44,45 @@ impl Decoder for FalconCodec {
     }
 }
 
-impl Encoder<()> for FalconCodec {
-    type Error = FalconCoreError;
+#[pin_project::pin_project]
+pub(crate) struct TcpWrite<'a, 'b> {
+    #[pin]
+    pub(crate) socket: &'b mut WriteHalf<'a>,
+    pub(crate) buffer: &'b mut BytesMut,
+}
 
-    fn encode(&mut self, _item: (), _dst: &mut bytes::BytesMut) -> Result<(), Self::Error> {
-        Ok(())
+impl<'a, 'b> TcpWrite<'a, 'b> {
+    pub(crate) fn new(socket: &'b mut WriteHalf<'a>, buffer: &'b mut BytesMut) -> Self {
+        Self {
+            socket,
+            buffer,
+        }
     }
 }
+
+impl<'a, 'b> Future for TcpWrite<'a, 'b> {
+    type Output = Result<(), std::io::Error>;
+
+    fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+        let mut pinned = self.project();
+
+        while !pinned.buffer.is_empty() {
+            let n = ready!(poll_write_buf(pinned.socket.as_mut(), cx, pinned.buffer))?;
+            if n == 0 {
+                return Poll::Ready(Err(std::io::Error::new(
+                    std::io::ErrorKind::WriteZero,
+                    "failed to \
+                     write frame to transport",
+                )
+                .into()));
+            }
+        }
+
+        ready!(pinned.socket.poll_flush(cx))?;
+
+        Poll::Ready(Ok(()))
+    }
+}
+
+
+

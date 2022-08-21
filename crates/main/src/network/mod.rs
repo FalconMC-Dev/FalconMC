@@ -57,10 +57,9 @@ impl NetworkListener {
                             let connection = FalconConnection::new(
                                 self.shutdown_handle.clone(),
                                 addr,
-                                socket,
                                 self.server.clone(),
                             ).await;
-                            tokio::spawn(connection.start(FalconReceiver));
+                            tokio::spawn(connection.start(socket, FalconReceiver));
                         },
                         Err(e) => {
                             print_error!(anyhow!("Connection broke due to {}", e));

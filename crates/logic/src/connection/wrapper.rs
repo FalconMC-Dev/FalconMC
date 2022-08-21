@@ -63,10 +63,6 @@ impl ConnectionWrapper {
             .send(ConnectionTask::Sync(Box::new(task)))
             .ignore();
     }
-
-    pub fn flush_connection(&self) {
-        self.link.send(ConnectionTask::Flush).ignore();
-    }
 }
 
 impl Clone for ConnectionWrapper {
