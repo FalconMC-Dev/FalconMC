@@ -18,6 +18,7 @@ pitch = 0.0
 [server]
 max_players = -1
 description = '§eFalcon server§r§b!!!'
+world = "world.schem"
 
 [versions]
 excluded = []

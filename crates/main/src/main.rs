@@ -39,7 +39,9 @@ async fn main() {
 
     debug!("Loading config!");
     if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")
-        .with_context(|| "The configuration file could not be loaded!")
+        .with_context(|| "The configuration file could not be loaded! \
+                      This can most likely be solved by removing the config file and adjusting \
+                      the config again after having launched (and shut down) FalconMC.")
     {
         print_error!(e);
         return;
