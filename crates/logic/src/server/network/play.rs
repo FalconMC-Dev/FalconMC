@@ -49,7 +49,7 @@ impl FalconServer {
             None => (0, 0, 0, 0),
         };
         if update_position {
-            self.world.update_player_pos(self.players.get(&uuid).unwrap(), old_x, old_z, x, z);
+            self.world.as_mut().unwrap().update_player_pos(self.players.get(&uuid).unwrap(), old_x, old_z, x, z);
         }
         if update_viewpos {
             self.players
@@ -62,7 +62,7 @@ impl FalconServer {
 
     pub fn player_update_view_distance(&mut self, uuid: Uuid, view_distance: u8) {
         if let Some(player) = self.players.get_mut(&uuid) {
-            self.world.update_view_distance(player, view_distance);
+            self.world.as_mut().unwrap().update_view_distance(player, view_distance);
             player.set_view_distance(view_distance);
         }
     }

@@ -54,7 +54,7 @@ impl FalconServer {
             let player_abilities = PlayerAbilitiesSpec::new(player.ability_flags(), 0.05, 0.1);
             player.connection().build_send_packet(player_abilities, falcon_send::send_player_abilities);
             
-            self.world.send_chunks_for_player(player);
+            self.world.as_mut().unwrap().send_chunks_for_player(player);
             
             let position_look = PositionAndLookSpec::new(player.position(), player.look_angles(), 0, 1);
             player.connection().build_send_packet(position_look, falcon_send::send_position_look);

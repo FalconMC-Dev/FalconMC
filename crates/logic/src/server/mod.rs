@@ -30,7 +30,7 @@ pub struct FalconServer {
     receiver: UnboundedReceiver<ServerTask>,
     eid_count: i32,
     players: AHashMap<Uuid, FalconPlayer>,
-    world: FalconWorld,
+    world: Option<FalconWorld>,
 }
 
 impl FalconServer {
@@ -38,7 +38,7 @@ impl FalconServer {
         shutdown: ShutdownHandle,
         console_rx: UnboundedReceiver<String>,
         receiver: UnboundedReceiver<ServerTask>,
-        world: FalconWorld,
+        world: Option<FalconWorld>,
     ) -> Self {
         Self {
             shutdown,
@@ -67,7 +67,7 @@ impl FalconServer {
         self.players.get_mut(&uuid)
     }
 
-    pub fn world(&mut self) -> &mut FalconWorld {
+    pub fn world(&mut self) -> &mut Option<FalconWorld> {
         &mut self.world
     }
 }
