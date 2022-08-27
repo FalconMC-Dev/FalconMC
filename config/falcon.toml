@@ -18,6 +18,7 @@ pitch = 0.0
 [server]
 max_players = -1
 description = '§eFalcon server§r§b!!!'
+#! Comment out, or remove 'world' so Falcon will start with no schematic.
 world = "world.schem"
 
 [versions]
