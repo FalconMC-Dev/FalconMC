@@ -11,7 +11,7 @@ use falcon_core::schematic::{SchematicData, SchematicVersionedRaw};
 use falcon_core::ShutdownHandle;
 use falcon_logic::{FalconServer, FalconWorld};
 
-use tracing::{info, debug};
+use tracing::info;
 
 use crate::network::NetworkListener;
 use crate::server::console::ConsoleListener;
@@ -22,22 +22,21 @@ pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
     info!("Starting server thread...");
 
     let world = match FalconConfig::global().world_file() {
-        Some(world_file) => { 
-            let world_file = std::fs::read(world_file)
-                .with_context(|| "Could not load world schematic, stopping launch")?;
+        Some(file_name) => { 
+            let world_file = std::fs::read(file_name)
+                .with_context(|| format!("Could not load \"{}\", stopping launch", file_name))?;
             let mut gz = GzDecoder::new(&world_file[..]);
             let mut decompressed_world = Vec::new();
             gz.read_to_end(&mut decompressed_world)
-                .with_context(|| "Could not decompress world.schem, is this a valid schematic?")?;
-            debug!("Checkpoint - loaded schem file");
+                .with_context(|| format!("Could not decompress \"{}\", is this a valid schematic?", file_name))?;
+
             let schematic: SchematicVersionedRaw = fastnbt::from_bytes(&decompressed_world)
-                .with_context(|| "Could not parse schematic file, is this valid nbt?")?;
-            debug!("Checkpoint - deserialized into raw format");
+                .with_context(|| format!("Could not parse schematic file \"{}\", is this valid nbt?", file_name))?;
+
             let data = SchematicData::try_from(schematic).with_context(|| {
-                "Invalid schematic, this server cannot use this schematic currently!"
+                format!("Invalid schematic, this server cannot use schematic \"{}\" currently!", file_name)
             })?;
             
-            debug!("Checkpoint - parsed raw format");
             info!("Loaded world");
 
             FalconWorld::try_from(data)?
