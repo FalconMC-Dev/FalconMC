@@ -51,6 +51,10 @@ impl FalconConfig {
         &self.server.description
     }
 
+    pub fn world_file(&self) -> Option<&str> {
+        self.server.world.as_deref()
+    }
+
     pub fn allow_flight(&self) -> bool {
         self.players.allow_flight
     }
@@ -110,6 +114,8 @@ impl Default for PlayerSettings {
 pub struct ServerSettings {
     max_players: i32,
     description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    world: Option<String>,
 }
 
 impl Default for ServerSettings {
@@ -117,6 +123,7 @@ impl Default for ServerSettings {
         ServerSettings {
             max_players: -1,
             description: String::from("§eFalcon server§r§b!!!"),
+            world: None,
         }
     }
 }
