@@ -13,7 +13,7 @@ Make sure to join us on [Discord](https://discord.com/invite/HC82fwYXW5)!
 - As much version overlap as possible
 
 #### Non-goals
-- Complete recreation of every version
+- 100% complete recreation of every version
 
 ## Getting started
 First, clone the repository:
@@ -35,12 +35,12 @@ make sure you pass `--bin falcon-mc` to cargo.
 
 ## Documentation
 We aim to provide documentation as up-to-date as possible.
-Currently, this is still a work in progress. As of right now it's better to just contact me directly, ideally through discord.
+Currently, this is still a work in progress. As of right now it's better to just contact me directly, ideally through [discord](https://discord.com/invite/HC82fwYXW5).
 
-See this [Github's wiki](https://github.com/FalconMC-Dev/FalconMC/wiki) for more information about building, user setup, plugin development, ...
+See our [wiki](https://wiki.falconmc.org/) for more information about user setp, plugin development, code architecture, ...
 
 ## Contributing
-Please feel free to help out in any way possible, the [wiki](https://github.com/FalconMC-Dev/FalconMC/wiki) includes information on the codebase's layout and architecture. [Discord](https://discord.com/invite/HC82fwYXW5) is the ideal place to ask questions.
+Please feel free to help out in any way possible, the [wiki](https://wiki.falconmc.org/) includes information on the codebase's layout and architecture. [Discord](https://discord.com/invite/HC82fwYXW5) is the ideal place to ask questions.
 
 - [Issues](https://github.com/FalconMC-Dev/FalconMC/issues)
 - [Pull requests](https://github.com/FalconMC-Dev/FalconMC/pulls)
