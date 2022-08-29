@@ -17,10 +17,11 @@ falcon_receive_derive::falcon_receive! {
 impl PacketHandler<FalconConnection> for LoginStartPacket {
     fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
         let version = connection.handler_state().protocol_id();
-        if FalconConfig::global().excluded_versions().contains(&version.unsigned_abs()) {
-            connection.disconnect(ChatComponent::from_text(
-                "Disabled version",
-                ComponentStyle::with_version(version.unsigned_abs()).color_if_absent(ChatColor::Red)
+
+         if FalconConfig::ALLOWED_VERSIONS.contains(&!47) == false {
+             connection.disconnect(ChatComponent::from_text(
+                 "Incompatible or Disabled version",
+                 ComponentStyle::with_version(version.unsigned_abs()).color_if_absent(ChatColor::Red)
             ));
         } else {
             let wrapper = connection.wrapper();
