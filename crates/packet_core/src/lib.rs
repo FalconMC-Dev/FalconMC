@@ -4,6 +4,8 @@ use error::ReadError;
 
 use self::error::WriteError;
 
+pub use primitives::*;
+
 pub mod error;
 mod primitives;
 
