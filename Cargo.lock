@@ -274,6 +274,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "falcon_packet_core"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "thiserror",
+]
+
+[[package]]
 name = "falcon_proc_util"
 version = "0.2.0"
 dependencies = [
