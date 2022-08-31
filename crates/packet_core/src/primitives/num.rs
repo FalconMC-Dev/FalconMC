@@ -1,7 +1,7 @@
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{PacketRead, PacketWrite};
+use crate::{PacketRead, PacketWrite, VarI32, VarI64};
 
 impl PacketRead for bool {
     #[inline(always)]
@@ -62,3 +62,52 @@ impl_num! {
     f32, get_f32, put_f32;
     f64, get_f64, put_f64;
 }
+
+const fn var_max<const BITS: u32>() -> usize {
+    (BITS as usize + 6) / 7
+}
+
+macro_rules! impl_var {
+    ($($var:ident = $num:ident & $unum:ident),*) => {$(
+        impl PacketWrite for $var {
+            fn write<B>(
+                self,
+                buffer: &mut B,
+            ) -> Result<(), WriteError>
+            where
+                B: BufMut + ?Sized,
+            {
+                let mut value = self.val;
+                while value & -128 as $num != 0 {
+                    ((value & 127 as $num) as u8 | 128u8).write(buffer)?;
+                    value = ((value as $unum) >> 7) as $num;
+                }
+                (value as u8).write(buffer)
+
+            }
+        }
+
+        impl PacketRead for $var {
+            fn read<B>(buffer: &mut B) -> Result<Self, ReadError>
+            where
+                B: Buf + ?Sized,
+                Self: Sized
+            {
+                let mut result: $num = 0;
+                for i in 0..=(var_max::<{ $num::BITS }>()) {
+                    if i > var_max::<{ $num::BITS }>() {
+                        return Err(ReadError::VarTooLong);
+                    }
+                    let byte = u8::read(buffer)?;
+                    result |= ((byte & 0x7f) as $num) << (i * 7);
+                    if byte & 0x80 == 0 {
+                        break;
+                    }
+                }
+                Ok($var::from(result))
+            }
+        }
+    )*}
+}
+
+impl_var! { VarI32 = i32 & u32, VarI64 = i64 & u64 }

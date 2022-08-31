@@ -12,4 +12,6 @@ pub enum WriteError {
 pub enum ReadError {
     #[error("IO read error")]
     IoError(#[from] io::Error),
+    #[error("VarInt was longer than allowed")]
+    VarTooLong,
 }
