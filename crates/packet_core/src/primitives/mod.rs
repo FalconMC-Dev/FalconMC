@@ -1,4 +1,7 @@
+mod bytes;
 mod num;
+
+pub use self::bytes::{AsRefU8, PacketVec};
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
