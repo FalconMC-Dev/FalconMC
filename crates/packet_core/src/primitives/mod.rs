@@ -6,6 +6,7 @@ mod str;
 mod tests;
 
 pub use self::bytes::{AsRefU8, PacketVec};
+pub use self::str::{AsRefStr, PacketString};
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
