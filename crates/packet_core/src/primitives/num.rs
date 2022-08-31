@@ -1,7 +1,7 @@
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{PacketRead, PacketWrite, VarI32, VarI64};
+use crate::{PacketRead, PacketSize, PacketWrite, VarI32, VarI64};
 
 impl PacketRead for bool {
     #[inline(always)]
@@ -25,6 +25,13 @@ impl PacketWrite for bool {
     }
 }
 
+impl PacketSize for bool {
+    #[inline(always)]
+    fn size(&self) -> usize {
+        1
+    }
+}
+
 macro_rules! impl_num {
     ($($num:ident, $get:ident, $put:ident);*$(;)?) => {$(
         impl PacketRead for $num {
@@ -45,6 +52,13 @@ macro_rules! impl_num {
                 B: BufMut + ?Sized
             {
                 Ok(buffer.$put(self))
+            }
+        }
+
+        impl PacketSize for $num {
+            #[inline(always)]
+            fn size(&self) -> usize {
+                std::mem::size_of::<$num>()
             }
         }
     )*}
@@ -84,6 +98,13 @@ macro_rules! impl_var {
                 }
                 (value as u8).write(buffer)
 
+            }
+        }
+
+        impl PacketSize for $var {
+            #[inline(always)]
+            fn size(&self) -> usize {
+                ({ $num::BITS as usize + 6 } - self.leading_zeros() as usize) / 7
             }
         }
 

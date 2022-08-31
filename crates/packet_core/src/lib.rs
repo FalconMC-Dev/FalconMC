@@ -16,7 +16,7 @@ pub trait PacketRead {
         Self: Sized;
 }
 
-pub trait PacketWrite {
+pub trait PacketWrite: PacketSize {
     fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
@@ -36,4 +36,8 @@ pub trait PacketWriteSeed {
     fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
+}
+
+pub trait PacketSize {
+    fn size(&self) -> usize;
 }
