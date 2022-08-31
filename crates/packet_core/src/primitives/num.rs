@@ -73,6 +73,8 @@ impl_num! {
     u32, get_u32, put_u32;
     i64, get_i64, put_i64;
     u64, get_u64, put_u64;
+    i128, get_i128, put_i128;
+    u128, get_u128, put_u128;
     f32, get_f32, put_f32;
     f64, get_f64, put_f64;
 }
