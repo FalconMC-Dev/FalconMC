@@ -4,7 +4,7 @@ use std::ops::{Deref, DerefMut};
 
 use bytes::BufMut;
 
-use crate::error::{WriteError, ReadError};
+use crate::error::{ReadError, WriteError};
 use crate::{PacketReadSeed, PacketSize, PacketWrite};
 
 pub struct AsRefU8<T>(pub T);

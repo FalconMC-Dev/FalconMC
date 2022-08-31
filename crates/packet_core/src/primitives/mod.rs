@@ -1,5 +1,9 @@
 mod bytes;
 mod num;
+mod str;
+
+#[cfg(test)]
+mod tests;
 
 pub use self::bytes::{AsRefU8, PacketVec};
 
