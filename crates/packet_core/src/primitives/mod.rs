@@ -1,3 +1,4 @@
+mod array;
 mod bytes;
 mod num;
 mod str;
@@ -5,6 +6,7 @@ mod str;
 #[cfg(test)]
 mod tests;
 
+pub use self::array::PacketArray;
 pub use self::bytes::{AsRefU8, PacketVec};
 pub use self::str::{AsRefStr, PacketString};
 
