@@ -279,6 +279,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "thiserror",
+ "uuid",
 ]
 
 [[package]]

@@ -12,6 +12,8 @@ pub enum WriteError {
 pub enum ReadError {
     #[error("Invalid UTF-8 received")]
     FromUTF8Error(#[from] FromUtf8Error),
+    #[error("Invalid StrUuid received")]
+    UuidError(#[from] uuid::Error),
     #[error("String was longer than allowed: {1} > {0}")]
     StringTooLong(usize, usize),
     #[error("VarInt was longer than allowed")]

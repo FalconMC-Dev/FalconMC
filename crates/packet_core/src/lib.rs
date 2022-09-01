@@ -7,6 +7,8 @@ use self::error::WriteError;
 pub use primitives::*;
 
 pub mod error;
+pub mod special;
+
 mod primitives;
 
 pub trait PacketRead {
