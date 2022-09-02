@@ -58,12 +58,12 @@ impl<T: AsRef<[u8]>> PacketSize for AsRefU8<T> {
     }
 }
 
-pub struct PacketVec<T> {
+pub struct Bytes<T> {
     size: usize,
     _marker: PhantomData<T>,
 }
 
-impl<T> PacketVec<T> {
+impl<T> Bytes<T> {
     pub fn new(size: usize) -> Self {
         Self {
             size,
@@ -72,7 +72,7 @@ impl<T> PacketVec<T> {
     }
 }
 
-impl<T: From<Vec<u8>>> PacketReadSeed for PacketVec<T> {
+impl<T: From<Vec<u8>>> PacketReadSeed for Bytes<T> {
     type Value = T;
 
     fn read<B>(self, buffer: &mut B) -> Result<Self::Value, ReadError>

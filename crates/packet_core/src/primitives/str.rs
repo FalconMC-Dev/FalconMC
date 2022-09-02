@@ -4,9 +4,7 @@ use std::ops::{Deref, DerefMut};
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{
-    PacketRead, PacketReadSeed, PacketSize, PacketVec, PacketWrite, PacketWriteSeed, VarI32,
-};
+use crate::{Bytes, PacketRead, PacketReadSeed, PacketSize, PacketWrite, PacketWriteSeed, VarI32, PacketSizeSeed};
 
 pub struct AsRefStr<T>(pub T);
 
@@ -30,12 +28,6 @@ impl<T: AsRef<str>> AsRef<str> for AsRefStr<T> {
     }
 }
 
-impl<T: AsRef<str>> PacketSize for AsRefStr<T> {
-    fn size(&self) -> usize {
-        VarI32::from(self.as_ref().len()).size() + self.as_ref().len()
-    }
-}
-
 pub struct PacketString<T> {
     size: usize,
     _marker: PhantomData<T>,
@@ -51,8 +43,6 @@ impl<T> PacketString<T> {
 }
 
 impl<T: AsRef<str>> PacketWriteSeed for PacketString<T> {
-    type Value = T;
-
     fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
@@ -67,6 +57,14 @@ impl<T: AsRef<str>> PacketWriteSeed for PacketString<T> {
     }
 }
 
+impl<T: AsRef<str>> PacketSizeSeed for PacketString<T> {
+    type Value = T;
+
+    fn size(&self, value: &Self::Value) -> usize {
+        VarI32::from(value.as_ref().len()).size() + value.as_ref().len()
+    }
+}
+
 impl<T: From<String>> PacketReadSeed for PacketString<T> {
     type Value = T;
 
@@ -78,7 +76,7 @@ impl<T: From<String>> PacketReadSeed for PacketString<T> {
         if len > self.size * 4 {
             return Err(ReadError::StringTooLong(self.size * 4, len));
         }
-        let buf = PacketVec::new(len).read(buffer)?;
+        let buf = Bytes::new(len).read(buffer)?;
         let str = String::from_utf8(buf)?;
         let count = str.chars().count();
         if count > self.size {

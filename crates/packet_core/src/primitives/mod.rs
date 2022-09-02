@@ -2,13 +2,15 @@ mod array;
 mod bytes;
 mod num;
 mod str;
+mod vec;
 
 #[cfg(test)]
 mod tests;
 
 pub use self::array::PacketArray;
-pub use self::bytes::{AsRefU8, PacketVec};
+pub use self::bytes::{AsRefU8, Bytes};
 pub use self::str::{AsRefStr, PacketString};
+pub use self::vec::PacketVec;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(

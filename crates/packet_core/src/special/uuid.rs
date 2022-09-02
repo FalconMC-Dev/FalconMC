@@ -5,7 +5,7 @@ use bytes::{Buf, BufMut};
 use uuid::Uuid;
 
 use crate::error::{ReadError, WriteError};
-use crate::{PacketRead, PacketSize, PacketString, PacketWrite, PacketWriteSeed, PacketReadSeed};
+use crate::{PacketRead, PacketReadSeed, PacketSize, PacketString, PacketWrite, PacketWriteSeed};
 
 impl PacketWrite for Uuid {
     fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
@@ -77,7 +77,7 @@ impl PacketRead for StrUuid {
     fn read<B>(buffer: &mut B) -> Result<Self, ReadError>
     where
         B: Buf + ?Sized,
-        Self: Sized
+        Self: Sized,
     {
         let s: String = PacketString::new(36).read(buffer)?;
         Ok(Self(Uuid::from_str(s.deref())?))
