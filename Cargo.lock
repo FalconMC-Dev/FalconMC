@@ -284,6 +284,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "falcon_packet_core_derive"
+version = "0.1.0"
+dependencies = [
+ "falcon_proc_util",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "falcon_proc_util"
 version = "0.2.0"
 dependencies = [
