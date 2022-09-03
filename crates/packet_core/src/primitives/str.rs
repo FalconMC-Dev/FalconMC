@@ -4,7 +4,10 @@ use std::ops::{Deref, DerefMut};
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{Bytes, PacketRead, PacketReadSeed, PacketSize, PacketWrite, PacketWriteSeed, VarI32, PacketSizeSeed};
+use crate::{
+    Bytes, PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed,
+    VarI32,
+};
 
 pub struct AsRefStr<T>(pub T);
 
