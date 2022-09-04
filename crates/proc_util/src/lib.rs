@@ -27,6 +27,18 @@ impl ErrorCatcher {
         }
     }
 
+    pub fn critical<T>(&self, error: Result<T, syn::Error>) -> Result<T, syn::Error> {
+        match error {
+            Ok(value) => Ok(value),
+            Err(mut error) => {
+                if let Some(err) = &self.error {
+                    error.combine(err.clone());
+                }
+                Err(error)
+            }
+        }
+    }
+
     pub fn emit(self) -> syn::Result<()> {
         if let Some(err) = self.error {
             Err(err)
