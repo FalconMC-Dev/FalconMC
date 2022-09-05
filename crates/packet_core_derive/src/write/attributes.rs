@@ -1,4 +1,4 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{cmp::Ordering, collections::HashSet, hash::Hash};
 
 use crate::{kw, util::FieldData};
 
@@ -9,47 +9,40 @@ use syn::{parse::Parse, punctuated::Punctuated, Field, Token};
 
 mod string;
 
+#[derive(Debug)]
 pub(crate) enum WriteAttributes {
     String(StringData),
     Unknown(Span),
 }
 
-impl Hash for WriteAttributes {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        core::mem::discriminant(self).hash(state);
-    }
-}
-
-impl PartialEq for WriteAttributes {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::String(l0), Self::String(r0)) => l0 == r0,
-            (Self::Unknown(_), Self::Unknown(_)) => true,
-            _ => false,
+impl WriteAttributes {
+    fn check<'a, I>(&self, fields: I) -> syn::Result<()>
+    where
+        I: Iterator<Item = &'a Field>,
+    {
+        match &self {
+            WriteAttributes::String(_) => Ok(()),
+            WriteAttributes::Unknown(_) => Ok(()),
         }
     }
-}
 
-impl Eq for WriteAttributes {}
-
-impl Parse for WriteAttributes {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        if input.peek(kw::string) {
-            input.parse::<kw::string>()?;
-            Ok(Self::String(input.parse::<StringData>()?))
-        } else {
-            Ok(Self::Unknown(input.span()))
+    pub fn is_end(&self) -> bool {
+        match self {
+            WriteAttributes::String(_) => true,
+            WriteAttributes::Unknown(_) => false,
         }
     }
 }
 
 impl<'a> FieldData<'a> for WriteAttributes {
-    fn parse<I>(current: &'a syn::Field, others: I) -> syn::Result<Option<Vec<Self>>>
+    fn parse(
+        current: &'a syn::Field,
+        others: &Punctuated<syn::Field, syn::token::Comma>,
+    ) -> syn::Result<Option<Vec<Self>>>
     where
-        I: Iterator<Item = &'a syn::Field>,
         Self: Sized,
     {
-        let (result, error) = current
+        let (result, mut error) = current
             .attrs
             .iter()
             .filter(|attribute| attribute.path.is_ident("falcon"))
@@ -84,9 +77,14 @@ impl<'a> FieldData<'a> for WriteAttributes {
                 },
             );
 
+        for attribute in &result {
+            error.extend_error(attribute.check(others.iter().filter(|e| e.ident != current.ident)));
+        }
+
         error.emit()?;
 
-        let result: Vec<Self> = result.into_iter().collect();
+        let mut result: Vec<Self> = result.into_iter().collect();
+        result.sort_unstable();
 
         if result.is_empty() {
             Ok(None)
@@ -102,7 +100,55 @@ impl<'a> FieldData<'a> for WriteAttributes {
         }
     }
 
-    fn to_tokenstream(self, field: &'a Field) -> Vec<syn::Stmt> {
-        todo!()
+    fn to_tokenstream(self, field: syn::Expr) -> syn::Expr {
+        match self {
+            WriteAttributes::String(data) => data.to_tokenstream(field),
+            WriteAttributes::Unknown(_) => field,
+        }
+    }
+}
+
+impl PartialOrd for WriteAttributes {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match (self, other) {
+            (WriteAttributes::String(_), WriteAttributes::Unknown(_)) => Some(Ordering::Greater),
+            (WriteAttributes::Unknown(_), WriteAttributes::String(_)) => Some(Ordering::Less),
+            _ => Some(Ordering::Equal),
+        }
+    }
+}
+
+impl Ord for WriteAttributes {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
+
+impl Hash for WriteAttributes {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        core::mem::discriminant(self).hash(state);
+    }
+}
+
+impl PartialEq for WriteAttributes {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::String(l0), Self::String(r0)) => l0 == r0,
+            (Self::Unknown(_), Self::Unknown(_)) => true,
+            _ => false,
+        }
+    }
+}
+
+impl Eq for WriteAttributes {}
+
+impl Parse for WriteAttributes {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        if input.peek(kw::string) {
+            input.parse::<kw::string>()?;
+            Ok(Self::String(input.parse::<StringData>()?))
+        } else {
+            Ok(Self::Unknown(input.span()))
+        }
     }
 }
