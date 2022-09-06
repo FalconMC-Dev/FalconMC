@@ -8,7 +8,10 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-syn = "1.0.99"
+syn = { version = "1.0.99", features = [ "extra-traits" ] }
 quote = "1.0.21"
 proc-macro2 = "1.0.43"
 falcon_proc_util = { path = "../proc_util/" }
+
+indexmap = "1.9.1"
+derivative = "2.2.0"
