@@ -1,0 +1,35 @@
+name: Feature Request
+description: Request a new feature for FalconMC
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+- type: textarea
+  attributes:
+    label: Description
+    description: "In as much detail as possible, describe the feature you are requesting. Include a description of how you think the feature should be implemented."
+    placeholder: |
+      Add support for ...
+      Expose an API for ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Motivation
+    description: "If your request is related to a problem, include a clear and concise description of the problem here. Otherwise, include a simple explanation about how this feature would be helpful/beneficial."
+    placeholder: "Supporting ... would allow for ..."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Possible Alternatives
+    description: "If there are any possible alternatives to implementing this feature, please describe them here. (Don't be afraid to describe a hacky workaround, any possible alternatives are useful information.)"
+    placeholder: "Using ... rather than ... can provide similar functionality, but ..."
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Remarks
+    description: "Write any additional information here. If you feel this issue should take priority, include that here as well."
+    placeholder: "This should be prioritized because ... Additionally, ..."
+  validations:
+    required: false
