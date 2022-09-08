@@ -1,0 +1,60 @@
+name: Bug Report
+description: Report a bug in FalconMC
+title: "[Bug]: "
+labels: ["bug"]
+body:
+- type: textarea
+  attributes:
+    label: Bug Description
+    description: Provide a short description of the bug
+    placeholder: |
+      Program crashes when ...
+      ... does not work.
+      ... is supposed to ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: Write a bare minimum example of how to reproduce the bug
+    placeholder: |
+      1. Run ...
+      2. Execute ...
+      3. The error is printed ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: What should happen when the above steps are followed?
+    placeholder: |
+      The program should ...
+      The program should not ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Screenshots
+    description: If applicable, attach screenshots to help explain your problem.
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Operating System
+    description: Enter your OS
+    placeholder: Ubuntu 20.04
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: FalconMC Version
+    description: Enter the version of FalconMC used when the error arose. (If using a bleeding-edge version, enter the commit hash or branch you are even with)
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Remarks
+    description: "Write any additional information here. If you feel this issue should take priority, include that here as well."
+    placeholder: "This should be prioritized because ... Additionally, ..."
+  validations:
+    required: false
