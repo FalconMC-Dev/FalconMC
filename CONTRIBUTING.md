@@ -11,6 +11,7 @@ This guide assumes an understanding of Git and common development tools. Some re
 - [Finding ways to contribute to open source on GitHub](https://docs.github.com/en/get-started/exploring-projects-on-github/finding-ways-to-contribute-to-open-source-on-github)
 - [Set up Git](https://docs.github.com/en/get-started/quickstart/set-up-git)
 - [GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow)
+  - We require all branches to follow the format described in the [Branch format](#branch-format) section.
 - [Collaborating with pull requests](https://docs.github.com/en/github/collaborating-with-pull-requests)
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com/), but any editor supporting rust-analyzer do just fine. If you do use VSCode, be sure to install the appropriate extensions:
@@ -24,7 +25,7 @@ We recommend using [Visual Studio Code](https://code.visualstudio.com/), but any
   
 ## Getting Started
 
-An overview of project architecture can be found in the [README](README.md) and within the [wiki](https://wiki.falconmc.org/).
+An overview of project architecture can be found in the [wiki](https://wiki.falconmc.org/), on the [architecture wiki page](https://wiki.falconmc.org/falconmc/developer/architecture.html).
 
 ### Issues
 
@@ -48,6 +49,25 @@ Find an issue that interests you by searching our [existing issues](https://gith
 
 - Using the command line:
   - [Fork the repo](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo#fork-an-example-repository) so that you can make your changes without affecting the original project until you're ready to merge them.
+
+#### Using branches
+
+##### Branch format
+
+We require all branches to follow a semantic naming scheme. Your branch can have any name while you are developing on your fork, but to submit a pull request, we require it abide by the following format:
+
+- **Features/Enhancements**: `feature/<short feature description>`
+- **Bug Fixes**: `bugfix/<short bug description>`
+
+For most changes, one of these two categories will make the most sense. If you find that your changes don't quite fall in line with either, feel free to prefix your branch how you see fit. 
+
+##### Creating a branch
+
+- Using GitHub Desktop:
+  - The [Managing branches](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/making-changes-in-a-branch/managing-branches) page is a good resource for learning branches on GitHub Desktop.
+  
+- Using the command line:
+  - `git branch <new-branch> [base-branch]`
 
 #### Commiting your changes
 
