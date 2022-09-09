@@ -32,12 +32,13 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let mut writes: Vec<Stmt> = Vec::with_capacity(parsed.fields.len());
     for (field, data) in parsed.fields {
         let ident = &field.ident;
+        let field_ty = &field.ty;
         let mut field: Expr = parse_quote_spanned! {field.span()=> self.#ident };
 
         let mut different = false;
         for attribute in &data {
             different = attribute.is_outer();
-            field = to_tokenstream(attribute, field);
+            field = to_tokenstream(attribute, field, field_ty);
         }
         if !different {
             field = parse_quote_spanned! {field.span()=>
