@@ -16,7 +16,7 @@ macro_rules! impl_parse {
     }
 }
 
-macro_rules! except {
+macro_rules! none_except {
     ($($except:pat_param)|+, $iter:ident, $this:expr) => {
         {
             let mut error = ErrorCatcher::new();
@@ -27,6 +27,24 @@ macro_rules! except {
                         a.span(),
                         format!("Incompatible with {}", $this),
                     ))
+                }
+            });
+            error.emit()
+        }
+    }
+}
+
+macro_rules! all_except {
+    ($($except:pat_param)|+, $iter:ident, $this:expr) => {
+        {
+            let mut error = ErrorCatcher::new();
+            $iter.for_each(|a| {
+                match a {
+                    $($except)|+ => error.add_error(Error::new(
+                        a.span(),
+                        format!("Incompatible with {}", $this),
+                    )),
+                    _ => {}
                 }
             });
             error.emit()

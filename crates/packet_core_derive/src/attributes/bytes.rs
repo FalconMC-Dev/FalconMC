@@ -9,9 +9,9 @@ use crate::kw;
 pub struct BytesAttribute {
     pub ident: kw::bytes,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub eq: Token![=],
+    pub eq: Option<Token![=]>,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub target: Ident,
+    pub target: Option<Ident>,
 }
 
 impl BytesAttribute {
@@ -23,8 +23,16 @@ impl BytesAttribute {
 impl Parse for BytesAttribute {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let ident = input.parse::<kw::bytes>()?;
-        let eq = input.parse::<Token![=]>()?;
-        let target = input.parse::<Ident>()?;
-        Ok(Self { ident, eq, target })
+        if input.peek(Token![=]) {
+            let eq = Some(input.parse::<Token![=]>()?);
+            let target = Some(input.parse::<Ident>()?);
+            Ok(Self { ident, eq, target })
+        } else {
+            Ok(Self {
+                ident,
+                eq: None,
+                target: None,
+            })
+        }
     }
 }

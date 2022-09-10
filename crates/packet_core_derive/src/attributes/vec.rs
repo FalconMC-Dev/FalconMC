@@ -9,9 +9,9 @@ use crate::kw;
 pub struct VecAttribute {
     pub ident: kw::vec,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub eq: Token![=],
+    pub eq: Option<Token![=]>,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub target: Ident,
+    pub target: Option<Ident>,
 }
 
 impl VecAttribute {
@@ -23,8 +23,16 @@ impl VecAttribute {
 impl Parse for VecAttribute {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let ident = input.parse::<kw::vec>()?;
-        let eq = input.parse::<Token![=]>()?;
-        let target = input.parse::<Ident>()?;
-        Ok(Self { ident, eq, target })
+        if input.peek(Token![=]) {
+            let eq = Some(input.parse::<Token![=]>()?);
+            let target = Some(input.parse::<Ident>()?);
+            Ok(Self { ident, eq, target })
+        } else {
+            Ok(Self {
+                ident,
+                eq: None,
+                target: None,
+            })
+        }
     }
 }
