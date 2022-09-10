@@ -1,27 +1,14 @@
 use std::borrow::Cow;
 use std::marker::PhantomData;
-use std::ops::{Deref, DerefMut};
+use std::ops::Deref;
 
 use bytes::BufMut;
 
 use crate::error::{ReadError, WriteError};
-use crate::{PacketReadSeed, PacketSize, PacketWrite};
+use crate::{PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
-pub struct AsRefU8<T>(pub T);
-
-impl<T> Deref for AsRefU8<T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T> DerefMut for AsRefU8<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
+#[derive(Default)]
+pub struct AsRefU8<T>(PhantomData<T>);
 
 impl<'a> PacketWrite for &'a [u8] {
     #[inline]
@@ -41,20 +28,22 @@ impl<'a> PacketSize for &'a [u8] {
     }
 }
 
-impl<T: AsRef<[u8]>> PacketWrite for AsRefU8<T> {
+impl<T: AsRef<[u8]>> PacketWriteSeed for AsRefU8<T> {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
-        self.as_ref().write(buffer)
+        value.as_ref().write(buffer)
     }
 }
 
-impl<T: AsRef<[u8]>> PacketSize for AsRefU8<T> {
+impl<T: AsRef<[u8]>> PacketSizeSeed for AsRefU8<T> {
+    type Value = T;
+
     #[inline]
-    fn size(&self) -> usize {
-        self.as_ref().len()
+    fn size(&self, value: &Self::Value) -> usize {
+        value.as_ref().len()
     }
 }
 

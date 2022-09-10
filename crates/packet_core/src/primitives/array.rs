@@ -1,29 +1,18 @@
+use std::marker::PhantomData;
 use std::mem::MaybeUninit;
-use std::ops::{Deref, DerefMut};
 
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{PacketRead, PacketSize, PacketWrite};
+use crate::{PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
-pub struct PacketArray<T>(pub T);
+#[derive(Default)]
+pub struct PacketArray<T>(PhantomData<T>);
 
-impl<T> Deref for PacketArray<T> {
-    type Target = T;
+impl<const N: usize, T: PacketRead> PacketReadSeed for PacketArray<[T; N]> {
+    type Value = [T; N];
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T> DerefMut for PacketArray<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-impl<const N: usize, T: PacketRead> PacketRead for PacketArray<[T; N]> {
-    fn read<B>(buffer: &mut B) -> Result<Self, ReadError>
+    fn read<B>(self, buffer: &mut B) -> Result<Self::Value, ReadError>
     where
         B: Buf + ?Sized,
         Self: Sized,
@@ -59,25 +48,27 @@ impl<const N: usize, T: PacketRead> PacketRead for PacketArray<[T; N]> {
             // initialized type.
             unsafe { data.as_ptr().cast::<[T; N]>().read() }
         };
-        Ok(PacketArray(data))
+        Ok(data)
     }
 }
 
-impl<const N: usize, T: PacketWrite> PacketWrite for PacketArray<[T; N]> {
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+impl<const N: usize, T: PacketWrite> PacketWriteSeed for PacketArray<[T; N]> {
+    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
-        for element in self.0 {
+        for element in value {
             element.write(buffer)?;
         }
         Ok(())
     }
 }
 
-impl<const N: usize, T: PacketSize> PacketSize for PacketArray<[T; N]> {
-    fn size(&self) -> usize {
-        self.iter().map(|n| n.size()).sum()
+impl<const N: usize, T: PacketSize> PacketSizeSeed for PacketArray<[T; N]> {
+    type Value = [T; N];
+
+    fn size(&self, value: &Self::Value) -> usize {
+        value.iter().map(|n| n.size()).sum()
     }
 }
 
