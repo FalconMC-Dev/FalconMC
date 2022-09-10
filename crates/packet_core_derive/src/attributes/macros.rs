@@ -29,7 +29,7 @@ macro_rules! none_except {
                     ))
                 }
             });
-            error.emit()
+            error
         }
     }
 }
@@ -47,7 +47,7 @@ macro_rules! all_except {
                     _ => {}
                 }
             });
-            error.emit()
+            error
         }
     }
 }

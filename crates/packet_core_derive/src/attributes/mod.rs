@@ -9,7 +9,7 @@ use self::{
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
     string::StringAttribute,
     varint::{VarI32Attribute, VarI64Attribute},
-    vec::VecAttribute,
+    vec::{ArrayAttribute, VecAttribute},
     PacketAttribute::*,
 };
 
@@ -24,6 +24,7 @@ mod macros;
 
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub enum PacketAttribute {
+    Array(ArrayAttribute),
     Bytes(BytesAttribute),
     Convert(ConvertAttribute),
     From(FromAttribute),
@@ -35,53 +36,58 @@ pub enum PacketAttribute {
 }
 
 impl PacketAttribute {
-    pub fn check<'a, I>(&self, others: I) -> syn::Result<()>
+    pub fn check<'a, I>(&mut self, others: I) -> syn::Result<()>
     where
-        I: Iterator<Item = &'a PacketAttribute>,
+        I: Iterator<Item = &'a mut PacketAttribute>,
     {
         match self {
-            String(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`string`"),
+            String(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`string`").emit(),
             VarI32(_) | VarI64(_) => none_except!(
                 Into(_) | From(_) | Convert(_),
                 others,
                 "`var32` and/or `var64`"
-            ),
-            Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`"),
-            Vec(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`vec`"),
-            Into(_) => all_except!(Convert(_), others, "`into`"),
-            From(_) => all_except!(Convert(_), others, "`from`"),
-            Convert(_) => all_except!(Into(_) | From(_), others, "`convert`"),
+            )
+            .emit(),
+            Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`").emit(),
+            Vec(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`vec`").emit(),
+            Into(_) => all_except!(Convert(_), others, "`into`").emit(),
+            From(_) => all_except!(Convert(_), others, "`from`").emit(),
+            Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
+            Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
         }
     }
 
     pub fn is_outer(&self) -> bool {
         match self {
-            PacketAttribute::String(_) => true,
-            PacketAttribute::VarI32(_) => false,
-            PacketAttribute::VarI64(_) => false,
-            PacketAttribute::Bytes(_) => true,
-            PacketAttribute::Vec(_) => true,
-            PacketAttribute::Into(_) => false,
-            PacketAttribute::From(_) => false,
-            PacketAttribute::Convert(_) => false,
+            String(_) => true,
+            VarI32(_) => false,
+            VarI64(_) => false,
+            Bytes(_) => true,
+            Vec(_) => true,
+            Into(_) => false,
+            From(_) => false,
+            Convert(_) => false,
+            Array(_) => false,
         }
     }
 
     pub fn span(&self) -> Span {
         match self {
-            PacketAttribute::String(data) => data.span(),
-            PacketAttribute::VarI32(data) => data.span(),
-            PacketAttribute::VarI64(data) => data.span(),
-            PacketAttribute::Bytes(data) => data.span(),
-            PacketAttribute::Vec(data) => data.span(),
-            PacketAttribute::Into(data) => data.span(),
-            PacketAttribute::From(data) => data.span(),
-            PacketAttribute::Convert(data) => data.span(),
+            String(data) => data.span(),
+            VarI32(data) => data.span(),
+            VarI64(data) => data.span(),
+            Bytes(data) => data.span(),
+            Vec(data) => data.span(),
+            Into(data) => data.span(),
+            From(data) => data.span(),
+            Convert(data) => data.span(),
+            Array(data) => data.span(),
         }
     }
 }
 
 impl_parse! {
+    Array = (ArrayAttribute as crate::kw::array),
     Bytes = (BytesAttribute as crate::kw::bytes),
     Convert = (ConvertAttribute as crate::kw::convert),
     Into = (IntoAttribute as crate::kw::into),

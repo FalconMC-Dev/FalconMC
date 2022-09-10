@@ -22,7 +22,7 @@ impl<'a> ParsedFields<'a> {
 fn to_attributes(field: &Field) -> syn::Result<Vec<PacketAttribute>> {
     let mut error = ErrorCatcher::new();
 
-    let attributes: Vec<PacketAttribute> = field
+    let mut attributes: Vec<PacketAttribute> = field
         .attrs
         .iter()
         .filter(|a| a.path.is_ident("falcon"))
@@ -46,17 +46,21 @@ fn to_attributes(field: &Field) -> syn::Result<Vec<PacketAttribute>> {
         .into_iter()
         .collect();
 
-    for (i, attribute) in attributes.iter().enumerate() {
-        error.extend_error(attribute.check(attributes.iter().filter(|&a| a != attribute)));
-        if attribute.is_outer() && i != attributes.len() - 1 {
+    let mut checked = Vec::with_capacity(attributes.len());
+
+    for _ in 0..attributes.len() {
+        let mut attribute = attributes.remove(0);
+        error.extend_error(attribute.check(attributes.iter_mut()));
+        if attribute.is_outer() && !attributes.is_empty() {
             error.add_error(Error::new(
                 attribute.span(),
                 "Ending attribute should be last in the list",
             ));
         }
+        checked.push(attribute);
     }
 
     error.emit()?;
 
-    Ok(attributes)
+    Ok(checked)
 }

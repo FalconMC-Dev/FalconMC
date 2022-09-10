@@ -6,6 +6,26 @@ use crate::kw;
 
 #[derive(Derivative)]
 #[derivative(Debug, Hash, PartialEq, Eq)]
+pub struct ArrayAttribute {
+    pub ident: kw::array,
+}
+
+impl ArrayAttribute {
+    pub fn span(&self) -> Span {
+        self.ident.span
+    }
+}
+
+impl Parse for ArrayAttribute {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            ident: input.parse::<kw::array>()?,
+        })
+    }
+}
+
+#[derive(Derivative)]
+#[derivative(Debug, Hash, PartialEq, Eq)]
 pub struct VecAttribute {
     pub ident: kw::vec,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]

@@ -12,6 +12,13 @@ pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type)
         PacketAttribute::From(_) => passthrough(field),
         PacketAttribute::Into(data) => generate_into(&data.target, field, field_ty),
         PacketAttribute::Convert(data) => generate_into(&data.target, field, field_ty),
+        PacketAttribute::Array(_) => generate_array(field),
+    }
+}
+
+fn generate_array(field: Expr) -> Expr {
+    parse_quote_spanned! {field.span()=>
+        ::falcon_packet_core::PacketArray(#field)
     }
 }
 
