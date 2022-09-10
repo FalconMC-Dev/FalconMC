@@ -1,5 +1,4 @@
 use std::marker::PhantomData;
-use std::ops::{Deref, DerefMut};
 
 use bytes::{Buf, BufMut};
 
@@ -8,28 +7,6 @@ use crate::{
     Bytes, PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed,
     VarI32,
 };
-
-pub struct AsRefStr<T>(pub T);
-
-impl<T> Deref for AsRefStr<T> {
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T> DerefMut for AsRefStr<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-impl<T: AsRef<str>> AsRef<str> for AsRefStr<T> {
-    fn as_ref(&self) -> &str {
-        self.deref().as_ref()
-    }
-}
 
 pub struct PacketString<T> {
     size: usize,

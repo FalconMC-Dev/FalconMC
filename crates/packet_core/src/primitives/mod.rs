@@ -9,7 +9,7 @@ mod tests;
 
 pub use self::array::PacketArray;
 pub use self::bytes::{AsRefU8, Bytes};
-pub use self::str::{AsRefStr, PacketString};
+pub use self::str::PacketString;
 pub use self::vec::PacketVec;
 
 macro_rules! impl_var_int {
