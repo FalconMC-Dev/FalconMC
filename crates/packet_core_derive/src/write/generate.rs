@@ -1,6 +1,10 @@
 use syn::{parse_quote_spanned, spanned::Spanned, Expr, Path, Type};
 
-use crate::attributes::{string::StringAttribute, PacketAttribute};
+use crate::attributes::{
+    asref::{AsRefAttribute, AsRefKind},
+    string::StringAttribute,
+    PacketAttribute,
+};
 
 pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type) -> Expr {
     match attribute {
@@ -13,6 +17,7 @@ pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type)
         PacketAttribute::Into(data) => generate_into(&data.target, field, field_ty),
         PacketAttribute::Convert(data) => generate_into(&data.target, field, field_ty),
         PacketAttribute::Array(_) => generate_array(field),
+        PacketAttribute::AsRef(data) => generate_asref(data, field),
     }
 }
 
@@ -62,5 +67,20 @@ fn generate_vec(field: Expr) -> Expr {
 fn generate_into(target: &Path, field: Expr, field_ty: &Type) -> Expr {
     parse_quote_spanned! {field.span()=>
         <#field_ty as ::std::convert::Into<#target>>::into(#field)
+    }
+}
+
+fn generate_asref(data: &AsRefAttribute, field: Expr) -> Expr {
+    match data.kind {
+        AsRefKind::Bytes => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::AsRefU8(#field)
+            }
+        }
+        AsRefKind::String => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::AsRefStr(#field)
+            }
+        }
     }
 }

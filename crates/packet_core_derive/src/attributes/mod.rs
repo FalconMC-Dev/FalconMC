@@ -5,6 +5,7 @@ use proc_macro2::Span;
 use syn::Error;
 
 use self::{
+    asref::{AsRefAttribute, AsRefKind},
     bytes::BytesAttribute,
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
     string::StringAttribute,
@@ -13,6 +14,7 @@ use self::{
     PacketAttribute::*,
 };
 
+pub mod asref;
 pub mod bytes;
 pub mod convert;
 pub mod string;
@@ -25,6 +27,7 @@ mod macros;
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub enum PacketAttribute {
     Array(ArrayAttribute),
+    AsRef(AsRefAttribute),
     Bytes(BytesAttribute),
     Convert(ConvertAttribute),
     From(FromAttribute),
@@ -54,6 +57,18 @@ impl PacketAttribute {
             From(_) => all_except!(Convert(_), others, "`from`").emit(),
             Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
             Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
+            AsRef(ref mut data) => {
+                let mut error = ErrorCatcher::new();
+                others.for_each(|a| match a {
+                    VarI32(_) | VarI64(_) | Vec(_) | Array(_) => {
+                        error.add_error(Error::new(a.span(), "Incompatible with `as_ref`"))
+                    }
+                    String(_) => data.kind = AsRefKind::String,
+                    Bytes(_) => data.kind = AsRefKind::Bytes,
+                    _ => {}
+                });
+                error.emit()
+            }
         }
     }
 
@@ -68,6 +83,7 @@ impl PacketAttribute {
             From(_) => false,
             Convert(_) => false,
             Array(_) => false,
+            AsRef(_) => false,
         }
     }
 
@@ -82,12 +98,14 @@ impl PacketAttribute {
             From(data) => data.span(),
             Convert(data) => data.span(),
             Array(data) => data.span(),
+            AsRef(data) => data.span(),
         }
     }
 }
 
 impl_parse! {
     Array = (ArrayAttribute as crate::kw::array),
+    AsRef = (AsRefAttribute as crate::kw::asref),
     Bytes = (BytesAttribute as crate::kw::bytes),
     Convert = (ConvertAttribute as crate::kw::convert),
     Into = (IntoAttribute as crate::kw::into),
