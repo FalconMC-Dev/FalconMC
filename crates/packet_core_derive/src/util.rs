@@ -1,7 +1,7 @@
 use falcon_proc_util::ErrorCatcher;
 use indexmap::IndexSet;
 use syn::punctuated::Punctuated;
-use syn::{Error, Field, Token};
+use syn::{Field, Token};
 
 use crate::attributes::PacketAttribute;
 
@@ -10,19 +10,25 @@ pub struct ParsedFields<'a> {
 }
 
 impl<'a> ParsedFields<'a> {
-    pub fn new(fields: &'a Punctuated<Field, Token![,]>) -> syn::Result<Self> {
+    pub fn new<F>(fields: &'a Punctuated<Field, Token![,]>, validate: F) -> syn::Result<Self>
+    where
+        F: FnOnce(Vec<PacketAttribute>) -> syn::Result<Vec<PacketAttribute>> + Copy,
+    {
         let mut result = Vec::with_capacity(fields.len());
         for field in fields {
-            result.push((field, to_attributes(field)?));
+            result.push((field, to_attributes(field, validate)?));
         }
         Ok(Self { fields: result })
     }
 }
 
-fn to_attributes(field: &Field) -> syn::Result<Vec<PacketAttribute>> {
+fn to_attributes<F>(field: &Field, validate: F) -> syn::Result<Vec<PacketAttribute>>
+where
+    F: FnOnce(Vec<PacketAttribute>) -> syn::Result<Vec<PacketAttribute>>,
+{
     let mut error = ErrorCatcher::new();
 
-    let mut attributes: Vec<PacketAttribute> = field
+    let attributes: Vec<PacketAttribute> = field
         .attrs
         .iter()
         .filter(|a| a.path.is_ident("falcon"))
@@ -46,21 +52,7 @@ fn to_attributes(field: &Field) -> syn::Result<Vec<PacketAttribute>> {
         .into_iter()
         .collect();
 
-    let mut checked = Vec::with_capacity(attributes.len());
-
-    for _ in 0..attributes.len() {
-        let mut attribute = attributes.remove(0);
-        error.extend_error(attribute.check(attributes.iter_mut()));
-        if attribute.is_outer() && !attributes.is_empty() {
-            error.add_error(Error::new(
-                attribute.span(),
-                "Ending attribute should be last in the list",
-            ));
-        }
-        checked.push(attribute);
-    }
-
     error.emit()?;
 
-    Ok(checked)
+    validate(attributes)
 }

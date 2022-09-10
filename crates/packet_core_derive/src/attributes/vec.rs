@@ -1,6 +1,6 @@
 use derivative::Derivative;
 use proc_macro2::Span;
-use syn::{parse::Parse, Ident, Token};
+use syn::{parse::Parse, Ident, LitStr, Token};
 
 use crate::kw;
 
@@ -29,9 +29,9 @@ impl Parse for ArrayAttribute {
 pub struct VecAttribute {
     pub ident: kw::vec,
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub eq: Option<Token![=]>,
+    pub eq: Token![=],
     #[derivative(Hash = "ignore", PartialEq = "ignore")]
-    pub target: Option<Ident>,
+    pub target: Ident,
 }
 
 impl VecAttribute {
@@ -43,16 +43,8 @@ impl VecAttribute {
 impl Parse for VecAttribute {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let ident = input.parse::<kw::vec>()?;
-        if input.peek(Token![=]) {
-            let eq = Some(input.parse::<Token![=]>()?);
-            let target = Some(input.parse::<Ident>()?);
-            Ok(Self { ident, eq, target })
-        } else {
-            Ok(Self {
-                ident,
-                eq: None,
-                target: None,
-            })
-        }
+        let eq = input.parse::<Token![=]>()?;
+        let target = input.parse::<LitStr>()?.parse()?;
+        Ok(Self { ident, eq, target })
     }
 }

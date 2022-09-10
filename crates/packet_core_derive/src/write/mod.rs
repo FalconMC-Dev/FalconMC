@@ -2,12 +2,16 @@ use falcon_proc_util::ErrorCatcher;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
+use syn::{
+    parse_quote, parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt, Token,
+};
 
 use crate::util::ParsedFields;
 
-use self::generate::to_tokenstream;
+use self::check::validate;
+use self::generate::{to_end, to_preprocess, to_tokenstream};
 
+mod check;
 mod generate;
 
 pub(crate) fn implement_write(item: ItemStruct) -> syn::Result<TokenStream> {
@@ -15,7 +19,7 @@ pub(crate) fn implement_write(item: ItemStruct) -> syn::Result<TokenStream> {
 
     match &item.fields {
         Fields::Named(fields) => {
-            let fields = error.critical(ParsedFields::new(&fields.named))?;
+            let fields = error.critical(ParsedFields::new(&fields.named, validate))?;
             return Ok(generate_tokens(&item, fields).into_token_stream());
         }
         _ => error.add_error(Error::new(
@@ -29,36 +33,40 @@ pub(crate) fn implement_write(item: ItemStruct) -> syn::Result<TokenStream> {
 }
 
 fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
+    let mut preprocess: Vec<Stmt> = Vec::new();
     let mut writes: Vec<Stmt> = Vec::with_capacity(parsed.fields.len());
+
     for (field, data) in parsed.fields {
         let ident = &field.ident;
         let field_ty = &field.ty;
         let mut field: Expr = parse_quote_spanned! {field.span()=> self.#ident };
 
-        let mut different = false;
-        for attribute in &data {
-            different = attribute.is_outer();
+        for (i, attribute) in data.iter().enumerate() {
             field = to_tokenstream(attribute, field, field_ty);
-        }
-        if !different {
-            field = parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::PacketWrite::write(
-                    #field,
-                    buffer,
-                )
+            if i == data.len() - 1 {
+                if let Some(process) = to_preprocess(attribute, field.clone()) {
+                    preprocess.push(process);
+                }
+                let end = to_end(attribute, field.clone());
+                writes.push(end);
             }
         }
-        writes.push(parse_quote_spanned! {field.span()=> #field?; })
     }
+    let mutable: Option<Token![mut]> = if preprocess.is_empty() {
+        None
+    } else {
+        Some(parse_quote!(mut))
+    };
 
     let ident = &item.ident;
     let (impl_generics, ty_generics, where_clause) = item.generics.split_for_impl();
     parse_quote_spanned! {item.ident.span()=>
         impl #impl_generics ::falcon_packet_core::PacketWrite for #ident #ty_generics #where_clause {
-            fn write<B>(self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet_core::WriteError>
+            fn write<B>(#mutable self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet_core::WriteError>
             where
                 B: ::bytes::BufMut + ?Sized
             {
+                #(#preprocess)*
                 #(#writes)*
                 Ok(())
             }

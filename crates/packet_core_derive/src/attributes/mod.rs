@@ -1,11 +1,9 @@
 #![macro_use]
 
-use falcon_proc_util::ErrorCatcher;
 use proc_macro2::Span;
-use syn::Error;
 
 use self::{
-    asref::{AsRefAttribute, AsRefKind},
+    asref::AsRefAttribute,
     bytes::BytesAttribute,
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
     string::StringAttribute,
@@ -22,7 +20,7 @@ pub mod varint;
 pub mod vec;
 
 #[macro_use]
-mod macros;
+pub mod macros;
 
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub enum PacketAttribute {
@@ -39,54 +37,6 @@ pub enum PacketAttribute {
 }
 
 impl PacketAttribute {
-    pub fn check<'a, I>(&mut self, others: I) -> syn::Result<()>
-    where
-        I: Iterator<Item = &'a mut PacketAttribute>,
-    {
-        match self {
-            String(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`string`").emit(),
-            VarI32(_) | VarI64(_) => none_except!(
-                Into(_) | From(_) | Convert(_),
-                others,
-                "`var32` and/or `var64`"
-            )
-            .emit(),
-            Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`").emit(),
-            Vec(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`vec`").emit(),
-            Into(_) => all_except!(Convert(_), others, "`into`").emit(),
-            From(_) => all_except!(Convert(_), others, "`from`").emit(),
-            Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
-            Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
-            AsRef(ref mut data) => {
-                let mut error = ErrorCatcher::new();
-                others.for_each(|a| match a {
-                    VarI32(_) | VarI64(_) | Vec(_) | Array(_) => {
-                        error.add_error(Error::new(a.span(), "Incompatible with `as_ref`"))
-                    }
-                    String(_) => data.kind = AsRefKind::String,
-                    Bytes(_) => data.kind = AsRefKind::Bytes,
-                    _ => {}
-                });
-                error.emit()
-            }
-        }
-    }
-
-    pub fn is_outer(&self) -> bool {
-        match self {
-            String(_) => true,
-            VarI32(_) => false,
-            VarI64(_) => false,
-            Bytes(_) => true,
-            Vec(_) => true,
-            Into(_) => false,
-            From(_) => false,
-            Convert(_) => false,
-            Array(_) => false,
-            AsRef(_) => false,
-        }
-    }
-
     pub fn span(&self) -> Span {
         match self {
             String(data) => data.span(),

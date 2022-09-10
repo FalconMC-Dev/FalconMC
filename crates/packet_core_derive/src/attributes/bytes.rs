@@ -1,6 +1,6 @@
 use derivative::Derivative;
 use proc_macro2::Span;
-use syn::{parse::Parse, Ident, Token};
+use syn::{parse::Parse, Ident, LitStr, Token};
 
 use crate::kw;
 
@@ -25,7 +25,7 @@ impl Parse for BytesAttribute {
         let ident = input.parse::<kw::bytes>()?;
         if input.peek(Token![=]) {
             let eq = Some(input.parse::<Token![=]>()?);
-            let target = Some(input.parse::<Ident>()?);
+            let target = Some(input.parse::<LitStr>()?.parse()?);
             Ok(Self { ident, eq, target })
         } else {
             Ok(Self {
