@@ -10,7 +10,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
                 self.#target = ::falcon_packet_core::PacketSizeSeed::size(
                     ::falcon_packet_core::PacketVec::new(0),
                     &#field,
-                );
+                ).into();
             })
         }
         Bytes(data) => {
@@ -18,7 +18,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
             Some(parse_quote_spanned! {field.span()=>
                 self.#target = ::falcon_packet_core::PacketSize::size(
                     &#field,
-                );
+                ).into();
             })
         }
         AsRef(data) => data.target.as_ref().map(|target| {
@@ -26,7 +26,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
                 self.#target = ::falcon_packet_core::PacketSizeSeed::size(
                     ::falcon_packet_core::AsRefU8::default(),
                     &#field,
-                );
+                ).into();
             }
         }),
         _ => None,

@@ -44,7 +44,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
         let ident = field.ident.as_ref().unwrap();
         let field_ty = &field.ty;
         let mut field: Expr = if replace.contains(ident) {
-            parse_quote_spanned! {field.span()=> #ident}
+            parse_quote_spanned! {field.span()=> <#field_ty as ::std::convert::From<usize>>::from(#ident)}
         } else {
             parse_quote_spanned! {field.span()=> self.#ident}
         };
@@ -64,6 +64,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let ident = &item.ident;
     let (impl_generics, ty_generics, where_clause) = item.generics.split_for_impl();
     parse_quote_spanned! {item.ident.span()=>
+        #[allow(clippy::useless_conversion)]
         impl #impl_generics ::falcon_packet_core::PacketSize for #ident #ty_generics #where_clause {
             fn size(&self) -> usize {
                 #(#preprocess)*

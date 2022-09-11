@@ -8,7 +8,7 @@ use crate::attributes::PacketAttribute::{
 };
 
 pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
-    attributes.into_iter()
+    attributes.iter()
         .flat_map(|(_, attrs)| attrs.iter())
         .filter_map(|a| match a {
             PacketVec(data) => Some(data.target.clone()),
@@ -76,9 +76,8 @@ where
             error.emit()
         }
         Bytes(bytes) => {
-            others.for_each(|a| match a {
-                AsRef(data) => data.target = bytes.target.clone(),
-                _ => {}
+            others.for_each(|a| if let AsRef(data) = a {
+               data.target = bytes.target.clone();
             });
             Ok(())
         }
