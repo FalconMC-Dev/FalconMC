@@ -1,14 +1,15 @@
 use std::collections::HashSet;
 
 use falcon_proc_util::ErrorCatcher;
-use syn::{Error, Ident, Field};
+use syn::{Error, Field, Ident};
 
 use crate::attributes::PacketAttribute::{
     self, Array, AsRef, Bytes, Convert, From, Into, String, VarI32, VarI64, Vec as PacketVec,
 };
 
 pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
-    attributes.iter()
+    attributes
+        .iter()
         .flat_map(|(_, attrs)| attrs.iter())
         .filter_map(|a| match a {
             PacketVec(data) => Some(data.target.clone()),
@@ -76,8 +77,10 @@ where
             error.emit()
         }
         Bytes(bytes) => {
-            others.for_each(|a| if let AsRef(data) = a {
-               data.target = bytes.target.clone();
+            others.for_each(|a| {
+                if let AsRef(data) = a {
+                    data.target = bytes.target.clone();
+                }
             });
             Ok(())
         }

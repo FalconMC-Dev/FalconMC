@@ -4,13 +4,11 @@ use falcon_proc_util::ErrorCatcher;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{
-    parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt, Ident,
-};
+use syn::{parse_quote_spanned, Error, Expr, Fields, Ident, ItemImpl, ItemStruct, Stmt};
 
 use crate::util::ParsedFields;
 
-use self::check::{validate, get_replaced};
+use self::check::{get_replaced, validate};
 use self::generate::{to_end, to_preprocess, to_tokenstream};
 
 mod check;
