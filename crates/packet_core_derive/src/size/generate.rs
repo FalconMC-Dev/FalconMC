@@ -1,74 +1,106 @@
-use syn::{Expr, Type, parse_quote_spanned, spanned::Spanned, Path};
+use syn::{parse_quote_spanned, spanned::Spanned, Expr, Stmt, Type};
 
-use crate::attributes::{PacketAttribute, string::StringAttribute, asref::{AsRefAttribute, AsRefKind}};
+use crate::attributes::PacketAttribute::{self, *};
 
+pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
+    match attribute {
+        Vec(data) => {
+            let target = &data.target;
+            Some(parse_quote_spanned! {field.span()=>
+                let #target = ::falcon_packet_core::PacketSizeSeed::size(
+                    ::falcon_packet_core::PacketVec::new(0),
+                    &#field,
+                );
+            })
+        }
+        Bytes(data) => data.target.as_ref().map(|target| {
+            parse_quote_spanned! {field.span()=>
+                let #target = ::falcon_packet_core::PacketSize::size(
+                    &#field,
+                );
+            }
+        }),
+        AsRef(data) => data.target.as_ref().map(|target| {
+            parse_quote_spanned! {field.span()=>
+                let #target = ::falcon_packet_core::PacketSizeSeed::size(
+                    ::falcon_packet_core::AsRefU8::default(),
+                    &#field,
+                );
+            }
+        }),
+        _ => None,
+    }
+}
+
+pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Expr {
+    match attribute {
+        String(data) => {
+            let len = &data.max_length;
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSizeSeed::size(
+                    &::falcon_packet_core::PacketString::new(#len),
+                    &#field,
+                )
+            }
+        }
+        Vec(_) => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSizeSeed::size(
+                    &::falcon_packet_core::PacketVec::new(0),
+                    &#field,
+                )
+            }
+        }
+        Array(_) => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSizeSeed::size(
+                    &::falcon_packet_core::PacketArray::default(),
+                    &#field,
+                )
+            }
+        }
+        AsRef(_) => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSizeSeed::size(
+                    &::falcon_packet_core::AsRefU8::default(),
+                    &#field,
+                )
+            }
+        }
+        _ => {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSize::size(
+                    &#field,
+                )
+            }
+        }
+    }
+}
 
 pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type) -> Expr {
     match attribute {
-        PacketAttribute::String(data) => generate_string(field),
-        PacketAttribute::VarI32(_) => generate_var32(field),
-        PacketAttribute::VarI64(_) => generate_var64(field),
-        PacketAttribute::Vec(_) => generate_vec(field),
-        PacketAttribute::Bytes(_) => passthrough(field),
-        PacketAttribute::From(_) => passthrough(field),
-        PacketAttribute::Into(data) => passthrough(field),
-        PacketAttribute::Convert(data) => passthrough(field),
-        PacketAttribute::Array(_) => generate_array(field),
-        PacketAttribute::AsRef(data) => generate_asref(data, field),
-    }
-}
-
-fn generate_array(field: Expr) -> Expr {
-    parse_quote_spanned! {field.span()=>
-        ::falcon_packet_core::PacketArray(&#field)
-    }
-}
-
-fn generate_string(field: Expr) -> Expr {
-    parse_quote_spanned! {field.span()=>
-        ::falcon_packet_core::PacketSizeSeed::size(
-            &::falcon_packet_core::PacketString::new(0),
-            &#field,
-        )
-    }
-}
-
-fn generate_var32(field: Expr) -> Expr {
-    parse_quote_spanned! {field.span()=>
-        ::falcon_packet_core::VarI32::from(#field)
-    }
-}
-
-fn generate_var64(field: Expr) -> Expr {
-    parse_quote_spanned! {field.span()=>
-        ::falcon_packet_core::VarI64::from(#field)
-    }
-}
-
-fn passthrough(field: Expr) -> Expr {
-    field
-}
-
-fn generate_vec(field: Expr) -> Expr {
-    parse_quote_spanned! {field.span()=>
-        ::falcon_packet_core::PacketSizeSeed::size(
-            &::falcon_packet_core::PacketVec::new(0),
-            &#field,
-        )
-    }
-}
-
-fn generate_asref(data: &AsRefAttribute, field: Expr) -> Expr {
-    match data.kind {
-        AsRefKind::Bytes => {
+        VarI32(_) => {
             parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::AsRefU8(&#field)
+                ::falcon_packet_core::VarI32::from(#field)
             }
         }
-        AsRefKind::String => {
+        VarI64(_) => {
             parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::AsRefStr(&#field)
+                ::falcon_packet_core::VarI64::from(#field)
             }
         }
+        Into(data) => {
+            let target = &data.target;
+            parse_quote_spanned! {field.span()=>
+                <#field_ty as ::std::convert::Into<#target>>::into(::std::clone::Clone::clone(&#field))
+            }
+        }
+        Convert(data) => {
+            let target = &data.target;
+            parse_quote_spanned! {field.span()=>
+                <#field_ty as ::std::convert::Into<#target>>::into(::std::clone::Clone::clone(&#field))
+            }
+        }
+        _ => field,
     }
 }
