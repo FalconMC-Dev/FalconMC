@@ -8,23 +8,22 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
             let target = &data.target;
             Some(parse_quote_spanned! {field.span()=>
                 self.#target = ::falcon_packet_core::PacketSizeSeed::size(
-                    ::falcon_packet_core::PacketVec::new(0),
+                    &::falcon_packet_core::PacketVec::new(0),
                     &#field,
                 ).into();
             })
         }
-        Bytes(data) => {
-            let target = &data.target;
-            Some(parse_quote_spanned! {field.span()=>
+        Bytes(data) => data.target.as_ref().map(|target| {
+            parse_quote_spanned! {field.span()=>
                 self.#target = ::falcon_packet_core::PacketSize::size(
                     &#field,
                 ).into();
-            })
-        }
+            }
+        }),
         AsRef(data) => data.target.as_ref().map(|target| {
             parse_quote_spanned! {field.span()=>
                 self.#target = ::falcon_packet_core::PacketSizeSeed::size(
-                    ::falcon_packet_core::AsRefU8::default(),
+                    &::falcon_packet_core::AsRefU8::default(),
                     &#field,
                 ).into();
             }
@@ -33,53 +32,40 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
     }
 }
 
-pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Stmt {
+pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
     match attribute {
         String(data) => {
             let len = &data.max_length;
-            parse_quote_spanned! {field.span()=>
+            Some(parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::PacketWriteSeed::write(
                     ::falcon_packet_core::PacketString::new(#len),
                     #field,
                     buffer,
                 )?;
-            }
+            })
         }
-        Vec(_) => {
-            parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::PacketWriteSeed::write(
-                    ::falcon_packet_core::PacketVec::new(0),
-                    #field,
-                    buffer,
-                )?;
-            }
-        }
-        Array(_) => {
-            parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::PacketWriteSeed::write(
-                    ::falcon_packet_core::PacketArray::default(),
-                    #field,
-                    buffer,
-                )?;
-            }
-        }
-        AsRef(_) => {
-            parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::PacketWriteSeed::write(
-                    ::falcon_packet_core::AsRefU8::default(),
-                    #field,
-                    buffer,
-                )?;
-            }
-        }
-        _ => {
-            parse_quote_spanned! {field.span()=>
-                ::falcon_packet_core::PacketWrite::write(
-                    #field,
-                    buffer,
-                )?;
-            }
-        }
+        Vec(_) => Some(parse_quote_spanned! {field.span()=>
+            ::falcon_packet_core::PacketWriteSeed::write(
+                ::falcon_packet_core::PacketVec::new(0),
+                #field,
+                buffer,
+            )?;
+        }),
+        Array(_) => Some(parse_quote_spanned! {field.span()=>
+            ::falcon_packet_core::PacketWriteSeed::write(
+                ::falcon_packet_core::PacketArray::default(),
+                #field,
+                buffer,
+            )?;
+        }),
+        AsRef(_) => Some(parse_quote_spanned! {field.span()=>
+            ::falcon_packet_core::PacketWriteSeed::write(
+                ::falcon_packet_core::AsRefU8::default(),
+                #field,
+                buffer,
+            )?;
+        }),
+        _ => None,
     }
 }
 

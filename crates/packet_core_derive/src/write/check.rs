@@ -27,7 +27,10 @@ pub fn validate(mut attributes: Vec<PacketAttribute>) -> syn::Result<Vec<PacketA
     for _ in 0..attributes.len() {
         let mut attribute = attributes.remove(0);
         error.extend_error(check(&mut attribute, attributes.iter_mut()));
-        if is_outer(&attribute) && attributes.iter().any(|e| !matches!(e, Bytes(_))) {
+        if !matches!(attribute, Bytes(_))
+            && is_outer(&attribute)
+            && attributes.iter().any(|e| !matches!(e, Bytes(_)))
+        {
             error.add_error(Error::new(
                 attribute.span(),
                 "Ending attribute should be last in the list",
@@ -61,7 +64,14 @@ where
             });
             error.emit()
         }
-        Bytes(_) => Ok(()),
+        Bytes(bytes) => {
+            others.for_each(|a| {
+                if let AsRef(data) = a {
+                    data.target = bytes.target.clone();
+                }
+            });
+            Ok(())
+        }
         From(_) => Ok(()),
     }
 }

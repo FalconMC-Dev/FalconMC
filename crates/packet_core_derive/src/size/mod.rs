@@ -47,16 +47,25 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
             parse_quote_spanned! {field.span()=> self.#ident}
         };
 
+        let mut end = None;
+
         for (i, attribute) in data.iter().enumerate() {
             field = to_tokenstream(attribute, field, field_ty);
             if i == data.len() - 1 {
                 if let Some(process) = to_preprocess(attribute, field.clone()) {
                     preprocess.push(process);
                 }
-                let end = to_end(attribute, field.clone());
-                writes.push(end);
+                end = to_end(attribute, field.clone());
             }
         }
+
+        writes.push(end.unwrap_or_else(|| {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketSize::size(
+                    &#field,
+                )
+            }
+        }));
     }
 
     let ident = &item.ident;

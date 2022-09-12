@@ -41,16 +41,26 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
         let field_ty = &field.ty;
         let mut field: Expr = parse_quote_spanned! {field.span()=> self.#ident };
 
+        let mut end = None;
+
         for (i, attribute) in data.iter().enumerate() {
             field = to_tokenstream(attribute, field, field_ty);
             if i == data.len() - 1 {
                 if let Some(process) = to_preprocess(attribute, field.clone()) {
                     preprocess.push(process);
                 }
-                let end = to_end(attribute, field.clone());
-                writes.push(end);
+                end = to_end(attribute, field.clone());
             }
         }
+
+        writes.push(end.unwrap_or_else(|| {
+            parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketWrite::write(
+                    #field,
+                    buffer,
+                )?;
+            }
+        }));
     }
     let mutable: Option<Token![mut]> = if preprocess.is_empty() {
         None
