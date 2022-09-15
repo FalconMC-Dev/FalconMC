@@ -2,6 +2,7 @@ use bytes::{Buf, BufMut};
 
 pub use error::{ReadError, WriteError};
 
+pub use falcon_packet_core_derive::{PacketRead, PacketSize, PacketWrite};
 pub use primitives::*;
 
 pub mod error;
