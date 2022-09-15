@@ -3,7 +3,6 @@
 use proc_macro2::Span;
 
 use self::{
-    asref::AsRefAttribute,
     bytes::BytesAttribute,
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
     string::StringAttribute,
@@ -12,7 +11,6 @@ use self::{
     PacketAttribute::*,
 };
 
-pub mod asref;
 pub mod bytes;
 pub mod convert;
 pub mod string;
@@ -25,7 +23,6 @@ pub mod macros;
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub enum PacketAttribute {
     Array(ArrayAttribute),
-    AsRef(AsRefAttribute),
     Bytes(BytesAttribute),
     Convert(ConvertAttribute),
     From(FromAttribute),
@@ -48,14 +45,12 @@ impl PacketAttribute {
             From(data) => data.span(),
             Convert(data) => data.span(),
             Array(data) => data.span(),
-            AsRef(data) => data.span(),
         }
     }
 }
 
 impl_parse! {
     Array = (ArrayAttribute as crate::kw::array),
-    AsRef = (AsRefAttribute as crate::kw::asref),
     Bytes = (BytesAttribute as crate::kw::bytes),
     Convert = (ConvertAttribute as crate::kw::convert),
     Into = (IntoAttribute as crate::kw::into),

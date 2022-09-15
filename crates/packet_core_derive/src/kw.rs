@@ -9,4 +9,3 @@ custom_keyword!(vec);
 custom_keyword!(convert);
 custom_keyword!(into);
 custom_keyword!(from);
-custom_keyword!(asref);

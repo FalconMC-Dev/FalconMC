@@ -40,8 +40,8 @@ macro_rules! impl_var_int {
 
             $(pub fn $out(self) -> $out_ty {
                 self.val as $out_ty
-            }
-        )+}
+            })+
+        }
 
         impl From<$base> for $var {
             fn from(val: $base) -> Self {
@@ -56,6 +56,18 @@ macro_rules! impl_var_int {
                 Self {
                     val: val as $base,
                 }
+            }
+        })+
+
+        impl From<$var> for $base {
+            fn from(val: $var) -> Self {
+                val.val
+            }
+        }
+
+        $(impl From<$var> for $out_ty {
+            fn from(val: $var) -> Self {
+                val.val as $out_ty
             }
         })+
     )*}

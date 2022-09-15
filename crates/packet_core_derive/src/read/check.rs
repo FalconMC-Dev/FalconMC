@@ -1,23 +1,9 @@
-use std::collections::HashSet;
-
 use falcon_proc_util::ErrorCatcher;
-use syn::{Error, Field, Ident};
+use syn::Error;
 
 use crate::attributes::PacketAttribute::{
     self, Array, Bytes, Convert, From, Into, String, VarI32, VarI64, Vec as PacketVec,
 };
-
-pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
-    attributes
-        .iter()
-        .flat_map(|(_, attrs)| attrs.iter())
-        .filter_map(|a| match a {
-            PacketVec(data) => Some(data.target.clone()),
-            Bytes(data) => data.target.clone(),
-            _ => None,
-        })
-        .collect()
-}
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
     match attribute {
@@ -37,10 +23,10 @@ pub fn validate(mut attributes: Vec<PacketAttribute>) -> syn::Result<Vec<PacketA
     let mut checked = Vec::with_capacity(attributes.len());
     let mut error = ErrorCatcher::new();
 
-    for _ in 0..attributes.len() {
-        let mut attribute = attributes.remove(0);
+    for i in (0..attributes.len()).rev() {
+        let mut attribute = attributes.remove(i);
         error.extend_error(check(&mut attribute, attributes.iter_mut()));
-        if is_outer(&attribute) && !attributes.is_empty() {
+        if is_outer(&attribute) && !checked.is_empty() {
             error.add_error(Error::new(
                 attribute.span(),
                 "Ending attribute should be last in the list",

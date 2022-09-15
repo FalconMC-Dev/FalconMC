@@ -2,7 +2,7 @@ use falcon_proc_util::ErrorCatcher;
 use syn::Error;
 
 use crate::attributes::PacketAttribute::{
-    self, Array, AsRef, Bytes, Convert, From, Into, String, VarI32, VarI64, Vec as PacketVec,
+    self, Array, Bytes, Convert, From, Into, String, VarI32, VarI64, Vec as PacketVec,
 };
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
@@ -16,7 +16,6 @@ pub fn is_outer(attribute: &PacketAttribute) -> bool {
         From(_) => false,
         Convert(_) => false,
         Array(_) => true,
-        AsRef(_) => true,
     }
 }
 
@@ -27,10 +26,7 @@ pub fn validate(mut attributes: Vec<PacketAttribute>) -> syn::Result<Vec<PacketA
     for _ in 0..attributes.len() {
         let mut attribute = attributes.remove(0);
         error.extend_error(check(&mut attribute, attributes.iter_mut()));
-        if !matches!(attribute, Bytes(_))
-            && is_outer(&attribute)
-            && attributes.iter().any(|e| !matches!(e, Bytes(_)))
-        {
+        if is_outer(&attribute) && !attributes.is_empty() {
             error.add_error(Error::new(
                 attribute.span(),
                 "Ending attribute should be last in the list",
@@ -55,23 +51,7 @@ where
         Into(_) => all_except!(Convert(_), others, "`into`").emit(),
         Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
         Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
-        AsRef(data) => {
-            let mut error = ErrorCatcher::new();
-            others.for_each(|a| match a {
-                Into(_) | From(_) | Convert(_) => {}
-                Bytes(bytes) => data.target = bytes.target.clone(),
-                a => error.add_error(Error::new(a.span(), "Incompatible with `asref`")),
-            });
-            error.emit()
-        }
-        Bytes(bytes) => {
-            others.for_each(|a| {
-                if let AsRef(data) = a {
-                    data.target = bytes.target.clone();
-                }
-            });
-            Ok(())
-        }
+        Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`").emit(),
         From(_) => Ok(()),
     }
 }
