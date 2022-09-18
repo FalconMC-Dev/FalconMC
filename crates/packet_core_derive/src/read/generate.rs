@@ -29,13 +29,19 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                 buffer,
             )?
         }),
-        Bytes(data) => data.target.as_ref().map(|target| {
-            parse_quote_spanned! {span=>
+        Bytes(data) => Some(match data.target.as_ref() {
+            Some(target) => parse_quote_spanned! {span=>
                 ::falcon_packet_core::PacketReadSeed::read(
                     ::falcon_packet_core::Bytes::new(#target.into()),
                     buffer,
                 )?
-            }
+            },
+            None => parse_quote_spanned! {span=>
+                ::falcon_packet_core::PacketReadSeed::read(
+                    ::falcon_packet_core::Bytes::new(buffer.remaining()),
+                    buffer,
+                )?
+            },
         }),
         _ => None,
     }
