@@ -1,7 +1,8 @@
-falcon_send_derive::falcon_send! {
-    use mc_chat::ChatComponent;
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
     use crate::specs::login::LoginSuccessSpec;
+    use falcon_core::network::packet::PacketEncode;
+    use mc_chat::ChatComponent;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = { -1 = 0x00 }, name = "disconnect")]

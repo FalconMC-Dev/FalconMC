@@ -1,6 +1,7 @@
-falcon_send_derive::falcon_send! {
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
     use crate::specs::play::PositionAndLookSpec;
+    use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = {
@@ -30,7 +31,7 @@ falcon_send_derive::falcon_send! {
                 yaw: spec.yaw,
                 pitch: spec.pitch,
                 flags: spec.flags,
-                teleport_id: spec.teleport_id
+                teleport_id: spec.teleport_id,
             }
         }
     }

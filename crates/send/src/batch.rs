@@ -1,6 +1,6 @@
 use bytes::Bytes;
 use falcon_core::network::connection::ConnectionLogic;
-use tracing::{trace, instrument};
+use tracing::{instrument, trace};
 
 #[instrument(level = "trace", target = "metrics::send", skip_all, fields(count = batch.len()))]
 pub fn send_batch<B, C, L>(batch: Vec<B>, mut convert: C, connection: &mut L)

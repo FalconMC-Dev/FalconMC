@@ -1,6 +1,7 @@
-falcon_send_derive::falcon_send! {
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
     use crate::specs::play::JoinGameSpec;
+    use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = {
@@ -27,7 +28,7 @@ falcon_send_derive::falcon_send! {
                 difficulty: spec.difficulty as u8,
                 max_players: spec.max_players,
                 level_type: spec.level_type,
-                reduced_debug: spec.reduced_debug
+                reduced_debug: spec.reduced_debug,
             }
         }
     }

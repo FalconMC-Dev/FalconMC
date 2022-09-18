@@ -1,23 +1,21 @@
 use std::iter::once;
 
-use falcon_proc_util::ItemListing;
 use proc_macro::TokenStream;
 
 use crate::data::PacketData;
 use quote::ToTokens;
 use syn::{
-    parse_macro_input, parse_quote_spanned, Arm, Expr, Ident, Item, ItemFn, LitInt, LitStr, Stmt,
+    parse_macro_input, parse_quote_spanned, Arm, Expr, Ident, Item, ItemFn, LitInt, LitStr, Stmt, ItemMod,
 };
 
 mod data;
 mod kw;
 
-#[proc_macro]
-pub fn falcon_send(contents: TokenStream) -> TokenStream {
-    let mut contents = parse_macro_input!(contents as ItemListing);
+#[proc_macro_attribute]
+pub fn falcon_send(_attr: TokenStream, contents: TokenStream) -> TokenStream {
+    let mut contents = parse_macro_input!(contents as ItemMod).content.unwrap().1;
 
     let (packet_data, error): (Vec<PacketData>, Option<syn::Error>) = contents
-        .content
         .iter_mut()
         .filter_map(|item| match item {
             Item::Struct(ref mut item) => PacketData::parse_packet(item).transpose(),
@@ -34,7 +32,8 @@ pub fn falcon_send(contents: TokenStream) -> TokenStream {
             (res, err)
         });
 
-    let mut result = contents.into_token_stream();
+    let mut result = proc_macro2::TokenStream::new();
+    result.extend(contents.into_iter().map(|i| i.to_token_stream()));
 
     if let Some(error) = error {
         result.extend(once(error.to_compile_error()));

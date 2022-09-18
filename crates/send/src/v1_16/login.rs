@@ -1,7 +1,8 @@
-falcon_send_derive::falcon_send! {
-    use uuid::Uuid;
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
     use crate::LoginSuccessSpec;
+    use falcon_core::network::packet::PacketEncode;
+    use uuid::Uuid;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = {

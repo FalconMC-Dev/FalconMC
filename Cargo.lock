@@ -355,6 +355,7 @@ version = "0.2.0"
 dependencies = [
  "bytes",
  "falcon_core",
+ "falcon_packet_core",
  "falcon_send_derive",
  "fastnbt",
  "mc_chat",

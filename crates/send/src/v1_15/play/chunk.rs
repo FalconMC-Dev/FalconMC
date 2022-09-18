@@ -1,10 +1,11 @@
-falcon_send_derive::falcon_send! {
+#[falcon_send_derive::falcon_send]
+mod inner {
+    use crate::specs::play::ChunkDataSpec;
+    use crate::util::HeightMap;
+    use crate::v1_14::play::{into_chunk_section, ChunkSectionData, PacketHeightMap};
     use falcon_core::network::buffer::PacketBufferWrite;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
-    use crate::specs::play::ChunkDataSpec;
-    use crate::util::HeightMap;
-    use crate::v1_14::play::{ChunkSectionData, into_chunk_section, PacketHeightMap};
 
     const BIOME_COUNT: u16 = 1024;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
@@ -45,8 +46,13 @@ falcon_send_derive::falcon_send! {
                 chunk_x: spec.chunk_x,
                 chunk_z: spec.chunk_z,
                 bit_mask: spec.bitmask,
-                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2230).into(),
-                chunk_sections: spec.sections.into_iter().map(|e| into_chunk_section(e, Blocks::get_global_id_2230)).collect(),
+                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2230)
+                    .into(),
+                chunk_sections: spec
+                    .sections
+                    .into_iter()
+                    .map(|e| into_chunk_section(e, Blocks::get_global_id_2230))
+                    .collect(),
             }
         }
     }

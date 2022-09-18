@@ -1,9 +1,10 @@
 mod chunk;
 
 pub use chunk::*;
-falcon_send_derive::falcon_send! {
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
     use crate::JoinGameSpec;
+    use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = {

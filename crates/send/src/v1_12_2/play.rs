@@ -1,4 +1,5 @@
-falcon_send_derive::falcon_send! {
+#[falcon_send_derive::falcon_send]
+mod inner {
     use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]

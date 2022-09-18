@@ -1,9 +1,10 @@
-falcon_send_derive::falcon_send! {
+#[falcon_send_derive::falcon_send]
+mod inner {
+    use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
     use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
-    use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
 
     const MAX_BITS_PER_BLOCK: u8 = 14;
 
@@ -115,12 +116,32 @@ falcon_send_derive::falcon_send! {
             };
 
             let (block_data, palette) = if bits_per_block > 8 {
-                let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+                let blocks = spec.palette.build_direct_palette(
+                    spec.blocks.into_iter(),
+                    block_to_int,
+                    Blocks::Air,
+                );
+                let block_data = build_compacted_data_array(
+                    MAX_BITS_PER_BLOCK,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16)
+                        as u32
+                        / i64::BITS,
+                    blocks,
+                );
                 (block_data, None)
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+                let (blocks, palette) = spec.palette.build_indirect_palette(
+                    spec.blocks.into_iter(),
+                    block_to_int,
+                    Blocks::Air,
+                );
+                let block_data = build_compacted_data_array(
+                    bits_per_block,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16)
+                        as u32
+                        / i64::BITS,
+                    blocks,
+                );
                 (block_data, Some(palette))
             };
             ChunkSectionData {
@@ -131,7 +152,11 @@ falcon_send_derive::falcon_send! {
         }
     }
 
-    pub fn build_compacted_data_array<E: Iterator<Item=u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
+    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(
+        bits_per_element: u8,
+        capacity: u32,
+        elements: E,
+    ) -> Vec<u64> {
         let mut compacted_data = Vec::with_capacity(capacity as usize);
         let mut current_long = 0u64;
         let mut offset = 0;

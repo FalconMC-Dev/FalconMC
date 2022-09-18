@@ -1,6 +1,9 @@
-falcon_send_derive::falcon_send! {
-    use falcon_core::network::packet::PacketEncode;
+use falcon_send_derive::falcon_send;
+
+#[falcon_send]
+mod inner {
     use crate::specs::status::StatusResponseSpec;
+    use falcon_core::network::packet::PacketEncode;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = { -1 = 0x00 }, name = "status_response")]

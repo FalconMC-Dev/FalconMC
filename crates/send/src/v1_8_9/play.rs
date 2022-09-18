@@ -1,9 +1,10 @@
-falcon_send_derive::falcon_send! {
-    use mc_chat::ChatComponent;
+#[falcon_send_derive::falcon_send]
+mod inner {
+    use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
+    use crate::ServerDifficultySpec;
     use falcon_core::network::packet::PacketEncode;
     use falcon_core::player::data::PlayerAbilityFlags;
-    use crate::ServerDifficultySpec;
-    use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
+    use mc_chat::ChatComponent;
 
     #[derive(PacketEncode)]
     #[falcon_packet(versions = {
@@ -29,7 +30,7 @@ falcon_send_derive::falcon_send! {
                 difficulty: spec.difficulty as u8,
                 max_players: spec.max_players,
                 level_type: spec.level_type,
-                reduced_debug: spec.reduced_debug
+                reduced_debug: spec.reduced_debug,
             }
         }
     }
@@ -54,7 +55,7 @@ falcon_send_derive::falcon_send! {
             PlayerAbilityPacket {
                 flags: spec.flags,
                 fly_speed: spec.flying_speed,
-                fov_modifier: spec.fov_modifier
+                fov_modifier: spec.fov_modifier,
             }
         }
     }
