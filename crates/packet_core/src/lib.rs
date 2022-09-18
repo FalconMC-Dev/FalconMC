@@ -1,8 +1,6 @@
 use bytes::{Buf, BufMut};
 
-use error::ReadError;
-
-use self::error::WriteError;
+pub use error::{ReadError, WriteError};
 
 pub use primitives::*;
 
