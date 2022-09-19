@@ -7,10 +7,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
         Vec(data) => {
             let target = &data.target;
             Some(parse_quote_spanned! {field.span()=>
-                let #target = ::falcon_packet_core::PacketSizeSeed::size(
-                    &::falcon_packet_core::PacketVec::new(0),
-                    &#field,
-                );
+                let #target = #field.len();
             })
         }
         Bytes(data) => data.target.as_ref().map(|target| {
