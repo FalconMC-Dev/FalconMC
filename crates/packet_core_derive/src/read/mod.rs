@@ -69,6 +69,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let (impl_generics, ty_generics, where_clause) = item.generics.split_for_impl();
     parse_quote_spanned! {item.ident.span()=>
         #[allow(clippy::useless_conversion)]
+        #[automatically_derived]
         impl #impl_generics ::falcon_packet_core::PacketRead for #ident #ty_generics #where_clause {
             fn read<B>(buffer: &mut B) -> ::std::result::Result<Self, ::falcon_packet_core::ReadError>
             where

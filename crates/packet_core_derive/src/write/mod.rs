@@ -71,6 +71,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let ident = &item.ident;
     let (impl_generics, ty_generics, where_clause) = item.generics.split_for_impl();
     parse_quote_spanned! {item.ident.span()=>
+        #[automatically_derived]
         impl #impl_generics ::falcon_packet_core::PacketWrite for #ident #ty_generics #where_clause {
             #[allow(clippy::useless_conversion)]
             fn write<B>(#mutable self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet_core::WriteError>
