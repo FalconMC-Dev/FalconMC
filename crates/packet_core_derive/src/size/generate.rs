@@ -1,3 +1,4 @@
+use quote::format_ident;
 use syn::{parse_quote_spanned, spanned::Spanned, Expr, Stmt, Type};
 
 use crate::attributes::PacketAttribute::{self, *};
@@ -18,6 +19,19 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
                 );
             }
         }),
+        Link(data) => {
+            let prefix = format_ident!("{}_value", data.prefix);
+            let target = &data.target;
+            let others = data.others.as_ref();
+            Some(match others.map(|o| o.into_iter()) {
+                Some(others) => parse_quote_spanned! {field.span()=>
+                    let #target = #prefix(&#field, #(&self.#others),*);
+                },
+                None => parse_quote_spanned! {field.span()=>
+                    let #target = #prefix(&#field);
+                },
+            })
+        }
         _ => None,
     }
 }
@@ -51,6 +65,12 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
                 &#field,
             )
         }),
+        Link(data) => {
+            let prefix = format_ident!("{}_size", data.prefix);
+            Some(parse_quote_spanned! {field.span()=>
+                #prefix(&#field)
+            })
+        }
         _ => None,
     }
 }

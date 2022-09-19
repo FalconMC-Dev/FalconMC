@@ -5,6 +5,7 @@ use proc_macro2::Span;
 use self::{
     bytes::BytesAttribute,
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
+    link::LinkAttribute,
     string::StringAttribute,
     varint::{VarI32Attribute, VarI64Attribute},
     vec::{ArrayAttribute, VecAttribute},
@@ -13,6 +14,7 @@ use self::{
 
 pub mod bytes;
 pub mod convert;
+pub mod link;
 pub mod string;
 pub mod varint;
 pub mod vec;
@@ -27,6 +29,7 @@ pub enum PacketAttribute {
     Convert(ConvertAttribute),
     From(FromAttribute),
     Into(IntoAttribute),
+    Link(LinkAttribute),
     String(StringAttribute),
     VarI32(VarI32Attribute),
     VarI64(VarI64Attribute),
@@ -42,6 +45,7 @@ impl PacketAttribute {
             Bytes(data) => data.span(),
             Vec(data) => data.span(),
             Into(data) => data.span(),
+            Link(data) => data.span(),
             From(data) => data.span(),
             Convert(data) => data.span(),
             Array(data) => data.span(),
@@ -55,6 +59,7 @@ impl_parse! {
     Convert = (ConvertAttribute as crate::kw::convert),
     Into = (IntoAttribute as crate::kw::into),
     From = (FromAttribute as crate::kw::from),
+    Link = (LinkAttribute as crate::kw::link),
     String = (StringAttribute as crate::kw::string),
     VarI32 = (VarI32Attribute as crate::kw::var32),
     VarI64 = (VarI64Attribute as crate::kw::var64),

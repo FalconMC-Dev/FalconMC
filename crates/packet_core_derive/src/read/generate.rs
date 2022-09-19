@@ -1,4 +1,5 @@
 use proc_macro2::Span;
+use quote::format_ident;
 use syn::{parse_quote_spanned, spanned::Spanned, Expr, Type};
 
 use crate::attributes::PacketAttribute::{self, *};
@@ -43,6 +44,18 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                 )?
             },
         }),
+        Link(data) => {
+            let target = &data.target;
+            let prefix = format_ident!("{}_read", data.prefix);
+            Some(match data.others.as_ref().map(|o| o.into_iter()) {
+                Some(others) => parse_quote_spanned! {span=>
+                    #prefix(buffer, &#target, #(&#others),*)?
+                },
+                None => parse_quote_spanned! {span=>
+                    #prefix(buffer, &#target)?
+                },
+            })
+        }
         _ => None,
     }
 }

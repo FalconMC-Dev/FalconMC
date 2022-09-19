@@ -4,7 +4,7 @@ use falcon_proc_util::ErrorCatcher;
 use syn::{Error, Field, Ident};
 
 use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, String, VarI32, VarI64, Vec as PacketVec,
+    self, Array, Bytes, Convert, From, Into, Link, String, VarI32, VarI64, Vec as PacketVec,
 };
 
 pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
@@ -14,6 +14,7 @@ pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Id
         .filter_map(|a| match a {
             PacketVec(data) => Some(data.target.clone()),
             Bytes(data) => data.target.clone(),
+            Link(data) => Some(data.target.clone()),
             _ => None,
         })
         .collect()
@@ -26,6 +27,7 @@ pub fn is_outer(attribute: &PacketAttribute) -> bool {
         VarI64(_) => true,
         Bytes(_) => true,
         PacketVec(_) => true,
+        Link(_) => true,
         Into(_) => false,
         From(_) => false,
         Convert(_) => false,
@@ -62,6 +64,7 @@ where
         VarI32(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`var32`").emit(),
         VarI64(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`var64`").emit(),
         PacketVec(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`vec`").emit(),
+        Link(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`link`").emit(),
         Into(_) => all_except!(Convert(_), others, "`into`").emit(),
         Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
         Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
