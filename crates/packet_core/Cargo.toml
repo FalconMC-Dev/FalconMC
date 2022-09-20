@@ -11,3 +11,4 @@ bytes = "1.2.1"
 thiserror = "1.0.32"
 
 uuid = "1.1.2"
+fastnbt = "2.3.2"

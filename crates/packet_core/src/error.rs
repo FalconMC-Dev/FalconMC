@@ -6,6 +6,8 @@ use thiserror::Error;
 pub enum WriteError {
     #[error("String was longer than allowed: {1} > {0}")]
     StringTooLong(usize, usize),
+    #[error("Couldn't serialize to NBT")]
+    FastNbtError(#[from] fastnbt::error::Error),
 }
 
 #[derive(Debug, Error)]
@@ -18,4 +20,6 @@ pub enum ReadError {
     StringTooLong(usize, usize),
     #[error("VarInt was longer than allowed")]
     VarTooLong,
+    #[error("Couldn't deserialize from NBT")]
+    FastNbtError(#[from] fastnbt::error::Error),
 }

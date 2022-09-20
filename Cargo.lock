@@ -278,6 +278,7 @@ name = "falcon_packet_core"
 version = "0.1.0"
 dependencies = [
  "bytes",
+ "fastnbt",
  "thiserror",
  "uuid",
 ]
