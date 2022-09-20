@@ -7,7 +7,7 @@ use self::{
     convert::{ConvertAttribute, FromAttribute, IntoAttribute},
     link::LinkAttribute,
     nbt::NBTAttribute,
-    string::StringAttribute,
+    string::{StringAttribute, ToStringAttribute},
     varint::{VarI32Attribute, VarI64Attribute},
     vec::{ArrayAttribute, VecAttribute},
     PacketAttribute::*,
@@ -34,6 +34,7 @@ pub enum PacketAttribute {
     Link(LinkAttribute),
     Nbt(NBTAttribute),
     String(StringAttribute),
+    ToString(ToStringAttribute),
     VarI32(VarI32Attribute),
     VarI64(VarI64Attribute),
     Vec(VecAttribute),
@@ -43,6 +44,7 @@ impl PacketAttribute {
     pub fn span(&self) -> Span {
         match self {
             String(data) => data.span(),
+            ToString(data) => data.span(),
             VarI32(data) => data.span(),
             VarI64(data) => data.span(),
             Bytes(data) => data.span(),
@@ -66,6 +68,7 @@ impl_parse! {
     Link = (LinkAttribute as crate::kw::link),
     Nbt = (NBTAttribute as crate::kw::nbt),
     String = (StringAttribute as crate::kw::string),
+    ToString = (ToStringAttribute as crate::kw::to_string),
     VarI32 = (VarI32Attribute as crate::kw::var32),
     VarI64 = (VarI64Attribute as crate::kw::var64),
     Vec = (VecAttribute as crate::kw::vec),

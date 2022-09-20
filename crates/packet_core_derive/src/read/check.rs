@@ -2,12 +2,14 @@ use falcon_proc_util::ErrorCatcher;
 use syn::Error;
 
 use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, VarI32, VarI64, Vec as PacketVec,
+    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64,
+    Vec as PacketVec,
 };
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
     match attribute {
         String(_) => true,
+        ToString(_) => true,
         VarI32(_) => true,
         VarI64(_) => true,
         Bytes(_) => true,
@@ -47,6 +49,7 @@ where
 {
     match current {
         String(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`string`").emit(),
+        ToString(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`to_string`").emit(),
         VarI32(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`var32`").emit(),
         VarI64(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`var64`").emit(),
         PacketVec(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`vec`").emit(),

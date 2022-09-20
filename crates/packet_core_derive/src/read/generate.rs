@@ -15,6 +15,15 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                 )?
             })
         }
+        ToString(data) => {
+            let len = &data.max_length;
+            Some(parse_quote_spanned! {span=>
+                ::falcon_packet_core::PacketReadSeed::read(
+                    ::falcon_packet_core::PacketString::new(#len),
+                    buffer,
+                )?
+            })
+        }
         Vec(data) => {
             let target = &data.target;
             Some(parse_quote_spanned! {span=>

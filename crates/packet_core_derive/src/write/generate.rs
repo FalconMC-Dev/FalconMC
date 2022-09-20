@@ -48,6 +48,16 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
                 )?;
             })
         }
+        ToString(data) => {
+            let len = &data.max_length;
+            Some(parse_quote_spanned! {field.span()=>
+                ::falcon_packet_core::PacketWriteSeed::write(
+                    ::falcon_packet_core::PacketString::new(#len),
+                    ::std::string::ToString::to_string(&#field),
+                    buffer,
+                )?;
+            })
+        }
         Vec(_) => Some(parse_quote_spanned! {field.span()=>
             ::falcon_packet_core::PacketWriteSeed::write(
                 ::falcon_packet_core::PacketVec::new(0),
