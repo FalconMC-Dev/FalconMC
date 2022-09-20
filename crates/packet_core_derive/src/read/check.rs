@@ -2,7 +2,7 @@ use falcon_proc_util::ErrorCatcher;
 use syn::Error;
 
 use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, Link, String, VarI32, VarI64, Vec as PacketVec,
+    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, VarI32, VarI64, Vec as PacketVec,
 };
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
@@ -17,6 +17,7 @@ pub fn is_outer(attribute: &PacketAttribute) -> bool {
         Link(_) => true,
         Convert(_) => false,
         Array(_) => true,
+        Nbt(_) => true,
     }
 }
 
@@ -54,6 +55,7 @@ where
         Link(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`link`").emit(),
         Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
         Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`").emit(),
+        Nbt(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`nbt`").emit(),
         From(_) => Ok(()),
     }
 }

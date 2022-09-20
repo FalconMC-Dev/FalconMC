@@ -56,6 +56,12 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                 },
             })
         }
+        Nbt(_) => Some(parse_quote_spanned! {span=>
+            {
+                let reader = ::falcon_packet_core::special::Reader::new(buffer);
+                ::fastnbt::from_reader(reader)?
+            }
+        }),
         _ => None,
     }
 }

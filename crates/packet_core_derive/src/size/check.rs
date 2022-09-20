@@ -4,7 +4,7 @@ use falcon_proc_util::ErrorCatcher;
 use syn::{Error, Field, Ident};
 
 use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, Link, String, VarI32, VarI64, Vec as PacketVec,
+    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, VarI32, VarI64, Vec as PacketVec,
 };
 
 pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
@@ -32,6 +32,7 @@ pub fn is_outer(attribute: &PacketAttribute) -> bool {
         From(_) => false,
         Convert(_) => false,
         Array(_) => true,
+        Nbt(_) => true,
     }
 }
 
@@ -69,6 +70,7 @@ where
         Convert(_) => all_except!(Into(_) | From(_), others, "`convert`").emit(),
         Array(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`array`").emit(),
         Bytes(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`bytes`").emit(),
+        Nbt(_) => none_except!(Into(_) | From(_) | Convert(_), others, "`nbt`").emit(),
         From(_) => Ok(()),
     }
 }

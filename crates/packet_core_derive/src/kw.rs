@@ -11,3 +11,4 @@ custom_keyword!(into);
 custom_keyword!(from);
 custom_keyword!(link);
 custom_keyword!(with);
+custom_keyword!(nbt);

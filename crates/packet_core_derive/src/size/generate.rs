@@ -71,6 +71,13 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
                 #prefix(&#field)
             })
         }
+        Nbt(_) => Some(parse_quote_spanned! {field.span()=>
+            {
+                let mut writer = ::falcon_packet_core::special::Counter::new();
+                ::fastnbt::to_writer(&mut writer, &#field).expect("Invalid NBT to be sent!!");
+                writer.count()
+            }
+        }),
         _ => None,
     }
 }

@@ -75,6 +75,12 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
                 #prefix(#field, buffer)?;
             })
         }
+        Nbt(_) => Some(parse_quote_spanned! {field.span()=>
+            {
+                let writer = ::falcon_packet_core::special::Writer::new(buffer);
+                ::fastnbt::to_writer(writer, &#field)?;
+            }
+        }),
         _ => None,
     }
 }
