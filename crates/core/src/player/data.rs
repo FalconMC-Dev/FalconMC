@@ -1,5 +1,3 @@
-use crate::network::buffer::PacketBufferWrite;
-use crate::network::packet::PacketEncode;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -8,6 +6,12 @@ pub enum GameMode {
     Creative,
     Adventure,
     Spectator,
+}
+
+impl From<GameMode> for u8 {
+    fn from(src: GameMode) -> Self {
+        src as u8
+    }
 }
 
 #[derive(Clone, Copy, Default, Debug)]
@@ -29,22 +33,12 @@ impl PlayerAbilityFlags {
     }
 }
 
-impl PacketEncode for PlayerAbilityFlags {
-    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-        let mut byte = 0u8;
-        if self.invulnerable {
-            byte |= 1;
-        }
-        if self.flying {
-            byte |= 1 << 1;
-        }
-        if self.allow_flying {
-            byte |= 1 << 2;
-        }
-        if self.instant_break {
-            byte |= 1 << 3;
-        }
-        buf.write_u8(byte);
+impl From<PlayerAbilityFlags> for u8 {
+    fn from(flags: PlayerAbilityFlags) -> Self {
+        flags.invulnerable as u8 |
+        (flags.flying as u8) << 1 |
+        (flags.allow_flying as u8) << 2 |
+        (flags.instant_break as u8) << 3
     }
 }
 

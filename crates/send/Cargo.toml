@@ -19,3 +19,5 @@ tracing = "0.1.36"
 
 uuid = "1.1.2"
 bytes = "1.2.1"
+
+derive-from-ext = "0.2.0"

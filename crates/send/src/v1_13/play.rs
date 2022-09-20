@@ -1,10 +1,14 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
     use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
-    use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
-    use falcon_core::network::packet::PacketEncode;
+    use bytes::BufMut;
+    use derive_from_ext::From;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
+    use falcon_packet_core::{
+        PacketArray, PacketSize, PacketSizeSeed, PacketVec, PacketWrite, PacketWriteSeed, VarI32,
+        WriteError,
+    };
 
     const MAX_BITS_PER_BLOCK: u8 = 14;
 
@@ -13,46 +17,48 @@ mod inner {
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
     const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
+    #[derive(PacketSize, PacketWrite, From)]
+    #[from(ChunkDataSpec)]
     #[falcon_packet(versions = {
         393, 401, 404 = 0x22;
     }, name = "chunk_data", batching = "build_chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
-        bit_mask: i32,
-        chunk_sections: Vec<ChunkSectionData>,
+        #[from(skip, default = "true")]
+        full_chunk: bool,
+        #[falcon(var32)]
+        bitmask: i32,
+        #[from(skip)]
+        #[falcon(var32)]
+        size: usize, // filled in by sections field
+        #[from(map = "data_map")]
+        #[falcon(link = "size with data")]
+        sections: Vec<ChunkSectionData>,
+        #[from(skip)]
+        #[falcon(var32)]
+        block_entity_num: i32, // default 0
     }
 
-    impl PacketEncode for ChunkDataPacket {
-        fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-            buf.write_i32(self.chunk_x);
-            buf.write_i32(self.chunk_z);
-            buf.write_bool(true); // We only send full chunks currently!
-            buf.write_var_i32(self.bit_mask);
-            let mut data_size: i32 = BIOME_COUNT as i32 * 4; // biomes get sent because of full chunk
-            for chunk in &self.chunk_sections {
-                data_size += chunk.get_data_size();
-            }
-            buf.write_var_i32(data_size);
-            for chunk in &self.chunk_sections {
-                chunk.to_buf(buf);
-            }
-            for x in BIOMES {
-                buf.write_i32(x);
-            }
-            buf.write_var_i32(0);
-        }
+    fn data_map(sections: Vec<ChunkSectionDataSpec>) -> Vec<ChunkSectionData> {
+        sections.into_iter().map(|s| s.into()).collect()
     }
 
-    impl From<ChunkDataSpec> for ChunkDataPacket {
-        fn from(spec: ChunkDataSpec) -> Self {
-            ChunkDataPacket {
-                chunk_x: spec.chunk_x,
-                chunk_z: spec.chunk_z,
-                bit_mask: spec.bitmask,
-                chunk_sections: spec.sections.into_iter().map(|e| e.into()).collect(),
-            }
-        }
+    #[inline(always)]
+    fn data_value(field: &Vec<ChunkSectionData>) -> usize {
+        data_size(field)
+    }
+
+    fn data_size(field: &Vec<ChunkSectionData>) -> usize {
+        PacketSizeSeed::size(&PacketVec::default(), field) + BIOME_COUNT as usize * 4
+    }
+
+    fn data_write<B: BufMut + ?Sized>(
+        field: Vec<ChunkSectionData>,
+        buffer: &mut B,
+    ) -> Result<(), WriteError> {
+        PacketWriteSeed::write(PacketVec::default(), field, buffer)?;
+        PacketWriteSeed::write(PacketArray::default(), BIOMES.clone(), buffer)
     }
 
     pub struct ChunkSectionData {
@@ -61,40 +67,44 @@ mod inner {
         block_data: Vec<u64>,
     }
 
-    impl PacketEncode for ChunkSectionData {
-        fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-            buf.write_u8(self.bits_per_block);
-            if let Some(palette) = &self.palette {
-                buf.write_var_i32(palette.len() as i32);
-                for x in palette {
-                    buf.write_var_i32(*x);
-                }
-            }
-            buf.write_var_i32(self.block_data.len() as i32);
-            for x in &self.block_data {
-                buf.write_i64(*x as i64);
-            }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
+    impl PacketSize for ChunkSectionData {
+        fn size(&self) -> usize {
+            let palette_len = if let Some(palette) = &self.palette {
+                VarI32::from(palette.len()).size()
+                    + palette
+                        .iter()
+                        .map(|x| VarI32::from(*x).size())
+                        .sum::<usize>()
+            } else {
+                0
+            };
+            self.bits_per_block.size()
+            + palette_len
+            + VarI32::from(self.block_data.len()).size()
+            + self.block_data.len() * std::mem::size_of::<u64>()
+            + LIGHT_COUNT // block light
+            + LIGHT_COUNT // sky light
         }
     }
 
-    impl ChunkSectionData {
-        pub fn get_data_size(&self) -> i32 {
-            let mut size = 1; // always one for bits per block;
-            if let Some(palette) = &self.palette {
-                size += get_var_i32_size(palette.len() as i32);
-                size += palette.iter().map(|x| get_var_i32_size(*x)).sum::<usize>();
+    impl PacketWrite for ChunkSectionData {
+        fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+        where
+            B: BufMut + ?Sized,
+        {
+            self.bits_per_block.write(buffer)?;
+            if let Some(palette) = self.palette {
+                VarI32::from(palette.len() as i32).write(buffer)?;
+                PacketWriteSeed::write(
+                    PacketVec::default(),
+                    palette.into_iter().map(|x| VarI32::from(x)).collect(),
+                    buffer,
+                )?;
             }
-            size += get_var_i32_size(self.block_data.len() as i32);
-            size += self.block_data.len() * std::mem::size_of::<u64>();
-            size += LIGHT_COUNT;
-            size += LIGHT_COUNT; // we only have the overworld for now
-            size as i32
+            VarI32::from(self.block_data.len()).write(buffer)?;
+            PacketWriteSeed::write(PacketVec::default(), self.block_data, buffer)?;
+            MAX_LIGHT.write(buffer)?;
+            MAX_LIGHT.write(buffer)
         }
     }
 

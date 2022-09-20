@@ -1,5 +1,3 @@
-use crate::network::buffer::PacketBufferWrite;
-use crate::network::packet::PacketEncode;
 use nom::branch::alt;
 use nom::bytes::complete::take_while;
 use nom::character::complete::char;
@@ -9,7 +7,7 @@ use nom::sequence::separated_pair;
 use std::borrow::Cow;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Identifier {
     namespace: Cow<'static, str>,
     location: Cow<'static, str>,
@@ -127,12 +125,6 @@ impl<'a> TryFrom<&'a str> for Identifier {
                 location,
             })
         }
-    }
-}
-
-impl PacketEncode for Identifier {
-    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-        buf.write_string(&self.to_string());
     }
 }
 

@@ -3,11 +3,13 @@ mod inner {
     use crate::util::HeightMap;
     use crate::v1_14::play::ChunkSectionData;
     use crate::{ChunkDataSpec, ChunkSectionDataSpec};
-    use falcon_core::network::buffer::PacketBufferWrite;
-    use falcon_core::network::packet::PacketEncode;
+    use bytes::BufMut;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
     use falcon_core::world::palette::PaletteToI32;
+    use falcon_packet_core::{
+        PacketSize, PacketSizeSeed, PacketVec, PacketWrite, PacketWriteSeed, WriteError,
+    };
     use fastnbt::LongArray;
     use serde::Serialize;
 
@@ -16,15 +18,27 @@ mod inner {
     const BIOME_COUNT: u16 = 1024;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
 
+    #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = {
         735, 736 = 0x21;
     }, name = "chunk_data", batching = "build_chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
-        bit_mask: i32,
+        full_chunk: bool,
+        ignore_old: bool,
+        #[falcon(var32)]
+        bitmask: i32,
+        #[falcon(nbt)]
         heightmap: PacketHeightMap,
-        chunk_sections: Vec<ChunkSectionData>,
+        #[falcon(array)]
+        biomes: [i32; BIOME_COUNT as usize],
+        #[falcon(var32)]
+        size: usize,
+        #[falcon(link = "size with data")]
+        sections: Vec<ChunkSectionData>,
+        #[falcon(var32)]
+        block_entity_num: i32,
     }
 
     #[derive(Serialize)]
@@ -50,24 +64,20 @@ mod inner {
         }
     }
 
-    impl PacketEncode for ChunkDataPacket {
-        fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-            buf.write_i32(self.chunk_x);
-            buf.write_i32(self.chunk_z);
-            buf.write_bool(true); // We only send full chunks currently!
-            buf.write_bool(false); // Update lighting
-            buf.write_var_i32(self.bit_mask);
-            buf.write_u8_array(fastnbt::to_bytes(&self.heightmap).unwrap().as_slice());
-            for x in BIOMES {
-                buf.write_i32(x);
-            }
-            let data_size = self.chunk_sections.iter().map(|c| c.get_data_size()).sum();
-            buf.write_var_i32(data_size);
-            for chunk in &self.chunk_sections {
-                chunk.to_buf(buf);
-            }
-            buf.write_var_i32(0);
-        }
+    #[inline(always)]
+    pub(crate) fn data_value(field: &Vec<ChunkSectionData>) -> usize {
+        data_size(field)
+    }
+
+    pub(crate) fn data_size(field: &Vec<ChunkSectionData>) -> usize {
+        PacketSizeSeed::size(&PacketVec::default(), field)
+    }
+
+    pub(crate) fn data_write<B: BufMut + ?Sized>(
+        field: Vec<ChunkSectionData>,
+        buffer: &mut B,
+    ) -> Result<(), WriteError> {
+        PacketWriteSeed::write(PacketVec::default(), field, buffer)
     }
 
     impl From<ChunkDataSpec> for ChunkDataPacket {
@@ -75,14 +85,19 @@ mod inner {
             ChunkDataPacket {
                 chunk_x: spec.chunk_x,
                 chunk_z: spec.chunk_z,
-                bit_mask: spec.bitmask,
+                full_chunk: true,
+                ignore_old: false,
+                bitmask: spec.bitmask,
                 heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2567)
                     .into(),
-                chunk_sections: spec
+                biomes: BIOMES,
+                size: 0,
+                sections: spec
                     .sections
                     .into_iter()
                     .map(|e| into_chunk_section(e, Blocks::get_global_id_2567))
                     .collect(),
+                block_entity_num: 0,
             }
         }
     }

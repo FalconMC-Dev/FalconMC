@@ -1,8 +1,8 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use falcon_core::network::packet::PacketEncode;
+    use falcon_packet_core::{PacketSize, PacketWrite};
 
-    #[derive(PacketEncode)]
+    #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = {
         340 = 0x1F;
         393, 401, 404, 573, 575, 578 = 0x21;
@@ -14,9 +14,7 @@ mod inner {
 
     impl From<i64> for KeepAlivePacket {
         fn from(id: i64) -> Self {
-            KeepAlivePacket {
-                id
-            }
+            KeepAlivePacket { id }
         }
     }
 }

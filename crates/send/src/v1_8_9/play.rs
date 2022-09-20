@@ -2,11 +2,12 @@
 mod inner {
     use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
     use crate::ServerDifficultySpec;
-    use falcon_core::network::packet::PacketEncode;
-    use falcon_core::player::data::PlayerAbilityFlags;
+    use derive_from_ext::From;
+    use falcon_packet_core::{PacketSize, PacketWrite};
     use mc_chat::ChatComponent;
 
-    #[derive(PacketEncode)]
+    #[derive(PacketSize, PacketWrite, From)]
+    #[from(JoinGameSpec)]
     #[falcon_packet(versions = {
         47 = 0x01;
         107 = 0x23;
@@ -14,28 +15,21 @@ mod inner {
     pub struct JoinGamePacket {
         entity_id: i32,
         game_mode: u8,
+        #[from(map = "i32_to_i8")]
         dimension: i8,
         difficulty: u8,
         max_players: u8,
+        #[falcon(string)]
         level_type: String,
         reduced_debug: bool,
     }
 
-    impl From<JoinGameSpec> for JoinGamePacket {
-        fn from(spec: JoinGameSpec) -> Self {
-            JoinGamePacket {
-                entity_id: spec.entity_id,
-                game_mode: spec.game_mode as u8,
-                dimension: spec.dimension as i8,
-                difficulty: spec.difficulty as u8,
-                max_players: spec.max_players,
-                level_type: spec.level_type,
-                reduced_debug: spec.reduced_debug,
-            }
-        }
+    fn i32_to_i8(n: i32) -> i8 {
+        n as i8
     }
 
-    #[derive(PacketEncode)]
+    #[derive(PacketSize, PacketWrite, From)]
+    #[from(PlayerAbilitiesSpec)]
     #[falcon_packet(versions = {
         47 = 0x39;
         107, 108, 109, 110, 210, 315, 316, 335 = 0x2B;
@@ -45,29 +39,19 @@ mod inner {
         573, 575, 578 = 0x32;
     }, name = "player_abilities")]
     pub struct PlayerAbilityPacket {
-        flags: PlayerAbilityFlags,
-        fly_speed: f32,
+        flags: u8,
+        flying_speed: f32,
         fov_modifier: f32,
     }
 
-    impl From<PlayerAbilitiesSpec> for PlayerAbilityPacket {
-        fn from(spec: PlayerAbilitiesSpec) -> Self {
-            PlayerAbilityPacket {
-                flags: spec.flags,
-                fly_speed: spec.flying_speed,
-                fov_modifier: spec.fov_modifier,
-            }
-        }
-    }
-
-    #[derive(PacketEncode)]
+    #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = {
         47 = 0x40;
         107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 477, 480, 485, 490, 498, 735, 736 = 0x1A;
         393, 401, 404, 573, 575, 578 = 0x1B;
     }, name = "disconnect")]
     pub struct DisconnectPacket {
-        #[max_length(262144)]
+        #[falcon(string = 262144)]
         reason: String,
     }
 
@@ -79,20 +63,13 @@ mod inner {
         }
     }
 
-    #[derive(PacketEncode)]
+    #[derive(PacketSize, PacketWrite, From)]
+    #[from(ServerDifficultySpec)]
     #[falcon_packet(versions = {
         47 = 0x41;
         107, 108, 109, 110, 210, 315, 316, 335, 338, 340, 393, 401, 404 = 0x0D;
     }, name = "send_difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
-    }
-
-    impl From<ServerDifficultySpec> for ServerDifficultyPacket {
-        fn from(spec: ServerDifficultySpec) -> Self {
-            ServerDifficultyPacket {
-                difficulty: spec.difficulty as u8,
-            }
-        }
     }
 }

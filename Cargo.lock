@@ -164,6 +164,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-from-ext"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0cd05fe6590ff35c134f88e85306845490180476af05159889bf5312e035f547"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "syn-unnamed-struct",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -354,6 +366,7 @@ name = "falcon_send"
 version = "0.2.0"
 dependencies = [
  "bytes",
+ "derive-from-ext",
  "falcon_core",
  "falcon_packet_core",
  "falcon_send_derive",
@@ -980,6 +993,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "syn-unnamed-struct"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db0794191b3a4553c98f8f5302470618fdd9bd533a8314d06dab0e70a4de0269"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

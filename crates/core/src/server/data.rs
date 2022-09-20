@@ -12,6 +12,12 @@ pub enum Difficulty {
     Hard,
 }
 
+impl From<Difficulty> for u8 {
+    fn from(src: Difficulty) -> Self {
+        src as u8
+    }
+}
+
 #[derive(Debug, Serialize)]
 pub struct ServerVersion {
     pub name: Cow<'static, str>,
