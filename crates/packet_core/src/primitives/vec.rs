@@ -7,6 +7,15 @@ pub struct PacketVec<T> {
     _marker: PhantomData<T>,
 }
 
+impl<T> Default for PacketVec<T> {
+    fn default() -> Self {
+        Self {
+            size: 0,
+            _marker: PhantomData,
+        }
+    }
+}
+
 impl<T> PacketVec<T> {
     pub fn new(size: usize) -> Self {
         Self {

@@ -14,6 +14,7 @@ pub use self::vec::PacketVec;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
+        #[repr(transparent)]
         pub struct $var {
             val: $base,
         }

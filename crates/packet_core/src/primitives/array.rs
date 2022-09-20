@@ -6,8 +6,13 @@ use bytes::{Buf, BufMut};
 use crate::error::{ReadError, WriteError};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
-#[derive(Default)]
 pub struct PacketArray<T>(PhantomData<T>);
+
+impl<T> Default for PacketArray<T> {
+    fn default() -> Self {
+        Self(PhantomData)
+    }
+}
 
 impl<const N: usize, T: PacketRead> PacketReadSeed for PacketArray<[T; N]> {
     type Value = [T; N];
