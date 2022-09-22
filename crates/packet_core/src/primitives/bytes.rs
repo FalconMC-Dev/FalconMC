@@ -68,6 +68,9 @@ impl<T: From<Vec<u8>>> PacketReadSeed for Bytes<T> {
     where
         B: bytes::Buf + ?Sized,
     {
+        if buffer.remaining() < self.size {
+            return Err(ReadError::NoMoreBytes);
+        }
         let mut buf = Vec::with_capacity(self.size);
         buffer.copy_to_slice(&mut buf);
         Ok(buf.into())
