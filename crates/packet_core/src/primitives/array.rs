@@ -100,6 +100,9 @@ impl<const N: usize> PacketRead for [u8; N] {
         B: Buf + ?Sized,
         Self: Sized,
     {
+        if buffer.remaining() < N {
+            return Err(ReadError::NoMoreBytes);
+        }
         let mut buf = [0u8; N];
         buffer.copy_to_slice(&mut buf);
         Ok(buf)

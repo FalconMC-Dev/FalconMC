@@ -16,10 +16,12 @@ pub enum ReadError {
     FromUTF8Error(#[from] FromUtf8Error),
     #[error("Invalid StrUuid received")]
     UuidError(#[from] uuid::Error),
+    #[error("Couldn't deserialize from NBT")]
+    FastNbtError(#[from] fastnbt::error::Error),
     #[error("String was longer than allowed: {1} > {0}")]
     StringTooLong(usize, usize),
     #[error("VarInt was longer than allowed")]
     VarTooLong,
-    #[error("Couldn't deserialize from NBT")]
-    FastNbtError(#[from] fastnbt::error::Error),
+    #[error("Reached EOF of input buffer")]
+    NoMoreBytes,
 }

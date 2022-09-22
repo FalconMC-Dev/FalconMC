@@ -10,6 +10,9 @@ impl PacketRead for bool {
         B: Buf + ?Sized,
         Self: Sized,
     {
+        if !buffer.has_remaining() {
+            return Err(ReadError::NoMoreBytes);
+        }
         Ok(buffer.get_u8() != 0)
     }
 }
@@ -41,6 +44,9 @@ macro_rules! impl_num {
                 B: Buf + ?Sized,
                 Self: Sized
             {
+                if buffer.remaining() < ::std::mem::size_of::<$num>() {
+                    return Err(ReadError::NoMoreBytes);
+                }
                 Ok(buffer.$get())
             }
         }
