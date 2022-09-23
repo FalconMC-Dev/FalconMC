@@ -91,10 +91,7 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
 
         let mut effective_palette = AHashMap::new();
         for (state, index) in value.palette {
-            effective_palette.insert(
-                index,
-                Blocks::from_str(state.as_ref())?,
-            );
+            effective_palette.insert(index, Blocks::from_str(state.as_ref())?);
         }
 
         Ok(SchematicData::new(

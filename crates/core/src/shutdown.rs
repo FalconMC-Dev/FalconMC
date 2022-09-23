@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Formatter};
 use tokio::sync::{broadcast, mpsc};
-use tracing::{info, debug};
+use tracing::{debug, info};
 
 /// A wrapper around two [Tokio channels](https://docs.rs/tokio/1.13.0/tokio/sync/index.html) to asynchronously control
 /// proper application clean-up upon termination.

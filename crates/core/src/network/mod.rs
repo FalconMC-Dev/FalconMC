@@ -4,9 +4,7 @@ use std::fmt::{Display, Formatter};
 
 use uuid::Uuid;
 
-pub mod buffer;
-pub mod connection;
-pub mod packet;
+pub mod util;
 
 pub const UNKNOWN_PROTOCOL: i32 = -1;
 
