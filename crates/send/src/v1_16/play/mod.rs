@@ -52,11 +52,11 @@ mod inner {
         is_flat: bool,
     }
 
-    fn worlds_value(field: &Vec<Identifier>) -> usize {
+    fn worlds_value(field: &[Identifier]) -> usize {
         field.len()
     }
 
-    fn worlds_size(field: &Vec<Identifier>) -> usize {
+    fn worlds_size(field: &[Identifier]) -> usize {
         field
             .iter()
             .map(|i| PacketSizeSeed::size(&PacketString::new(32767), &i.to_string()))

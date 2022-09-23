@@ -21,7 +21,7 @@ mod inner {
     #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = {
         735, 736 = 0x21;
-    }, name = "chunk_data", batching = "build_chunk_data")]
+    }, name = "chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
@@ -65,10 +65,12 @@ mod inner {
     }
 
     #[inline(always)]
+    #[allow(clippy::ptr_arg)]
     pub(crate) fn data_value(field: &Vec<ChunkSectionData>) -> usize {
         data_size(field)
     }
 
+    #[allow(clippy::ptr_arg)]
     pub(crate) fn data_size(field: &Vec<ChunkSectionData>) -> usize {
         PacketSizeSeed::size(&PacketVec::default(), field)
     }

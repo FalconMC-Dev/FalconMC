@@ -21,7 +21,7 @@ mod inner {
     #[from(ChunkDataSpec)]
     #[falcon_packet(versions = {
         393, 401, 404 = 0x22;
-    }, name = "chunk_data", batching = "build_chunk_data")]
+    }, name = "chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
@@ -45,10 +45,12 @@ mod inner {
     }
 
     #[inline(always)]
+    #[allow(clippy::ptr_arg)]
     fn data_value(field: &Vec<ChunkSectionData>) -> usize {
         data_size(field)
     }
 
+    #[allow(clippy::ptr_arg)]
     fn data_size(field: &Vec<ChunkSectionData>) -> usize {
         PacketSizeSeed::size(&PacketVec::default(), field) + BIOME_COUNT as usize * 4
     }
@@ -58,7 +60,7 @@ mod inner {
         buffer: &mut B,
     ) -> Result<(), WriteError> {
         PacketWriteSeed::write(PacketVec::default(), field, buffer)?;
-        PacketWriteSeed::write(PacketArray::default(), BIOMES.clone(), buffer)
+        PacketWriteSeed::write(PacketArray::default(), BIOMES, buffer)
     }
 
     pub struct ChunkSectionData {
@@ -97,7 +99,7 @@ mod inner {
                 VarI32::from(palette.len() as i32).write(buffer)?;
                 PacketWriteSeed::write(
                     PacketVec::default(),
-                    palette.into_iter().map(|x| VarI32::from(x)).collect(),
+                    palette.into_iter().map(VarI32::from).collect(),
                     buffer,
                 )?;
             }

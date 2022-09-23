@@ -5,7 +5,7 @@ use proc_macro::TokenStream;
 use crate::data::PacketData;
 use quote::ToTokens;
 use syn::{
-    parse_macro_input, parse_quote_spanned, Arm, Expr, Ident, Item, ItemFn, LitInt, LitStr, Stmt, ItemMod,
+    parse_macro_input, parse_quote_spanned, Arm, Ident, Item, ItemFn, ItemMod, LitInt, Stmt,
 };
 
 mod data;
@@ -48,9 +48,6 @@ pub(crate) fn generate(data: Vec<PacketData>) -> proc_macro2::TokenStream {
     let mut result = proc_macro2::TokenStream::new();
     for data in data {
         result.extend(once(generate_send(&data).into_token_stream()));
-        if let Some(batch_name) = data.batch_name() {
-            result.extend(once(generate_batched(&data, batch_name).into_token_stream()));
-        }
     }
     result
 }
@@ -70,79 +67,39 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
         })
         .collect();
 
-    let fn_body = generate_fn_body(
-        packet_ident,
-        data.mappings().is_exclude(),
-        match_arms,
-        parse_quote_spanned! {span=> connection.handler_state().protocol_id()},
-        parse_quote_spanned! {span=> false},
-    );
+    let fn_body = generate_fn_body(packet_ident, data.mappings().is_exclude(), match_arms);
 
     let fn_name = data.fn_name();
     let fn_name = Ident::new(&fn_name.value(), fn_name.span());
-    let write: Stmt = parse_quote_spanned! {span=>
-        connection.send_packet(packet_id, &packet);
-    };
 
     parse_quote_spanned! {fn_name.span()=>
-        pub fn #fn_name<T, L>(packet: &mut Option<T>, connection: &mut L) -> bool
+        pub fn #fn_name<T, B>(
+            packet: &mut Option<T>,
+            buffer: &mut B,
+            _protocol: i32,
+        ) -> Result<bool, ::falcon_packet_core::WriteError>
         where
             #packet_ident: ::std::convert::From<T>,
-            L: ::falcon_core::network::connection::ConnectionLogic,
+            B: ::falcon_packet_core::special::BufRes,
         {
             if packet.is_none() {
-                return false;
+                return Ok(false);
             }
-            let packet_id = { #(#fn_body)* };
+            let packet_id = ::falcon_packet_core::VarI32::from(#(#fn_body)*);
             let packet: #packet_ident = packet.take().unwrap().into();
-            #write
-            true
-        }
-    }
-}
-
-pub(crate) fn generate_batched(data: &PacketData, batch: &LitStr) -> ItemFn {
-    let packet_ident = data.struct_name();
-    let span = data.struct_name().span();
-    let match_arms: Vec<Arm> = data
-        .mappings()
-        .versions()
-        .map(|(packet_id, versions)| {
-            parse_quote_spanned! {span=>
-                #(#versions)|* => {
-                    #packet_id
-                }
-            }
-        })
-        .collect();
-
-    let fn_body = generate_fn_body(
-        packet_ident,
-        data.mappings().is_exclude(),
-        match_arms,
-        parse_quote_spanned! {span=> protocol_id},
-        parse_quote_spanned! {span=> None},
-    );
-
-    let fn_name = Ident::new(&batch.value(), batch.span());
-    let write: Stmt = parse_quote_spanned! {span=>
-        ::falcon_core::network::packet::PacketEncode::to_buf(&packet, &mut buffer);
-    };
-
-    parse_quote_spanned! {fn_name.span()=>
-        pub fn #fn_name<T>(packet: &mut Option<T>, protocol_id: i32) -> Option<::bytes::Bytes>
-        where
-            #packet_ident: ::std::convert::From<T>,
-        {
-            if packet.is_none() {
-                return None;
-            }
-            let mut buffer = ::bytes::BytesMut::new();
-            let packet_id = { #(#fn_body)* };
-            ::falcon_core::network::buffer::PacketBufferWrite::write_var_i32(&mut buffer, packet_id);
-            let packet: #packet_ident = packet.take().unwrap().into();
-            #write
-            Some(buffer.freeze())
+            buffer.reserve(
+                ::falcon_packet_core::PacketSize::size(&packet_id)
+                    + ::falcon_packet_core::PacketSize::size(&packet)
+            );
+            ::falcon_packet_core::PacketWrite::write(
+                packet_id,
+                buffer,
+            )?;
+            ::falcon_packet_core::PacketWrite::write(
+                packet,
+                buffer,
+            )?;
+            Ok(true)
         }
     }
 }
@@ -151,8 +108,6 @@ pub(crate) fn generate_fn_body(
     packet_ident: &Ident,
     exclude: Option<&LitInt>,
     match_arms: Vec<Arm>,
-    protocol_expr: Expr,
-    default: Expr,
 ) -> Vec<Stmt> {
     let span = packet_ident.span();
     if let Some(version) = exclude {
@@ -162,8 +117,7 @@ pub(crate) fn generate_fn_body(
             }
         } else {
             parse_quote_spanned! {span=>
-                let protocol_version = #protocol_expr;
-                match protocol_version {
+                match _protocol {
                     #(#match_arms,)*
                     _ => #version,
                 }
@@ -175,10 +129,9 @@ pub(crate) fn generate_fn_body(
         }
     } else {
         parse_quote_spanned! {span=>
-            let protocol_version = #protocol_expr;
-            match protocol_version {
+            match _protocol {
                 #(#match_arms,)*
-                _ => return #default,
+                _ => return Ok(false),
             }
         }
     }
