@@ -10,27 +10,30 @@ use crate::{PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWrite
 #[derive(Default)]
 pub struct AsRefU8<T>(PhantomData<T>);
 
-impl<'a> PacketWrite for &'a [u8] {
+impl PacketWrite for [u8] {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
+        if !buffer.remaining_mut() < self.len() {
+            return Err(WriteError::EndOfBuffer);
+        }
         buffer.put_slice(self);
         Ok(())
     }
 }
 
-impl<'a> PacketSize for &'a [u8] {
+impl PacketSize for [u8] {
     #[inline]
     fn size(&self) -> usize {
         self.len()
     }
 }
 
-impl<T: AsRef<[u8]>> PacketWriteSeed for AsRefU8<T> {
+impl<'a, T: AsRef<[u8]>> PacketWriteSeed<'a> for AsRefU8<T> {
     #[inline]
-    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(self, value: &Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
@@ -38,11 +41,11 @@ impl<T: AsRef<[u8]>> PacketWriteSeed for AsRefU8<T> {
     }
 }
 
-impl<T: AsRef<[u8]>> PacketSizeSeed for AsRefU8<T> {
+impl<'a, T: AsRef<[u8]>> PacketSizeSeed<'a> for AsRefU8<T> {
     type Value = T;
 
     #[inline]
-    fn size(&self, value: &Self::Value) -> usize {
+    fn size(self, value: &Self::Value) -> usize {
         value.as_ref().len()
     }
 }
@@ -79,7 +82,7 @@ impl<T: From<Vec<u8>>> PacketReadSeed for Bytes<T> {
 
 impl PacketWrite for Vec<u8> {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
@@ -96,7 +99,7 @@ impl PacketSize for Vec<u8> {
 
 impl<'a> PacketWrite for Cow<'a, [u8]> {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
