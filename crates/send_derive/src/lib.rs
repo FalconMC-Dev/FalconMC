@@ -92,11 +92,11 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
                     + ::falcon_packet_core::PacketSize::size(&packet)
             );
             ::falcon_packet_core::PacketWrite::write(
-                packet_id,
+                &packet_id,
                 buffer,
             )?;
             ::falcon_packet_core::PacketWrite::write(
-                packet,
+                &packet,
                 buffer,
             )?;
             Ok(true)

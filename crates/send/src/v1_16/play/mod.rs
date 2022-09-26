@@ -59,16 +59,16 @@ mod inner {
     fn worlds_size(field: &[Identifier]) -> usize {
         field
             .iter()
-            .map(|i| PacketSizeSeed::size(&PacketString::new(32767), &i.to_string()))
+            .map(|i| PacketSizeSeed::size(PacketString::new(32767), &i.to_string()))
             .sum::<usize>()
     }
 
-    fn worlds_write<B>(field: Vec<Identifier>, buffer: &mut B) -> Result<(), WriteError>
+    fn worlds_write<B>(field: &[Identifier], buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
         for ident in field {
-            PacketWriteSeed::write(PacketString::new(32767), ident.to_string(), buffer)?;
+            PacketWriteSeed::write(PacketString::new(32767), &ident.to_string(), buffer)?;
         }
         Ok(())
     }

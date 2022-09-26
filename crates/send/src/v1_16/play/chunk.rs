@@ -7,9 +7,7 @@ mod inner {
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
     use falcon_core::world::palette::PaletteToI32;
-    use falcon_packet_core::{
-        PacketSize, PacketSizeSeed, PacketVec, PacketWrite, PacketWriteSeed, WriteError,
-    };
+    use falcon_packet_core::{PacketIter, PacketSize, PacketWrite, WriteError};
     use fastnbt::LongArray;
     use serde::Serialize;
 
@@ -66,20 +64,20 @@ mod inner {
 
     #[inline(always)]
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_value(field: &Vec<ChunkSectionData>) -> usize {
+    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize {
         data_size(field)
     }
 
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_size(field: &Vec<ChunkSectionData>) -> usize {
-        PacketSizeSeed::size(&PacketVec::default(), field)
+    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize {
+        PacketIter::new(field.iter()).size_ref()
     }
 
     pub(crate) fn data_write<B: BufMut + ?Sized>(
-        field: Vec<ChunkSectionData>,
+        field: &[ChunkSectionData],
         buffer: &mut B,
     ) -> Result<(), WriteError> {
-        PacketWriteSeed::write(PacketVec::default(), field, buffer)
+        PacketIter::new(field.iter()).write_ref(buffer)
     }
 
     impl From<ChunkDataSpec> for ChunkDataPacket {

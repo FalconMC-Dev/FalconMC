@@ -5,9 +5,7 @@ mod inner {
     use crate::v1_14::play::{into_chunk_section, ChunkSectionData, PacketHeightMap};
     use bytes::BufMut;
     use falcon_core::world::blocks::Blocks;
-    use falcon_packet_core::{
-        PacketSize, PacketSizeSeed, PacketVec, PacketWrite, PacketWriteSeed, WriteError,
-    };
+    use falcon_packet_core::{PacketIter, PacketSize, PacketWrite, WriteError};
 
     const BIOME_COUNT: u16 = 1024;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
@@ -36,20 +34,20 @@ mod inner {
 
     #[inline(always)]
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_value(field: &Vec<ChunkSectionData>) -> usize {
+    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize {
         data_size(field)
     }
 
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_size(field: &Vec<ChunkSectionData>) -> usize {
-        PacketSizeSeed::size(&PacketVec::default(), field)
+    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize {
+        PacketIter::new(field.iter()).size_ref()
     }
 
     pub(crate) fn data_write<B: BufMut + ?Sized>(
-        field: Vec<ChunkSectionData>,
+        field: &[ChunkSectionData],
         buffer: &mut B,
     ) -> Result<(), WriteError> {
-        PacketWriteSeed::write(PacketVec::default(), field, buffer)
+        PacketIter::new(field.iter()).write_ref(buffer)
     }
 
     impl From<ChunkDataSpec> for ChunkDataPacket {

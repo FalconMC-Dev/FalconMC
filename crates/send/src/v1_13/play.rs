@@ -6,7 +6,7 @@ mod inner {
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
     use falcon_packet_core::{
-        PacketArray, PacketSize, PacketSizeSeed, PacketVec, PacketWrite, PacketWriteSeed, VarI32,
+        PacketArray, PacketIter, PacketSize, PacketVec, PacketWrite, PacketWriteSeed, VarI32,
         WriteError,
     };
 
@@ -46,21 +46,21 @@ mod inner {
 
     #[inline(always)]
     #[allow(clippy::ptr_arg)]
-    fn data_value(field: &Vec<ChunkSectionData>) -> usize {
+    fn data_value(field: &[ChunkSectionData]) -> usize {
         data_size(field)
     }
 
     #[allow(clippy::ptr_arg)]
-    fn data_size(field: &Vec<ChunkSectionData>) -> usize {
-        PacketSizeSeed::size(&PacketVec::default(), field) + BIOME_COUNT as usize * 4
+    fn data_size(field: &[ChunkSectionData]) -> usize {
+        PacketIter::new(field.iter()).size_ref() + BIOME_COUNT as usize * 4
     }
 
     fn data_write<B: BufMut + ?Sized>(
-        field: Vec<ChunkSectionData>,
+        field: &[ChunkSectionData],
         buffer: &mut B,
     ) -> Result<(), WriteError> {
-        PacketWriteSeed::write(PacketVec::default(), field, buffer)?;
-        PacketWriteSeed::write(PacketArray::default(), BIOMES, buffer)
+        PacketIter::new(field.iter()).write_ref(buffer)?;
+        PacketWriteSeed::write(PacketArray::default(), &BIOMES, buffer)
     }
 
     pub struct ChunkSectionData {
@@ -90,21 +90,17 @@ mod inner {
     }
 
     impl PacketWrite for ChunkSectionData {
-        fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+        fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
         where
             B: BufMut + ?Sized,
         {
             self.bits_per_block.write(buffer)?;
-            if let Some(palette) = self.palette {
+            if let Some(palette) = &self.palette {
                 VarI32::from(palette.len() as i32).write(buffer)?;
-                PacketWriteSeed::write(
-                    PacketVec::default(),
-                    palette.into_iter().map(VarI32::from).collect(),
-                    buffer,
-                )?;
+                PacketIter::new(palette.iter().map(|&x| VarI32::from(x))).write_owned(buffer)?;
             }
             VarI32::from(self.block_data.len()).write(buffer)?;
-            PacketWriteSeed::write(PacketVec::default(), self.block_data, buffer)?;
+            PacketWriteSeed::write(PacketVec::default(), &self.block_data, buffer)?;
             MAX_LIGHT.write(buffer)?;
             MAX_LIGHT.write(buffer)
         }
