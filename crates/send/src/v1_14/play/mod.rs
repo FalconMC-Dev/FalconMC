@@ -30,7 +30,7 @@ mod inner {
     #[falcon_packet(versions = {
         477, 480, 485, 490, 498, 735, 736 = 0x0D;
         573, 575, 578 = 0x0E;
-    }, name = "send_difficulty")]
+    }, name = "difficulty")]
     pub struct ServerDifficultyPacket {
         difficulty: u8,
         locked: bool,
