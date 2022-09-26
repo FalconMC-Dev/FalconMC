@@ -1,10 +1,8 @@
-use std::collections::HashSet;
-
 use falcon_proc_util::ErrorCatcher;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote_spanned, Error, Expr, Fields, Ident, ItemImpl, ItemStruct, Stmt};
+use syn::{parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
 
 use crate::util::ParsedFields;
 
@@ -36,7 +34,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let mut preprocess: Vec<Stmt> = Vec::new();
     let mut writes: Vec<Expr> = Vec::with_capacity(parsed.fields.len());
 
-    let replace: HashSet<Ident> = get_replaced(&parsed.fields);
+    let replace = get_replaced(&parsed.fields);
 
     for (field, data) in parsed.fields {
         let ident = field.ident.as_ref().unwrap();
@@ -53,7 +51,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
             field = to_tokenstream(attribute, field, field_ty);
             if i == data.len() - 1 {
                 if let Some(process) = to_preprocess(attribute, field.clone()) {
-                    preprocess.push(process);
+                    preprocess.extend(process);
                 }
                 end = to_end(attribute, field.clone());
             }

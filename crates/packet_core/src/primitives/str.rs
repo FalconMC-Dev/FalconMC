@@ -22,8 +22,8 @@ impl<T> PacketString<T> {
     }
 }
 
-impl<T: AsRef<str>> PacketWriteSeed for PacketString<T> {
-    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
+impl<'a, T: AsRef<str>> PacketWriteSeed<'a> for PacketString<T> {
+    fn write<B>(self, value: &Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
@@ -37,10 +37,10 @@ impl<T: AsRef<str>> PacketWriteSeed for PacketString<T> {
     }
 }
 
-impl<T: AsRef<str>> PacketSizeSeed for PacketString<T> {
+impl<'a, T: AsRef<str>> PacketSizeSeed<'a> for PacketString<T> {
     type Value = T;
 
-    fn size(&self, value: &Self::Value) -> usize {
+    fn size(self, value: &Self::Value) -> usize {
         VarI32::from(value.as_ref().len()).size() + value.as_ref().len()
     }
 }

@@ -1,3 +1,4 @@
+extern crate self as falcon_packet_core;
 use bytes::{Buf, BufMut};
 
 pub use error::{ReadError, WriteError};
@@ -7,6 +8,7 @@ pub use primitives::*;
 
 pub mod error;
 pub mod special;
+mod test;
 
 mod primitives;
 
@@ -18,9 +20,13 @@ pub trait PacketRead {
 }
 
 pub trait PacketWrite: PacketSize {
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
+}
+
+pub trait PacketSize {
+    fn size(&self) -> usize;
 }
 
 pub trait PacketReadSeed {
@@ -31,18 +37,14 @@ pub trait PacketReadSeed {
         B: Buf + ?Sized;
 }
 
-pub trait PacketWriteSeed: PacketSizeSeed {
-    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
+pub trait PacketWriteSeed<'a>: PacketSizeSeed<'a> {
+    fn write<B>(self, value: &'a Self::Value, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
 }
 
-pub trait PacketSize {
-    fn size(&self) -> usize;
-}
-
-pub trait PacketSizeSeed {
+pub trait PacketSizeSeed<'a> {
     type Value;
 
-    fn size(&self, value: &Self::Value) -> usize;
+    fn size(self, value: &'a Self::Value) -> usize;
 }

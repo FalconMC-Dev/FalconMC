@@ -57,8 +57,8 @@ impl<const N: usize, T: PacketRead> PacketReadSeed for PacketArray<[T; N]> {
     }
 }
 
-impl<const N: usize, T: PacketWrite> PacketWriteSeed for PacketArray<[T; N]> {
-    fn write<B>(self, value: Self::Value, buffer: &mut B) -> Result<(), WriteError>
+impl<'a, const N: usize, T: PacketWrite> PacketWriteSeed<'a> for PacketArray<[T; N]> {
+    fn write<B>(self, value: &Self::Value, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
@@ -69,17 +69,17 @@ impl<const N: usize, T: PacketWrite> PacketWriteSeed for PacketArray<[T; N]> {
     }
 }
 
-impl<const N: usize, T: PacketSize> PacketSizeSeed for PacketArray<[T; N]> {
+impl<'a, const N: usize, T: PacketSize> PacketSizeSeed<'a> for PacketArray<[T; N]> {
     type Value = [T; N];
 
-    fn size(&self, value: &Self::Value) -> usize {
+    fn size(self, value: &Self::Value) -> usize {
         value.iter().map(|n| n.size()).sum()
     }
 }
 
 impl<const N: usize> PacketWrite for [u8; N] {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {

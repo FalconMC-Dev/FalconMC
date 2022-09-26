@@ -8,6 +8,8 @@ pub enum WriteError {
     StringTooLong(usize, usize),
     #[error("Couldn't serialize to NBT")]
     FastNbtError(#[from] fastnbt::error::Error),
+    #[error("Buffer ran out of space")]
+    EndOfBuffer,
 }
 
 #[derive(Debug, Error)]

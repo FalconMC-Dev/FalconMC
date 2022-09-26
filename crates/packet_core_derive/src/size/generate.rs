@@ -1,20 +1,24 @@
+use std::vec;
+
 use quote::format_ident;
 use syn::{parse_quote_spanned, spanned::Spanned, Expr, Stmt, Type};
 
 use crate::attributes::PacketAttribute::{self, *};
 
-pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
+pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<vec::Vec<Stmt>> {
     match attribute {
         Vec(data) => {
             let target = &data.target;
             Some(parse_quote_spanned! {field.span()=>
+                let _ = self.#target;
                 let #target = #field.len();
             })
         }
         Bytes(data) => data.target.as_ref().map(|target| {
             parse_quote_spanned! {field.span()=>
+                let _ = self.#target;
                 let #target = ::falcon_packet_core::PacketSizeSeed::size(
-                    &::falcon_packet_core::AsRefU8::default(),
+                    ::falcon_packet_core::AsRefU8::default(),
                     &#field,
                 );
             }
@@ -25,9 +29,11 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<Stmt> {
             let others = data.others.as_ref();
             Some(match others.map(|o| o.into_iter()) {
                 Some(others) => parse_quote_spanned! {field.span()=>
+                    let _ = self.#target;
                     let #target = #prefix(&#field, #(&self.#others),*);
                 },
                 None => parse_quote_spanned! {field.span()=>
+                    let _ = self.#target;
                     let #target = #prefix(&#field);
                 },
             })
@@ -42,7 +48,7 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
             let len = &data.max_length;
             Some(parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::PacketSizeSeed::size(
-                    &::falcon_packet_core::PacketString::new(#len),
+                    ::falcon_packet_core::PacketString::new(#len),
                     &#field,
                 )
             })
@@ -51,26 +57,26 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
             let len = &data.max_length;
             Some(parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::PacketSizeSeed::size(
-                    &::falcon_packet_core::PacketString::new(#len),
+                    ::falcon_packet_core::PacketString::new(#len),
                     &::std::string::ToString::to_string(&#field),
                 )
             })
         }
         Vec(_) => Some(parse_quote_spanned! {field.span()=>
             ::falcon_packet_core::PacketSizeSeed::size(
-                &::falcon_packet_core::PacketVec::new(0),
+                ::falcon_packet_core::PacketVec::new(0),
                 &#field,
             )
         }),
         Array(_) => Some(parse_quote_spanned! {field.span()=>
             ::falcon_packet_core::PacketSizeSeed::size(
-                &::falcon_packet_core::PacketArray::default(),
+                ::falcon_packet_core::PacketArray::default(),
                 &#field,
             )
         }),
         Bytes(_) => Some(parse_quote_spanned! {field.span()=>
             ::falcon_packet_core::PacketSizeSeed::size(
-                &::falcon_packet_core::AsRefU8::default(),
+                ::falcon_packet_core::AsRefU8::default(),
                 &#field,
             )
         }),

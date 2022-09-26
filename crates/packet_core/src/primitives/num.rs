@@ -19,11 +19,14 @@ impl PacketRead for bool {
 
 impl PacketWrite for bool {
     #[inline]
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
-        buffer.put_u8(self as u8);
+        if !buffer.has_remaining_mut() {
+            return Err(WriteError::EndOfBuffer);
+        }
+        buffer.put_u8(*self as u8);
         Ok(())
     }
 }
@@ -53,11 +56,14 @@ macro_rules! impl_num {
 
         impl PacketWrite for $num {
             #[inline]
-            fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+            fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
             where
                 B: BufMut + ?Sized
             {
-                Ok(buffer.$put(self))
+                if buffer.remaining_mut() < ::std::mem::size_of::<$num>() {
+                    return Err(WriteError::EndOfBuffer);
+                }
+                Ok(buffer.$put(*self))
             }
         }
 
@@ -93,7 +99,7 @@ macro_rules! impl_var {
     ($($var:ident = $num:ident & $unum:ident),*) => {$(
         impl PacketWrite for $var {
             fn write<B>(
-                self,
+                &self,
                 buffer: &mut B,
             ) -> Result<(), WriteError>
             where
@@ -105,7 +111,6 @@ macro_rules! impl_var {
                     value = ((value as $unum) >> 7) as $num;
                 }
                 (value as u8).write(buffer)
-
             }
         }
 

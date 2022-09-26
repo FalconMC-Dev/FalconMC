@@ -8,7 +8,7 @@ use crate::error::{ReadError, WriteError};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketString, PacketWrite, PacketWriteSeed};
 
 impl PacketWrite for Uuid {
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
@@ -57,13 +57,16 @@ impl From<StrUuid> for Uuid {
 }
 
 impl PacketWrite for StrUuid {
-    fn write<B>(self, buffer: &mut B) -> Result<(), WriteError>
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized,
     {
         let mut buf = [0u8; uuid::fmt::Hyphenated::LENGTH];
-        PacketString::new(uuid::fmt::Hyphenated::LENGTH)
-            .write(self.0.hyphenated().encode_lower(&mut buf), buffer)
+        PacketWriteSeed::write(
+            PacketString::new(uuid::fmt::Hyphenated::LENGTH),
+            &self.0.hyphenated().encode_lower(&mut buf),
+            buffer,
+        )
     }
 }
 
