@@ -1,3 +1,4 @@
+extern crate self as falcon_packet_core;
 use bytes::{Buf, BufMut};
 
 pub use error::{ReadError, WriteError};
@@ -7,6 +8,7 @@ pub use primitives::*;
 
 pub mod error;
 pub mod special;
+mod test;
 
 mod primitives;
 

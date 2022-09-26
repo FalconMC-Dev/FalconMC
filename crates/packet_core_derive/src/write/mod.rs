@@ -2,13 +2,11 @@ use falcon_proc_util::ErrorCatcher;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{
-    parse_quote, parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt, Token,
-};
+use syn::{parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
 
 use crate::util::ParsedFields;
 
-use self::check::validate;
+use self::check::{get_replaced, validate};
 use self::generate::{to_end, to_preprocess, to_tokenstream};
 
 mod check;
@@ -36,10 +34,16 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
     let mut preprocess: Vec<Stmt> = Vec::new();
     let mut writes: Vec<Stmt> = Vec::with_capacity(parsed.fields.len());
 
+    let replace = get_replaced(&parsed.fields);
+
     for (field, data) in parsed.fields {
-        let ident = &field.ident;
+        let ident = field.ident.as_ref().unwrap();
         let field_ty = &field.ty;
-        let mut field: Expr = parse_quote_spanned! {field.span()=> self.#ident };
+        let mut field: Expr = if replace.contains(ident) {
+            parse_quote_spanned! {field.span()=> <#field_ty as ::std::convert::From<usize>>::from(#ident)}
+        } else {
+            parse_quote_spanned! {field.span()=> self.#ident}
+        };
 
         let mut end = None;
 
@@ -47,7 +51,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
             field = to_tokenstream(attribute, field, field_ty);
             if i == data.len() - 1 {
                 if let Some(process) = to_preprocess(attribute, field.clone()) {
-                    preprocess.push(process);
+                    preprocess.extend(process);
                 }
                 end = to_end(attribute, field.clone());
             }
@@ -56,17 +60,12 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
         writes.push(end.unwrap_or_else(|| {
             parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::PacketWrite::write(
-                    #field,
+                    &#field,
                     buffer,
                 )?;
             }
         }));
     }
-    let mutable: Option<Token![mut]> = if preprocess.is_empty() {
-        None
-    } else {
-        Some(parse_quote!(mut))
-    };
 
     let ident = &item.ident;
     let (impl_generics, ty_generics, where_clause) = item.generics.split_for_impl();
@@ -74,7 +73,7 @@ fn generate_tokens(item: &ItemStruct, parsed: ParsedFields) -> ItemImpl {
         #[automatically_derived]
         impl #impl_generics ::falcon_packet_core::PacketWrite for #ident #ty_generics #where_clause {
             #[allow(clippy::useless_conversion)]
-            fn write<B>(#mutable self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet_core::WriteError>
+            fn write<B>(&self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet_core::WriteError>
             where
                 B: ::bytes::BufMut + ?Sized
             {

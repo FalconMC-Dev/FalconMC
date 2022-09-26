@@ -1,10 +1,25 @@
+use std::collections::HashSet;
+
 use falcon_proc_util::ErrorCatcher;
-use syn::Error;
+use syn::{Error, Field, Ident};
 
 use crate::attributes::PacketAttribute::{
     self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64,
     Vec as PacketVec,
 };
+
+pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
+    attributes
+        .iter()
+        .flat_map(|(_, attrs)| attrs.iter())
+        .filter_map(|a| match a {
+            PacketVec(data) => Some(data.target.clone()),
+            Bytes(data) => data.target.clone(),
+            Link(data) => Some(data.target.clone()),
+            _ => None,
+        })
+        .collect()
+}
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
     match attribute {
