@@ -5,6 +5,8 @@ use std::{
 
 use crate::{PacketRead, PacketReadSeed, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
+use super::iter::PacketIter;
+
 pub struct PacketVec<T, I> {
     size: usize,
     _marker: PhantomData<T>,
@@ -41,7 +43,7 @@ where
     where
         B: bytes::BufMut + ?Sized,
     {
-        value.into_iter().try_for_each(|elem| elem.write(buffer))
+        PacketIter::new(value.into_iter()).write_ref(buffer)
     }
 }
 
@@ -54,7 +56,7 @@ where
     type Value = I;
 
     fn size(self, value: &'a Self::Value) -> usize {
-        value.into_iter().map(|elem| elem.size()).sum()
+        PacketIter::new(value.into_iter()).size_ref()
     }
 }
 

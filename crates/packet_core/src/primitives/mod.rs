@@ -1,5 +1,6 @@
 mod array;
 mod bytes;
+mod iter;
 mod num;
 mod str;
 mod vec;
@@ -9,6 +10,7 @@ mod tests;
 
 pub use self::array::PacketArray;
 pub use self::bytes::{AsRefU8, Bytes};
+pub use self::iter::PacketIter;
 pub use self::str::PacketString;
 pub use self::vec::PacketVec;
 
