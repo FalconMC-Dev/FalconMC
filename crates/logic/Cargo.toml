@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 falcon_core = { path = "../core" }
+falcon_packet_core = { path = "../packet_core/" }
 falcon_send = { path = "../send" }
 
 mc_chat = "0.3.0"

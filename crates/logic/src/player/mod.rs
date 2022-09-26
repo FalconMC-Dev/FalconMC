@@ -1,8 +1,8 @@
-use falcon_core::network::connection::ConnectionLogic;
 use falcon_core::player::data::{GameMode, LookAngles, PlayerAbilityFlags, Position};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::play::JoinGameSpec;
+use ignore_result::Ignore;
 use tokio::time::Instant;
 use uuid::Uuid;
 
@@ -118,7 +118,8 @@ impl FalconPlayer {
 impl FalconPlayer {
     pub fn disconnect(&mut self, reason: ChatComponent) {
         self.connection.execute_sync(move |connection| {
-            connection.disconnect(reason);
+            // TODO: remove ignore
+            connection.disconnect(reason).ignore();
         });
     }
 
@@ -127,7 +128,8 @@ impl FalconPlayer {
         let elapsed = self.time.elapsed().as_secs();
         self.connection.execute_sync(move |connection| {
             connection.handler_state_mut().set_last_keep_alive(elapsed);
-            falcon_send::send_keep_alive(elapsed as i64, connection);
+            // TODO: remove ignore
+            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive).ignore();
         });
     }
 

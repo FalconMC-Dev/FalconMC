@@ -56,7 +56,7 @@ impl FalconServer {
                 .get(&uuid)
                 .unwrap()
                 .connection()
-                .build_send_packet((x, z), falcon_send::send_update_viewpos);
+                .send_packet((x, z), falcon_send::write_update_viewpos);
         }
     }
 

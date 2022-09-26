@@ -13,9 +13,9 @@ impl FalconServer {
             self.online_count() as i32,
         );
         let description = String::from(FalconConfig::global().description());
-        connection.build_send_packet(
+        connection.send_packet(
             StatusResponseSpec::new(version, player_data, description),
-            falcon_send::send_status_response,
+            falcon_send::write_status_response,
         );
     }
 }
