@@ -5,15 +5,16 @@ use proc_macro::TokenStream;
 use crate::data::PacketData;
 use quote::ToTokens;
 use syn::{
-    parse_macro_input, parse_quote_spanned, Arm, Ident, Item, ItemFn, ItemMod, LitInt, Stmt,
+    parse_macro_input, parse_quote_spanned, Arm, Ident, Item, ItemFn, ItemMod, LitInt, Stmt, parse::Nothing,
 };
 
 mod data;
 mod kw;
 
 #[proc_macro_attribute]
-pub fn falcon_send(_attr: TokenStream, contents: TokenStream) -> TokenStream {
+pub fn falcon_send(attr: TokenStream, contents: TokenStream) -> TokenStream {
     let mut contents = parse_macro_input!(contents as ItemMod).content.unwrap().1;
+    let _ = parse_macro_input!(attr as Nothing);
 
     let (packet_data, error): (Vec<PacketData>, Option<syn::Error>) = contents
         .iter_mut()

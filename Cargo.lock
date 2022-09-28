@@ -348,8 +348,10 @@ dependencies = [
 name = "falcon_receive"
 version = "0.2.0"
 dependencies = [
+ "bytes",
  "falcon_core",
  "falcon_logic",
+ "falcon_packet_core",
  "falcon_receive_derive",
  "falcon_send",
  "mc_chat",
