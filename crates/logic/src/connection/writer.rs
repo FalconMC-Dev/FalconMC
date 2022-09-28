@@ -1,4 +1,4 @@
-use bytes::{buf::UninitSlice, BufMut, BytesMut};
+use bytes::{buf::UninitSlice, Buf, BufMut, BytesMut};
 use falcon_packet_core::{special::BufRes, PacketSize, VarI32};
 use flate2::{Compress, Compression, FlushCompress, Status};
 
@@ -72,6 +72,7 @@ impl SocketWrite {
 
         // TODO: do encryption
 
+        self.compression.reset();
         self.ready_pos = self.output_buffer.len();
     }
 
@@ -82,11 +83,9 @@ impl SocketWrite {
         if self.next_is_compressed {
             loop {
                 let before = self.compression.total_out();
-                self.compression.compress(
-                    &[],
-                    Self::output_mut(&mut self.output_buffer),
-                    FlushCompress::Finish,
-                ).unwrap();
+                self.compression
+                    .compress(&[], Self::output_mut(&mut self.output_buffer), FlushCompress::Finish)
+                    .unwrap();
                 let n = self.compression.total_out();
                 // TODO: explain unsafe
                 unsafe { self.output_buffer.advance_mut((n - before) as usize) };
@@ -131,10 +130,7 @@ impl SocketWrite {
             unsafe { self.output_buffer.advance_mut((self.compression.total_out() - before_out) as usize) };
 
             let is_stream_end = matches!(ret, Status::StreamEnd);
-            if !&self.compression_buffer[start..self.compression_position].is_empty()
-                && written == 0
-                && !is_stream_end
-            {
+            if !&self.compression_buffer[start..self.compression_position].is_empty() && written == 0 && !is_stream_end {
                 continue;
             }
 
@@ -221,9 +217,24 @@ unsafe impl BufMut for SocketWrite {
     }
 }
 
+impl Buf for SocketWrite {
+    fn remaining(&self) -> usize {
+        self.ready_pos.min(self.output_buffer.remaining())
+    }
+
+    fn chunk(&self) -> &[u8] {
+        &self.output_buffer[..self.remaining()]
+    }
+
+    fn advance(&mut self, cnt: usize) {
+        self.output_buffer.advance(cnt);
+        self.ready_pos -= cnt;
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use bytes::BufMut;
+    use bytes::{Buf, BufMut};
     use falcon_packet_core::special::BufRes;
     use itertools::Itertools;
 
@@ -238,6 +249,33 @@ mod test {
 
         writer.reserve(220);
         writer.put_bytes(1, 220);
+        writer.finish();
+
+        println!("Capacity: {}", writer.output_buffer.capacity());
+        println!("CompPos: {}", writer.compression_position);
+        println!("Length: {}", writer.output_buffer.len());
+        println!("ReadyPos: {}", writer.ready_pos);
+        println!("Content: {:02x}", writer.output_buffer.as_ref().iter().format(" "));
+
+        writer.reserve(220);
+        writer.put_bytes(1, 110);
+
+        println!("Capacity: {}", writer.output_buffer.capacity());
+        println!("CompPos: {}", writer.compression_position);
+        println!("Length: {}", writer.output_buffer.len());
+        println!("ReadyPos: {}", writer.ready_pos);
+        println!("Content: {:02x}", writer.output_buffer.as_ref().iter().format(" "));
+
+        let mut read = [0u8; 10];
+        writer.copy_to_slice(&mut read);
+
+        println!("Capacity: {}", writer.output_buffer.capacity());
+        println!("CompPos: {}", writer.compression_position);
+        println!("Length: {}", writer.output_buffer.len());
+        println!("ReadyPos: {}", writer.ready_pos);
+        println!("Content: {:02x}", writer.output_buffer.as_ref().iter().format(" "));
+
+        writer.put_bytes(1, 110);
         writer.finish();
 
         println!("Capacity: {}", writer.output_buffer.capacity());
