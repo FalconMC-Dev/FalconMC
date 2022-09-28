@@ -74,6 +74,15 @@ impl SocketWrite {
 
         self.compression.reset();
         self.ready_pos = self.output_buffer.len();
+
+        if self.output_buffer.len() < COMPRESSION_BUFFER_LEN {
+            let capacity = self.output_buffer.capacity();
+            if capacity > COMPRESSION_BUFFER_LEN && capacity > 3 * self.output_buffer.len() {
+                let new_buffer = BytesMut::with_capacity(COMPRESSION_BUFFER_LEN);
+                let old_buffer = std::mem::replace(&mut self.output_buffer, new_buffer);
+                self.output_buffer.put(old_buffer);
+            }
+        }
     }
 
     fn flush(&mut self) {
@@ -84,7 +93,11 @@ impl SocketWrite {
             loop {
                 let before = self.compression.total_out();
                 self.compression
-                    .compress(&[], Self::output_mut(&mut self.output_buffer), FlushCompress::Finish)
+                    .compress(
+                        &[],
+                        Self::output_mut(&mut self.output_buffer),
+                        FlushCompress::Finish,
+                    )
                     .unwrap();
                 let n = self.compression.total_out();
                 // TODO: explain unsafe
