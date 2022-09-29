@@ -37,7 +37,7 @@ macro_rules! packet_write_fn {
             protocol: i32,
         ) -> ::std::result::Result<bool, ::falcon_packet_core::WriteError>
         where
-            B: ::falcon_packet_core::special::BufRes,
+            B: ::falcon_packet_core::special::PacketPrepare,
         {
             let mut packet = Some(packet);
             $(

@@ -81,14 +81,14 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
         ) -> Result<bool, ::falcon_packet_core::WriteError>
         where
             #packet_ident: ::std::convert::From<T>,
-            B: ::falcon_packet_core::special::BufRes,
+            B: ::falcon_packet_core::special::PacketPrepare,
         {
             if packet.is_none() {
                 return Ok(false);
             }
             let packet_id = ::falcon_packet_core::VarI32::from(#(#fn_body)*);
             let packet: #packet_ident = packet.take().unwrap().into();
-            buffer.reserve(
+            buffer.prepare(
                 ::falcon_packet_core::PacketSize::size(&packet_id)
                     + ::falcon_packet_core::PacketSize::size(&packet)
             );

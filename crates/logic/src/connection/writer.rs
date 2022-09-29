@@ -1,5 +1,5 @@
 use bytes::{buf::UninitSlice, Buf, BufMut, BytesMut};
-use falcon_packet_core::{special::BufRes, PacketSize, VarI32};
+use falcon_packet_core::{special::PacketPrepare, PacketSize, VarI32};
 use flate2::{Compress, Compression, FlushCompress, Status};
 
 const COMPRESSION_BUFFER_LEN: usize = 4096;
@@ -168,7 +168,7 @@ fn write_fixed_varint(mut value: i32, size: usize, buf: &mut [u8]) {
     buf[size - 1] = value as u8;
 }
 
-impl BufRes for SocketWrite {
+impl PacketPrepare for SocketWrite {
     /// # Important
     /// This function optimizes allocations by assuming
     /// a single call to this function spans an entire packet.
@@ -179,7 +179,7 @@ impl BufRes for SocketWrite {
     ///
     /// As a result of the above, the packet should be written to
     /// this writer immediately after calling this.
-    fn reserve(&mut self, additional: usize) {
+    fn prepare(&mut self, additional: usize) {
         let len_size = VarI32::from(additional).size();
         let mut capacity = additional;
         if self.compression_treshold >= 0 {
@@ -248,7 +248,7 @@ impl Buf for SocketWrite {
 #[cfg(test)]
 mod test {
     use bytes::{Buf, BufMut};
-    use falcon_packet_core::special::BufRes;
+    use falcon_packet_core::special::PacketPrepare;
     use itertools::Itertools;
 
     use super::SocketWrite;
@@ -260,7 +260,7 @@ mod test {
 
         println!("Capacity: {}", writer.output_buffer.capacity());
 
-        writer.reserve(220);
+        writer.prepare(220);
         writer.put_bytes(1, 220);
         writer.finish();
 
@@ -270,7 +270,7 @@ mod test {
         println!("ReadyPos: {}", writer.ready_pos);
         println!("Content: {:02x}", writer.output_buffer.as_ref().iter().format(" "));
 
-        writer.reserve(220);
+        writer.prepare(220);
         writer.put_bytes(1, 110);
 
         println!("Capacity: {}", writer.output_buffer.capacity());
