@@ -11,6 +11,7 @@ path = "src/main.rs"
 
 [dependencies]
 falcon_core = { path = "../core" }
+falcon_packet_core = { path = "../packet_core" }
 falcon_receive = { path = "../receive" }
 falcon_logic = { path = "../logic" }
 mc_chat = "0.3.0"

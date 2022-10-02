@@ -4,9 +4,10 @@ use falcon_core::ShutdownHandle;
 use falcon_logic::connection::ConnectionReceiver;
 use falcon_logic::server::ServerWrapper;
 use falcon_logic::FalconConnection;
+use falcon_packet_core::ReadError;
 use ignore_result::Ignore;
 use tokio::net::TcpListener;
-use tracing::{info, debug};
+use tracing::{debug, info};
 
 pub struct NetworkListener {
     shutdown_handle: ShutdownHandle,
@@ -80,7 +81,7 @@ impl ConnectionReceiver for FalconReceiver {
         packet_id: i32,
         bytes: &mut bytes::Bytes,
         connection: &mut FalconConnection,
-    ) -> Result<Option<()>, falcon_core::error::FalconCoreError> {
+    ) -> Result<bool, ReadError> {
         falcon_receive::falcon_process_packet(packet_id, bytes, connection)
     }
 }

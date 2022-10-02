@@ -4,9 +4,8 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use bytes::Bytes;
-use falcon_core::error::FalconCoreError;
 use falcon_core::ShutdownHandle;
-use falcon_packet_core::WriteError;
+use falcon_packet_core::{WriteError, ReadError};
 use ignore_result::Ignore;
 use mc_chat::ChatComponent;
 
@@ -42,7 +41,7 @@ pub trait ConnectionReceiver {
         packet_id: i32,
         bytes: &mut Bytes,
         connection: &mut FalconConnection,
-    ) -> Result<Option<()>, FalconCoreError>;
+    ) -> Result<bool, ReadError>;
 }
 
 #[derive(Debug)]

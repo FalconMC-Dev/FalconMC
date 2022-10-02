@@ -97,7 +97,7 @@ fn process_packet<R: ConnectionReceiver>(
     let packet_id = VarI32::read(&mut packet)?.val();
     let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
     let _enter = span.enter();
-    if receiver.receive(packet_id, &mut packet, connection)?.is_none() {
+    if !receiver.receive(packet_id, &mut packet, connection)? {
         let state = connection.handler_state().connection_state();
         if state == ConnectionState::Login || state == ConnectionState::Status {
             let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red);

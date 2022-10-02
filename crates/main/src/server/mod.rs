@@ -22,7 +22,7 @@ pub(crate) fn start_server(shutdown_handle: ShutdownHandle) -> Result<()> {
     info!("Starting server thread...");
 
     let world = match FalconConfig::global().world_file() {
-        Some(file_name) => { 
+        Some(file_name) => {
             let world_file = std::fs::read(file_name)
                 .with_context(|| format!("Could not load \"{}\", stopping launch", file_name))?;
             let mut gz = GzDecoder::new(&world_file[..]);

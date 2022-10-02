@@ -1,9 +1,9 @@
 use anyhow::Context;
-use tracing::{info, debug};
 use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;
 use tracing::metadata::LevelFilter;
+use tracing::{debug, info};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::Layer;
