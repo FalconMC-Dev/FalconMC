@@ -7,6 +7,7 @@ const COMPRESSION_BUFFER_LEN: usize = 4096;
 /// This is header (= 2) + Adler checksum (= 4)
 const ZLIB_EXTRA_LEN: usize = 6;
 
+#[derive(Debug)]
 pub struct SocketWrite {
     compression_buffer: [u8; COMPRESSION_BUFFER_LEN],
     compression_treshold: i32,

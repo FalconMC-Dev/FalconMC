@@ -1,4 +1,3 @@
-use bytes::BytesMut;
 use falcon_packet_core::WriteError;
 use ignore_result::Ignore;
 use std::fmt::Debug;
@@ -7,7 +6,7 @@ use tracing::error;
 
 use crate::FalconConnection;
 
-use super::ConnectionTask;
+use super::{writer::SocketWrite, ConnectionTask};
 
 #[derive(Debug)]
 pub struct ConnectionWrapper {
@@ -30,7 +29,7 @@ impl ConnectionWrapper {
     pub fn send_packet<T, F>(&self, packet: T, write_fn: F)
     where
         T: Send + Sync + 'static,
-        F: FnOnce(T, &mut BytesMut, i32) -> Result<bool, WriteError> + Send + Sync + 'static,
+        F: FnOnce(T, &mut SocketWrite, i32) -> Result<bool, WriteError> + Send + Sync + 'static,
     {
         self.link
             .send(ConnectionTask::Sync(Box::new(move |connection| {

@@ -5,6 +5,7 @@ use flate2::{Decompress, FlushDecompress, Status};
 
 const COMPRESSION_BUF_LEN: usize = 4096;
 
+#[derive(Debug)]
 pub struct SocketRead {
     decompress_buf: [u8; COMPRESSION_BUF_LEN],
     decompress: Decompress,
@@ -201,7 +202,7 @@ fn read_varint_size(buf: &[u8]) -> Option<(i32, usize)> {
 // TODO: explain unsafe
 unsafe impl BufMut for SocketRead {
     fn remaining_mut(&self) -> usize {
-        self.output_buf.remaining_mut()
+        isize::MAX as usize
     }
 
     // TODO: explain unsafe

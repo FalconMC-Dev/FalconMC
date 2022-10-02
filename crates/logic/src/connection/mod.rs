@@ -3,10 +3,11 @@ use std::net::SocketAddr;
 use std::pin::Pin;
 use std::time::Duration;
 
-use bytes::{Bytes, BytesMut};
+use bytes::Bytes;
 use falcon_core::error::FalconCoreError;
 use falcon_core::ShutdownHandle;
-use falcon_packet_core::{PacketWrite, VarI32, WriteError};
+use falcon_packet_core::WriteError;
+use ignore_result::Ignore;
 use mc_chat::ChatComponent;
 
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
@@ -18,11 +19,13 @@ use crate::server::ServerWrapper;
 
 pub use wrapper::ConnectionWrapper;
 
+use self::writer::SocketWrite;
+
 // mod codec;
-// mod tick;
-mod wrapper;
 pub mod handler;
 pub mod reader;
+mod tick;
+mod wrapper;
 pub mod writer;
 
 pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;
@@ -50,7 +53,7 @@ pub struct FalconConnection {
     wrapper: ConnectionWrapper,
     timeout: Interval,
     addr: SocketAddr,
-    write_buffer: BytesMut,
+    write_buffer: SocketWrite,
     state: PacketHandlerState,
 }
 
@@ -67,7 +70,7 @@ impl FalconConnection {
             task_rx: receiver,
             timeout,
             addr,
-            write_buffer: BytesMut::with_capacity(4096),
+            write_buffer: SocketWrite::new(-1),
             state: PacketHandlerState::new(UNKNOWN_PROTOCOL),
         }
     }
@@ -101,23 +104,19 @@ impl FalconConnection {
     #[instrument(level = "trace", skip_all)]
     pub fn send<F>(&mut self, write_fn: F) -> Result<(), WriteError>
     where
-        F: FnOnce(&mut BytesMut, i32) -> Result<(), WriteError>,
+        F: FnOnce(&mut SocketWrite, i32) -> Result<(), WriteError>,
     {
         if self.state.connection_state() == ConnectionState::Disconnected {
             return Ok(());
         }
-        let old_len = self.write_buffer.len();
         write_fn(&mut self.write_buffer, self.state.protocol_id())?;
-        let temp_buf = self.write_buffer.split_off(old_len);
-        VarI32::from(temp_buf.len()).write(&mut self.write_buffer)?;
-        trace!("{} bytes sent", temp_buf.len());
-        self.write_buffer.unsplit(temp_buf);
+        self.write_buffer.finish();
         Ok(())
     }
 
     pub fn send_packet<T, F>(&mut self, packet: T, write_fn: F) -> Result<(), WriteError>
     where
-        F: FnOnce(T, &mut BytesMut, i32) -> Result<bool, WriteError>,
+        F: FnOnce(T, &mut SocketWrite, i32) -> Result<bool, WriteError>,
     {
         self.send(move |buffer, protocol| {
             if !write_fn(packet, buffer, protocol)? {
@@ -128,13 +127,18 @@ impl FalconConnection {
     }
 
     #[instrument(level = "trace", skip_all)]
-    pub fn disconnect(&mut self, reason: ChatComponent) -> Result<(), WriteError> {
-        match self.state.connection_state() {
-            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect)?,
-            _ => self.send_packet(reason, falcon_send::write_login_disconnect)?,
-        }
-        self.state.set_connection_state(ConnectionState::Disconnected);
+    pub fn disconnect(&mut self, reason: ChatComponent) {
+        self.state
+            .set_connection_state(ConnectionState::Disconnected);
         trace!("Player connection marked as disconnected");
-        Ok(())
+
+        match self.state.connection_state() {
+            ConnectionState::Play => self
+                .send_packet(reason, falcon_send::write_play_disconnect)
+                .ignore(),
+            _ => self
+                .send_packet(reason, falcon_send::write_login_disconnect)
+                .ignore(),
+        }
     }
 }

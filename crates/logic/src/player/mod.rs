@@ -118,8 +118,7 @@ impl FalconPlayer {
 impl FalconPlayer {
     pub fn disconnect(&mut self, reason: ChatComponent) {
         self.connection.execute_sync(move |connection| {
-            // TODO: remove ignore
-            connection.disconnect(reason).ignore();
+            connection.disconnect(reason);
         });
     }
 

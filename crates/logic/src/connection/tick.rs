@@ -1,21 +1,23 @@
 use crate::connection::ConnectionTask;
 use crate::FalconConnection;
-use falcon_core::network::connection::ConnectionLogic;
-use falcon_core::network::ConnectionState;
-use futures::StreamExt;
+use bytes::{Buf, Bytes};
+use falcon_core::{error::FalconCoreError, network::ConnectionState};
+use falcon_packet_core::{PacketRead, ReadError, VarI32};
 use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
-use tokio::net::TcpStream;
-use tokio_util::codec::FramedRead;
-use tracing::{trace_span, debug_span, trace};
+use thiserror::Error;
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpStream,
+};
+use tracing::{debug_span, trace, trace_span};
 
-use super::ConnectionReceiver;
-use super::codec::{TcpWrite, FalconCodec};
+use super::{reader::SocketRead, ConnectionReceiver};
 
 impl FalconConnection {
     #[tracing::instrument(name = "client", skip_all, fields(address = %self.address()))]
     pub async fn start<R: ConnectionReceiver>(mut self, mut socket: TcpStream, mut receiver: R) {
-        let (socket_read, mut socket_write) = socket.split();
-        let mut socket_read = FramedRead::with_capacity(socket_read, FalconCodec, 4 * 1024);
+        let (mut socket_readhalf, mut socket_writehalf) = socket.split();
+        let mut socket_read = SocketRead::new(-1);
 
         loop {
             tokio::select! {
@@ -48,36 +50,32 @@ impl FalconConnection {
                     }
                 }
 
-                packet = socket_read.next() => {
+                n = socket_readhalf.read_buf(&mut socket_read) => {
                     let span = debug_span!("incoming_data", state = %self.state);
                     let _enter = span.enter();
-                    if packet.is_none() {
-                        self.state.set_connection_state(ConnectionState::Disconnected);
-                        break;
-                    }
-                    let packet = packet.unwrap();
-                    if let Err(error) = packet.and_then(|(packet_id, mut packet)| {
-                        let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
-                        let _enter = span.enter();
-                        if receiver.receive(packet_id, &mut packet, &mut self)?.is_none() {
-                            let state = self.state.connection_state();
-                            if state == ConnectionState::Login || state == ConnectionState::Status {
-                                let style = ComponentStyle::with_version(self.state.protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red);
-                                self.disconnect(ChatComponent::from_text("Unsupported version!", style));
+                    match n {
+                        Ok(n) => {
+                            if n == 0 {
+                                self.state.set_connection_state(ConnectionState::Disconnected);
+                                break;
                             }
-                            trace!("Unknown packet received, skipping!");
+                            if let Some(packet) = socket_read.next_packet() {
+                                if let Err(error) = process_packet(&mut self, packet, &mut receiver) {
+                                    self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                                }
+                            }
                         }
-                        Ok(())
-                    }) {
-                        self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                        Err(error) => {
+                            self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                        }
                     }
                 }
 
-                result = TcpWrite::new(&mut socket_write, &mut self.write_buffer), if !self.write_buffer.is_empty() => {
-                    if let Err(_) = result {
+                res = socket_writehalf.write_all_buf(&mut self.write_buffer), if self.write_buffer.has_remaining() => {
+                    if res.is_err() {
                         self.state.set_connection_state(ConnectionState::Disconnected);
                         break;
-                    } else if self.write_buffer.is_empty() && self.state.connection_state() == ConnectionState::Disconnected {
+                    } else if !self.write_buffer.has_remaining() && self.state.connection_state() == ConnectionState::Disconnected {
                         break;
                     }
                 }
@@ -91,3 +89,29 @@ impl FalconConnection {
     }
 }
 
+fn process_packet<R: ConnectionReceiver>(
+    connection: &mut FalconConnection,
+    mut packet: Bytes,
+    receiver: &mut R,
+) -> Result<(), ReceiveError> {
+    let packet_id = VarI32::read(&mut packet)?.val();
+    let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
+    let _enter = span.enter();
+    if receiver.receive(packet_id, &mut packet, connection)?.is_none() {
+        let state = connection.handler_state().connection_state();
+        if state == ConnectionState::Login || state == ConnectionState::Status {
+            let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red);
+            connection.disconnect(ChatComponent::from_text("Unsupported version!", style));
+        }
+        trace!("Unknown packet received, skipping!");
+    }
+    Ok(())
+}
+
+#[derive(Error, Debug)]
+enum ReceiveError {
+    #[error("Core error")]
+    Core(#[from] FalconCoreError),
+    #[error("packet read error")]
+    Read(#[from] ReadError),
+}
