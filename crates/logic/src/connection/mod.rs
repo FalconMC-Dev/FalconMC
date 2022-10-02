@@ -22,6 +22,7 @@ pub use wrapper::ConnectionWrapper;
 // mod tick;
 mod wrapper;
 pub mod handler;
+pub mod reader;
 pub mod writer;
 
 pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;

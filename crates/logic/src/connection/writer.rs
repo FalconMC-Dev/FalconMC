@@ -155,6 +155,9 @@ impl SocketWrite {
         // TODO: explain unsafe
         unsafe {
             let chunk = buffer.chunk_mut();
+            // This probably runs UB risk because of uninitialized memory
+            // But because this is only used for writing and
+            // not for reading, it seems to be working correctly so far.
             std::slice::from_raw_parts_mut(chunk.as_mut_ptr(), chunk.len())
         }
     }
