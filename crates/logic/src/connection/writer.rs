@@ -199,7 +199,6 @@ impl PacketPrepare for SocketWrite {
             self.next_is_compressed = false;
             self.next_len_size = len_size;
         }
-        println!("capacity: {}, next_len: {}", capacity, self.next_len_size);
         self.output_buffer.reserve(capacity + self.next_len_size);
         self.output_buffer.put_bytes(0, self.next_len_size);
     }

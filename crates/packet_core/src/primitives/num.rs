@@ -117,7 +117,7 @@ macro_rules! impl_var {
         impl PacketSize for $var {
             #[inline]
             fn size(&self) -> usize {
-                ({ $num::BITS as usize + 6 } - self.leading_zeros() as usize) / 7
+                ((({ $num::BITS - self.leading_zeros() } as usize).checked_sub(1).unwrap_or(0)) / 7) + 1
             }
         }
 
@@ -145,3 +145,20 @@ macro_rules! impl_var {
 }
 
 impl_var! { VarI32 = i32 & u32, VarI64 = i64 & u64 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_size() {
+        let num = VarI32::from(3);
+        assert_eq!(num.size(), 1);
+        let num = VarI32::from(0b1111111111111);
+        assert_eq!(num.size(), 2);
+        let num = VarI32::from(200);
+        assert_eq!(num.size(), 2);
+        let num = VarI32::from(4000);
+        assert_eq!(num.size(), 2);
+    }
+}

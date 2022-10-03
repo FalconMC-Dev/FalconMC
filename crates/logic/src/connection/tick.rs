@@ -59,7 +59,7 @@ impl FalconConnection {
                                 self.state.set_connection_state(ConnectionState::Disconnected);
                                 break;
                             }
-                            if let Some(packet) = socket_read.next_packet() {
+                            while let Some(packet) = socket_read.next_packet() {
                                 if let Err(error) = process_packet(&mut self, packet, &mut receiver) {
                                     self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
                                 }

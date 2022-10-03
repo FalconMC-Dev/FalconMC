@@ -90,7 +90,7 @@ impl SocketRead {
                 if self.next_is_compressed {
                     self.decompress.reset(true);
                 }
-                self.ready_pos = self.output_buf.len() + size_of::<i32>();
+                self.ready_pos = self.output_buf.len();
 
                 if self.output_buf.len() < COMPRESSION_BUF_LEN {
                     let capacity = self.output_buf.capacity();
@@ -202,7 +202,7 @@ fn read_varint_size(buf: &[u8]) -> Option<(i32, usize)> {
 // TODO: explain unsafe
 unsafe impl BufMut for SocketRead {
     fn remaining_mut(&self) -> usize {
-        isize::MAX as usize
+        self.output_buf.remaining_mut()
     }
 
     // TODO: explain unsafe

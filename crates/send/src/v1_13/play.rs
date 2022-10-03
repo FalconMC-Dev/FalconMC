@@ -45,12 +45,10 @@ mod inner {
     }
 
     #[inline(always)]
-    #[allow(clippy::ptr_arg)]
     fn data_value(field: &[ChunkSectionData]) -> usize {
         data_size(field)
     }
 
-    #[allow(clippy::ptr_arg)]
     fn data_size(field: &[ChunkSectionData]) -> usize {
         PacketIter::new(field.iter()).size_ref() + BIOME_COUNT as usize * 4
     }
@@ -63,7 +61,7 @@ mod inner {
         PacketWriteSeed::write(PacketArray::default(), &BIOMES, buffer)
     }
 
-    pub struct ChunkSectionData {
+    struct ChunkSectionData {
         bits_per_block: u8,
         palette: Option<Vec<i32>>,
         block_data: Vec<u64>,

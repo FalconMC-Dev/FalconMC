@@ -16,7 +16,7 @@ impl PacketWrite for [u8] {
     where
         B: BufMut + ?Sized,
     {
-        if !buffer.remaining_mut() < self.len() {
+        if buffer.remaining_mut() < self.len() {
             return Err(WriteError::EndOfBuffer);
         }
         buffer.put_slice(self);
@@ -75,7 +75,7 @@ impl<T: From<Vec<u8>>> PacketReadSeed for Bytes<T> {
             return Err(ReadError::NoMoreBytes);
         }
         let mut buf = Vec::with_capacity(self.size);
-        buffer.copy_to_slice(&mut buf);
+        buf.extend_from_slice(buffer.copy_to_bytes(self.size).as_ref());
         Ok(buf.into())
     }
 }

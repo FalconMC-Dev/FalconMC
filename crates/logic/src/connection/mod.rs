@@ -119,7 +119,7 @@ impl FalconConnection {
     {
         self.send(move |buffer, protocol| {
             if !write_fn(packet, buffer, protocol)? {
-                trace!("Unresolved packet");
+                // trace!("Unresolved packet");
             }
             Ok(())
         })
@@ -127,10 +127,6 @@ impl FalconConnection {
 
     #[instrument(level = "trace", skip_all)]
     pub fn disconnect(&mut self, reason: ChatComponent) {
-        self.state
-            .set_connection_state(ConnectionState::Disconnected);
-        trace!("Player connection marked as disconnected");
-
         match self.state.connection_state() {
             ConnectionState::Play => self
                 .send_packet(reason, falcon_send::write_play_disconnect)
@@ -139,5 +135,8 @@ impl FalconConnection {
                 .send_packet(reason, falcon_send::write_login_disconnect)
                 .ignore(),
         }
+        self.state
+            .set_connection_state(ConnectionState::Disconnected);
+        trace!("Player connection marked as disconnected");
     }
 }
