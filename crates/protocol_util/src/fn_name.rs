@@ -1,5 +1,4 @@
-use syn::Error;
-use syn::LitStr;
+use syn::{Error, LitStr};
 
 #[derive(Debug)]
 pub struct SendFnName {
@@ -29,7 +28,5 @@ impl SendFnName {
         }
     }
 
-    pub fn name(self) -> Option<LitStr> {
-        self.name
-    }
+    pub fn name(self) -> Option<LitStr> { self.name }
 }

@@ -1,4 +1,3 @@
-use crate::kw;
 use falcon_proc_util::ErrorCatcher;
 use falcon_protocol_util::{PacketVersionMappings, SendFnName, VersionsToID};
 use proc_macro2::Ident;
@@ -6,11 +5,12 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{braced, Error, ItemStruct, LitStr, Token};
 
+use crate::kw;
+
 #[derive(Debug)]
 pub(crate) struct PacketData {
     struct_name: Ident,
     fn_name: LitStr,
-    batch_name: Option<LitStr>,
     versions: PacketVersionMappings,
 }
 
@@ -18,7 +18,6 @@ impl PacketData {
     pub(crate) fn parse_packet(item: &mut ItemStruct) -> syn::Result<Option<PacketData>> {
         let mut error = ErrorCatcher::new();
         let mut fn_name = SendFnName::new();
-        let mut batch_name = SendFnName::new();
         let mut versions = PacketVersionMappings::new();
         let mut found = false;
 
@@ -30,7 +29,6 @@ impl PacketData {
                     match arg {
                         PacketAttributes::Name(n) => error.extend_error(fn_name.set_name(n)),
                         PacketAttributes::Versions(v) => error.extend_error(versions.add_versions(v.into_iter())),
-                        PacketAttributes::Batched(b) => error.extend_error(batch_name.set_name(b)),
                     }
                 }
             }
@@ -38,12 +36,13 @@ impl PacketData {
 
         item.attrs.retain(|attr| !attr.path.is_ident("falcon_packet"));
         error.emit()?;
-        
+
         if found {
             Ok(Some(PacketData {
                 struct_name: item.ident.clone(),
-                fn_name: fn_name.name().ok_or_else(|| Error::new(item.ident.span(), "missing \"falcon_packet\" attribute \"name\""))?,
-                batch_name: batch_name.name(),
+                fn_name: fn_name
+                    .name()
+                    .ok_or_else(|| Error::new(item.ident.span(), "missing \"falcon_packet\" attribute \"name\""))?,
                 versions,
             }))
         } else {
@@ -51,28 +50,17 @@ impl PacketData {
         }
     }
 
-    pub(crate) fn mappings(&self) -> &PacketVersionMappings {
-        &self.versions
-    }
+    pub(crate) fn mappings(&self) -> &PacketVersionMappings { &self.versions }
 
-    pub(crate) fn fn_name(&self) -> &LitStr {
-        &self.fn_name
-    }
+    pub(crate) fn fn_name(&self) -> &LitStr { &self.fn_name }
 
-    pub(crate) fn struct_name(&self) -> &Ident {
-        &self.struct_name
-    }
-
-    pub(crate) fn batch_name(&self) -> Option<&LitStr> {
-        self.batch_name.as_ref()
-    }
+    pub(crate) fn struct_name(&self) -> &Ident { &self.struct_name }
 }
 
 #[derive(Debug)]
 enum PacketAttributes {
     Versions(Punctuated<VersionsToID, Token![;]>),
     Name(LitStr),
-    Batched(LitStr),
 }
 
 impl Parse for PacketAttributes {
@@ -87,10 +75,6 @@ impl Parse for PacketAttributes {
             input.parse::<kw::name>()?;
             input.parse::<Token![=]>()?;
             Ok(Self::Name(input.parse()?))
-        } else if input.peek(kw::batching) {
-            input.parse::<kw::batching>()?;
-            input.parse::<Token![=]>()?;
-            Ok(Self::Batched(input.parse()?))
         } else {
             Err(Error::new(input.span(), "Unexpected attribute argument!"))
         }

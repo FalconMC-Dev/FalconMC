@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 falcon_core = { path = "../core" }
+falcon_packet_core = { path = "../packet_core/" }
 falcon_send_derive = { path = "../send_derive" }
 
 mc_chat = { version = "0.3.0", features = [ "serde" ] }
@@ -18,3 +19,5 @@ tracing = "0.1.36"
 
 uuid = "1.1.2"
 bytes = "1.2.1"
+
+derive-from-ext = "0.2.0"

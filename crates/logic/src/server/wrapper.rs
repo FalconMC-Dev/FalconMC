@@ -3,10 +3,9 @@ use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
+use super::ServerTask;
 use crate::connection::ConnectionWrapper;
 use crate::FalconServer;
-
-use super::ServerTask;
 
 #[derive(Debug)]
 pub struct ServerWrapper {
@@ -14,9 +13,7 @@ pub struct ServerWrapper {
 }
 
 impl ServerWrapper {
-    pub fn new(link: UnboundedSender<ServerTask>) -> Self {
-        Self { link }
-    }
+    pub fn new(link: UnboundedSender<ServerTask>) -> Self { Self { link } }
 
     /// Do not pass a `Box` to this function.
     pub fn execute_sync<T>(&self, task: T)
@@ -40,13 +37,7 @@ impl ServerWrapper {
         })
     }
 
-    pub fn player_update_pos_look(
-        &self,
-        uuid: Uuid,
-        pos: Option<Position>,
-        facing: Option<(f32, f32)>,
-        on_ground: bool,
-    ) {
+    pub fn player_update_pos_look(&self, uuid: Uuid, pos: Option<Position>, facing: Option<(f32, f32)>, on_ground: bool) {
         self.execute_sync(move |server| {
             server.player_update_pos_look(uuid, pos, facing, on_ground);
         })

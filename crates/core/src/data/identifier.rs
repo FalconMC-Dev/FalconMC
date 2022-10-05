@@ -1,24 +1,21 @@
-use crate::network::buffer::PacketBufferWrite;
-use crate::network::packet::PacketEncode;
+use std::borrow::Cow;
+use std::fmt::{Display, Formatter};
+
 use nom::branch::alt;
 use nom::bytes::complete::take_while;
 use nom::character::complete::char;
 use nom::combinator::map;
 use nom::error::Error;
 use nom::sequence::separated_pair;
-use std::borrow::Cow;
-use std::fmt::{Display, Formatter};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Identifier {
     namespace: Cow<'static, str>,
     location: Cow<'static, str>,
 }
 
 impl Display for Identifier {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}", self.namespace, self.location)
-    }
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{}:{}", self.namespace, self.location) }
 }
 
 impl Identifier {
@@ -55,28 +52,16 @@ impl Identifier {
         }
     }
 
-    pub fn namespace(&self) -> &str {
-        &self.namespace
-    }
+    pub fn namespace(&self) -> &str { &self.namespace }
 
-    pub fn location(&self) -> &str {
-        &self.location
-    }
+    pub fn location(&self) -> &str { &self.location }
 
     pub fn parse_static(input: &'static str) -> Result<Self, usize> {
-        let namespace_domain = take_while::<_, _, Error<&'static str>>(|i| {
-            "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i)
-        });
-        let location_domain = take_while::<_, _, Error<&'static str>>(|i| {
-            "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
-        });
+        let namespace_domain = take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i));
+        let location_domain = take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i));
         let namespace_location = separated_pair(namespace_domain, char(':'), location_domain);
-        let location_only = map(
-            take_while::<_, _, Error<&'static str>>(|i| {
-                "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
-            }),
-            |o: &'static str| ("minecraft", o),
-        );
+        let location_only =
+            map(take_while::<_, _, Error<&'static str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)), |o: &'static str| ("minecraft", o));
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
         if !input.is_empty() {
             Err(location.len())
@@ -93,31 +78,21 @@ impl<'a> TryFrom<&'a str> for Identifier {
     type Error = usize;
 
     fn try_from(input: &'a str) -> Result<Self, Self::Error> {
-        let namespace_domain = take_while::<_, _, Error<&'a str>>(|i| {
-            "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i)
+        let namespace_domain = take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_.".contains(i));
+        let location_domain = take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i));
+        let namespace_location = map(separated_pair(namespace_domain, char(':'), location_domain), |(namespace, location)| {
+            (
+                if namespace == "minecraft" {
+                    "minecraft".into()
+                } else {
+                    Cow::from(namespace.to_string())
+                },
+                Cow::from(location.to_string()),
+            )
         });
-        let location_domain = take_while::<_, _, Error<&'a str>>(|i| {
-            "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
+        let location_only = map(take_while::<_, _, Error<&'a str>>(|i| "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)), |o: &'a str| {
+            ("minecraft".into(), Cow::from(o.to_string()))
         });
-        let namespace_location = map(
-            separated_pair(namespace_domain, char(':'), location_domain),
-            |(namespace, location)| {
-                (
-                    if namespace == "minecraft" {
-                        "minecraft".into()
-                    } else {
-                        Cow::from(namespace.to_string())
-                    },
-                    Cow::from(location.to_string()),
-                )
-            },
-        );
-        let location_only = map(
-            take_while::<_, _, Error<&'a str>>(|i| {
-                "0123456789abcdefghijklmnopqrstuvwxyz-_./".contains(i)
-            }),
-            |o: &'a str| ("minecraft".into(), Cow::from(o.to_string())),
-        );
         let (input, (namespace, location)) = alt((namespace_location, location_only))(input).unwrap();
         if !input.is_empty() {
             Err(location.len())
@@ -130,16 +105,11 @@ impl<'a> TryFrom<&'a str> for Identifier {
     }
 }
 
-impl PacketEncode for Identifier {
-    fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-        buf.write_string(&self.to_string());
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::Identifier;
     use std::borrow::Cow;
+
+    use super::Identifier;
 
     #[test]
     fn it_works() {

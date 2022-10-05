@@ -1,12 +1,13 @@
-use bytes::Bytes;
-use falcon_core::network::connection::ConnectionLogic;
-use ignore_result::Ignore;
 use std::fmt::Debug;
+
+use falcon_packet_core::WriteError;
+use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::error;
 
-use crate::FalconConnection;
-
+use super::writer::SocketWrite;
 use super::ConnectionTask;
+use crate::FalconConnection;
 
 #[derive(Debug)]
 pub struct ConnectionWrapper {
@@ -14,9 +15,7 @@ pub struct ConnectionWrapper {
 }
 
 impl ConnectionWrapper {
-    pub fn new(link: UnboundedSender<ConnectionTask>) -> Self {
-        ConnectionWrapper { link }
-    }
+    pub fn new(link: UnboundedSender<ConnectionTask>) -> Self { ConnectionWrapper { link } }
 
     pub fn reset_keep_alive(&self) {
         self.link
@@ -26,32 +25,18 @@ impl ConnectionWrapper {
             .ignore();
     }
 
-    pub fn build_send_packet<T>(&self, packet: T, func: fn(T, &mut FalconConnection))
+    pub fn send_packet<T, F>(&self, packet: T, write_fn: F)
     where
-        T: Sync + Send + 'static,
+        T: Send + Sync + 'static,
+        F: FnOnce(T, &mut SocketWrite, i32) -> Result<bool, WriteError> + Send + Sync + 'static,
     {
         self.link
             .send(ConnectionTask::Sync(Box::new(move |connection| {
-                func(packet, connection)
+                if let Err(err) = connection.send_packet(packet, write_fn) {
+                    error!("Error when sending packet: {}", err);
+                }
             })))
-            .ignore();
-    }
-
-    pub fn send_batch<B, C>(&self, batch: Vec<B>, mut convert: C)
-    where
-        C: FnMut(B) -> Option<Bytes>,
-    {
-        let mut packets = Vec::with_capacity(batch.len());
-        for item in batch {
-            if let Some(data) = convert(item) {
-                packets.push(data);
-            }
-        }
-        self.execute_sync(move |connection| {
-            for packet in packets {
-                connection.send(packet);
-            }
-        })
+            .ignore()
     }
 
     /// Do not pass a `Box` to this function.
@@ -59,9 +44,7 @@ impl ConnectionWrapper {
     where
         T: FnOnce(&mut FalconConnection) + Send + Sync + 'static,
     {
-        self.link
-            .send(ConnectionTask::Sync(Box::new(task)))
-            .ignore();
+        self.link.send(ConnectionTask::Sync(Box::new(task))).ignore();
     }
 }
 

@@ -8,30 +8,18 @@ pub struct Palette<T: Clone + Debug> {
 }
 
 impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
-    pub fn empty() -> Self {
-        Palette { items: vec![] }
-    }
+    pub fn empty() -> Self { Palette { items: vec![] } }
 
-    pub fn new(init: Vec<T>) -> Self {
-        Palette { items: init }
-    }
+    pub fn new(init: Vec<T>) -> Self { Palette { items: init } }
 
     pub fn push(&mut self, item: T) -> usize {
         self.items.push(item);
         self.items.len() - 1
     }
 
-    pub fn get_index(&self, target: &T) -> Option<usize> {
-        self.items
-            .iter()
-            .enumerate()
-            .find(|(_, item)| *item == target)
-            .map(|(i, _)| i)
-    }
+    pub fn get_index(&self, target: &T) -> Option<usize> { self.items.iter().enumerate().find(|(_, item)| *item == target).map(|(i, _)| i) }
 
-    pub fn at(&self, index: usize) -> Option<&T> {
-        self.items.get(index)
-    }
+    pub fn at(&self, index: usize) -> Option<&T> { self.items.get(index) }
 
     pub fn remove(&mut self, index: usize) -> usize {
         self.items.swap_remove(index);
@@ -39,35 +27,19 @@ impl<T: PartialEq + Clone + Debug + 'static> Palette<T> {
     }
 
     pub fn calculate_bits_per_entry(&self, to_i32: fn(&T) -> Option<i32>) -> u32 {
-        let count = self
-            .items
-            .iter()
-            .map(to_i32)
-            .filter(|item| item.is_some())
-            .count();
+        let count = self.items.iter().map(to_i32).filter(|item| item.is_some()).count();
         usize::BITS - count.leading_zeros()
     }
 
-    pub fn build_direct_palette<'a, I>(
-        &'a self,
-        data_iterator: I,
-        to_i32: PaletteToI32<T>,
-        default: T,
-    ) -> impl Iterator<Item = u64> + 'a
+    pub fn build_direct_palette<'a, I>(&'a self, data_iterator: I, to_i32: PaletteToI32<T>, default: T) -> impl Iterator<Item = u64> + 'a
     where
         I: Iterator<Item = u16> + 'a,
     {
         let default_value = to_i32(&default).unwrap();
-        data_iterator
-            .map(move |value| to_i32(&self.items[value as usize]).unwrap_or(default_value) as u64)
+        data_iterator.map(move |value| to_i32(&self.items[value as usize]).unwrap_or(default_value) as u64)
     }
 
-    pub fn build_indirect_palette<'a, I>(
-        &'a self,
-        data_iterator: I,
-        to_i32: PaletteToI32<T>,
-        default: T,
-    ) -> (impl Iterator<Item = u64>, Vec<i32>)
+    pub fn build_indirect_palette<'a, I>(&'a self, data_iterator: I, to_i32: PaletteToI32<T>, default: T) -> (impl Iterator<Item = u64>, Vec<i32>)
     where
         I: Iterator<Item = u16> + 'a,
     {

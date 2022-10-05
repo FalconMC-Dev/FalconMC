@@ -1,47 +1,44 @@
-use falcon_core::network::connection::ConnectionLogic;
-use falcon_logic::FalconConnection;
-use tracing::trace;
-
-falcon_receive_derive::falcon_receive! {
+#[falcon_receive_derive::falcon_receive]
+mod inner {
+    use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
+    use falcon_packet_core::PacketRead;
+    use tracing::trace;
     use falcon_core::network::ConnectionState;
-    use falcon_core::network::packet::{PacketDecode, PacketHandler, TaskScheduleResult};
 
-    #[derive(PacketDecode)]
+    #[derive(PacketRead)]
     #[falcon_packet(versions = { -1 = 0x00 })]
-    pub struct StatusRequestPacket;
+    pub struct StatusRequestPacket {}
 
-    #[derive(PacketDecode)]
+    #[derive(PacketRead)]
     #[falcon_packet(versions = { -1 = 0x01 })]
     pub struct StatusPingPacket {
         payload: i64,
     }
-}
 
-impl PacketHandler<FalconConnection> for StatusRequestPacket {
-    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
-        trace!("Status requested");
-        let version = connection.handler_state().protocol_id();
-        let wrapper = connection.wrapper();
-        connection.server().request_status(version, wrapper);
-        Ok(())
+    impl PacketHandler for StatusRequestPacket {
+        fn handle_packet(self, connection: &mut FalconConnection) {
+            trace!("Status requested");
+            let version = connection.handler_state().protocol_id();
+            let wrapper = connection.wrapper();
+            connection.server().request_status(version, wrapper);
+        }
+
+        fn get_name(&self) -> &'static str {
+            "Status request (1.8.9)"
+        }
     }
 
-    fn get_name(&self) -> &'static str {
-        "Status request (1.8.9)"
-    }
-}
+    impl PacketHandler for StatusPingPacket {
+        fn handle_packet(self, connection: &mut FalconConnection) {
+            trace!("Sent status pong");
+            connection.send_packet(self.payload, falcon_send::write_status_pong);
+            connection
+                .handler_state_mut()
+                .set_connection_state(ConnectionState::Disconnected);
+        }
 
-impl PacketHandler<FalconConnection> for StatusPingPacket {
-    fn handle_packet(self, connection: &mut FalconConnection) -> TaskScheduleResult {
-        trace!("Sent status pong");
-        falcon_send::send_status_pong(self.payload, connection);
-        connection
-            .handler_state_mut()
-            .set_connection_state(ConnectionState::Disconnected);
-        Ok(())
-    }
-
-    fn get_name(&self) -> &'static str {
-        "Ping Request (1.8.9)"
+        fn get_name(&self) -> &'static str {
+            "Ping Request (1.8.9)"
+        }
     }
 }

@@ -9,9 +9,7 @@ pub struct ErrorCatcher {
 }
 
 impl ErrorCatcher {
-    pub fn new() -> Self {
-        Self { error: None }
-    }
+    pub fn new() -> Self { Self { error: None } }
 
     pub fn add_error(&mut self, error: syn::Error) {
         match self.error {
@@ -24,6 +22,18 @@ impl ErrorCatcher {
         match error {
             Ok(value) => value,
             Err(error) => self.add_error(error),
+        }
+    }
+
+    pub fn critical<T>(&self, error: Result<T, syn::Error>) -> Result<T, syn::Error> {
+        match error {
+            Ok(value) => Ok(value),
+            Err(mut error) => {
+                if let Some(err) = &self.error {
+                    error.combine(err.clone());
+                }
+                Err(error)
+            },
         }
     }
 

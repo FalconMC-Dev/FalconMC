@@ -1,3 +1,4 @@
+// @generated
 #![allow(clippy::derivable_impls)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Blocks {

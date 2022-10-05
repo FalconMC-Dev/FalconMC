@@ -37,14 +37,7 @@ pub struct SchematicData<'a> {
 }
 
 impl<'a> SchematicData<'a> {
-    pub fn new(
-        width: u16,
-        height: u16,
-        length: u16,
-        offset: [i32; 3],
-        palette: AHashMap<i32, Blocks>,
-        block_data: ByteArray<'a>,
-    ) -> Self {
+    pub fn new(width: u16, height: u16, length: u16, offset: [i32; 3], palette: AHashMap<i32, Blocks>, block_data: ByteArray<'a>) -> Self {
         SchematicData {
             width,
             height,
@@ -68,7 +61,7 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
                 if content != REQUIRED_DATA_VERSION {
                     return Err(FalconCoreError::WrongDataVersion(REQUIRED_DATA_VERSION, content));
                 }
-            }
+            },
             None => return Err(FalconCoreError::MissingData),
         }
         let block_data = {
@@ -81,29 +74,16 @@ impl<'a> TryFrom<SchematicVersionedRaw<'a>> for SchematicData<'a> {
         let mut effective_offset = [0; 3];
         if let Some(offset) = value.offset {
             if offset.iter().count() != 3 {
-                return Err(FalconCoreError::InvalidData(String::from("Expected 3 offset coords")))
+                return Err(FalconCoreError::InvalidData(String::from("Expected 3 offset coords")));
             }
-            offset
-                .iter()
-                .enumerate()
-                .for_each(|(i, x)| effective_offset[i] = x);
+            offset.iter().enumerate().for_each(|(i, x)| effective_offset[i] = x);
         }
 
         let mut effective_palette = AHashMap::new();
         for (state, index) in value.palette {
-            effective_palette.insert(
-                index,
-                Blocks::from_str(state.as_ref())?,
-            );
+            effective_palette.insert(index, Blocks::from_str(state.as_ref())?);
         }
 
-        Ok(SchematicData::new(
-            value.width as u16,
-            value.height as u16,
-            value.length as u16,
-            effective_offset,
-            effective_palette,
-            block_data,
-        ))
+        Ok(SchematicData::new(value.width as u16, value.height as u16, value.length as u16, effective_offset, effective_palette, block_data))
     }
 }

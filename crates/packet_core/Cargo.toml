@@ -1,0 +1,16 @@
+[package]
+name = "falcon_packet_core"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+falcon_packet_core_derive = { path = "../packet_core_derive/" }
+
+bytes = "1.2.1"
+
+thiserror = "1.0.32"
+
+uuid = "1.1.2"
+fastnbt = "2.3.2"

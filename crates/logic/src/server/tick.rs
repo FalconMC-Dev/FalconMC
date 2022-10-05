@@ -4,9 +4,8 @@ use tokio::runtime::Builder;
 use tokio::time::MissedTickBehavior;
 use tracing::{debug, debug_span, info};
 
-use crate::FalconServer;
-
 use super::ServerTask;
+use crate::FalconServer;
 
 impl FalconServer {
     #[tracing::instrument(name = "server", skip(self))]
@@ -61,9 +60,5 @@ impl FalconServer {
     }
 
     #[tracing::instrument(skip(self), fields(player_count = self.players.len()))]
-    fn keep_alive(&mut self) {
-        self.players
-            .values()
-            .for_each(|player| player.send_keep_alive());
-    }
+    fn keep_alive(&mut self) { self.players.values().for_each(|player| player.send_keep_alive()); }
 }

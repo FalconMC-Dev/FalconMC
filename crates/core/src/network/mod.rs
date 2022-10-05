@@ -4,9 +4,7 @@ use std::fmt::{Display, Formatter};
 
 use uuid::Uuid;
 
-pub mod buffer;
-pub mod connection;
-pub mod packet;
+pub mod util;
 
 pub const UNKNOWN_PROTOCOL: i32 = -1;
 
@@ -19,9 +17,7 @@ pub struct PacketHandlerState {
 }
 
 impl Display for PacketHandlerState {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}|{}", self.connection_state, self.protocol_id)
-    }
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}|{}", self.connection_state, self.protocol_id) }
 }
 
 impl PacketHandlerState {
@@ -34,37 +30,21 @@ impl PacketHandlerState {
         }
     }
 
-    pub fn player_uuid(&self) -> Option<Uuid> {
-        self.uuid
-    }
+    pub fn player_uuid(&self) -> Option<Uuid> { self.uuid }
 
-    pub fn set_player_uuid(&mut self, uuid: Uuid) {
-        self.uuid = Some(uuid);
-    }
+    pub fn set_player_uuid(&mut self, uuid: Uuid) { self.uuid = Some(uuid); }
 
-    pub fn last_keep_alive(&self) -> u64 {
-        self.last_keep_alive
-    }
+    pub fn last_keep_alive(&self) -> u64 { self.last_keep_alive }
 
-    pub fn set_last_keep_alive(&mut self, last_keep_alive: u64) {
-        self.last_keep_alive = last_keep_alive;
-    }
+    pub fn set_last_keep_alive(&mut self, last_keep_alive: u64) { self.last_keep_alive = last_keep_alive; }
 
-    pub fn protocol_id(&self) -> i32 {
-        self.protocol_id
-    }
+    pub fn protocol_id(&self) -> i32 { self.protocol_id }
 
-    pub fn set_protocol_id(&mut self, protocol_id: i32) {
-        self.protocol_id = protocol_id;
-    }
+    pub fn set_protocol_id(&mut self, protocol_id: i32) { self.protocol_id = protocol_id; }
 
-    pub fn connection_state(&self) -> ConnectionState {
-        self.connection_state
-    }
+    pub fn connection_state(&self) -> ConnectionState { self.connection_state }
 
-    pub fn set_connection_state(&mut self, state: ConnectionState) {
-        self.connection_state = state;
-    }
+    pub fn set_connection_state(&mut self, state: ConnectionState) { self.connection_state = state; }
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]

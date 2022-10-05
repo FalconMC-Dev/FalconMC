@@ -1,8 +1,11 @@
-falcon_send_derive::falcon_send! {
-    use falcon_core::network::buffer::{get_var_i32_size, PacketBufferWrite};
-    use falcon_core::network::packet::PacketEncode;
+#[falcon_send_derive::falcon_send]
+mod inner {
+    use bytes::BufMut;
+    use derive_from_ext::From;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
+    use falcon_packet_core::{PacketArray, PacketIter, PacketSize, PacketVec, PacketWrite, PacketWriteSeed, VarI32, WriteError};
+
     use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
 
     const MAX_BITS_PER_BLOCK: u8 = 14;
@@ -12,88 +15,77 @@ falcon_send_derive::falcon_send! {
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
     const MAX_LIGHT: [u8; LIGHT_COUNT] = [0xFF; LIGHT_COUNT];
 
+    #[derive(PacketSize, PacketWrite, From)]
+    #[from(ChunkDataSpec)]
     #[falcon_packet(versions = {
         393, 401, 404 = 0x22;
-    }, name = "chunk_data", batching = "build_chunk_data")]
+    }, name = "chunk_data")]
     pub struct ChunkDataPacket {
         chunk_x: i32,
         chunk_z: i32,
-        bit_mask: i32,
-        chunk_sections: Vec<ChunkSectionData>,
+        #[from(skip, default = "true")]
+        full_chunk: bool,
+        #[falcon(var32)]
+        bitmask: i32,
+        #[from(skip)]
+        #[falcon(var32)]
+        size: usize, // filled in by sections field
+        #[from(map = "data_map")]
+        #[falcon(link = "size with data")]
+        sections: Vec<ChunkSectionData>,
+        #[from(skip)]
+        #[falcon(var32)]
+        block_entity_num: i32, // default 0
     }
 
-    impl PacketEncode for ChunkDataPacket {
-        fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-            buf.write_i32(self.chunk_x);
-            buf.write_i32(self.chunk_z);
-            buf.write_bool(true); // We only send full chunks currently!
-            buf.write_var_i32(self.bit_mask);
-            let mut data_size: i32 = BIOME_COUNT as i32 * 4; // biomes get sent because of full chunk
-            for chunk in &self.chunk_sections {
-                data_size += chunk.get_data_size();
-            }
-            buf.write_var_i32(data_size);
-            for chunk in &self.chunk_sections {
-                chunk.to_buf(buf);
-            }
-            for x in BIOMES {
-                buf.write_i32(x);
-            }
-            buf.write_var_i32(0);
-        }
+    fn data_map(sections: Vec<ChunkSectionDataSpec>) -> Vec<ChunkSectionData> { sections.into_iter().map(|s| s.into()).collect() }
+
+    #[inline(always)]
+    fn data_value(field: &[ChunkSectionData]) -> usize { data_size(field) }
+
+    fn data_size(field: &[ChunkSectionData]) -> usize { PacketIter::new(field.iter()).size_ref() + BIOME_COUNT as usize * 4 }
+
+    fn data_write<B: BufMut + ?Sized>(field: &[ChunkSectionData], buffer: &mut B) -> Result<(), WriteError> {
+        PacketIter::new(field.iter()).write_ref(buffer)?;
+        PacketWriteSeed::write(PacketArray::default(), &BIOMES, buffer)
     }
 
-    impl From<ChunkDataSpec> for ChunkDataPacket {
-        fn from(spec: ChunkDataSpec) -> Self {
-            ChunkDataPacket {
-                chunk_x: spec.chunk_x,
-                chunk_z: spec.chunk_z,
-                bit_mask: spec.bitmask,
-                chunk_sections: spec.sections.into_iter().map(|e| e.into()).collect(),
-            }
-        }
-    }
-
-    pub struct ChunkSectionData {
+    struct ChunkSectionData {
         bits_per_block: u8,
         palette: Option<Vec<i32>>,
         block_data: Vec<u64>,
     }
 
-    impl PacketEncode for ChunkSectionData {
-        fn to_buf(&self, buf: &mut dyn PacketBufferWrite) {
-            buf.write_u8(self.bits_per_block);
-            if let Some(palette) = &self.palette {
-                buf.write_var_i32(palette.len() as i32);
-                for x in palette {
-                    buf.write_var_i32(*x);
-                }
-            }
-            buf.write_var_i32(self.block_data.len() as i32);
-            for x in &self.block_data {
-                buf.write_i64(*x as i64);
-            }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
-            for x in MAX_LIGHT {
-                buf.write_u8(x);
-            }
+    impl PacketSize for ChunkSectionData {
+        fn size(&self) -> usize {
+            let palette_len = if let Some(palette) = &self.palette {
+                VarI32::from(palette.len()).size() + palette.iter().map(|x| VarI32::from(*x).size()).sum::<usize>()
+            } else {
+                0
+            };
+            self.bits_per_block.size()
+            + palette_len
+            + VarI32::from(self.block_data.len()).size()
+            + self.block_data.len() * std::mem::size_of::<u64>()
+            + LIGHT_COUNT // block light
+            + LIGHT_COUNT // sky light
         }
     }
 
-    impl ChunkSectionData {
-        pub fn get_data_size(&self) -> i32 {
-            let mut size = 1; // always one for bits per block;
+    impl PacketWrite for ChunkSectionData {
+        fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
+        where
+            B: BufMut + ?Sized,
+        {
+            self.bits_per_block.write(buffer)?;
             if let Some(palette) = &self.palette {
-                size += get_var_i32_size(palette.len() as i32);
-                size += palette.iter().map(|x| get_var_i32_size(*x)).sum::<usize>();
+                VarI32::from(palette.len() as i32).write(buffer)?;
+                PacketIter::new(palette.iter().map(|&x| VarI32::from(x))).write_owned(buffer)?;
             }
-            size += get_var_i32_size(self.block_data.len() as i32);
-            size += self.block_data.len() * std::mem::size_of::<u64>();
-            size += LIGHT_COUNT;
-            size += LIGHT_COUNT; // we only have the overworld for now
-            size as i32
+            VarI32::from(self.block_data.len()).write(buffer)?;
+            PacketWriteSeed::write(PacketVec::default(), &self.block_data, buffer)?;
+            MAX_LIGHT.write(buffer)?;
+            MAX_LIGHT.write(buffer)
         }
     }
 
@@ -116,11 +108,21 @@ falcon_send_derive::falcon_send! {
 
             let (block_data, palette) = if bits_per_block > 8 {
                 let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(MAX_BITS_PER_BLOCK, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+                let block_data = build_compacted_data_array(
+                    MAX_BITS_PER_BLOCK,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
+                    blocks,
+                );
                 (block_data, None)
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
-                let block_data = build_compacted_data_array(bits_per_block, (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS, blocks);
+                let (blocks, palette) = spec
+                    .palette
+                    .build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
+                let block_data = build_compacted_data_array(
+                    bits_per_block,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
+                    blocks,
+                );
                 (block_data, Some(palette))
             };
             ChunkSectionData {
@@ -131,7 +133,7 @@ falcon_send_derive::falcon_send! {
         }
     }
 
-    pub fn build_compacted_data_array<E: Iterator<Item=u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
+    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
         let mut compacted_data = Vec::with_capacity(capacity as usize);
         let mut current_long = 0u64;
         let mut offset = 0;

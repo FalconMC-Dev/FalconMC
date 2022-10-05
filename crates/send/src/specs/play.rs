@@ -1,10 +1,8 @@
 use falcon_core::player::data::{GameMode, LookAngles, PlayerAbilityFlags, Position};
 use falcon_core::server::data::Difficulty;
-use falcon_core::world::{
-    blocks::Blocks,
-    chunks::{Chunk, ChunkSection},
-    palette::Palette,
-};
+use falcon_core::world::blocks::Blocks;
+use falcon_core::world::chunks::{Chunk, ChunkSection};
+use falcon_core::world::palette::Palette;
 
 use crate::define_spec;
 
