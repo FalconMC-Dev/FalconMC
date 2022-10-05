@@ -10,7 +10,7 @@ const ZLIB_EXTRA_LEN: usize = 6;
 #[derive(Debug)]
 pub struct SocketWrite {
     compression_buffer: [u8; COMPRESSION_BUFFER_LEN],
-    compression_treshold: i32,
+    compression_threshold: i32,
     compression: Compress,
     compression_position: usize,
     output_buffer: BytesMut,
@@ -20,10 +20,10 @@ pub struct SocketWrite {
 }
 
 impl SocketWrite {
-    pub fn new(treshold: i32) -> Self {
+    pub fn new(threshold: i32) -> Self {
         Self {
             compression_buffer: [0; COMPRESSION_BUFFER_LEN],
-            compression_treshold: treshold,
+            compression_threshold: threshold,
             compression: Compress::new(Compression::new(5), true),
             compression_position: 0,
             output_buffer: BytesMut::with_capacity(COMPRESSION_BUFFER_LEN),
@@ -40,7 +40,7 @@ impl SocketWrite {
 
         self.flush();
 
-        if self.compression_treshold >= 0 {
+        if self.compression_threshold >= 0 {
             if self.next_is_compressed {
                 let offset = VarI32::from(self.compression.total_in() as usize).size();
                 let overall_len = self.next_len_size - offset;
@@ -186,8 +186,8 @@ impl PacketPrepare for SocketWrite {
     fn prepare(&mut self, additional: usize) {
         let len_size = VarI32::from(additional).size();
         let mut capacity = additional;
-        if self.compression_treshold >= 0 {
-            if self.compression_treshold <= additional as i32 {
+        if self.compression_threshold >= 0 {
+            if self.compression_threshold <= additional as i32 {
                 self.next_is_compressed = true;
                 capacity += ZLIB_EXTRA_LEN;
                 self.next_len_size = 3.min(VarI32::from(capacity + len_size).size()) + len_size;

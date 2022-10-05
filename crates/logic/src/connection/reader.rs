@@ -10,7 +10,7 @@ pub struct SocketRead {
     decompress_buf: [u8; COMPRESSION_BUF_LEN],
     decompress: Decompress,
     decompress_pos: usize,
-    compression_treshold: i32,
+    compression_threshold: i32,
     output_buf: BytesMut,
     next_is_compressed: bool,
     ready_pos: usize,
@@ -18,12 +18,12 @@ pub struct SocketRead {
 }
 
 impl SocketRead {
-    pub fn new(compression_treshold: i32) -> Self {
+    pub fn new(compression_threshold: i32) -> Self {
         Self {
             decompress_buf: [0u8; COMPRESSION_BUF_LEN],
             decompress: Decompress::new(true),
             decompress_pos: 0,
-            compression_treshold,
+            compression_threshold,
             output_buf: BytesMut::with_capacity(COMPRESSION_BUF_LEN),
             next_is_compressed: false,
             ready_pos: 0,
@@ -55,7 +55,7 @@ impl SocketRead {
             if self.next_expected == 0 {
                 if let Some((length, cnt)) = read_varint_size(&self.decompress_buf[start..self.decompress_pos]) {
                     start += cnt;
-                    if self.compression_treshold >= 0 {
+                    if self.compression_threshold >= 0 {
                         if let Some((uncomp_len, cnt)) = read_varint_size(&self.decompress_buf[start..self.decompress_pos]) {
                             self.next_expected = length as usize - cnt;
                             if uncomp_len == 0 {
