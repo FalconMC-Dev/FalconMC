@@ -24,23 +24,17 @@ pub fn falcon_receive(attrs: TokenStream, contents: TokenStream) -> TokenStream 
             Item::Struct(ref mut item) => PacketData::parse_packet(item).transpose(),
             _ => None,
         })
-        .fold(
-            (ReceiveMatchMappings::new(), ErrorCatcher::new()),
-            |(mut res, mut err), item| {
-                match item {
-                    Ok(item) => {
-                        let (exclude, mappings) = item.mappings().to_inner();
-                        let name =
-                            Some(item.struct_name().clone()).and_then(|n| exclude.map(|v| (v, n)));
-                        err.extend_error(
-                            res.add_packet(item.struct_name().clone(), (name, mappings)),
-                        );
-                    }
-                    Err(error) => err.add_error(error),
-                }
-                (res, err)
-            },
-        );
+        .fold((ReceiveMatchMappings::new(), ErrorCatcher::new()), |(mut res, mut err), item| {
+            match item {
+                Ok(item) => {
+                    let (exclude, mappings) = item.mappings().to_inner();
+                    let name = Some(item.struct_name().clone()).and_then(|n| exclude.map(|v| (v, n)));
+                    err.extend_error(res.add_packet(item.struct_name().clone(), (name, mappings)));
+                },
+                Err(error) => err.add_error(error),
+            }
+            (res, err)
+        });
 
     let mut result = proc_macro2::TokenStream::new();
     result.extend(contents.into_iter().map(|i| i.to_token_stream()));
@@ -55,7 +49,9 @@ pub fn falcon_receive(attrs: TokenStream, contents: TokenStream) -> TokenStream 
 }
 
 pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
-    let match_arms: Vec<Arm> = data.mappings.into_iter()
+    let match_arms: Vec<Arm> = data
+        .mappings
+        .into_iter()
         .map(|(id, mappings)| {
             let packet_id = id.packet_id;
             match id.exclude {
@@ -70,7 +66,9 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                     }
                 },
                 None => {
-                    let inner_arms: Vec<Arm> = mappings.versions.into_iter()
+                    let inner_arms: Vec<Arm> = mappings
+                        .versions
+                        .into_iter()
                         .map(|(struct_name, versions)| {
                             let versions = versions.iter().map(|(v, _)| v);
                             parse_quote_spanned! {struct_name.span()=>
@@ -83,7 +81,8 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                                     Ok(true)
                                 }
                             }
-                        }).collect();
+                        })
+                        .collect();
                     parse_quote! {
                         #packet_id => {
                             match protocol_id {
@@ -92,9 +91,10 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                             }
                         }
                     }
-                }
+                },
             }
-        }).collect();
+        })
+        .collect();
 
     parse_quote! {
         pub fn falcon_process_packet<B>(packet_id: i32, buffer: &mut B, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::core::result::Result<bool, ::falcon_packet_core::ReadError>

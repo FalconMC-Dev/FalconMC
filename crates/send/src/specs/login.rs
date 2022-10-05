@@ -1,5 +1,6 @@
-use crate::define_spec;
 use uuid::Uuid;
+
+use crate::define_spec;
 
 define_spec! {
     LoginSuccessSpec {

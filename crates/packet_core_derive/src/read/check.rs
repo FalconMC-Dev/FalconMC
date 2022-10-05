@@ -1,10 +1,7 @@
 use falcon_proc_util::ErrorCatcher;
 use syn::Error;
 
-use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64,
-    Vec as PacketVec,
-};
+use crate::attributes::PacketAttribute::{self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64, Vec as PacketVec};
 
 pub fn is_outer(attribute: &PacketAttribute) -> bool {
     match attribute {
@@ -31,10 +28,7 @@ pub fn validate(mut attributes: Vec<PacketAttribute>) -> syn::Result<Vec<PacketA
         let mut attribute = attributes.remove(i);
         error.extend_error(check(&mut attribute, attributes.iter_mut()));
         if is_outer(&attribute) && !checked.is_empty() {
-            error.add_error(Error::new(
-                attribute.span(),
-                "Ending attribute should be last in the list",
-            ));
+            error.add_error(Error::new(attribute.span(), "Ending attribute should be last in the list"));
         }
         checked.push(attribute);
     }

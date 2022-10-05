@@ -27,23 +27,13 @@ pub struct TestPacket {
     // nbt_test: TestStrWrapper,
 }
 
-fn link_fn_value(field: &u32, _id: &i32) -> usize {
-    field.leading_zeros() as usize
-}
+fn link_fn_value(field: &u32, _id: &i32) -> usize { field.leading_zeros() as usize }
 
-fn link_fn_size(field: &u32) -> usize {
-    ::falcon_packet_core::PacketSize::size(field)
-}
+fn link_fn_size(field: &u32) -> usize { ::falcon_packet_core::PacketSize::size(field) }
 
-fn link_fn_write<B: BufMut + ?Sized>(field: &u32, buffer: &mut B) -> Result<(), crate::WriteError> {
-    crate::PacketWrite::write(field, buffer)
-}
+fn link_fn_write<B: BufMut + ?Sized>(field: &u32, buffer: &mut B) -> Result<(), crate::WriteError> { crate::PacketWrite::write(field, buffer) }
 
-fn link_fn_read<B: Buf + ?Sized>(
-    buffer: &mut B,
-    length: &usize,
-    _id: &i32,
-) -> Result<u32, ReadError> {
+fn link_fn_read<B: Buf + ?Sized>(buffer: &mut B, length: &usize, _id: &i32) -> Result<u32, ReadError> {
     println!("value: {}", length);
     crate::PacketRead::read(buffer)
 }
@@ -54,19 +44,13 @@ struct TestStrWrapper {
 }
 
 impl From<TestStrWrapper> for String {
-    fn from(data: TestStrWrapper) -> Self {
-        data.content
-    }
+    fn from(data: TestStrWrapper) -> Self { data.content }
 }
 
 impl From<String> for TestStrWrapper {
-    fn from(data: String) -> Self {
-        Self { content: data }
-    }
+    fn from(data: String) -> Self { Self { content: data } }
 }
 
 impl AsRef<str> for TestStrWrapper {
-    fn as_ref(&self) -> &str {
-        &self.content
-    }
+    fn as_ref(&self) -> &str { &self.content }
 }

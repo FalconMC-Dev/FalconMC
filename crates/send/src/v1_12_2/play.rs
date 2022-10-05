@@ -13,8 +13,6 @@ mod inner {
     }
 
     impl From<i64> for KeepAlivePacket {
-        fn from(id: i64) -> Self {
-            KeepAlivePacket { id }
-        }
+        fn from(id: i64) -> Self { KeepAlivePacket { id } }
     }
 }

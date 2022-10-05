@@ -13,9 +13,7 @@ pub enum Difficulty {
 }
 
 impl From<Difficulty> for u8 {
-    fn from(src: Difficulty) -> Self {
-        src as u8
-    }
+    fn from(src: Difficulty) -> Self { src as u8 }
 }
 
 #[derive(Debug, Serialize)]

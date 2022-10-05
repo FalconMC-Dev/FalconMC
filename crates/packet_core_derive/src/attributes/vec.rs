@@ -1,6 +1,7 @@
 use derivative::Derivative;
 use proc_macro2::Span;
-use syn::{parse::Parse, Ident, LitStr, Token};
+use syn::parse::Parse;
+use syn::{Ident, LitStr, Token};
 
 use crate::kw;
 
@@ -11,9 +12,7 @@ pub struct ArrayAttribute {
 }
 
 impl ArrayAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for ArrayAttribute {
@@ -35,9 +34,7 @@ pub struct VecAttribute {
 }
 
 impl VecAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for VecAttribute {

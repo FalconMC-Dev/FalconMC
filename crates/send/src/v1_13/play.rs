@@ -1,14 +1,12 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
     use bytes::BufMut;
     use derive_from_ext::From;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
-    use falcon_packet_core::{
-        PacketArray, PacketIter, PacketSize, PacketVec, PacketWrite, PacketWriteSeed, VarI32,
-        WriteError,
-    };
+    use falcon_packet_core::{PacketArray, PacketIter, PacketSize, PacketVec, PacketWrite, PacketWriteSeed, VarI32, WriteError};
+
+    use crate::specs::play::{ChunkDataSpec, ChunkSectionDataSpec};
 
     const MAX_BITS_PER_BLOCK: u8 = 14;
 
@@ -40,23 +38,14 @@ mod inner {
         block_entity_num: i32, // default 0
     }
 
-    fn data_map(sections: Vec<ChunkSectionDataSpec>) -> Vec<ChunkSectionData> {
-        sections.into_iter().map(|s| s.into()).collect()
-    }
+    fn data_map(sections: Vec<ChunkSectionDataSpec>) -> Vec<ChunkSectionData> { sections.into_iter().map(|s| s.into()).collect() }
 
     #[inline(always)]
-    fn data_value(field: &[ChunkSectionData]) -> usize {
-        data_size(field)
-    }
+    fn data_value(field: &[ChunkSectionData]) -> usize { data_size(field) }
 
-    fn data_size(field: &[ChunkSectionData]) -> usize {
-        PacketIter::new(field.iter()).size_ref() + BIOME_COUNT as usize * 4
-    }
+    fn data_size(field: &[ChunkSectionData]) -> usize { PacketIter::new(field.iter()).size_ref() + BIOME_COUNT as usize * 4 }
 
-    fn data_write<B: BufMut + ?Sized>(
-        field: &[ChunkSectionData],
-        buffer: &mut B,
-    ) -> Result<(), WriteError> {
+    fn data_write<B: BufMut + ?Sized>(field: &[ChunkSectionData], buffer: &mut B) -> Result<(), WriteError> {
         PacketIter::new(field.iter()).write_ref(buffer)?;
         PacketWriteSeed::write(PacketArray::default(), &BIOMES, buffer)
     }
@@ -70,11 +59,7 @@ mod inner {
     impl PacketSize for ChunkSectionData {
         fn size(&self) -> usize {
             let palette_len = if let Some(palette) = &self.palette {
-                VarI32::from(palette.len()).size()
-                    + palette
-                        .iter()
-                        .map(|x| VarI32::from(*x).size())
-                        .sum::<usize>()
+                VarI32::from(palette.len()).size() + palette.iter().map(|x| VarI32::from(*x).size()).sum::<usize>()
             } else {
                 0
             };
@@ -122,30 +107,20 @@ mod inner {
             };
 
             let (block_data, palette) = if bits_per_block > 8 {
-                let blocks = spec.palette.build_direct_palette(
-                    spec.blocks.into_iter(),
-                    block_to_int,
-                    Blocks::Air,
-                );
+                let blocks = spec.palette.build_direct_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(
                     MAX_BITS_PER_BLOCK,
-                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16)
-                        as u32
-                        / i64::BITS,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
                     blocks,
                 );
                 (block_data, None)
             } else {
-                let (blocks, palette) = spec.palette.build_indirect_palette(
-                    spec.blocks.into_iter(),
-                    block_to_int,
-                    Blocks::Air,
-                );
+                let (blocks, palette) = spec
+                    .palette
+                    .build_indirect_palette(spec.blocks.into_iter(), block_to_int, Blocks::Air);
                 let block_data = build_compacted_data_array(
                     bits_per_block,
-                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16)
-                        as u32
-                        / i64::BITS,
+                    (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
                     blocks,
                 );
                 (block_data, Some(palette))
@@ -158,11 +133,7 @@ mod inner {
         }
     }
 
-    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(
-        bits_per_element: u8,
-        capacity: u32,
-        elements: E,
-    ) -> Vec<u64> {
+    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
         let mut compacted_data = Vec::with_capacity(capacity as usize);
         let mut current_long = 0u64;
         let mut offset = 0;

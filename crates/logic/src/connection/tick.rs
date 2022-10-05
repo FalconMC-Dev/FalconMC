@@ -1,17 +1,17 @@
-use crate::connection::ConnectionTask;
-use crate::FalconConnection;
 use bytes::{Buf, Bytes};
-use falcon_core::{error::FalconCoreError, network::ConnectionState};
+use falcon_core::error::FalconCoreError;
+use falcon_core::network::ConnectionState;
 use falcon_packet_core::{PacketRead, ReadError, VarI32};
 use mc_chat::{ChatColor, ChatComponent, ComponentStyle};
 use thiserror::Error;
-use tokio::{
-    io::{AsyncReadExt, AsyncWriteExt},
-    net::TcpStream,
-};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpStream;
 use tracing::{debug_span, trace, trace_span};
 
-use super::{reader::SocketRead, ConnectionReceiver};
+use super::reader::SocketRead;
+use super::ConnectionReceiver;
+use crate::connection::ConnectionTask;
+use crate::FalconConnection;
 
 impl FalconConnection {
     #[tracing::instrument(name = "client", skip_all, fields(address = %self.address()))]
@@ -89,11 +89,7 @@ impl FalconConnection {
     }
 }
 
-fn process_packet<R: ConnectionReceiver>(
-    connection: &mut FalconConnection,
-    mut packet: Bytes,
-    receiver: &mut R,
-) -> Result<(), ReceiveError> {
+fn process_packet<R: ConnectionReceiver>(connection: &mut FalconConnection, mut packet: Bytes, receiver: &mut R) -> Result<(), ReceiveError> {
     let packet_id = VarI32::read(&mut packet)?.val();
     let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
     let _enter = span.enter();

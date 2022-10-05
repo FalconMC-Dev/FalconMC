@@ -37,10 +37,7 @@ where
             let attrs = attrs.map(|attrs| {
                 for attr in attrs {
                     if result.contains(&attr) {
-                        error.add_error(syn::Error::new(
-                            attr.span(),
-                            "Attribute already defined earlier",
-                        ));
+                        error.add_error(syn::Error::new(attr.span(), "Attribute already defined earlier"));
                     } else {
                         result.insert(attr);
                     }

@@ -6,14 +6,14 @@ use specs::status::*;
 pub mod macros;
 pub mod specs;
 pub mod util;
-pub mod v1_8_9;
-pub mod v1_9;
-pub mod v1_9_1;
 pub mod v1_12_2;
 pub mod v1_13;
 pub mod v1_14;
 pub mod v1_15;
 pub mod v1_16;
+pub mod v1_8_9;
+pub mod v1_9;
+pub mod v1_9_1;
 
 // Status packets
 packet_write_fn! {

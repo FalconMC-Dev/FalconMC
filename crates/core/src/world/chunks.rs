@@ -40,25 +40,15 @@ impl Chunk {
         }
     }
 
-    pub fn get_bit_mask(&self) -> i32 {
-        self.bitmask
-    }
+    pub fn get_bit_mask(&self) -> i32 { self.bitmask }
 
-    pub fn get_position(&self) -> &ChunkPos {
-        &self.pos
-    }
+    pub fn get_position(&self) -> &ChunkPos { &self.pos }
 
-    pub fn mark_dirty(&mut self, dirty: bool) {
-        self.dirty = dirty;
-    }
+    pub fn mark_dirty(&mut self, dirty: bool) { self.dirty = dirty; }
 
-    pub fn is_dirty(&self) -> bool {
-        self.dirty
-    }
+    pub fn is_dirty(&self) -> bool { self.dirty }
 
-    pub fn get_chunk_sections(&self) -> &[Option<ChunkSection>; SECTIONS_NUM as usize] {
-        &self.sections
-    }
+    pub fn get_chunk_sections(&self) -> &[Option<ChunkSection>; SECTIONS_NUM as usize] { &self.sections }
 }
 
 #[derive(Clone, Debug)]
@@ -101,33 +91,25 @@ impl ChunkSection {
     }
 
     pub fn block_at(&self, x: u16, y: u16, z: u16) -> &Blocks {
-        self.palette.at(self.blocks[ChunkSection::calculate_index(x, y, z)] as usize).unwrap()
+        self.palette
+            .at(self.blocks[ChunkSection::calculate_index(x, y, z)] as usize)
+            .unwrap()
     }
 
     /// This is the block-count internal to `FalconMC`. Depending on the version
-    /// this count will not be correct due to missing blocks. Do not depend on this number when working
-    /// on networking synchronization!!
-    pub fn get_block_count(&self) -> u16 {
-        self.block_count
-    }
+    /// this count will not be correct due to missing blocks. Do not depend on
+    /// this number when working on networking synchronization!!
+    pub fn get_block_count(&self) -> u16 { self.block_count }
 
-    pub fn get_palette(&self) -> &Palette<Blocks> {
-        &self.palette
-    }
+    pub fn get_palette(&self) -> &Palette<Blocks> { &self.palette }
 
-    pub fn get_block_data(&self) -> &Vec<u16> {
-        &self.blocks
-    }
+    pub fn get_block_data(&self) -> &Vec<u16> { &self.blocks }
 
-    pub fn calculate_index(x: u16, y: u16, z: u16) -> usize {
-        (x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize
-    }
+    pub fn calculate_index(x: u16, y: u16, z: u16) -> usize { (x + z * SECTION_WIDTH + y * SECTION_WIDTH * SECTION_LENGTH) as usize }
 }
 
 impl Default for ChunkSection {
-    fn default() -> Self {
-        ChunkSection::empty()
-    }
+    fn default() -> Self { ChunkSection::empty() }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
@@ -137,25 +119,17 @@ pub struct ChunkPos {
 }
 
 impl ChunkPos {
-    pub fn new(x: i32, z: i32) -> Self {
-        ChunkPos { x, z }
-    }
+    pub fn new(x: i32, z: i32) -> Self { ChunkPos { x, z } }
 }
 
 impl From<ChunkPos> for (i32, i32) {
-    fn from(pos: ChunkPos) -> Self {
-        (pos.x, pos.z)
-    }
+    fn from(pos: ChunkPos) -> Self { (pos.x, pos.z) }
 }
 
 impl From<&ChunkPos> for (i32, i32) {
-    fn from(pos: &ChunkPos) -> Self {
-        (pos.x, pos.z)
-    }
+    fn from(pos: &ChunkPos) -> Self { (pos.x, pos.z) }
 }
 
 impl From<(i32, i32)> for ChunkPos {
-    fn from((x, z): (i32, i32)) -> Self {
-        ChunkPos::new(x, z)
-    }
+    fn from((x, z): (i32, i32)) -> Self { ChunkPos::new(x, z) }
 }

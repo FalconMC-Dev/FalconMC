@@ -1,7 +1,8 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::specs::status::StatusResponseSpec;
     use falcon_packet_core::{PacketSize, PacketWrite};
+
+    use crate::specs::status::StatusResponseSpec;
 
     #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = { -1 = 0x00 }, name = "status_response")]
@@ -25,8 +26,6 @@ mod inner {
     }
 
     impl From<i64> for StatusPongPacket {
-        fn from(payload: i64) -> Self {
-            StatusPongPacket { payload }
-        }
+        fn from(payload: i64) -> Self { StatusPongPacket { payload } }
     }
 }

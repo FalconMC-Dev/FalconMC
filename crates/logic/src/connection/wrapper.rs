@@ -1,12 +1,13 @@
+use std::fmt::Debug;
+
 use falcon_packet_core::WriteError;
 use ignore_result::Ignore;
-use std::fmt::Debug;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::error;
 
+use super::writer::SocketWrite;
+use super::ConnectionTask;
 use crate::FalconConnection;
-
-use super::{writer::SocketWrite, ConnectionTask};
 
 #[derive(Debug)]
 pub struct ConnectionWrapper {
@@ -14,9 +15,7 @@ pub struct ConnectionWrapper {
 }
 
 impl ConnectionWrapper {
-    pub fn new(link: UnboundedSender<ConnectionTask>) -> Self {
-        ConnectionWrapper { link }
-    }
+    pub fn new(link: UnboundedSender<ConnectionTask>) -> Self { ConnectionWrapper { link } }
 
     pub fn reset_keep_alive(&self) {
         self.link
@@ -45,9 +44,7 @@ impl ConnectionWrapper {
     where
         T: FnOnce(&mut FalconConnection) + Send + Sync + 'static,
     {
-        self.link
-            .send(ConnectionTask::Sync(Box::new(task)))
-            .ignore();
+        self.link.send(ConnectionTask::Sync(Box::new(task))).ignore();
     }
 }
 

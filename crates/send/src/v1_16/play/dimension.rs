@@ -8,9 +8,7 @@ pub struct Codec {
 }
 
 impl Codec {
-    pub fn new(dimension: Vec<DimensionData>) -> Self {
-        Codec { dimension }
-    }
+    pub fn new(dimension: Vec<DimensionData>) -> Self { Codec { dimension } }
 }
 
 pub struct DimensionData {
@@ -18,9 +16,7 @@ pub struct DimensionData {
 }
 
 impl DimensionData {
-    pub fn new(dimension: Dimension) -> Self {
-        DimensionData { dimension }
-    }
+    pub fn new(dimension: Dimension) -> Self { DimensionData { dimension } }
 }
 
 impl Serialize for DimensionData {

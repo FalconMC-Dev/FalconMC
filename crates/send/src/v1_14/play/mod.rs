@@ -4,9 +4,10 @@ pub use chunk::*;
 
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::{JoinGameSpec, ServerDifficultySpec};
     use derive_from_ext::From;
     use falcon_packet_core::{PacketSize, PacketWrite};
+
+    use crate::{JoinGameSpec, ServerDifficultySpec};
 
     #[derive(PacketSize, PacketWrite, From)]
     #[from(JoinGameSpec)]
@@ -49,8 +50,6 @@ mod inner {
     }
 
     impl From<(i32, i32)> for UpdateViewPosition {
-        fn from((chunk_x, chunk_z): (i32, i32)) -> Self {
-            UpdateViewPosition { chunk_x, chunk_z }
-        }
+        fn from((chunk_x, chunk_z): (i32, i32)) -> Self { UpdateViewPosition { chunk_x, chunk_z } }
     }
 }

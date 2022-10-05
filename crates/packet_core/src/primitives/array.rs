@@ -9,9 +9,7 @@ use crate::{PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite,
 pub struct PacketArray<T>(PhantomData<T>);
 
 impl<T> Default for PacketArray<T> {
-    fn default() -> Self {
-        Self(PhantomData)
-    }
+    fn default() -> Self { Self(PhantomData) }
 }
 
 impl<const N: usize, T: PacketRead> PacketReadSeed for PacketArray<[T; N]> {
@@ -45,7 +43,7 @@ impl<const N: usize, T: PacketRead> PacketReadSeed for PacketArray<[T; N]> {
                             }
                         }
                         return Err(error);
-                    }
+                    },
                 };
             }
 
@@ -72,9 +70,7 @@ impl<'a, const N: usize, T: PacketWrite> PacketWriteSeed<'a> for PacketArray<[T;
 impl<'a, const N: usize, T: PacketSize> PacketSizeSeed<'a> for PacketArray<[T; N]> {
     type Value = [T; N];
 
-    fn size(self, value: &Self::Value) -> usize {
-        value.iter().map(|n| n.size()).sum()
-    }
+    fn size(self, value: &Self::Value) -> usize { value.iter().map(|n| n.size()).sum() }
 }
 
 impl<const N: usize> PacketWrite for [u8; N] {
@@ -89,9 +85,7 @@ impl<const N: usize> PacketWrite for [u8; N] {
 
 impl<const N: usize> PacketSize for [u8; N] {
     #[inline]
-    fn size(&self) -> usize {
-        (&self[..]).size()
-    }
+    fn size(&self) -> usize { (&self[..]).size() }
 }
 
 impl<const N: usize> PacketRead for [u8; N] {

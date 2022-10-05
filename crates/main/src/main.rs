@@ -1,15 +1,15 @@
-use anyhow::Context;
 use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;
+
+use anyhow::Context;
+use falcon_core::server::config::FalconConfig;
+use falcon_core::ShutdownHandle;
 use tracing::metadata::LevelFilter;
 use tracing::{debug, info};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::Layer;
-
-use falcon_core::server::config::FalconConfig;
-use falcon_core::ShutdownHandle;
 
 mod error;
 mod network;
@@ -38,11 +38,10 @@ async fn main() {
     info!("Launching Falcon Server!");
 
     debug!("Loading config!");
-    if let Err(ref e) = FalconConfig::init_config("config/falcon.toml")
-        .with_context(|| "The configuration file could not be loaded! \
-                      This can most likely be solved by removing the config file and adjusting \
-                      the config again after having launched (and shut down) FalconMC.")
-    {
+    if let Err(ref e) = FalconConfig::init_config("config/falcon.toml").with_context(|| {
+        "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after having \
+         launched (and shut down) FalconMC."
+    }) {
         print_error!(e);
         return;
     }
@@ -68,21 +67,14 @@ async fn main() {
 
 fn load_log_file() -> std::io::Result<File> {
     let path = Path::new("./logs/debug.log");
-    match OpenOptions::new()
-        .append(true)
-        .create(true)
-        .open("./logs/debug.log")
-    {
+    match OpenOptions::new().append(true).create(true).open("./logs/debug.log") {
         Ok(log_file) => Ok(log_file),
         Err(ref e) if e.kind() == NotFound => {
             if let Some(parent) = path.parent() {
                 std::fs::create_dir_all(parent)?;
             }
-            OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open("./logs/debug.log")
-        }
+            OpenOptions::new().append(true).create(true).open("./logs/debug.log")
+        },
         Err(e) => Err(e),
     }
 }

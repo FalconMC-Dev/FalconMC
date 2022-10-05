@@ -37,8 +37,6 @@ mod inner {
     }
 
     impl From<(i32, i32)> for UnloadChunkPacket {
-        fn from((chunk_x, chunk_z): (i32, i32)) -> Self {
-            UnloadChunkPacket { chunk_x, chunk_z }
-        }
+        fn from((chunk_x, chunk_z): (i32, i32)) -> Self { UnloadChunkPacket { chunk_x, chunk_z } }
     }
 }

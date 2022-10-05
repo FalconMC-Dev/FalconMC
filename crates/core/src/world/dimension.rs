@@ -13,11 +13,7 @@ impl Dimension {
         }
     }
 
-    pub fn name(&self) -> &str {
-        &self.name
-    }
+    pub fn name(&self) -> &str { &self.name }
 
-    pub fn id(&self) -> i32 {
-        self.id
-    }
+    pub fn id(&self) -> i32 { self.id }
 }

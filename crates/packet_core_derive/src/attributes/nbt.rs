@@ -11,9 +11,7 @@ pub struct NBTAttribute {
 }
 
 impl NBTAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for NBTAttribute {

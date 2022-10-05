@@ -26,8 +26,7 @@ impl PacketData {
             }
         }
 
-        item.attrs
-            .retain(|attr| !attr.path.is_ident("falcon_packet"));
+        item.attrs.retain(|attr| !attr.path.is_ident("falcon_packet"));
         error.emit()?;
 
         if found {
@@ -40,13 +39,9 @@ impl PacketData {
         }
     }
 
-    pub(crate) fn mappings(&self) -> &PacketVersionMappings {
-        &self.versions
-    }
+    pub(crate) fn mappings(&self) -> &PacketVersionMappings { &self.versions }
 
-    pub(crate) fn struct_name(&self) -> &Ident {
-        &self.struct_name
-    }
+    pub(crate) fn struct_name(&self) -> &Ident { &self.struct_name }
 }
 
 pub(crate) struct VersionsArg {

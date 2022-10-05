@@ -1,4 +1,5 @@
-use std::{cmp, io::Read};
+use std::cmp;
+use std::io::Read;
 
 use bytes::Buf;
 
@@ -8,9 +9,7 @@ pub struct Reader<'a, B: ?Sized> {
 }
 
 impl<'a, B: ?Sized> Reader<'a, B> {
-    pub fn new(buf: &'a mut B) -> Self {
-        Self { buf }
-    }
+    pub fn new(buf: &'a mut B) -> Self { Self { buf } }
 }
 
 impl<'a, B: Buf + ?Sized> Read for Reader<'a, B> {

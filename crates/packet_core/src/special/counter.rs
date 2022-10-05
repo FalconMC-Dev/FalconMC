@@ -6,13 +6,9 @@ pub struct Counter {
 }
 
 impl Counter {
-    pub fn new() -> Self {
-        Default::default()
-    }
+    pub fn new() -> Self { Default::default() }
 
-    pub fn count(&self) -> usize {
-        self.count
-    }
+    pub fn count(&self) -> usize { self.count }
 }
 
 impl Write for Counter {
@@ -22,7 +18,5 @@ impl Write for Counter {
         Ok(written)
     }
 
-    fn flush(&mut self) -> std::io::Result<()> {
-        Ok(())
-    }
+    fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
 }

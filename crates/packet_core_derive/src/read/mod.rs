@@ -1,14 +1,12 @@
 use falcon_proc_util::ErrorCatcher;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse_quote_spanned, spanned::Spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
+use syn::spanned::Spanned;
+use syn::{parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
 
+use self::check::validate;
+use self::generate::{to_begin, to_tokenstream};
 use crate::util::ParsedFields;
-
-use self::{
-    check::validate,
-    generate::{to_begin, to_tokenstream},
-};
 
 mod check;
 mod generate;
@@ -20,11 +18,8 @@ pub(crate) fn implement_read(item: ItemStruct) -> syn::Result<TokenStream> {
         Fields::Named(fields) => {
             let fields = error.critical(ParsedFields::new(&fields.named, validate))?;
             return Ok(generate_tokens(&item, fields).into_token_stream());
-        }
-        _ => error.add_error(Error::new(
-            item.fields.span(),
-            "Only named fields are supported currently",
-        )),
+        },
+        _ => error.add_error(Error::new(item.fields.span(), "Only named fields are supported currently")),
     }
 
     error.emit()?;

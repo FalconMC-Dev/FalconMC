@@ -26,9 +26,7 @@ impl PacketWrite for [u8] {
 
 impl PacketSize for [u8] {
     #[inline]
-    fn size(&self) -> usize {
-        self.len()
-    }
+    fn size(&self) -> usize { self.len() }
 }
 
 impl<'a, T: AsRef<[u8]>> PacketWriteSeed<'a> for AsRefU8<T> {
@@ -45,9 +43,7 @@ impl<'a, T: AsRef<[u8]>> PacketSizeSeed<'a> for AsRefU8<T> {
     type Value = T;
 
     #[inline]
-    fn size(self, value: &Self::Value) -> usize {
-        value.as_ref().len()
-    }
+    fn size(self, value: &Self::Value) -> usize { value.as_ref().len() }
 }
 
 pub struct Bytes<T> {
@@ -92,9 +88,7 @@ impl PacketWrite for Vec<u8> {
 
 impl PacketSize for Vec<u8> {
     #[inline]
-    fn size(&self) -> usize {
-        self.deref().len()
-    }
+    fn size(&self) -> usize { self.deref().len() }
 }
 
 impl<'a> PacketWrite for Cow<'a, [u8]> {
@@ -109,7 +103,5 @@ impl<'a> PacketWrite for Cow<'a, [u8]> {
 
 impl<'a> PacketSize for Cow<'a, [u8]> {
     #[inline]
-    fn size(&self) -> usize {
-        self.deref().len()
-    }
+    fn size(&self) -> usize { self.deref().len() }
 }

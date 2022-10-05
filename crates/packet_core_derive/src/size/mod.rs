@@ -4,10 +4,9 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{parse_quote_spanned, Error, Expr, Fields, ItemImpl, ItemStruct, Stmt};
 
-use crate::util::ParsedFields;
-
 use self::check::{get_replaced, validate};
 use self::generate::{to_end, to_preprocess, to_tokenstream};
+use crate::util::ParsedFields;
 
 mod check;
 mod generate;
@@ -19,11 +18,8 @@ pub(crate) fn implement_size(item: ItemStruct) -> syn::Result<TokenStream> {
         Fields::Named(fields) => {
             let fields = error.critical(ParsedFields::new(&fields.named, validate))?;
             return Ok(generate_tokens(&item, fields).into_token_stream());
-        }
-        _ => error.add_error(Error::new(
-            item.fields.span(),
-            "Only named fields are supported currently",
-        )),
+        },
+        _ => error.add_error(Error::new(item.fields.span(), "Only named fields are supported currently")),
     }
 
     error.emit()?;

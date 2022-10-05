@@ -1,5 +1,6 @@
-use crate::world::blocks::ParseBlockError;
 use thiserror::Error;
+
+use crate::world::blocks::ParseBlockError;
 
 pub type Result<T> = std::result::Result<T, FalconCoreError>;
 

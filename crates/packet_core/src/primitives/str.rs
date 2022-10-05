@@ -3,10 +3,7 @@ use std::marker::PhantomData;
 use bytes::{Buf, BufMut};
 
 use crate::error::{ReadError, WriteError};
-use crate::{
-    Bytes, PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed,
-    VarI32,
-};
+use crate::{Bytes, PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed, VarI32};
 
 pub struct PacketString<T> {
     size: usize,
@@ -40,9 +37,7 @@ impl<'a, T: AsRef<str>> PacketWriteSeed<'a> for PacketString<T> {
 impl<'a, T: AsRef<str>> PacketSizeSeed<'a> for PacketString<T> {
     type Value = T;
 
-    fn size(self, value: &Self::Value) -> usize {
-        VarI32::from(value.as_ref().len()).size() + value.as_ref().len()
-    }
+    fn size(self, value: &Self::Value) -> usize { VarI32::from(value.as_ref().len()).size() + value.as_ref().len() }
 }
 
 impl<T: From<String>> PacketReadSeed for PacketString<T> {

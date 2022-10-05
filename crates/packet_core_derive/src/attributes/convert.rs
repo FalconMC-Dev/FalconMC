@@ -1,6 +1,7 @@
 use derivative::Derivative;
 use proc_macro2::Span;
-use syn::{parse::Parse, LitStr, Path, Token};
+use syn::parse::Parse;
+use syn::{LitStr, Path, Token};
 
 use crate::kw;
 
@@ -15,9 +16,7 @@ pub struct IntoAttribute {
 }
 
 impl IntoAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for IntoAttribute {
@@ -44,9 +43,7 @@ pub struct FromAttribute {
 }
 
 impl FromAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for FromAttribute {
@@ -73,9 +70,7 @@ pub struct ConvertAttribute {
 }
 
 impl ConvertAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for ConvertAttribute {

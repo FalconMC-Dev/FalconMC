@@ -1,12 +1,11 @@
 use std::iter::once;
 
 use proc_macro::TokenStream;
+use quote::ToTokens;
+use syn::parse::Nothing;
+use syn::{parse_macro_input, parse_quote_spanned, Arm, Ident, Item, ItemFn, ItemMod, LitInt, Stmt};
 
 use crate::data::PacketData;
-use quote::ToTokens;
-use syn::{
-    parse_macro_input, parse_quote_spanned, Arm, Ident, Item, ItemFn, ItemMod, LitInt, Stmt, parse::Nothing,
-};
 
 mod data;
 mod kw;
@@ -105,11 +104,7 @@ pub(crate) fn generate_send(data: &PacketData) -> ItemFn {
     }
 }
 
-pub(crate) fn generate_fn_body(
-    packet_ident: &Ident,
-    exclude: Option<&LitInt>,
-    match_arms: Vec<Arm>,
-) -> Vec<Stmt> {
+pub(crate) fn generate_fn_body(packet_ident: &Ident, exclude: Option<&LitInt>, match_arms: Vec<Arm>) -> Vec<Stmt> {
     let span = packet_ident.span();
     if let Some(version) = exclude {
         if match_arms.is_empty() {

@@ -1,8 +1,5 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::util::HeightMap;
-    use crate::v1_14::play::ChunkSectionData;
-    use crate::{ChunkDataSpec, ChunkSectionDataSpec};
     use bytes::BufMut;
     use falcon_core::world::blocks::Blocks;
     use falcon_core::world::chunks::{SECTION_HEIGHT, SECTION_LENGTH, SECTION_WIDTH};
@@ -10,6 +7,10 @@ mod inner {
     use falcon_packet_core::{PacketIter, PacketSize, PacketWrite, WriteError};
     use fastnbt::LongArray;
     use serde::Serialize;
+
+    use crate::util::HeightMap;
+    use crate::v1_14::play::ChunkSectionData;
+    use crate::{ChunkDataSpec, ChunkSectionDataSpec};
 
     const MAX_BITS_PER_BLOCK: u8 = 15;
 
@@ -49,14 +50,10 @@ mod inner {
         fn from(map: HeightMap) -> Self {
             PacketHeightMap {
                 motion_blocking: LongArray::new(
-                    build_compacted_data_array(
-                        9,
-                        37,
-                        map.motion_blocking().into_iter().map(|v| v as u64),
-                    )
-                    .into_iter()
-                    .map(|v| v as i64)
-                    .collect(),
+                    build_compacted_data_array(9, 37, map.motion_blocking().into_iter().map(|v| v as u64))
+                        .into_iter()
+                        .map(|v| v as i64)
+                        .collect(),
                 ),
             }
         }
@@ -64,19 +61,12 @@ mod inner {
 
     #[inline(always)]
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize {
-        data_size(field)
-    }
+    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize { data_size(field) }
 
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize {
-        PacketIter::new(field.iter()).size_ref()
-    }
+    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize { PacketIter::new(field.iter()).size_ref() }
 
-    pub(crate) fn data_write<B: BufMut + ?Sized>(
-        field: &[ChunkSectionData],
-        buffer: &mut B,
-    ) -> Result<(), WriteError> {
+    pub(crate) fn data_write<B: BufMut + ?Sized>(field: &[ChunkSectionData], buffer: &mut B) -> Result<(), WriteError> {
         PacketIter::new(field.iter()).write_ref(buffer)
     }
 
@@ -88,8 +78,7 @@ mod inner {
                 full_chunk: true,
                 ignore_old: false,
                 bitmask: spec.bitmask,
-                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2567)
-                    .into(),
+                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2567).into(),
                 biomes: BIOMES,
                 size: 0,
                 sections: spec
@@ -102,10 +91,7 @@ mod inner {
         }
     }
 
-    pub(crate) fn into_chunk_section(
-        spec: ChunkSectionDataSpec,
-        block_to_int: PaletteToI32<Blocks>,
-    ) -> ChunkSectionData {
+    pub(crate) fn into_chunk_section(spec: ChunkSectionDataSpec, block_to_int: PaletteToI32<Blocks>) -> ChunkSectionData {
         let bits_per_block = {
             let actual = spec.palette.calculate_bits_per_entry(block_to_int);
             if actual < 4 {
@@ -120,31 +106,23 @@ mod inner {
         let mut block_count = 0;
         let block_iterator = spec.blocks.into_iter().inspect(|v| {
             let block = spec.palette.at(*v as usize).unwrap();
-            if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir)
-                && block_to_int(block).is_some()
-            {
+            if !matches!(block, Blocks::Air | Blocks::VoidAir | Blocks::CaveAir) && block_to_int(block).is_some() {
                 block_count += 1;
             }
         });
         let (block_data, palette) = if bits_per_block > 8 {
-            let blocks =
-                spec.palette
-                    .build_direct_palette(block_iterator, block_to_int, Blocks::Air);
+            let blocks = spec.palette.build_direct_palette(block_iterator, block_to_int, Blocks::Air);
             let block_data = build_compacted_data_array(
                 MAX_BITS_PER_BLOCK,
-                (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32
-                    / i64::BITS,
+                (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
                 blocks,
             );
             (block_data, None)
         } else {
-            let (blocks, palette) =
-                spec.palette
-                    .build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
+            let (blocks, palette) = spec.palette.build_indirect_palette(block_iterator, block_to_int, Blocks::Air);
             let block_data = build_compacted_data_array(
                 bits_per_block,
-                (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32
-                    / i64::BITS,
+                (SECTION_WIDTH * SECTION_HEIGHT * SECTION_LENGTH * bits_per_block as u16) as u32 / i64::BITS,
                 blocks,
             );
             (block_data, Some(palette))
@@ -157,11 +135,7 @@ mod inner {
         }
     }
 
-    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(
-        bits_per_element: u8,
-        capacity: u32,
-        elements: E,
-    ) -> Vec<u64> {
+    pub fn build_compacted_data_array<E: Iterator<Item = u64>>(bits_per_element: u8, capacity: u32, elements: E) -> Vec<u64> {
         let mut compacted_data = Vec::with_capacity(capacity as usize);
         let mut current_long = 0u64;
 

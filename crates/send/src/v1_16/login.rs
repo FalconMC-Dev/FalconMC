@@ -1,9 +1,10 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::LoginSuccessSpec;
     use derive_from_ext::From;
     use falcon_packet_core::{PacketSize, PacketWrite};
     use uuid::Uuid;
+
+    use crate::LoginSuccessSpec;
 
     #[derive(PacketSize, PacketWrite, From)]
     #[from(LoginSuccessSpec)]

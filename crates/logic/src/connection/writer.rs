@@ -1,5 +1,7 @@
-use bytes::{buf::UninitSlice, Buf, BufMut, BytesMut};
-use falcon_packet_core::{special::PacketPrepare, PacketSize, VarI32};
+use bytes::buf::UninitSlice;
+use bytes::{Buf, BufMut, BytesMut};
+use falcon_packet_core::special::PacketPrepare;
+use falcon_packet_core::{PacketSize, VarI32};
 use flate2::{Compress, Compression, FlushCompress, Status};
 
 const COMPRESSION_BUFFER_LEN: usize = 4096;
@@ -44,31 +46,15 @@ impl SocketWrite {
             if self.next_is_compressed {
                 let offset = VarI32::from(self.compression.total_in() as usize).size();
                 let overall_len = self.next_len_size - offset;
-                write_fixed_varint(
-                    (self.output_buffer.len() - self.ready_pos - overall_len) as i32,
-                    overall_len,
-                    &mut self.output_buffer[self.ready_pos..],
-                );
-                write_fixed_varint(
-                    self.compression.total_in() as i32,
-                    offset,
-                    &mut self.output_buffer[self.ready_pos + overall_len..],
-                );
+                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
+                write_fixed_varint(self.compression.total_in() as i32, offset, &mut self.output_buffer[self.ready_pos + overall_len..]);
             } else {
                 let overall_len = self.next_len_size - 1;
-                write_fixed_varint(
-                    (self.output_buffer.len() - self.ready_pos - overall_len) as i32,
-                    overall_len,
-                    &mut self.output_buffer[self.ready_pos..],
-                );
+                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
             }
         } else {
             let overall_len = self.next_len_size;
-            write_fixed_varint(
-                (self.output_buffer.len() - self.ready_pos - overall_len) as i32,
-                self.next_len_size,
-                &mut self.output_buffer[self.ready_pos..],
-            );
+            write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, self.next_len_size, &mut self.output_buffer[self.ready_pos..]);
         }
 
         // TODO: do encryption
@@ -94,11 +80,7 @@ impl SocketWrite {
             loop {
                 let before = self.compression.total_out();
                 self.compression
-                    .compress(
-                        &[],
-                        Self::output_mut(&mut self.output_buffer),
-                        FlushCompress::Finish,
-                    )
+                    .compress(&[], Self::output_mut(&mut self.output_buffer), FlushCompress::Finish)
                     .unwrap();
                 let n = self.compression.total_out();
                 // TODO: explain unsafe
@@ -133,11 +115,10 @@ impl SocketWrite {
         loop {
             let before_out = self.compression.total_out();
             let before_in = self.compression.total_in();
-            let ret = self.compression.compress(
-                &self.compression_buffer[start..self.compression_position],
-                Self::output_mut(&mut self.output_buffer),
-                FlushCompress::None,
-            ).unwrap();
+            let ret = self
+                .compression
+                .compress(&self.compression_buffer[start..self.compression_position], Self::output_mut(&mut self.output_buffer), FlushCompress::None)
+                .unwrap();
             let written = (self.compression.total_in() - before_in) as usize;
 
             // TODO: explain unsafe
@@ -206,9 +187,7 @@ impl PacketPrepare for SocketWrite {
 
 // TODO: explain unsafe code
 unsafe impl BufMut for SocketWrite {
-    fn remaining_mut(&self) -> usize {
-        self.output_buffer.remaining_mut()
-    }
+    fn remaining_mut(&self) -> usize { self.output_buffer.remaining_mut() }
 
     // TODO: explain unsafe
     unsafe fn advance_mut(&mut self, cnt: usize) {
@@ -224,9 +203,7 @@ unsafe impl BufMut for SocketWrite {
         // TODO: explain unsafe
         unsafe {
             UninitSlice::from_raw_parts_mut(
-                self.compression_buffer
-                    .as_mut_ptr()
-                    .add(self.compression_position),
+                self.compression_buffer.as_mut_ptr().add(self.compression_position),
                 COMPRESSION_BUFFER_LEN - self.compression_position,
             )
         }
@@ -234,13 +211,9 @@ unsafe impl BufMut for SocketWrite {
 }
 
 impl Buf for SocketWrite {
-    fn remaining(&self) -> usize {
-        self.ready_pos.min(self.output_buffer.remaining())
-    }
+    fn remaining(&self) -> usize { self.ready_pos.min(self.output_buffer.remaining()) }
 
-    fn chunk(&self) -> &[u8] {
-        &self.output_buffer[..self.remaining()]
-    }
+    fn chunk(&self) -> &[u8] { &self.output_buffer[..self.remaining()] }
 
     fn advance(&mut self, cnt: usize) {
         self.output_buffer.advance(cnt);

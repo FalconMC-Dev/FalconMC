@@ -5,7 +5,5 @@ pub trait PacketPrepare: BufMut {
 }
 
 impl PacketPrepare for BytesMut {
-    fn prepare(&mut self, additional: usize) {
-        self.reserve(additional);
-    }
+    fn prepare(&mut self, additional: usize) { self.reserve(additional); }
 }

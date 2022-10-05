@@ -9,9 +9,7 @@ pub struct ErrorCatcher {
 }
 
 impl ErrorCatcher {
-    pub fn new() -> Self {
-        Self { error: None }
-    }
+    pub fn new() -> Self { Self { error: None } }
 
     pub fn add_error(&mut self, error: syn::Error) {
         match self.error {
@@ -35,7 +33,7 @@ impl ErrorCatcher {
                     error.combine(err.clone());
                 }
                 Err(error)
-            }
+            },
         }
     }
 

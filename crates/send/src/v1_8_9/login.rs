@@ -1,9 +1,11 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::specs::login::LoginSuccessSpec;
     use derive_from_ext::From;
-    use falcon_packet_core::{special::StrUuid, PacketSize, PacketWrite};
+    use falcon_packet_core::special::StrUuid;
+    use falcon_packet_core::{PacketSize, PacketWrite};
     use mc_chat::ChatComponent;
+
+    use crate::specs::login::LoginSuccessSpec;
 
     #[derive(PacketSize, PacketWrite)]
     #[falcon_packet(versions = { -1 = 0x00 }, name = "disconnect")]

@@ -1,6 +1,7 @@
 use proc_macro2::Span;
 use quote::format_ident;
-use syn::{parse_quote_spanned, spanned::Spanned, Expr, Type};
+use syn::spanned::Spanned;
+use syn::{parse_quote_spanned, Expr, Type};
 
 use crate::attributes::PacketAttribute::{self, *};
 
@@ -14,7 +15,7 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                     buffer,
                 )?
             })
-        }
+        },
         ToString(data) => {
             let len = &data.max_length;
             Some(parse_quote_spanned! {span=>
@@ -23,7 +24,7 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                     buffer,
                 )?
             })
-        }
+        },
         Vec(data) => {
             let target = &data.target;
             Some(parse_quote_spanned! {span=>
@@ -32,7 +33,7 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                     buffer,
                 )?
             })
-        }
+        },
         Array(_) => Some(parse_quote_spanned! {span=>
             ::falcon_packet_core::PacketReadSeed::read(
                 ::falcon_packet_core::PacketArray::default(),
@@ -64,7 +65,7 @@ pub fn to_begin(attribute: &PacketAttribute, span: Span) -> Option<Expr> {
                     #prefix(buffer, &#target)?
                 },
             })
-        }
+        },
         Nbt(_) => Some(parse_quote_spanned! {span=>
             {
                 let reader = ::falcon_packet_core::special::Reader::new(buffer);
@@ -81,24 +82,24 @@ pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type)
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::From<::falcon_packet_core::VarI32>>::from(#field)
             }
-        }
+        },
         VarI64(_) => {
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::From<::falcon_packet_core::VarI64>>::from(#field)
             }
-        }
+        },
         From(data) => {
             let target = &data.target;
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::From<#target>>::from(#field)
             }
-        }
+        },
         Convert(data) => {
             let target = &data.target;
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::From<#target>>::from(#field)
             }
-        }
+        },
         _ => field,
     }
 }

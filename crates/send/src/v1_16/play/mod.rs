@@ -5,15 +5,14 @@ pub use chunk::*;
 
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::v1_16::play::dimension::{Codec, DimensionData};
-    use crate::JoinGameSpec;
     use bytes::BufMut;
     use derive_from_ext::From;
     use falcon_core::data::Identifier;
     use falcon_core::world::dimension::Dimension;
-    use falcon_packet_core::{
-        PacketSize, PacketSizeSeed, PacketString, PacketWrite, PacketWriteSeed, WriteError,
-    };
+    use falcon_packet_core::{PacketSize, PacketSizeSeed, PacketString, PacketWrite, PacketWriteSeed, WriteError};
+
+    use crate::v1_16::play::dimension::{Codec, DimensionData};
+    use crate::JoinGameSpec;
 
     #[derive(PacketSize, PacketWrite, From)]
     #[from(JoinGameSpec)]
@@ -52,9 +51,7 @@ mod inner {
         is_flat: bool,
     }
 
-    fn worlds_value(field: &[Identifier]) -> usize {
-        field.len()
-    }
+    fn worlds_value(field: &[Identifier]) -> usize { field.len() }
 
     fn worlds_size(field: &[Identifier]) -> usize {
         field
@@ -73,22 +70,11 @@ mod inner {
         Ok(())
     }
 
-    fn init_worlds() -> Vec<Identifier> {
-        vec![init_world()]
-    }
+    fn init_worlds() -> Vec<Identifier> { vec![init_world()] }
 
-    fn init_world() -> Identifier {
-        Identifier::from_static("falcon", "world")
-    }
+    fn init_world() -> Identifier { Identifier::from_static("falcon", "world") }
 
-    fn init_dimension_codec() -> Codec {
-        Codec::new(vec![DimensionData::new(Dimension::new(
-            "minecraft:overworld",
-            0,
-        ))])
-    }
+    fn init_dimension_codec() -> Codec { Codec::new(vec![DimensionData::new(Dimension::new("minecraft:overworld", 0))]) }
 
-    fn init_dimension() -> Identifier {
-        Identifier::from_static("minecraft", "overworld")
-    }
+    fn init_dimension() -> Identifier { Identifier::from_static("minecraft", "overworld") }
 }

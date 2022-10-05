@@ -1,4 +1,5 @@
-use std::{cmp, io::Write};
+use std::cmp;
+use std::io::Write;
 
 use bytes::BufMut;
 
@@ -8,9 +9,7 @@ pub struct Writer<'a, B: ?Sized> {
 }
 
 impl<'a, B: ?Sized> Writer<'a, B> {
-    pub fn new(buf: &'a mut B) -> Self {
-        Self { buf }
-    }
+    pub fn new(buf: &'a mut B) -> Self { Self { buf } }
 }
 
 impl<'a, B: BufMut + ?Sized> Write for Writer<'a, B> {
@@ -21,7 +20,5 @@ impl<'a, B: BufMut + ?Sized> Write for Writer<'a, B> {
         Ok(n)
     }
 
-    fn flush(&mut self) -> std::io::Result<()> {
-        Ok(())
-    }
+    fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
 }

@@ -1,6 +1,7 @@
 use derivative::Derivative;
 use proc_macro2::Span;
-use syn::{parse::Parse, Ident, LitStr, Token};
+use syn::parse::Parse;
+use syn::{Ident, LitStr, Token};
 
 use crate::kw;
 
@@ -15,9 +16,7 @@ pub struct BytesAttribute {
 }
 
 impl BytesAttribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for BytesAttribute {

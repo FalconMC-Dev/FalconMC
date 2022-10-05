@@ -1,10 +1,11 @@
-use crate::kw;
 use falcon_proc_util::ErrorCatcher;
 use falcon_protocol_util::{PacketVersionMappings, SendFnName, VersionsToID};
 use proc_macro2::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{braced, Error, ItemStruct, LitStr, Token};
+
+use crate::kw;
 
 #[derive(Debug)]
 pub(crate) struct PacketData {
@@ -39,12 +40,9 @@ impl PacketData {
         if found {
             Ok(Some(PacketData {
                 struct_name: item.ident.clone(),
-                fn_name: fn_name.name().ok_or_else(|| {
-                    Error::new(
-                        item.ident.span(),
-                        "missing \"falcon_packet\" attribute \"name\"",
-                    )
-                })?,
+                fn_name: fn_name
+                    .name()
+                    .ok_or_else(|| Error::new(item.ident.span(), "missing \"falcon_packet\" attribute \"name\""))?,
                 versions,
             }))
         } else {
@@ -52,17 +50,11 @@ impl PacketData {
         }
     }
 
-    pub(crate) fn mappings(&self) -> &PacketVersionMappings {
-        &self.versions
-    }
+    pub(crate) fn mappings(&self) -> &PacketVersionMappings { &self.versions }
 
-    pub(crate) fn fn_name(&self) -> &LitStr {
-        &self.fn_name
-    }
+    pub(crate) fn fn_name(&self) -> &LitStr { &self.fn_name }
 
-    pub(crate) fn struct_name(&self) -> &Ident {
-        &self.struct_name
-    }
+    pub(crate) fn struct_name(&self) -> &Ident { &self.struct_name }
 }
 
 #[derive(Debug)]

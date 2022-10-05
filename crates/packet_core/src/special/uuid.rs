@@ -18,9 +18,7 @@ impl PacketWrite for Uuid {
 
 impl PacketSize for Uuid {
     #[inline]
-    fn size(&self) -> usize {
-        16
-    }
+    fn size(&self) -> usize { 16 }
 }
 
 impl PacketRead for Uuid {
@@ -38,22 +36,16 @@ pub struct StrUuid(pub(crate) Uuid);
 
 const STR_UUID_LEN: usize = {
     // copied over from VarI32
-    let n = ({ i32::BITS as usize + 6 }
-        - (uuid::fmt::Hyphenated::LENGTH as i32).leading_zeros() as usize)
-        / 7;
+    let n = ({ i32::BITS as usize + 6 } - (uuid::fmt::Hyphenated::LENGTH as i32).leading_zeros() as usize) / 7;
     n + uuid::fmt::Hyphenated::LENGTH
 };
 
 impl From<Uuid> for StrUuid {
-    fn from(id: Uuid) -> Self {
-        Self(id)
-    }
+    fn from(id: Uuid) -> Self { Self(id) }
 }
 
 impl From<StrUuid> for Uuid {
-    fn from(id: StrUuid) -> Self {
-        id.0
-    }
+    fn from(id: StrUuid) -> Self { id.0 }
 }
 
 impl PacketWrite for StrUuid {
@@ -62,18 +54,12 @@ impl PacketWrite for StrUuid {
         B: BufMut + ?Sized,
     {
         let mut buf = [0u8; uuid::fmt::Hyphenated::LENGTH];
-        PacketWriteSeed::write(
-            PacketString::new(uuid::fmt::Hyphenated::LENGTH),
-            &self.0.hyphenated().encode_lower(&mut buf),
-            buffer,
-        )
+        PacketWriteSeed::write(PacketString::new(uuid::fmt::Hyphenated::LENGTH), &self.0.hyphenated().encode_lower(&mut buf), buffer)
     }
 }
 
 impl PacketSize for StrUuid {
-    fn size(&self) -> usize {
-        STR_UUID_LEN
-    }
+    fn size(&self) -> usize { STR_UUID_LEN }
 }
 
 impl PacketRead for StrUuid {

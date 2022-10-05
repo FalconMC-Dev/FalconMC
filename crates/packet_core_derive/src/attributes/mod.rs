@@ -2,16 +2,14 @@
 
 use proc_macro2::Span;
 
-use self::{
-    bytes::BytesAttribute,
-    convert::{ConvertAttribute, FromAttribute, IntoAttribute},
-    link::LinkAttribute,
-    nbt::NBTAttribute,
-    string::{StringAttribute, ToStringAttribute},
-    varint::{VarI32Attribute, VarI64Attribute},
-    vec::{ArrayAttribute, VecAttribute},
-    PacketAttribute::*,
-};
+use self::bytes::BytesAttribute;
+use self::convert::{ConvertAttribute, FromAttribute, IntoAttribute};
+use self::link::LinkAttribute;
+use self::nbt::NBTAttribute;
+use self::string::{StringAttribute, ToStringAttribute};
+use self::varint::{VarI32Attribute, VarI64Attribute};
+use self::vec::{ArrayAttribute, VecAttribute};
+use self::PacketAttribute::*;
 
 pub mod bytes;
 pub mod convert;

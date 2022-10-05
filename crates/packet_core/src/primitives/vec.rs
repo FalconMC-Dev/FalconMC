@@ -1,11 +1,8 @@
-use std::{
-    iter::{self, FromIterator},
-    marker::PhantomData,
-};
-
-use crate::{PacketRead, PacketReadSeed, PacketSizeSeed, PacketWrite, PacketWriteSeed};
+use std::iter::{self, FromIterator};
+use std::marker::PhantomData;
 
 use super::iter::PacketIter;
+use crate::{PacketRead, PacketReadSeed, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
 pub struct PacketVec<T, I> {
     size: usize,
@@ -14,9 +11,7 @@ pub struct PacketVec<T, I> {
 }
 
 impl<T, I> Default for PacketVec<T, I> {
-    fn default() -> Self {
-        Self::new(0)
-    }
+    fn default() -> Self { Self::new(0) }
 }
 
 impl<T, I> PacketVec<T, I> {
@@ -35,11 +30,7 @@ where
     It: Iterator<Item = &'a T>,
     &'a I: IntoIterator<Item = &'a T, IntoIter = It> + 'a,
 {
-    fn write<B>(
-        self,
-        value: &'a Self::Value,
-        buffer: &'a mut B,
-    ) -> Result<(), crate::error::WriteError>
+    fn write<B>(self, value: &'a Self::Value, buffer: &'a mut B) -> Result<(), crate::error::WriteError>
     where
         B: bytes::BufMut + ?Sized,
     {
@@ -55,9 +46,7 @@ where
 {
     type Value = I;
 
-    fn size(self, value: &'a Self::Value) -> usize {
-        PacketIter::new(value.into_iter()).size_ref()
-    }
+    fn size(self, value: &'a Self::Value) -> usize { PacketIter::new(value.into_iter()).size_ref() }
 }
 
 impl<T, I> PacketReadSeed for PacketVec<T, I>

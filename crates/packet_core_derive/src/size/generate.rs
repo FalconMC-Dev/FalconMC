@@ -1,7 +1,8 @@
 use std::vec;
 
 use quote::format_ident;
-use syn::{parse_quote_spanned, spanned::Spanned, Expr, Stmt, Type};
+use syn::spanned::Spanned;
+use syn::{parse_quote_spanned, Expr, Stmt, Type};
 
 use crate::attributes::PacketAttribute::{self, *};
 
@@ -13,7 +14,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<vec::Ve
                 let _ = self.#target;
                 let #target = #field.len();
             })
-        }
+        },
         Bytes(data) => data.target.as_ref().map(|target| {
             parse_quote_spanned! {field.span()=>
                 let _ = self.#target;
@@ -37,7 +38,7 @@ pub fn to_preprocess(attribute: &PacketAttribute, field: Expr) -> Option<vec::Ve
                     let #target = #prefix(&#field);
                 },
             })
-        }
+        },
         _ => None,
     }
 }
@@ -52,7 +53,7 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
                     &#field,
                 )
             })
-        }
+        },
         ToString(data) => {
             let len = &data.max_length;
             Some(parse_quote_spanned! {field.span()=>
@@ -61,7 +62,7 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
                     &::std::string::ToString::to_string(&#field),
                 )
             })
-        }
+        },
         Vec(_) => Some(parse_quote_spanned! {field.span()=>
             ::falcon_packet_core::PacketSizeSeed::size(
                 ::falcon_packet_core::PacketVec::new(0),
@@ -85,7 +86,7 @@ pub fn to_end(attribute: &PacketAttribute, field: Expr) -> Option<Expr> {
             Some(parse_quote_spanned! {field.span()=>
                 #prefix(&#field)
             })
-        }
+        },
         Nbt(_) => Some(parse_quote_spanned! {field.span()=>
             {
                 let mut writer = ::falcon_packet_core::special::Counter::new();
@@ -103,24 +104,24 @@ pub fn to_tokenstream(attribute: &PacketAttribute, field: Expr, field_ty: &Type)
             parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::VarI32::from(#field)
             }
-        }
+        },
         VarI64(_) => {
             parse_quote_spanned! {field.span()=>
                 ::falcon_packet_core::VarI64::from(#field)
             }
-        }
+        },
         Into(data) => {
             let target = &data.target;
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::Into<#target>>::into(::std::clone::Clone::clone(&#field))
             }
-        }
+        },
         Convert(data) => {
             let target = &data.target;
             parse_quote_spanned! {field.span()=>
                 <#field_ty as ::std::convert::Into<#target>>::into(::std::clone::Clone::clone(&#field))
             }
-        }
+        },
         _ => field,
     }
 }

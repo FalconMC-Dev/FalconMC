@@ -4,21 +4,18 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use bytes::Bytes;
+use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use falcon_core::ShutdownHandle;
-use falcon_packet_core::{WriteError, ReadError};
+use falcon_packet_core::{ReadError, WriteError};
 use ignore_result::Ignore;
 use mc_chat::ChatComponent;
-
-use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::{interval, Interval, MissedTickBehavior};
 use tracing::{instrument, trace};
-
-use crate::server::ServerWrapper;
-
 pub use wrapper::ConnectionWrapper;
 
 use self::writer::SocketWrite;
+use crate::server::ServerWrapper;
 
 // mod codec;
 pub mod handler;
@@ -28,7 +25,7 @@ mod wrapper;
 pub mod writer;
 
 pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;
-pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output=()> + Send>>) + Send + Sync;
+pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = ()> + Send>>) + Send + Sync;
 
 pub enum ConnectionTask {
     Sync(Box<SyncConnectionTask>),
@@ -36,12 +33,7 @@ pub enum ConnectionTask {
 }
 
 pub trait ConnectionReceiver {
-    fn receive(
-        &mut self,
-        packet_id: i32,
-        bytes: &mut Bytes,
-        connection: &mut FalconConnection,
-    ) -> Result<bool, ReadError>;
+    fn receive(&mut self, packet_id: i32, bytes: &mut Bytes, connection: &mut FalconConnection) -> Result<bool, ReadError>;
 }
 
 #[derive(Debug)]
@@ -74,31 +66,19 @@ impl FalconConnection {
         }
     }
 
-    pub fn reset_keep_alive(&mut self) {
-        self.timeout.reset();
-    }
+    pub fn reset_keep_alive(&mut self) { self.timeout.reset(); }
 
-    pub fn server(&self) -> &ServerWrapper {
-        &self.server
-    }
+    pub fn server(&self) -> &ServerWrapper { &self.server }
 
-    pub fn wrapper(&self) -> ConnectionWrapper {
-        self.wrapper.clone()
-    }
+    pub fn wrapper(&self) -> ConnectionWrapper { self.wrapper.clone() }
 }
 
 impl FalconConnection {
-    pub fn address(&self) -> &std::net::SocketAddr {
-        &self.addr
-    }
+    pub fn address(&self) -> &std::net::SocketAddr { &self.addr }
 
-    pub fn handler_state(&self) -> &falcon_core::network::PacketHandlerState {
-        &self.state
-    }
+    pub fn handler_state(&self) -> &falcon_core::network::PacketHandlerState { &self.state }
 
-    pub fn handler_state_mut(&mut self) -> &mut falcon_core::network::PacketHandlerState {
-        &mut self.state
-    }
+    pub fn handler_state_mut(&mut self) -> &mut falcon_core::network::PacketHandlerState { &mut self.state }
 
     #[instrument(level = "trace", skip_all)]
     pub fn send<F>(&mut self, write_fn: F) -> Result<(), WriteError>
@@ -128,15 +108,10 @@ impl FalconConnection {
     #[instrument(level = "trace", skip_all)]
     pub fn disconnect(&mut self, reason: ChatComponent) {
         match self.state.connection_state() {
-            ConnectionState::Play => self
-                .send_packet(reason, falcon_send::write_play_disconnect)
-                .ignore(),
-            _ => self
-                .send_packet(reason, falcon_send::write_login_disconnect)
-                .ignore(),
+            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ignore(),
+            _ => self.send_packet(reason, falcon_send::write_login_disconnect).ignore(),
         }
-        self.state
-            .set_connection_state(ConnectionState::Disconnected);
+        self.state.set_connection_state(ConnectionState::Disconnected);
         trace!("Player connection marked as disconnected");
     }
 }

@@ -1,10 +1,11 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
-    use crate::ServerDifficultySpec;
     use derive_from_ext::From;
     use falcon_packet_core::{PacketSize, PacketWrite};
     use mc_chat::ChatComponent;
+
+    use crate::specs::play::{JoinGameSpec, PlayerAbilitiesSpec};
+    use crate::ServerDifficultySpec;
 
     #[derive(PacketSize, PacketWrite, From)]
     #[from(JoinGameSpec)]
@@ -24,9 +25,7 @@ mod inner {
         reduced_debug: bool,
     }
 
-    fn i32_to_i8(n: i32) -> i8 {
-        n as i8
-    }
+    fn i32_to_i8(n: i32) -> i8 { n as i8 }
 
     #[derive(PacketSize, PacketWrite, From)]
     #[from(PlayerAbilitiesSpec)]

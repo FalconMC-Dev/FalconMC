@@ -1,11 +1,12 @@
 #[falcon_send_derive::falcon_send]
 mod inner {
-    use crate::specs::play::ChunkDataSpec;
-    use crate::util::HeightMap;
-    use crate::v1_14::play::{into_chunk_section, ChunkSectionData, PacketHeightMap};
     use bytes::BufMut;
     use falcon_core::world::blocks::Blocks;
     use falcon_packet_core::{PacketIter, PacketSize, PacketWrite, WriteError};
+
+    use crate::specs::play::ChunkDataSpec;
+    use crate::util::HeightMap;
+    use crate::v1_14::play::{into_chunk_section, ChunkSectionData, PacketHeightMap};
 
     const BIOME_COUNT: u16 = 1024;
     const BIOMES: [i32; BIOME_COUNT as usize] = [0; BIOME_COUNT as usize];
@@ -34,19 +35,12 @@ mod inner {
 
     #[inline(always)]
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize {
-        data_size(field)
-    }
+    pub(crate) fn data_value(field: &[ChunkSectionData]) -> usize { data_size(field) }
 
     #[allow(clippy::ptr_arg)]
-    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize {
-        PacketIter::new(field.iter()).size_ref()
-    }
+    pub(crate) fn data_size(field: &[ChunkSectionData]) -> usize { PacketIter::new(field.iter()).size_ref() }
 
-    pub(crate) fn data_write<B: BufMut + ?Sized>(
-        field: &[ChunkSectionData],
-        buffer: &mut B,
-    ) -> Result<(), WriteError> {
+    pub(crate) fn data_write<B: BufMut + ?Sized>(field: &[ChunkSectionData], buffer: &mut B) -> Result<(), WriteError> {
         PacketIter::new(field.iter()).write_ref(buffer)
     }
 
@@ -57,8 +51,7 @@ mod inner {
                 chunk_z: spec.chunk_z,
                 full_chunk: true,
                 bitmask: spec.bitmask,
-                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2230)
-                    .into(),
+                heightmap: HeightMap::from_sections(&spec.sections, Blocks::get_global_id_2230).into(),
                 biomes: BIOMES,
                 size: 0,
                 sections: spec

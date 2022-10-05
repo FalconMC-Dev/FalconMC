@@ -3,10 +3,7 @@ use std::collections::HashSet;
 use falcon_proc_util::ErrorCatcher;
 use syn::{Error, Field, Ident};
 
-use crate::attributes::PacketAttribute::{
-    self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64,
-    Vec as PacketVec,
-};
+use crate::attributes::PacketAttribute::{self, Array, Bytes, Convert, From, Into, Link, Nbt, String, ToString, VarI32, VarI64, Vec as PacketVec};
 
 pub fn get_replaced(attributes: &[(&Field, Vec<PacketAttribute>)]) -> HashSet<Ident> {
     attributes
@@ -46,10 +43,7 @@ pub fn validate(mut attributes: Vec<PacketAttribute>) -> syn::Result<Vec<PacketA
         let mut attribute = attributes.remove(0);
         error.extend_error(check(&mut attribute, attributes.iter_mut()));
         if is_outer(&attribute) && !attributes.is_empty() {
-            error.add_error(Error::new(
-                attribute.span(),
-                "Ending attribute should be last in the list",
-            ));
+            error.add_error(Error::new(attribute.span(), "Ending attribute should be last in the list"));
         }
         checked.push(attribute);
     }

@@ -1,6 +1,8 @@
-use std::{mem::size_of, ptr};
+use std::mem::size_of;
+use std::ptr;
 
-use bytes::{buf::UninitSlice, Buf, BufMut, Bytes, BytesMut};
+use bytes::buf::UninitSlice;
+use bytes::{Buf, BufMut, Bytes, BytesMut};
 use flate2::{Decompress, FlushDecompress, Status};
 
 const COMPRESSION_BUF_LEN: usize = 4096;
@@ -107,21 +109,11 @@ impl SocketRead {
             if remaining <= start {
                 // TODO: explain unsafe
                 unsafe {
-                    ptr::copy_nonoverlapping(
-                        self.decompress_buf.as_ptr().add(start),
-                        self.decompress_buf.as_mut_ptr(),
-                        remaining,
-                    );
+                    ptr::copy_nonoverlapping(self.decompress_buf.as_ptr().add(start), self.decompress_buf.as_mut_ptr(), remaining);
                 }
             } else {
                 // TODO: explain unsafe
-                unsafe {
-                    ptr::copy(
-                        self.decompress_buf.as_ptr().add(start),
-                        self.decompress_buf.as_mut_ptr(),
-                        remaining,
-                    )
-                }
+                unsafe { ptr::copy(self.decompress_buf.as_ptr().add(start), self.decompress_buf.as_mut_ptr(), remaining) }
             }
         }
         Some(remaining)
@@ -171,7 +163,7 @@ impl SocketRead {
             }
         }
     }
-    
+
     fn output_mut(buffer: &mut BytesMut) -> &mut [u8] {
         // TODO: explain unsafe
         unsafe {
@@ -201,9 +193,7 @@ fn read_varint_size(buf: &[u8]) -> Option<(i32, usize)> {
 
 // TODO: explain unsafe
 unsafe impl BufMut for SocketRead {
-    fn remaining_mut(&self) -> usize {
-        self.output_buf.remaining_mut()
-    }
+    fn remaining_mut(&self) -> usize { self.output_buf.remaining_mut() }
 
     // TODO: explain unsafe
     unsafe fn advance_mut(&mut self, cnt: usize) {
@@ -219,12 +209,7 @@ unsafe impl BufMut for SocketRead {
 
     fn chunk_mut(&mut self) -> &mut bytes::buf::UninitSlice {
         // TODO: explain unsafe
-        unsafe {
-            UninitSlice::from_raw_parts_mut(
-                self.decompress_buf.as_mut_ptr().add(self.decompress_pos),
-                COMPRESSION_BUF_LEN - self.decompress_pos,
-            )
-        }
+        unsafe { UninitSlice::from_raw_parts_mut(self.decompress_buf.as_mut_ptr().add(self.decompress_pos), COMPRESSION_BUF_LEN - self.decompress_pos) }
     }
 }
 
@@ -243,7 +228,8 @@ mod test {
         println!("Capacity: {}", reader.output_buf.capacity());
 
         reader.put_slice(&[0x8e, 0x00, 0xdc, 0x01, 0x78, 0x5e, 0x63, 0x64, 0x1c, 0xbe, 0x00, 0x00, 0x5f, 0xd2, 0x00, 0xdd]);
-        // reader.put_slice(&[0x8d, 0x00, 0x00, 0x78, 0x5e, 0x63, 0x64, 0x1c, 0xbe, 0x00, 0x00, 0x5f, 0xd2, 0x00, 0xdd]);
+        // reader.put_slice(&[0x8d, 0x00, 0x00, 0x78, 0x5e, 0x63, 0x64, 0x1c, 0xbe,
+        // 0x00, 0x00, 0x5f, 0xd2, 0x00, 0xdd]);
         reader.put_slice(&[0x8d, 0x00]);
         // let res = reader.flush_buffer();
 
@@ -258,16 +244,17 @@ mod test {
         println!("Next_comp: {}", reader.next_is_compressed);
         println!("Next_exp: {}", reader.next_expected);
         println!("Content: {:02x}", reader.output_buf.as_ref().iter().format(" "));
-        // println!("waiting: {:02x}", reader.decompress_buf[..res.unwrap()].as_ref().iter().format(" "));
+        // println!("waiting: {:02x}",
+        // reader.decompress_buf[..res.unwrap()].as_ref().iter().format(" "));
 
         println!("Data: {:?}", data);
-
 
         // println!("Capacity: {}", reader.output_buf.capacity());
         // println!("CompPos: {}", reader.compression_position);
         // println!("Length: {}", reader.output_buf.len());
         // println!("ReadyPos: {}", reader.ready_pos);
-        // println!("Content: {:02x}", reader.output_buf.as_ref().iter().format(" "));
+        // println!("Content: {:02x}",
+        // reader.output_buf.as_ref().iter().format(" "));
 
         // let mut read = [0u8; 10];
         // reader.copy_to_slice(&mut read);
@@ -276,7 +263,8 @@ mod test {
         // println!("CompPos: {}", reader.compression_position);
         // println!("Length: {}", reader.output_buf.len());
         // println!("ReadyPos: {}", reader.ready_pos);
-        // println!("Content: {:02x}", reader.output_buf.as_ref().iter().format(" "));
+        // println!("Content: {:02x}",
+        // reader.output_buf.as_ref().iter().format(" "));
 
         // reader.put_bytes(1, 110);
         // reader.finish();
@@ -285,6 +273,7 @@ mod test {
         // println!("CompPos: {}", reader.compression_position);
         // println!("Length: {}", reader.output_buf.len());
         // println!("ReadyPos: {}", reader.ready_pos);
-        // println!("Content: {:02x}", reader.output_buf.as_ref().iter().format(" "));
+        // println!("Content: {:02x}",
+        // reader.output_buf.as_ref().iter().format(" "));
     }
 }

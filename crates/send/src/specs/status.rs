@@ -1,6 +1,7 @@
-use crate::define_spec;
 use falcon_core::server::data::ServerVersion;
 use serde::Serialize;
+
+use crate::define_spec;
 
 define_spec! {
     StatusResponseSpec {

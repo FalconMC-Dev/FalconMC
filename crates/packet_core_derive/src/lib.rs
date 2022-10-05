@@ -1,7 +1,8 @@
-use crate::write::implement_write;
 use read::implement_read;
 use size::implement_size;
 use syn::{parse_macro_input, ItemStruct};
+
+use crate::write::implement_write;
 
 pub(crate) mod attributes;
 pub(crate) mod kw;

@@ -11,9 +11,7 @@ pub struct VarI32Attribute {
 }
 
 impl VarI32Attribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for VarI32Attribute {
@@ -30,9 +28,7 @@ pub struct VarI64Attribute {
 }
 
 impl VarI64Attribute {
-    pub fn span(&self) -> Span {
-        self.ident.span
-    }
+    pub fn span(&self) -> Span { self.ident.span }
 }
 
 impl Parse for VarI64Attribute {

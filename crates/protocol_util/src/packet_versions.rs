@@ -44,10 +44,7 @@ impl PacketVersionMappings {
                     entry = Some(i);
                 }
                 for version in &new_version.versions {
-                    if let Some((old_version, has_errored)) = versions
-                        .iter_mut()
-                        .find(|(v, _)| v.base10_digits() == version.base10_digits())
-                    {
+                    if let Some((old_version, has_errored)) = versions.iter_mut().find(|(v, _)| v.base10_digits() == version.base10_digits()) {
                         if !*has_errored {
                             *has_errored = true;
                             error.add_error(Error::new(old_version.span(), "duplicate protocol version"));
@@ -62,10 +59,13 @@ impl PacketVersionMappings {
                 match &self.is_exclude {
                     Some(exclude) => {
                         if exclude.base10_digits() != new_version.id.base10_digits() {
-                            self.versions.push((new_version.id, new_version.versions.into_iter().map(|v| (v, false)).collect()));
+                            self.versions
+                                .push((new_version.id, new_version.versions.into_iter().map(|v| (v, false)).collect()));
                         }
-                    }
-                    _ => self.versions.push((new_version.id, new_version.versions.into_iter().map(|v| (v, false)).collect())),
+                    },
+                    _ => self
+                        .versions
+                        .push((new_version.id, new_version.versions.into_iter().map(|v| (v, false)).collect())),
                 }
             }
         }
@@ -80,13 +80,9 @@ impl PacketVersionMappings {
             .map(|(id, versions)| (id, versions.iter().map(|(v, _)| v).collect()))
     }
 
-    pub fn is_exclude(&self) -> Option<&LitInt> {
-        self.is_exclude.as_ref()
-    }
+    pub fn is_exclude(&self) -> Option<&LitInt> { self.is_exclude.as_ref() }
 
-    pub fn to_inner(&self) -> (Option<LitInt>, Vec<(LitInt, Vec<(LitInt, bool)>)>) {
-        (self.is_exclude.clone(), self.versions.clone())
-    }
+    pub fn to_inner(&self) -> (Option<LitInt>, Vec<(LitInt, Vec<(LitInt, bool)>)>) { (self.is_exclude.clone(), self.versions.clone()) }
 }
 
 #[derive(Debug)]
@@ -97,7 +93,8 @@ pub struct VersionsToID {
 
 impl VersionsToID {
     pub(crate) fn check_duplicates(self) -> syn::Result<Self> {
-        let versions: Punctuated<LitInt, Token![,]> = self.versions
+        let versions: Punctuated<LitInt, Token![,]> = self
+            .versions
             .into_iter()
             .sorted_by(|v1, v2| v1.base10_digits().cmp(v2.base10_digits()))
             .collect();
@@ -135,12 +132,9 @@ impl VersionsToID {
         N: PartialEq<N>,
         <N as FromStr>::Err: std::fmt::Display,
     {
-        self.versions.iter().find(|v| {
-            v.base10_parse::<N>()
-                .ok()
-                .map(|n| n == version)
-                .unwrap_or(false)
-        })
+        self.versions
+            .iter()
+            .find(|v| v.base10_parse::<N>().ok().map(|n| n == version).unwrap_or(false))
     }
 }
 

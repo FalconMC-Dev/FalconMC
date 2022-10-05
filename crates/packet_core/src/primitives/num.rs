@@ -33,9 +33,7 @@ impl PacketWrite for bool {
 
 impl PacketSize for bool {
     #[inline]
-    fn size(&self) -> usize {
-        1
-    }
+    fn size(&self) -> usize { 1 }
 }
 
 macro_rules! impl_num {
@@ -91,9 +89,7 @@ impl_num! {
     f64, get_f64, put_f64;
 }
 
-const fn var_max<const BITS: u32>() -> usize {
-    (BITS as usize + 6) / 7
-}
+const fn var_max<const BITS: u32>() -> usize { (BITS as usize + 6) / 7 }
 
 macro_rules! impl_var {
     ($($var:ident = $num:ident & $unum:ident),*) => {$(
