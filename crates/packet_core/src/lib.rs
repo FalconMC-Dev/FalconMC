@@ -102,6 +102,12 @@ pub trait PacketSize {
     fn size(&self) -> usize;
 }
 
+/// A data structure that can read another data type from a minecraft connection. The implementing
+/// type usually stores a length or similar data. Examples from this crate include implementing
+/// read for all types that implement [`From<Vec<u8>>`].
+///
+/// This trait should rarely be implemented manually, if you implement this for a general type, please contribute
+/// it to this project.
 pub trait PacketReadSeed {
     type Value;
 
@@ -110,12 +116,24 @@ pub trait PacketReadSeed {
         B: Buf + ?Sized;
 }
 
+/// A data structure that can write another data type from a minecraft connection. The implementing
+/// type usually stores a length or similar data. Examples from this crate include implementing
+/// write for all types that implement [`AsRef<[u8]>`](std::convert::AsRef]>`).
+///
+/// This trait should rarely be implemented manually, if you implement this for a general type, please contribute
+/// it to this project.
 pub trait PacketWriteSeed<'a>: PacketSizeSeed<'a> {
     fn write<B>(self, value: &'a Self::Value, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
 }
 
+/// A data structure that can determine the size of the data written by [`PacketWriteSeed`]. The implementing
+/// type usually stores a length or similar data. Examples from the crate include implementing
+/// size for all types that implement [`AsRef<[u8]>`](std::convert::AsRef]>`).
+///
+/// This trait should rarely be implemented manually, if you implement this for a general type, please contribute
+/// it to this project.
 pub trait PacketSizeSeed<'a> {
     type Value;
 
