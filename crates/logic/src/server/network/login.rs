@@ -17,12 +17,10 @@ impl FalconServer {
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
         let username2 = username.clone();
         connection.execute_sync(move |connection| {
-            connection
-                .send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)?;
+            connection.send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)?;
             let handler_state = connection.handler_state_mut();
             handler_state.set_connection_state(ConnectionState::Play);
             handler_state.set_player_uuid(player_uuid);
-
             Ok(())
         });
         self.login_success(username, player_uuid, protocol, connection);

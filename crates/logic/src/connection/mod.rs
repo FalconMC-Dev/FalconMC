@@ -24,7 +24,7 @@ mod tick;
 mod wrapper;
 pub mod writer;
 
-pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) -> Result<()> + Send + Sync ;
+pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) -> Result<()> + Send + Sync;
 pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = Result<()>> + Send>>) + Send + Sync;
 
 pub enum ConnectionTask {

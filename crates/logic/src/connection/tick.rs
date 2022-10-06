@@ -40,15 +40,14 @@ impl FalconConnection {
                     };
                     let span = debug_span!("connection_task", state = %self.state);
                     let _enter = span.enter();
-                    let res = match task {
+                    if let Err(error) = match task {
                         ConnectionTask::Sync(task) => {
                             task(&mut self)
                         }
                         ConnectionTask::Async(task) => {
                             task(&mut self).await
                         }
-                    };
-                    if let Err(error) = res {
+                    } {
                         self.disconnect(ChatComponent::from_text(format!("Error on task: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
                     };
                 }

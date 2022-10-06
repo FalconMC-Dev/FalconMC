@@ -77,22 +77,15 @@ impl FalconPlayer {
 }
 
 impl FalconPlayer {
-    pub fn disconnect(&mut self, reason: ChatComponent) {
-        self.connection.execute_sync(move |connection| {
-            connection.disconnect(reason);
-
-            Ok(())
-        });
-    }
+    pub fn disconnect(&mut self, reason: ChatComponent) { self.connection.execute_sync(move |connection| Ok(connection.disconnect(reason))); }
 
     #[tracing::instrument(skip(self))]
     pub fn send_keep_alive(&self) {
         let elapsed = self.time.elapsed().as_secs();
         self.connection.execute_sync(move |connection| {
             connection.handler_state_mut().set_last_keep_alive(elapsed);
-            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive)?;
 
-            Ok(())
+            Ok(connection.send_packet(elapsed as i64, falcon_send::write_keep_alive)?)
         });
     }
 

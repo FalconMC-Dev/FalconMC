@@ -32,11 +32,7 @@ impl ConnectionWrapper {
         F: FnOnce(T, &mut SocketWrite, i32) -> Result<bool, WriteError> + Send + Sync + 'static,
     {
         self.link
-            .send(ConnectionTask::Sync(Box::new(move |connection| {
-                connection.send_packet(packet, write_fn)?;
-
-                Ok(())
-            })))
+            .send(ConnectionTask::Sync(Box::new(move |connection| Ok(connection.send_packet(packet, write_fn)?))))
             .ok();
     }
 
