@@ -5,12 +5,16 @@ use bytes::{Buf, BufMut};
 use crate::error::{ReadError, WriteError};
 use crate::{Bytes, PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed, VarI32};
 
+/// Helper type to read any type `T` that implements [`From<String>`] from a
+/// buffer and write any type `T` that implements [`AsRef<str>`](AsRef) to a
+/// buffer.
 pub struct PacketString<T> {
     size: usize,
     _marker: PhantomData<T>,
 }
 
 impl<T> PacketString<T> {
+    /// Creates a new `PacketString`.
     pub fn new(size: usize) -> Self {
         Self {
             size,
@@ -47,7 +51,7 @@ impl<T: From<String>> PacketReadSeed for PacketString<T> {
     where
         B: Buf + ?Sized,
     {
-        let len = VarI32::read(buffer)?.as_usize();
+        let len = usize::from(VarI32::read(buffer)?);
         if len > self.size * 4 {
             return Err(ReadError::StringTooLong(self.size * 4, len));
         }

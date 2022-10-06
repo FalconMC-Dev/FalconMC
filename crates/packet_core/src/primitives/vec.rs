@@ -4,6 +4,16 @@ use std::marker::PhantomData;
 use super::iter::PacketIter;
 use crate::{PacketRead, PacketReadSeed, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
+/// Helper type to read any type `I` that implements [`FromIterator`] over `T`
+/// from a buffer and write any type `I` that implements [`IntoIterator`] over
+/// `T` to a buffer.
+///
+/// ## Note
+/// Do not use this type to write byte slices, use [`AsRefU8`](super::AsRefU8)
+/// for that.
+///
+/// Do not use this type to read a byte vec, use [`Bytes`](super::Bytes) for
+/// that.
 pub struct PacketVec<T, I> {
     size: usize,
     _marker: PhantomData<T>,
@@ -15,6 +25,7 @@ impl<T, I> Default for PacketVec<T, I> {
 }
 
 impl<T, I> PacketVec<T, I> {
+    /// Creates a new `PacketVec`.
     pub fn new(size: usize) -> Self {
         Self {
             size,

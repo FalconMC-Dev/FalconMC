@@ -7,6 +7,8 @@ use bytes::BufMut;
 use crate::error::{ReadError, WriteError};
 use crate::{PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
+/// Helper type to write any type `T` that implements [`AsRef<[u8]>`](AsRef) to
+/// a minecraft connection.
 #[derive(Default)]
 pub struct AsRefU8<T>(PhantomData<T>);
 
@@ -46,12 +48,15 @@ impl<'a, T: AsRef<[u8]>> PacketSizeSeed<'a> for AsRefU8<T> {
     fn size(self, value: &Self::Value) -> usize { value.as_ref().len() }
 }
 
+/// Helper type to read any type `T` that implements [`From<Vec<u8>>`] from a
+/// minecraft connection.
 pub struct Bytes<T> {
     size: usize,
     _marker: PhantomData<T>,
 }
 
 impl<T> Bytes<T> {
+    /// Creates a new `Bytes`.
     pub fn new(size: usize) -> Self {
         Self {
             size,

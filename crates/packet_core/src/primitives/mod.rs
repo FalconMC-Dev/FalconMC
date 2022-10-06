@@ -15,7 +15,13 @@ pub use self::str::PacketString;
 pub use self::vec::PacketVec;
 
 macro_rules! impl_var_int {
-    ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
+    ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident),+);*$(;)?) => {$(
+        #[doc = "Transparent wrapper around an "]
+        #[doc = stringify!($base)]
+        #[doc = "."]
+        ///
+        /// When writing to or reading from a minecraft connection, this will read itself using the
+        /// [varint](https://wiki.vg/Protocol#VarInt_and_VarLong) representation.
         #[repr(transparent)]
         pub struct $var {
             val: $base,
@@ -36,13 +42,10 @@ macro_rules! impl_var_int {
         }
 
         impl $var {
+            /// Return the stored value.
             pub fn val(self) -> $base {
                 self.val
             }
-
-            $(pub fn $out(self) -> $out_ty {
-                self.val as $out_ty
-            })+
         }
 
         impl From<$base> for $var {
@@ -76,7 +79,6 @@ macro_rules! impl_var_int {
 }
 
 impl_var_int! {
-    VarI32: i32 => i8, u8, i16, u16, isize, usize, u32 +
-    isize = as_isize, usize = as_usize, u32 = as_u32, i64 = as_i64, u64 = as_u64, i128 = as_i128, u128 = as_u128;
-    VarI64: i64 => i8, u8, i16, u16, i32, u32, isize, usize, u64 + u64 = as_u64, i128 = as_i128, u128 = as_u128;
+    VarI32: i32 => i8, u8, i16, u16, isize, usize, u32 + isize, usize, u32, i64, u64, i128, u128;
+    VarI64: i64 => i8, u8, i16, u16, i32, u32, isize, usize, u64 + u64, i128, u128;
 }

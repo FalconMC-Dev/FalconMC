@@ -14,3 +14,6 @@ thiserror = "1.0.32"
 
 uuid = "1.1.2"
 fastnbt = "2.3.2"
+
+[dev-dependencies]
+pretty_assertions = "1.3.0"

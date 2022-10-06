@@ -35,43 +35,6 @@ impl SocketWrite {
         }
     }
 
-    pub fn finish(&mut self) {
-        if self.ready_pos == self.output_buffer.len() {
-            return;
-        }
-
-        self.flush();
-
-        if self.compression_threshold >= 0 {
-            if self.next_is_compressed {
-                let offset = VarI32::from(self.compression.total_in() as usize).size();
-                let overall_len = self.next_len_size - offset;
-                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
-                write_fixed_varint(self.compression.total_in() as i32, offset, &mut self.output_buffer[self.ready_pos + overall_len..]);
-            } else {
-                let overall_len = self.next_len_size - 1;
-                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
-            }
-        } else {
-            let overall_len = self.next_len_size;
-            write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, self.next_len_size, &mut self.output_buffer[self.ready_pos..]);
-        }
-
-        // TODO: do encryption
-
-        self.compression.reset();
-        self.ready_pos = self.output_buffer.len();
-
-        if self.output_buffer.len() < COMPRESSION_BUFFER_LEN {
-            let capacity = self.output_buffer.capacity();
-            if capacity > COMPRESSION_BUFFER_LEN && capacity > 3 * self.output_buffer.len() {
-                let new_buffer = BytesMut::with_capacity(COMPRESSION_BUFFER_LEN);
-                let old_buffer = std::mem::replace(&mut self.output_buffer, new_buffer);
-                self.output_buffer.put(old_buffer);
-            }
-        }
-    }
-
     fn flush(&mut self) {
         self.write_all();
         self.compression_position = 0;
@@ -154,16 +117,6 @@ fn write_fixed_varint(mut value: i32, size: usize, buf: &mut [u8]) {
 }
 
 impl PacketPrepare for SocketWrite {
-    /// # Important
-    /// This function optimizes allocations by assuming
-    /// a single call to this function spans an entire packet.
-    /// This is important because this is the function that determins
-    /// whether a packet gets compressed or not. It is also used
-    /// for marking the start of a new packet. Depending on
-    /// this, it may allocate up to 3-9 bytes extra.
-    ///
-    /// As a result of the above, the packet should be written to
-    /// this writer immediately after calling this.
     fn prepare(&mut self, additional: usize) {
         let len_size = VarI32::from(additional).size();
         let mut capacity = additional;
@@ -182,6 +135,43 @@ impl PacketPrepare for SocketWrite {
         }
         self.output_buffer.reserve(capacity + self.next_len_size);
         self.output_buffer.put_bytes(0, self.next_len_size);
+    }
+
+    fn finish(&mut self) {
+        if self.ready_pos == self.output_buffer.len() {
+            return;
+        }
+
+        self.flush();
+
+        if self.compression_threshold >= 0 {
+            if self.next_is_compressed {
+                let offset = VarI32::from(self.compression.total_in() as usize).size();
+                let overall_len = self.next_len_size - offset;
+                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
+                write_fixed_varint(self.compression.total_in() as i32, offset, &mut self.output_buffer[self.ready_pos + overall_len..]);
+            } else {
+                let overall_len = self.next_len_size - 1;
+                write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, overall_len, &mut self.output_buffer[self.ready_pos..]);
+            }
+        } else {
+            let overall_len = self.next_len_size;
+            write_fixed_varint((self.output_buffer.len() - self.ready_pos - overall_len) as i32, self.next_len_size, &mut self.output_buffer[self.ready_pos..]);
+        }
+
+        // TODO: do encryption
+
+        self.compression.reset();
+        self.ready_pos = self.output_buffer.len();
+
+        if self.output_buffer.len() < COMPRESSION_BUFFER_LEN {
+            let capacity = self.output_buffer.capacity();
+            if capacity > COMPRESSION_BUFFER_LEN && capacity > 3 * self.output_buffer.len() {
+                let new_buffer = BytesMut::with_capacity(COMPRESSION_BUFFER_LEN);
+                let old_buffer = std::mem::replace(&mut self.output_buffer, new_buffer);
+                self.output_buffer.put(old_buffer);
+            }
+        }
     }
 }
 

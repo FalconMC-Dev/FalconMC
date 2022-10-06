@@ -6,6 +6,7 @@ use bytes::{Buf, BufMut};
 use crate::error::{ReadError, WriteError};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketSizeSeed, PacketWrite, PacketWriteSeed};
 
+/// Helper type to write and read [`array`]s to and from a minecraft connection.
 pub struct PacketArray<T>(PhantomData<T>);
 
 impl<T> Default for PacketArray<T> {
