@@ -20,7 +20,7 @@ async fn main() {
     human_panic::setup_panic!();
 
     // TODO: Link config to logging level
-    let log_file = match load_log_file().context("Could not find config file") {
+    let log_file = match load_log_file().context("Could not load config file") {
         Ok(val) => val,
         Err(e) => { print_error!(e); return; },
     };
