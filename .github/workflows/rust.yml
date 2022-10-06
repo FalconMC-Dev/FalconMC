@@ -1,0 +1,22 @@
+name: "Rust checks"
+on:
+  push:
+  pull_request:
+
+jobs:
+  formatting:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - uses: actions-rs/toolchain@v1
+          with:
+              toolchain: nightly
+              components: rustfmt
+              override: true
+        - uses: LoliGothick/rustfmt-check@v0.2
+          with:
+              token: ${{ secrets.GITHUB_TOKEN }}
+              flags: --all
+              options: --manifest-path=Cargo.toml
+              args: --config-path=rustfmt.toml
