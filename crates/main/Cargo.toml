@@ -24,7 +24,6 @@ tracing-subscriber = { version = "0.3.15", features = [ "local-time" ] }
 tracing-appender = "0.2.2"
 
 anyhow = "1.0.62"
-ignore-result = "0.2.0"
 human-panic = "1.0.3"
 
 flate2 = "1.0.24"

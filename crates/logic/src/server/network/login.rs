@@ -3,7 +3,6 @@ use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::login::LoginSuccessSpec;
 use falcon_send::specs::play::{PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
-use ignore_result::Ignore;
 use tracing::{debug, error, info};
 use uuid::Uuid;
 
@@ -21,7 +20,7 @@ impl FalconServer {
             // TODO: remove ignore
             connection
                 .send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)
-                .ignore();
+                .ok();
             let handler_state = connection.handler_state_mut();
             handler_state.set_connection_state(ConnectionState::Play);
             handler_state.set_player_uuid(player_uuid);

@@ -2,7 +2,6 @@ use falcon_core::player::data::{GameMode, LookAngles, PlayerAbilityFlags, Positi
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_send::specs::play::JoinGameSpec;
-use ignore_result::Ignore;
 use mc_chat::ChatComponent;
 use tokio::time::Instant;
 use uuid::Uuid;
@@ -90,7 +89,7 @@ impl FalconPlayer {
         self.connection.execute_sync(move |connection| {
             connection.handler_state_mut().set_last_keep_alive(elapsed);
             // TODO: remove ignore
-            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive).ignore();
+            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive).ok();
         });
     }
 

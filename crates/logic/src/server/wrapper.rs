@@ -1,5 +1,4 @@
 use falcon_core::player::data::Position;
-use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 use uuid::Uuid;
 
@@ -20,7 +19,7 @@ impl ServerWrapper {
     where
         T: FnOnce(&mut FalconServer) + Send + Sync + 'static,
     {
-        self.link.send(ServerTask::Sync(Box::new(task))).ignore();
+        self.link.send(ServerTask::Sync(Box::new(task))).ok();
     }
 }
 

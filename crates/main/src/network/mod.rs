@@ -5,7 +5,6 @@ use falcon_logic::connection::ConnectionReceiver;
 use falcon_logic::server::ServerWrapper;
 use falcon_logic::FalconConnection;
 use falcon_packet_core::ReadError;
-use ignore_result::Ignore;
 use tokio::net::TcpListener;
 use tracing::{debug, info};
 
@@ -51,7 +50,7 @@ impl NetworkListener {
                     match connection {
                         Ok((socket, addr)) => {
                             debug!(address = %addr, "Accepted connection");
-                            socket.set_nodelay(true).ignore();
+                            socket.set_nodelay(true).ok();
                             let connection = FalconConnection::new(
                                 self.shutdown_handle.clone(),
                                 addr,

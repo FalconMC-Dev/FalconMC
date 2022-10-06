@@ -273,7 +273,6 @@ dependencies = [
  "falcon_packet_core",
  "falcon_send",
  "flate2",
- "ignore-result",
  "itertools",
  "mc_chat",
  "thiserror",
@@ -296,7 +295,6 @@ dependencies = [
  "fastnbt",
  "flate2",
  "human-panic",
- "ignore-result",
  "mc_chat",
  "tokio",
  "tracing",
@@ -480,12 +478,6 @@ dependencies = [
  "toml",
  "uuid 0.8.2",
 ]
-
-[[package]]
-name = "ignore-result"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "665ff4dce8edd10d490641ccb78949832f1ddbff02c584fb1f85ab888fe0e50c"
 
 [[package]]
 name = "indexmap"

@@ -7,7 +7,6 @@ use bytes::Bytes;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use falcon_core::ShutdownHandle;
 use falcon_packet_core::{ReadError, WriteError};
-use ignore_result::Ignore;
 use mc_chat::ChatComponent;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::{interval, Interval, MissedTickBehavior};
@@ -108,9 +107,9 @@ impl FalconConnection {
     #[instrument(level = "trace", skip_all)]
     pub fn disconnect(&mut self, reason: ChatComponent) {
         match self.state.connection_state() {
-            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ignore(),
-            _ => self.send_packet(reason, falcon_send::write_login_disconnect).ignore(),
-        }
+            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ok(),
+            _ => self.send_packet(reason, falcon_send::write_login_disconnect).ok(),
+        };
         self.state.set_connection_state(ConnectionState::Disconnected);
         trace!("Player connection marked as disconnected");
     }

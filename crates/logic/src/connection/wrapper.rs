@@ -1,7 +1,6 @@
 use std::fmt::Debug;
 
 use falcon_packet_core::WriteError;
-use ignore_result::Ignore;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::error;
 
@@ -22,7 +21,7 @@ impl ConnectionWrapper {
             .send(ConnectionTask::Sync(Box::new(|connection| {
                 connection.reset_keep_alive();
             })))
-            .ignore();
+            .ok();
     }
 
     pub fn send_packet<T, F>(&self, packet: T, write_fn: F)
@@ -36,7 +35,7 @@ impl ConnectionWrapper {
                     error!("Error when sending packet: {}", err);
                 }
             })))
-            .ignore()
+            .ok();
     }
 
     /// Do not pass a `Box` to this function.
@@ -44,7 +43,7 @@ impl ConnectionWrapper {
     where
         T: FnOnce(&mut FalconConnection) + Send + Sync + 'static,
     {
-        self.link.send(ConnectionTask::Sync(Box::new(task))).ignore();
+        self.link.send(ConnectionTask::Sync(Box::new(task))).ok();
     }
 }
 
