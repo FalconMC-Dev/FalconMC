@@ -17,8 +17,14 @@ mod server;
 
 #[tokio::main]
 async fn main() {
+    human_panic::setup_panic!();
+
     // TODO: Link config to logging level
-    let log_file = load_log_file().unwrap();
+    let log_file = match load_log_file().context("Could not find config file") {
+        Ok(val) => val,
+        Err(e) => { print_error!(e); return; },
+    };
+    
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::fmt::layer()
@@ -38,16 +44,16 @@ async fn main() {
     info!("Launching Falcon Server!");
 
     debug!("Loading config!");
-    if let Err(ref e) = FalconConfig::init_config("config/falcon.toml").with_context(|| {
+    if let Err(e) = FalconConfig::init_config("config/falcon.toml").context(
         "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after having \
          launched (and shut down) FalconMC."
-    }) {
+    ) {
         print_error!(e);
         return;
     }
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
-    if let Err(ref e) = server::start_server(shutdown_handle.clone()) {
+    if let Err(e) = server::start_server(shutdown_handle.clone()) {
         print_error!(e);
         shutdown_handle.send_shutdown();
     } else {
