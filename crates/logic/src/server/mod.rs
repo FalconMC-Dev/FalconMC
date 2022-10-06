@@ -1,6 +1,7 @@
 use std::future::Future;
 use std::pin::Pin;
 
+use anyhow::Result;
 use ahash::AHashMap;
 use falcon_core::ShutdownHandle;
 use tokio::sync::mpsc::UnboundedReceiver;
@@ -14,8 +15,8 @@ mod network;
 mod tick;
 mod wrapper;
 
-pub type SyncServerTask = dyn FnOnce(&mut FalconServer) + Send + Sync;
-pub type AsyncServerTask = dyn (FnOnce(&mut FalconServer) -> Pin<Box<dyn Future<Output = ()>>>) + Send + Sync;
+pub type SyncServerTask = dyn FnOnce(&mut FalconServer) -> Result<()>  + Send + Sync;
+pub type AsyncServerTask = dyn (FnOnce(&mut FalconServer) -> Pin<Box<dyn Future<Output = Result<()>>>>) + Send + Sync;
 
 pub enum ServerTask {
     Sync(Box<SyncServerTask>),

@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use tokio::runtime::Builder;
 use tokio::time::MissedTickBehavior;
-use tracing::{debug, debug_span, info};
+use tracing::{debug, debug_span, info, error};
 
 use super::ServerTask;
 use crate::FalconServer;
@@ -42,9 +42,11 @@ impl FalconServer {
         while let Ok(task) = self.receiver.try_recv() {
             let span = debug_span!("server_task");
             let _enter = span.enter();
-            match task {
+            if let Err(error) = match task {
                 ServerTask::Sync(task) => task(self),
                 ServerTask::Async(task) => task(self).await,
+            } {
+                error!("ERROR: {}", error);
             }
         }
         while let Ok(command) = self.console_rx.try_recv() {
