@@ -22,9 +22,12 @@ async fn main() {
     // TODO: Link config to logging level
     let log_file = match load_log_file().context("Could not load config file") {
         Ok(val) => val,
-        Err(e) => { print_error!(e); return; },
+        Err(e) => {
+            print_error!(e);
+            return;
+        },
     };
-    
+
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::fmt::layer()
@@ -46,7 +49,7 @@ async fn main() {
     debug!("Loading config!");
     if let Err(e) = FalconConfig::init_config("config/falcon.toml").context(
         "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after having \
-         launched (and shut down) FalconMC."
+         launched (and shut down) FalconMC.",
     ) {
         print_error!(e);
         return;
