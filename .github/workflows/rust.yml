@@ -5,14 +5,18 @@ on:
 
 jobs:
   formatting:
-    name: cargo fmt
+    name: rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      # Ensure rustfmt is installed and setup problem matcher
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: nightly
-          components: rustfmt
-      - name: Rustfmt Check
-        uses: actions-rust-lang/rustfmt@v1
+        - uses: actions/checkout@v2
+        - uses: actions-rs/toolchain@v1
+          with:
+              toolchain: nightly
+              components: rustfmt
+              override: true
+        - uses: LoliGothick/rustfmt-check@v0.2
+          with:
+              token: ${{ secrets.GITHUB_TOKEN }}
+              flags: --all
+              options: --manifest-path=Cargo.toml
+              args: --config-path=rustfmt.toml
