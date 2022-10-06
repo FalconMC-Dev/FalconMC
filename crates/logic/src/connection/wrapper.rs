@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 
+use anyhow::Result;
 use falcon_packet_core::WriteError;
 use tokio::sync::mpsc::UnboundedSender;
-use tracing::error;
 
 use super::writer::SocketWrite;
 use super::ConnectionTask;
@@ -20,6 +20,8 @@ impl ConnectionWrapper {
         self.link
             .send(ConnectionTask::Sync(Box::new(|connection| {
                 connection.reset_keep_alive();
+
+                Ok(())
             })))
             .ok();
     }
@@ -31,9 +33,9 @@ impl ConnectionWrapper {
     {
         self.link
             .send(ConnectionTask::Sync(Box::new(move |connection| {
-                if let Err(err) = connection.send_packet(packet, write_fn) {
-                    error!("Error when sending packet: {}", err);
-                }
+                connection.send_packet(packet, write_fn)?;
+
+                Ok(())
             })))
             .ok();
     }
@@ -41,7 +43,7 @@ impl ConnectionWrapper {
     /// Do not pass a `Box` to this function.
     pub fn execute_sync<T>(&self, task: T)
     where
-        T: FnOnce(&mut FalconConnection) + Send + Sync + 'static,
+        T: FnOnce(&mut FalconConnection) -> Result<()> + Send + Sync + 'static,
     {
         self.link.send(ConnectionTask::Sync(Box::new(task))).ok();
     }

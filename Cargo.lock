@@ -268,6 +268,7 @@ name = "falcon_logic"
 version = "0.2.0"
 dependencies = [
  "ahash",
+ "anyhow",
  "bytes",
  "falcon_core",
  "falcon_packet_core",

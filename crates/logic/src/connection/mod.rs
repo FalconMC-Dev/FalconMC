@@ -3,6 +3,7 @@ use std::net::SocketAddr;
 use std::pin::Pin;
 use std::time::Duration;
 
+use anyhow::Result;
 use bytes::Bytes;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use falcon_core::ShutdownHandle;
@@ -23,8 +24,8 @@ mod tick;
 mod wrapper;
 pub mod writer;
 
-pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;
-pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = ()> + Send>>) + Send + Sync;
+pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) -> Result<()> + Send + Sync ;
+pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = Result<()>> + Send>>) + Send + Sync;
 
 pub enum ConnectionTask {
     Sync(Box<SyncConnectionTask>),

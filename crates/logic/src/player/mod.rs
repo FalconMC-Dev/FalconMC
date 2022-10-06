@@ -80,6 +80,8 @@ impl FalconPlayer {
     pub fn disconnect(&mut self, reason: ChatComponent) {
         self.connection.execute_sync(move |connection| {
             connection.disconnect(reason);
+
+            Ok(())
         });
     }
 
@@ -88,8 +90,9 @@ impl FalconPlayer {
         let elapsed = self.time.elapsed().as_secs();
         self.connection.execute_sync(move |connection| {
             connection.handler_state_mut().set_last_keep_alive(elapsed);
-            // TODO: remove ignore
-            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive).ok();
+            connection.send_packet(elapsed as i64, falcon_send::write_keep_alive)?;
+
+            Ok(())
         });
     }
 
