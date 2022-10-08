@@ -6,6 +6,7 @@ use std::time::Duration;
 use bytes::Bytes;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use falcon_core::ShutdownHandle;
+use falcon_packet_core::special::PacketPrepare;
 use falcon_packet_core::{ReadError, WriteError};
 use ignore_result::Ignore;
 use mc_chat::ChatComponent;

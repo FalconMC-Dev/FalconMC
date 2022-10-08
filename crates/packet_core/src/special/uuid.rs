@@ -32,6 +32,53 @@ impl PacketRead for Uuid {
     }
 }
 
+/// String representation of [`Uuid`] as a wrapper.
+///
+/// Instance creation should happen using [`From`].
+///
+/// Unlike normal strings, the string representation of a uuid always has a
+/// maximum length of 36. This allows this type to implement [`PacketRead`],
+/// [`PacketSize`] and [`PacketWrite`] directly instead of the seed-flavored
+/// traits.
+///
+/// # Examples
+/// Writing a `StrUuid`:
+/// ```
+/// use uuid::Uuid;
+/// use bytes::BytesMut;
+/// use falcon_packet_core::special::StrUuid;
+/// use falcon_packet_core::{PacketSize, PacketWrite};
+///
+/// let mut buffer = BytesMut::new();
+///
+/// let uuid = Uuid::parse_str("ec174daf-b5a5-4ea1-adc6-35a7f9fc4a60").unwrap(); // random uuid
+/// let str_uuid = StrUuid::from(uuid);
+///
+/// assert_eq!(str_uuid.size(), 37);
+///
+/// str_uuid.write(&mut buffer)?;
+/// assert_eq!(buffer.len(), 37); // assert a minecraft string of length 36 has been written
+/// # Ok::<(), falcon_packet_core::WriteError>(())
+/// ```
+///
+/// Reading a `StrUuid`:
+/// ```
+/// use uuid::Uuid;
+/// use bytes::{BytesMut, BufMut};
+/// use falcon_packet_core::special::StrUuid;
+/// use falcon_packet_core::PacketRead;
+///
+/// // buffer containing a random uuid
+/// let mut buffer = BytesMut::new();
+/// buffer.put_u8(36);
+/// buffer.put_slice(b"ec174daf-b5a5-4ea1-adc6-35a7f9fc4a60");
+///
+/// let str_uuid = StrUuid::read(&mut buffer)?;
+/// let uuid = Uuid::from(str_uuid);
+///
+/// assert_eq!(uuid, Uuid::parse_str("ec174daf-b5a5-4ea1-adc6-35a7f9fc4a60").unwrap());
+/// # Ok::<(), falcon_packet_core::ReadError>(())
+/// ```
 pub struct StrUuid(pub(crate) Uuid);
 
 const STR_UUID_LEN: usize = {

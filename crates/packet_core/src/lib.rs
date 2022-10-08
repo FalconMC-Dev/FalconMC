@@ -1,3 +1,5 @@
+#![doc(html_favicon_url = "https://wiki.falconmc.org/perm/icons/favicon.ico?v=1")]
+#![doc(html_logo_url = "https://wiki.falconmc.org/perm/icons/android-chrome-512x512.png?v=1")]
 //! ## **Packet Core**
 //! This is the main component of [Falcon](https://github.com/FalconMC-Dev/FalconMC)'s
 //! networking system. It defines how types should be read from and written to a
@@ -95,6 +97,7 @@ pub trait PacketRead {
 ///
 /// [derive macros]: falcon_packet_core#derives
 pub trait PacketWrite: PacketSize {
+    /// Write self to the buffer according to the minecraft protocol.
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
@@ -109,6 +112,8 @@ pub trait PacketWrite: PacketSize {
 ///
 /// [derive macros]: falcon_packet_core#derives
 pub trait PacketSize {
+    /// Determine the size Self would have if it was written to
+    /// a minecraft connection, this should be an exact value.
     fn size(&self) -> usize;
 }
 
@@ -120,8 +125,11 @@ pub trait PacketSize {
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
 pub trait PacketReadSeed {
+    /// The target type this struct will produce.
     type Value;
 
+    /// Read [`Self::Value`](PacketReadSeed::Value) from the buffer using self,
+    /// according to the minecraft protocol.
     fn read<B>(self, buffer: &mut B) -> Result<Self::Value, ReadError>
     where
         B: Buf + ?Sized;
@@ -135,6 +143,8 @@ pub trait PacketReadSeed {
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
 pub trait PacketWriteSeed<'a>: PacketSizeSeed<'a> {
+    /// Write [`Self::Value`](PacketSizeSeed::Value) to the buffer using self,
+    /// according to the minecraft protocol.
     fn write<B>(self, value: &'a Self::Value, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: BufMut + ?Sized;
@@ -148,7 +158,11 @@ pub trait PacketWriteSeed<'a>: PacketSizeSeed<'a> {
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
 pub trait PacketSizeSeed<'a> {
+    /// The target type this struct will write.
     type Value;
 
+    /// Determine the size [`Self::Value`](PacketReadSeed::Value) would have if
+    /// it was written to a minecraft connection, this should be an exact
+    /// value.
     fn size(self, value: &'a Self::Value) -> usize;
 }
