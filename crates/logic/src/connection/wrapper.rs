@@ -1,3 +1,5 @@
+use std::convert::Infallible;
+use std::error::Error;
 use std::fmt::Debug;
 
 use anyhow::Result;
@@ -5,7 +7,7 @@ use falcon_packet_core::WriteError;
 use tokio::sync::mpsc::UnboundedSender;
 
 use super::writer::SocketWrite;
-use super::ConnectionTask;
+use super::{ConnectionTask, SyncConnectionTask};
 use crate::FalconConnection;
 
 #[derive(Debug)]
@@ -17,13 +19,10 @@ impl ConnectionWrapper {
     pub fn new(link: UnboundedSender<ConnectionTask>) -> Self { ConnectionWrapper { link } }
 
     pub fn reset_keep_alive(&self) {
-        self.link
-            .send(ConnectionTask::Sync(Box::new(|connection| {
-                connection.reset_keep_alive();
-
-                Ok(())
-            })))
-            .ok();
+        self.execute(|connection| {
+            connection.reset_keep_alive();
+            Ok::<(), Infallible>(())
+        })
     }
 
     pub fn send_packet<T, F>(&self, packet: T, write_fn: F)
@@ -31,17 +30,30 @@ impl ConnectionWrapper {
         T: Send + Sync + 'static,
         F: FnOnce(T, &mut SocketWrite, i32) -> Result<bool, WriteError> + Send + Sync + 'static,
     {
-        self.link
-            .send(ConnectionTask::Sync(Box::new(move |connection| Ok(connection.send_packet(packet, write_fn)?))))
-            .ok();
+        self.execute(move |connection| -> Result<(), WriteError> {
+            connection.send_packet(packet, write_fn)?;
+            Ok(())
+        });
     }
 
     /// Do not pass a `Box` to this function.
-    pub fn execute_sync<T>(&self, task: T)
+    #[inline]
+    pub fn send<T>(&self, task: T)
     where
-        T: FnOnce(&mut FalconConnection) -> Result<()> + Send + Sync + 'static,
+        T: SyncConnectionTask + 'static,
     {
+        // SAFE: if this channel returns an error, then the client will have
+        // disconnected already.
         self.link.send(ConnectionTask::Sync(Box::new(task))).ok();
+    }
+
+    /// Do not pass a `Box` to this function.
+    pub fn execute<F, E>(&self, task: F)
+    where
+        E: Error + Send + Sync + 'static,
+        F: FnOnce(&mut FalconConnection) -> Result<(), E> + Send + Sync + 'static,
+    {
+        self.send(task);
     }
 }
 

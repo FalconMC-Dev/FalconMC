@@ -1,5 +1,7 @@
 #[falcon_receive_derive::falcon_receive]
 mod inner {
+    use std::convert::Infallible;
+
     use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
     use falcon_packet_core::PacketRead;
     use mc_chat::{ChatComponent, ComponentStyle};
@@ -16,13 +18,16 @@ mod inner {
     }
 
     impl PacketHandler for KeepAlivePacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
+        type Error = Infallible;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
             if connection.handler_state().last_keep_alive() != self.id as u64 {
                 let version = connection.handler_state().protocol_id();
                 connection.disconnect(ChatComponent::from_text("Received invalid Keep Alive id!", ComponentStyle::with_version(version.unsigned_abs())));
             } else {
                 connection.reset_keep_alive();
             }
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {

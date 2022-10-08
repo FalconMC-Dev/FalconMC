@@ -1,5 +1,7 @@
 #[falcon_receive_derive::falcon_receive]
 mod inner {
+    use std::convert::Infallible;
+
     use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
     use falcon_packet_core::PacketRead;
     use mc_chat::{ChatComponent, ComponentStyle};
@@ -18,7 +20,9 @@ mod inner {
     }
 
     impl PacketHandler for HandshakePacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
+        type Error = Infallible;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
             match self.next_state {
                 1 => connection
                     .handler_state_mut()
@@ -33,6 +37,7 @@ mod inner {
             connection
                 .handler_state_mut()
                 .set_protocol_id(self.version);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {

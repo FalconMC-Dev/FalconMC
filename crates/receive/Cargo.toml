@@ -18,3 +18,4 @@ bytes = "1.2.1"
 
 tracing = "0.1.36"
 thiserror = "1.0.32"
+anyhow = "1.0.65"

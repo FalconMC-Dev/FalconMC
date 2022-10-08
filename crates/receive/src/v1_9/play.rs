@@ -3,6 +3,8 @@ mod inner {
     use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
     use falcon_packet_core::PacketRead;
 
+    use crate::ReceiveError;
+
     #[derive(PacketRead)]
     #[falcon_packet(versions = {
         107, 108, 109, 110, 210, 315, 316, 393, 338, 340, 401, 404 = 0x04;
@@ -21,11 +23,12 @@ mod inner {
     }
 
     impl PacketHandler for ClientSettingsPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
-            if let Some(uuid) = connection.handler_state().player_uuid() {
-                connection.server()
-                    .player_update_view_distance(uuid, self.view_distance);
-            }
+        type Error = ReceiveError;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
+            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            connection.server().player_update_view_distance(uuid, self.view_distance);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {

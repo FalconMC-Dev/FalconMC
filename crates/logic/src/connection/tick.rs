@@ -1,3 +1,4 @@
+use anyhow::Result;
 use bytes::{Buf, Bytes};
 use falcon_core::error::FalconCoreError;
 use falcon_core::network::ConnectionState;
@@ -41,14 +42,10 @@ impl FalconConnection {
                     let span = debug_span!("connection_task", state = %self.state);
                     let _enter = span.enter();
                     if let Err(error) = match task {
-                        ConnectionTask::Sync(task) => {
-                            task(&mut self)
-                        }
-                        ConnectionTask::Async(task) => {
-                            task(&mut self).await
-                        }
+                        ConnectionTask::Sync(task) => task.run(&mut self),
+                        ConnectionTask::Async(task) => task.run(&mut self).await,
                     } {
-                        self.disconnect(ChatComponent::from_text(format!("Error on task: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                        self.disconnect(ChatComponent::from_text(format!("Task errored: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
                     };
                 }
 
@@ -91,7 +88,7 @@ impl FalconConnection {
     }
 }
 
-fn process_packet<R: ConnectionReceiver>(connection: &mut FalconConnection, mut packet: Bytes, receiver: &mut R) -> Result<(), ReceiveError> {
+fn process_packet<R: ConnectionReceiver>(connection: &mut FalconConnection, mut packet: Bytes, receiver: &mut R) -> Result<()> {
     let packet_id = VarI32::read(&mut packet)?.val();
     let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
     let _enter = span.enter();
@@ -110,6 +107,6 @@ fn process_packet<R: ConnectionReceiver>(connection: &mut FalconConnection, mut 
 enum ReceiveError {
     #[error("Core error")]
     Core(#[from] FalconCoreError),
-    #[error("packet read error")]
+    #[error("PacketRead error")]
     Read(#[from] ReadError),
 }

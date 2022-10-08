@@ -1,7 +1,9 @@
 #[falcon_receive_derive::falcon_receive]
 mod inner {
+    use std::convert::Infallible;
+
     use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
-    use falcon_packet_core::PacketRead;
+    use falcon_packet_core::{PacketRead, WriteError};
     use tracing::trace;
     use falcon_core::network::ConnectionState;
 
@@ -16,11 +18,14 @@ mod inner {
     }
 
     impl PacketHandler for StatusRequestPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
+        type Error = Infallible;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
             trace!("Status requested");
             let version = connection.handler_state().protocol_id();
             let wrapper = connection.wrapper();
             connection.server().request_status(version, wrapper);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {
@@ -29,12 +34,13 @@ mod inner {
     }
 
     impl PacketHandler for StatusPingPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
+        type Error = WriteError;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
             trace!("Sent status pong");
-            connection.send_packet(self.payload, falcon_send::write_status_pong);
-            connection
-                .handler_state_mut()
-                .set_connection_state(ConnectionState::Disconnected);
+            connection.send_packet(self.payload, falcon_send::write_status_pong)?;
+            connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {
