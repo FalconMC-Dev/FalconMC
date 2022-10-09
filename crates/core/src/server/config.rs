@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 use tokio::net::ToSocketAddrs;
 use tracing::metadata::LevelFilter;
 
-use crate::error::FalconCoreError;
 use crate::player::data::{LookAngles, Position};
 
 static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
@@ -43,6 +42,8 @@ impl FalconConfig {
 
     pub fn world_file(&self) -> Option<&str> { self.server.world.as_deref() }
 
+    pub fn tracing_level(&self) -> LevelFilter { self.server.tracing_level }
+
     pub fn allow_flight(&self) -> bool { self.players.allow_flight }
 
     pub fn max_view_distance(&self) -> u8 { self.players.max_view_distance }
@@ -52,17 +53,6 @@ impl FalconConfig {
     pub fn spawn_look(&self) -> LookAngles { self.players.spawn_look }
 
     pub fn excluded_versions(&self) -> &Vec<u32> { &self.versions.excluded }
-
-    pub fn tracing_level(&self) -> Result<LevelFilter, FalconCoreError> {
-        match self.server.tracing_level.to_lowercase().as_str() {
-            "trace" => Ok(LevelFilter::TRACE),
-            "debug" => Ok(LevelFilter::DEBUG),
-            "info" => Ok(LevelFilter::INFO),
-            "warn" => Ok(LevelFilter::WARN),
-            "error" => Ok(LevelFilter::ERROR),
-            _ => Err(FalconCoreError::ConfigInvalidTracingLevel(self.server.tracing_level.clone())),
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -101,7 +91,8 @@ impl Default for PlayerSettings {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerSettings {
-    tracing_level: String,
+    #[serde(with = "tracing_serde")]
+    tracing_level: LevelFilter,
     max_players: i32,
     description: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -111,7 +102,7 @@ pub struct ServerSettings {
 impl Default for ServerSettings {
     fn default() -> Self {
         ServerSettings {
-            tracing_level: String::from("info"),
+            tracing_level: LevelFilter::INFO,
             max_players: -1,
             description: String::from("§eFalcon server§r§b!!!"),
             world: None,
@@ -122,4 +113,34 @@ impl Default for ServerSettings {
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct VersionSettings {
     excluded: Vec<u32>,
+}
+
+mod tracing_serde {
+    use serde::de::Error;
+    use serde::{Deserialize, Deserializer, Serializer};
+    use tracing::metadata::LevelFilter;
+
+    pub fn serialize<S: Serializer>(level: &LevelFilter, serializer: S) -> Result<S::Ok, S::Error> {
+        match *level {
+            LevelFilter::OFF => serializer.serialize_str("off"),
+            LevelFilter::ERROR => serializer.serialize_str("error"),
+            LevelFilter::WARN => serializer.serialize_str("warn"),
+            LevelFilter::INFO => serializer.serialize_str("info"),
+            LevelFilter::DEBUG => serializer.serialize_str("debug"),
+            LevelFilter::TRACE => serializer.serialize_str("trace"),
+        }
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<LevelFilter, D::Error> {
+        let input: &'de str = <&'de str>::deserialize(deserializer)?;
+        match input.trim().to_lowercase().as_str() {
+            "off" => Ok(LevelFilter::OFF),
+            "error" => Ok(LevelFilter::ERROR),
+            "warn" => Ok(LevelFilter::WARN),
+            "info" => Ok(LevelFilter::INFO),
+            "debug" => Ok(LevelFilter::DEBUG),
+            "trace" => Ok(LevelFilter::TRACE),
+            _ => Err(Error::unknown_variant(input, &["off", "error", "warn", "info", "debug", "trace"])),
+        }
+    }
 }
