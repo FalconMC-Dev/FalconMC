@@ -16,6 +16,8 @@ yaw = 0.0
 pitch = 0.0
 
 [server]
+# Can be trace, debug, info, warn, error.
+tracing_level = "info"
 # -1 means unlimited players.
 max_players = -1
 description = '§eFalcon server§r§b!!!'

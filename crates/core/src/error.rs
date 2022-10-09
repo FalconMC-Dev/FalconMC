@@ -20,4 +20,6 @@ pub enum FalconCoreError {
     MissingData,
     #[error("Error while reading block data")]
     ParseBlockError(#[from] ParseBlockError),
+    #[error("Tracing level cannot be: {0}")]
+    ConfigInvalidTracingLevel(String),
 }

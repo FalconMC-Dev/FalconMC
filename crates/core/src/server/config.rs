@@ -5,7 +5,9 @@ use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 use tokio::net::ToSocketAddrs;
+use tracing::metadata::LevelFilter;
 
+use crate::error::FalconCoreError;
 use crate::player::data::{LookAngles, Position};
 
 static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
@@ -50,6 +52,17 @@ impl FalconConfig {
     pub fn spawn_look(&self) -> LookAngles { self.players.spawn_look }
 
     pub fn excluded_versions(&self) -> &Vec<u32> { &self.versions.excluded }
+
+    pub fn tracing_level(&self) -> Result<LevelFilter, FalconCoreError> {
+        match self.server.tracing_level.to_lowercase().as_str() {
+            "trace" => Ok(LevelFilter::TRACE),
+            "debug" => Ok(LevelFilter::DEBUG),
+            "info" => Ok(LevelFilter::INFO),
+            "warn" => Ok(LevelFilter::WARN),
+            "error" => Ok(LevelFilter::ERROR),
+            _ => Err(FalconCoreError::ConfigInvalidTracingLevel(self.server.tracing_level.clone())),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -88,6 +101,7 @@ impl Default for PlayerSettings {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerSettings {
+    tracing_level: String,
     max_players: i32,
     description: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,6 +111,7 @@ pub struct ServerSettings {
 impl Default for ServerSettings {
     fn default() -> Self {
         ServerSettings {
+            tracing_level: String::from("info"),
             max_players: -1,
             description: String::from("§eFalcon server§r§b!!!"),
             world: None,
