@@ -79,13 +79,13 @@ impl<const N: usize> PacketWrite for [u8; N] {
     where
         B: BufMut + ?Sized,
     {
-        (&self[..]).write(buffer)
+        (self[..]).write(buffer)
     }
 }
 
 impl<const N: usize> PacketSize for [u8; N] {
     #[inline]
-    fn size(&self) -> usize { (&self[..]).size() }
+    fn size(&self) -> usize { (self[..]).size() }
 }
 
 impl<const N: usize> PacketRead for [u8; N] {

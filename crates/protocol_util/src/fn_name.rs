@@ -30,3 +30,7 @@ impl SendFnName {
 
     pub fn name(self) -> Option<LitStr> { self.name }
 }
+
+impl Default for SendFnName {
+    fn default() -> Self { Self::new() }
+}

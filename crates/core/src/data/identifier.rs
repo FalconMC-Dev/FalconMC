@@ -8,7 +8,7 @@ use nom::combinator::map;
 use nom::error::Error;
 use nom::sequence::separated_pair;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Identifier {
     namespace: Cow<'static, str>,
     location: Cow<'static, str>,

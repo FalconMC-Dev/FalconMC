@@ -120,18 +120,8 @@ impl<'a> TryFrom<SchematicData<'a>> for FalconWorld {
     fn try_from(schematic: SchematicData<'a>) -> Result<Self, Self::Error> {
         let rest_x = schematic.width % 16;
         let rest_z = schematic.length % 16;
-        let count_x = ((schematic.width - rest_x) / 16) as usize
-            + if rest_x > 0 {
-                1
-            } else {
-                0
-            };
-        let count_z = ((schematic.length - rest_z) / 16) as usize
-            + if rest_z > 0 {
-                1
-            } else {
-                0
-            };
+        let count_x = ((schematic.width - rest_x) / 16) as usize + usize::from(rest_x > 0);
+        let count_z = ((schematic.length - rest_z) / 16) as usize + usize::from(rest_z > 0);
         debug!(x = count_x, z = count_z, "World size");
 
         let air_value = schematic

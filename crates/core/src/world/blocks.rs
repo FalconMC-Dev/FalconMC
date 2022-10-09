@@ -35307,8 +35307,7 @@ impl std::str::FromStr for Blocks {
         };
         let props: ::ahash::AHashMap<&str, &str> = stripped
             .split(',')
-            .map(|x| x.split_once('='))
-            .flatten()
+            .flat_map(|x| x.split_once('='))
             .collect();
         Ok(match name {
             "air" => Blocks::Air,

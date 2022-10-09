@@ -6,14 +6,12 @@ pub(crate) struct ReceiveMatchMappings {
     pub(crate) mappings: Vec<(ReceivePacketID, ReceiveMappings)>,
 }
 
+type Mappings = Vec<(LitInt, Vec<(LitInt, bool)>)>;
+
 impl ReceiveMatchMappings {
     pub fn new() -> Self { Self { mappings: vec![] } }
 
-    pub fn add_packet(
-        &mut self,
-        packet_ident: Ident,
-        (mut exclude, mappings): (Option<(LitInt, Ident)>, Vec<(LitInt, Vec<(LitInt, bool)>)>),
-    ) -> syn::Result<()> {
+    pub fn add_packet(&mut self, packet_ident: Ident, (mut exclude, mappings): (Option<(LitInt, Ident)>, Mappings)) -> syn::Result<()> {
         let mut error = ErrorCatcher::new();
 
         for (packet_id, mut new_mapping) in mappings {
