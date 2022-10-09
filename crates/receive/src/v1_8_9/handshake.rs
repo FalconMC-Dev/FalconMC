@@ -13,9 +13,8 @@ mod inner {
         #[falcon(var32)]
         version: i32,
         #[falcon(string)]
-        // TODO: Use these and remove underscore
-        _address: String,
-        _port: u16,
+        address: String,
+        port: u16,
         #[falcon(var32)]
         next_state: i32,
     }
