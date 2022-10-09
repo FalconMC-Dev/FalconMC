@@ -113,7 +113,7 @@ macro_rules! impl_var {
         impl PacketSize for $var {
             #[inline]
             fn size(&self) -> usize {
-                ((({ $num::BITS - self.leading_zeros() } as usize).checked_sub(1).unwrap_or(0)) / 7) + 1
+                ((({ $num::BITS - self.leading_zeros() } as usize).saturating_sub(1)) / 7) + 1
             }
         }
 
