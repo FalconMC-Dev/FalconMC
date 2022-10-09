@@ -2,7 +2,7 @@ use std::fs::{File, OpenOptions};
 use std::io::ErrorKind::NotFound;
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Error, Result};
 use falcon_core::server::config::FalconConfig;
 use falcon_core::ShutdownHandle;
 use tracing::metadata::LevelFilter;
@@ -38,19 +38,25 @@ async fn main() -> Result<()> {
 
     info!("Launching Falcon Server!");
 
-    debug!("Loading config!");
-    FalconConfig::init_config("config/falcon.toml").context(
-        "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after having \
-         launched (and shut down) FalconMC.",
-    )?;
+    if let Err(e) = {
+        debug!("Loading config!");
+        FalconConfig::init_config("config/falcon.toml").context(
+            "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after \
+             having launched (and shut down) FalconMC.",
+        )?;
 
-    let filter_level = FalconConfig::global().tracing_level();
-    handle_file.modify(|l| {
-        *l.filter_mut() = filter_level;
-    })?;
-    handle_stdout.modify(|l| {
-        *l.filter_mut() = filter_level;
-    })?;
+        let filter_level = FalconConfig::global().tracing_level();
+        handle_file.modify(|l| {
+            *l.filter_mut() = filter_level;
+        })?;
+        handle_stdout.modify(|l| {
+            *l.filter_mut() = filter_level;
+        })?;
+        Ok::<(), Error>(())
+    } {
+        print_error!(e);
+        return Ok(());
+    }
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
     if let Err(e) = server::start_server(shutdown_handle.clone()) {
