@@ -5,6 +5,7 @@ use confy::ConfyError;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 use tokio::net::ToSocketAddrs;
+use tracing::metadata::LevelFilter;
 
 use crate::player::data::{LookAngles, Position};
 
@@ -40,6 +41,8 @@ impl FalconConfig {
     pub fn description(&self) -> &str { &self.server.description }
 
     pub fn world_file(&self) -> Option<&str> { self.server.world.as_deref() }
+
+    pub fn tracing_level(&self) -> LevelFilter { self.server.tracing_level }
 
     pub fn allow_flight(&self) -> bool { self.players.allow_flight }
 
@@ -88,6 +91,8 @@ impl Default for PlayerSettings {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerSettings {
+    #[serde(with = "tracing_serde")]
+    tracing_level: LevelFilter,
     max_players: i32,
     description: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -97,6 +102,7 @@ pub struct ServerSettings {
 impl Default for ServerSettings {
     fn default() -> Self {
         ServerSettings {
+            tracing_level: LevelFilter::INFO,
             max_players: -1,
             description: String::from("§eFalcon server§r§b!!!"),
             world: None,
@@ -107,4 +113,34 @@ impl Default for ServerSettings {
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct VersionSettings {
     excluded: Vec<u32>,
+}
+
+mod tracing_serde {
+    use serde::de::Error;
+    use serde::{Deserialize, Deserializer, Serializer};
+    use tracing::metadata::LevelFilter;
+
+    pub fn serialize<S: Serializer>(level: &LevelFilter, serializer: S) -> Result<S::Ok, S::Error> {
+        match *level {
+            LevelFilter::OFF => serializer.serialize_str("off"),
+            LevelFilter::ERROR => serializer.serialize_str("error"),
+            LevelFilter::WARN => serializer.serialize_str("warn"),
+            LevelFilter::INFO => serializer.serialize_str("info"),
+            LevelFilter::DEBUG => serializer.serialize_str("debug"),
+            LevelFilter::TRACE => serializer.serialize_str("trace"),
+        }
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<LevelFilter, D::Error> {
+        let input: &'de str = <&'de str>::deserialize(deserializer)?;
+        match input.trim().to_lowercase().as_str() {
+            "off" => Ok(LevelFilter::OFF),
+            "error" => Ok(LevelFilter::ERROR),
+            "warn" => Ok(LevelFilter::WARN),
+            "info" => Ok(LevelFilter::INFO),
+            "debug" => Ok(LevelFilter::DEBUG),
+            "trace" => Ok(LevelFilter::TRACE),
+            _ => Err(Error::unknown_variant(input, &["off", "error", "warn", "info", "debug", "trace"])),
+        }
+    }
 }
