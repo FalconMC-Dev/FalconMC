@@ -87,9 +87,7 @@ impl PacketVersionMappings {
 }
 
 impl Default for PacketVersionMappings {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 #[derive(Debug)]

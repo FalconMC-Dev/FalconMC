@@ -32,7 +32,5 @@ impl SendFnName {
 }
 
 impl Default for SendFnName {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }

@@ -47,9 +47,7 @@ impl ErrorCatcher {
 }
 
 impl Default for ErrorCatcher {
-    fn default() -> Self {
-        Self::new()
-    }
+    fn default() -> Self { Self::new() }
 }
 
 pub struct ItemListing {
