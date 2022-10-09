@@ -9,7 +9,6 @@ use syn::{Error, LitInt, Token};
 #[derive(Debug)]
 pub struct PacketVersionMappings {
     versions: Vec<(LitInt, Vec<(LitInt, bool)>)>,
-    /// TODO: change into Option<LitInt>
     is_exclude: Option<LitInt>,
 }
 

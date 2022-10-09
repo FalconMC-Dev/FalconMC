@@ -2,7 +2,6 @@ use std::thread;
 
 use anyhow::{Context, Result};
 use falcon_core::ShutdownHandle;
-use ignore_result::Ignore;
 use tokio::sync::broadcast;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tracing::{info, trace};
@@ -36,7 +35,7 @@ impl ConsoleListener {
             let stdin = std::io::stdin();
             if let Err(ref e) = stdin.read_line(&mut buffer).with_context(|| "Could not read from stdin!") {
                 print_error!(e);
-                self.shutdown_handle.send(()).ignore();
+                self.shutdown_handle.send(()).ok();
                 break;
             } else {
                 trace!(input = %buffer, "Sending console input!");

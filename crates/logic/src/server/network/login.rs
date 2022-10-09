@@ -1,9 +1,9 @@
 use falcon_core::network::ConnectionState;
 use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
+use falcon_packet_core::WriteError;
 use falcon_send::specs::login::LoginSuccessSpec;
 use falcon_send::specs::play::{PlayerAbilitiesSpec, PositionAndLookSpec, ServerDifficultySpec};
-use ignore_result::Ignore;
 use tracing::{debug, error, info};
 use uuid::Uuid;
 
@@ -17,21 +17,19 @@ impl FalconServer {
         // TODO: create minecraft uuids
         let player_uuid = Uuid::new_v3(&Uuid::NAMESPACE_DNS, username.as_bytes());
         let username2 = username.clone();
-        connection.execute_sync(move |connection| {
-            // TODO: remove ignore
-            connection
-                .send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)
-                .ignore();
+        connection.execute(move |connection| -> Result<(), WriteError> {
+            connection.send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)?;
             let handler_state = connection.handler_state_mut();
             handler_state.set_connection_state(ConnectionState::Play);
             handler_state.set_player_uuid(player_uuid);
+            Ok(())
         });
         self.login_success(username, player_uuid, protocol, connection);
     }
 
     pub fn login_success(&mut self, username: String, uuid: Uuid, protocol: i32, connection: ConnectionWrapper) {
         if self.players.contains_key(&uuid) {
-            // TODO: Kick duplicqted playeers
+            // TODO: Kick duplicated players
             error!(%uuid, %username, "Duplicate player joining");
         }
         info!(name = %username, "Player joined the game!");

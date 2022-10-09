@@ -25,7 +25,7 @@ macro_rules! packet_modules {
         $($($visi_login mod $mod_name_login;)*)?
         $($($visi_play mod $mod_name_play;)*)?
 
-        pub fn falcon_process_packet<B>(packet_id: i32, buffer: &mut B, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::core::result::Result<bool, ::falcon_packet_core::ReadError>
+        pub fn falcon_process_packet<B>(packet_id: i32, buffer: &mut B, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::anyhow::Result<bool>
         where
             B: ::bytes::Buf,
         {

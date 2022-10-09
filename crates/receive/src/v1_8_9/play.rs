@@ -4,6 +4,8 @@ mod inner {
     use falcon_logic::{FalconConnection, connection::handler::PacketHandler};
     use falcon_packet_core::PacketRead;
 
+    use crate::ReceiveError;
+
     #[derive(PacketRead)]
     #[falcon_packet(versions = {
         47 = 0x04;
@@ -57,11 +59,12 @@ mod inner {
     }
 
     impl PacketHandler for PlayerPositionPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
-            if let Some(uuid) = connection.handler_state().player_uuid() {
-                connection.server()
-                    .player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), None, self.on_ground);
-            }
+        type Error = ReceiveError;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
+            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            connection.server().player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), None, self.on_ground);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {
@@ -70,10 +73,12 @@ mod inner {
     }
 
     impl PacketHandler for PlayerLookPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
-            let uuid = connection.handler_state().player_uuid().expect("Something impossible happened");
-            connection.server()
-                .player_update_pos_look(uuid, None, Some((self.yaw, self.pitch)), self.on_ground);
+        type Error = ReceiveError;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
+            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            connection.server().player_update_pos_look(uuid, None, Some((self.yaw, self.pitch)), self.on_ground);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {
@@ -82,10 +87,12 @@ mod inner {
     }
 
     impl PacketHandler for PositionLookPacket {
-        fn handle_packet(self, connection: &mut FalconConnection) {
-            let uuid = connection.handler_state().player_uuid().expect("Something impossible happened");
-            connection.server()
-                .player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), Some((self.yaw, self.pitch)), self.on_ground);
+        type Error = ReceiveError;
+
+        fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
+            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            connection.server().player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), Some((self.yaw, self.pitch)), self.on_ground);
+            Ok(())
         }
 
         fn get_name(&self) -> &'static str {

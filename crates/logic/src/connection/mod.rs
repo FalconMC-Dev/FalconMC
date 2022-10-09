@@ -1,13 +1,14 @@
+use std::error::Error;
 use std::future::Future;
 use std::net::SocketAddr;
 use std::pin::Pin;
 use std::time::Duration;
 
+use anyhow::Result;
 use bytes::Bytes;
 use falcon_core::network::{ConnectionState, PacketHandlerState, UNKNOWN_PROTOCOL};
 use falcon_core::ShutdownHandle;
-use falcon_packet_core::{ReadError, WriteError};
-use ignore_result::Ignore;
+use falcon_packet_core::WriteError;
 use mc_chat::ChatComponent;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
 use tokio::time::{interval, Interval, MissedTickBehavior};
@@ -24,16 +25,21 @@ mod tick;
 mod wrapper;
 pub mod writer;
 
-pub type SyncConnectionTask = dyn FnOnce(&mut FalconConnection) + Send + Sync;
-pub type AsyncConnectionTask = dyn (FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = ()> + Send>>) + Send + Sync;
+pub trait SyncConnectionTask: Send + Sync {
+    fn run(self: Box<Self>, connection: &mut FalconConnection) -> Result<()>;
+}
+
+pub trait SyncFutConnectionTask: Send + Sync {
+    fn run(self: Box<Self>, connection: &mut FalconConnection) -> Pin<Box<dyn Future<Output = Result<()>> + Send + '_>>;
+}
 
 pub enum ConnectionTask {
-    Sync(Box<SyncConnectionTask>),
-    Async(Box<AsyncConnectionTask>),
+    Sync(Box<dyn SyncConnectionTask>),
+    Async(Box<dyn SyncFutConnectionTask>),
 }
 
 pub trait ConnectionReceiver {
-    fn receive(&mut self, packet_id: i32, bytes: &mut Bytes, connection: &mut FalconConnection) -> Result<bool, ReadError>;
+    fn receive(&mut self, packet_id: i32, bytes: &mut Bytes, connection: &mut FalconConnection) -> Result<bool>;
 }
 
 #[derive(Debug)]
@@ -108,10 +114,26 @@ impl FalconConnection {
     #[instrument(level = "trace", skip_all)]
     pub fn disconnect(&mut self, reason: ChatComponent) {
         match self.state.connection_state() {
-            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ignore(),
-            _ => self.send_packet(reason, falcon_send::write_login_disconnect).ignore(),
-        }
+            ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ok(),
+            _ => self.send_packet(reason, falcon_send::write_login_disconnect).ok(),
+        };
         self.state.set_connection_state(ConnectionState::Disconnected);
         trace!("Player connection marked as disconnected");
     }
+}
+
+impl<F, E> SyncConnectionTask for F
+where
+    E: Error + Send + Sync + 'static,
+    F: FnOnce(&mut FalconConnection) -> Result<(), E> + Send + Sync,
+{
+    fn run(self: Box<Self>, server: &mut FalconConnection) -> Result<()> { Ok(self(server)?) }
+}
+
+impl<F, E> SyncFutConnectionTask for F
+where
+    E: Error + Send + Sync + 'static,
+    F: FnOnce(&mut FalconConnection) -> Pin<Box<dyn Future<Output = Result<(), E>> + Send>> + Send + Sync + 'static,
+{
+    fn run(self: Box<F>, server: &mut FalconConnection) -> Pin<Box<dyn Future<Output = Result<()>> + Send + '_>> { Box::pin(async { Ok(self(server).await?) }) }
 }

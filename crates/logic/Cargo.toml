@@ -18,7 +18,7 @@ flate2 = { version = "1.0.24", features = ["zlib-ng"], default-features = false 
 
 uuid = { version = "1.1.2", features = [ "v3" ] }
 bytes = "1.2.1"
-ignore-result = "0.2.0"
+anyhow = "1.0.65"
 thiserror = "1.0.37"
 ahash = "0.8.0"
 

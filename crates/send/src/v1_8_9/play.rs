@@ -57,7 +57,7 @@ mod inner {
     impl From<ChatComponent> for DisconnectPacket {
         fn from(reason: ChatComponent) -> Self {
             DisconnectPacket {
-                reason: serde_json::to_string(&reason).unwrap(),
+                reason: serde_json::to_string(&reason).expect("Invalid reason data"),
             }
         }
     }

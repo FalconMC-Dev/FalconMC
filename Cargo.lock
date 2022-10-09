@@ -268,12 +268,12 @@ name = "falcon_logic"
 version = "0.2.0"
 dependencies = [
  "ahash",
+ "anyhow",
  "bytes",
  "falcon_core",
  "falcon_packet_core",
  "falcon_send",
  "flate2",
- "ignore-result",
  "itertools",
  "mc_chat",
  "thiserror",
@@ -296,7 +296,6 @@ dependencies = [
  "fastnbt",
  "flate2",
  "human-panic",
- "ignore-result",
  "mc_chat",
  "tokio",
  "tracing",
@@ -351,6 +350,7 @@ dependencies = [
 name = "falcon_receive"
 version = "0.2.0"
 dependencies = [
+ "anyhow",
  "bytes",
  "falcon_core",
  "falcon_logic",
@@ -480,12 +480,6 @@ dependencies = [
  "toml",
  "uuid 0.8.2",
 ]
-
-[[package]]
-name = "ignore-result"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "665ff4dce8edd10d490641ccb78949832f1ddbff02c584fb1f85ab888fe0e50c"
 
 [[package]]
 name = "indexmap"
@@ -926,9 +920,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.20.1"
+version = "1.21.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a8325f63a7d4774dd041e363b2409ed1c5cbbd0f867795e661df066b2b0a581"
+checksum = "a9e03c497dc955702ba729190dc4aac6f2a0ce97f913e5b1b5912fc5039d9099"
 dependencies = [
  "autocfg",
  "bytes",
@@ -936,7 +930,6 @@ dependencies = [
  "memchr",
  "mio",
  "num_cpus",
- "once_cell",
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",

@@ -1,7 +1,9 @@
+use std::error::Error;
 use std::future::Future;
 use std::pin::Pin;
 
 use ahash::AHashMap;
+use anyhow::Result;
 use falcon_core::ShutdownHandle;
 use tokio::sync::mpsc::UnboundedReceiver;
 use uuid::Uuid;
@@ -14,12 +16,17 @@ mod network;
 mod tick;
 mod wrapper;
 
-pub type SyncServerTask = dyn FnOnce(&mut FalconServer) + Send + Sync;
-pub type AsyncServerTask = dyn (FnOnce(&mut FalconServer) -> Pin<Box<dyn Future<Output = ()>>>) + Send + Sync;
+pub trait SyncServerTask: Send + Sync {
+    fn run(self: Box<Self>, server: &mut FalconServer) -> Result<()>;
+}
+
+pub trait SyncFutServerTask: Send + Sync {
+    fn run(self: Box<Self>, server: &mut FalconServer) -> Pin<Box<dyn Future<Output = Result<()>> + Send + '_>>;
+}
 
 pub enum ServerTask {
-    Sync(Box<SyncServerTask>),
-    Async(Box<AsyncServerTask>),
+    Sync(Box<dyn SyncServerTask>),
+    Async(Box<dyn SyncFutServerTask>),
 }
 
 pub struct FalconServer {
@@ -54,4 +61,20 @@ impl FalconServer {
     pub fn player_mut(&mut self, uuid: Uuid) -> Option<&mut FalconPlayer> { self.players.get_mut(&uuid) }
 
     pub fn world(&mut self) -> &mut FalconWorld { &mut self.world }
+}
+
+impl<F, E> SyncServerTask for F
+where
+    E: Error + Send + Sync + 'static,
+    F: FnOnce(&mut FalconServer) -> Result<(), E> + Send + Sync,
+{
+    fn run(self: Box<Self>, server: &mut FalconServer) -> Result<()> { Ok(self(server)?) }
+}
+
+impl<F, E> SyncFutServerTask for F
+where
+    E: Error + Send + Sync + 'static,
+    F: FnOnce(&mut FalconServer) -> Pin<Box<dyn Future<Output = Result<(), E>> + Send>> + Send + Sync + 'static,
+{
+    fn run(self: Box<F>, server: &mut FalconServer) -> Pin<Box<dyn Future<Output = Result<()>> + Send + '_>> { Box::pin(async { Ok(self(server).await?) }) }
 }

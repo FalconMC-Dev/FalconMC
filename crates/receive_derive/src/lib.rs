@@ -61,7 +61,7 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                         let packet_name = ::falcon_logic::connection::handler::PacketHandler::get_name(&packet);
                         let span = ::tracing::trace_span!("handle_packet", %packet_name);
                         let _enter = span.enter();
-                        ::falcon_logic::connection::handler::PacketHandler::handle_packet(packet, connection);
+                        ::falcon_logic::connection::handler::PacketHandler::handle_packet(packet, connection)?;
                         Ok(true)
                     }
                 },
@@ -77,7 +77,7 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
                                     let packet_name = ::falcon_logic::connection::handler::PacketHandler::get_name(&packet);
                                     let span = ::tracing::trace_span!("handle_packet", %packet_name);
                                     let _enter = span.enter();
-                                    ::falcon_logic::connection::handler::PacketHandler::handle_packet(packet, connection);
+                                    ::falcon_logic::connection::handler::PacketHandler::handle_packet(packet, connection)?;
                                     Ok(true)
                                 }
                             }
@@ -97,7 +97,7 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
         .collect();
 
     parse_quote! {
-        pub fn falcon_process_packet<B>(packet_id: i32, buffer: &mut B, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::core::result::Result<bool, ::falcon_packet_core::ReadError>
+        pub fn falcon_process_packet<B>(packet_id: i32, buffer: &mut B, connection: &mut ::falcon_logic::connection::FalconConnection) -> ::anyhow::Result<bool>
         where
             B: ::bytes::Buf,
         {
