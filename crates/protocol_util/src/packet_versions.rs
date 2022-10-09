@@ -6,9 +6,11 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{Error, LitInt, Token};
 
+type Versions = Vec<(LitInt, Vec<(LitInt, bool)>)>;
+
 #[derive(Debug)]
 pub struct PacketVersionMappings {
-    versions: Vec<(LitInt, Vec<(LitInt, bool)>)>,
+    versions: Versions,
     is_exclude: Option<LitInt>,
 }
 
@@ -81,7 +83,13 @@ impl PacketVersionMappings {
 
     pub fn is_exclude(&self) -> Option<&LitInt> { self.is_exclude.as_ref() }
 
-    pub fn to_inner(&self) -> (Option<LitInt>, Vec<(LitInt, Vec<(LitInt, bool)>)>) { (self.is_exclude.clone(), self.versions.clone()) }
+    pub fn to_inner(&self) -> (Option<LitInt>, Versions) { (self.is_exclude.clone(), self.versions.clone()) }
+}
+
+impl Default for PacketVersionMappings {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[derive(Debug)]

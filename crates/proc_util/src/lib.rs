@@ -46,6 +46,12 @@ impl ErrorCatcher {
     }
 }
 
+impl Default for ErrorCatcher {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct ItemListing {
     pub content: Vec<Item>,
 }
