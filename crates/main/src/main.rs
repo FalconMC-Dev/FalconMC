@@ -45,16 +45,12 @@ async fn main() -> Result<()> {
     )?;
 
     let filter_level = FalconConfig::global().tracing_level();
-    handle_file
-        .modify(|l| {
-            *l.filter_mut() = filter_level;
-        })
-        .unwrap();
-    handle_stdout
-        .modify(|l| {
-            *l.filter_mut() = filter_level;
-        })
-        .unwrap();
+    handle_file.modify(|l| {
+        *l.filter_mut() = filter_level;
+    })?;
+    handle_stdout.modify(|l| {
+        *l.filter_mut() = filter_level;
+    })?;
 
     let (mut shutdown_handle, mut finished_rx) = ShutdownHandle::new();
     if let Err(e) = server::start_server(shutdown_handle.clone()) {
