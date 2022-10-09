@@ -12,7 +12,6 @@ macro_rules! define_spec {
         }
 
         impl $spec_name {
-            #[allow(clippy::too_many_arguments)]
             pub fn new($($($arg: $arg_ty,)*)? $($default: $default_ty),*) -> Self {
                 $($($data)*)?
                 $spec_name {
