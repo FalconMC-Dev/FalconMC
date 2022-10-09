@@ -38,7 +38,7 @@ async fn main() -> Result<()> {
 
     info!("Launching Falcon Server!");
 
-    if let Err(e) = {
+    if let Err(e) = || -> Result<(), Error> {
         debug!("Loading config!");
         FalconConfig::init_config("config/falcon.toml").context(
             "The configuration file could not be loaded! This can most likely be solved by removing the config file and adjusting the config again after \
@@ -53,7 +53,7 @@ async fn main() -> Result<()> {
             *l.filter_mut() = filter_level;
         })?;
         Ok::<(), Error>(())
-    } {
+    }() {
         print_error!(e);
         return Ok(());
     }
