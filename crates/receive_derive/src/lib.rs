@@ -101,7 +101,7 @@ pub(crate) fn generate(data: ReceiveMatchMappings) -> ItemFn {
         where
             B: ::bytes::Buf,
         {
-            let protocol_id = connection.handler_state().protocol_id();
+            let protocol_id = connection.state().protocol_id;
             match packet_id {
                 #(#match_arms)*
                 _ => Ok(false)

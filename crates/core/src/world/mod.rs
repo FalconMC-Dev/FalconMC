@@ -30,5 +30,5 @@ impl BlockPosition {
 }
 
 impl From<Position> for BlockPosition {
-    fn from(pos: Position) -> Self { BlockPosition::new(pos.x().floor() as i32, pos.y().floor() as i32, pos.z().floor() as i32) }
+    fn from(pos: Position) -> Self { BlockPosition::new(pos.x.floor() as i32, pos.y.floor() as i32, pos.z.floor() as i32) }
 }

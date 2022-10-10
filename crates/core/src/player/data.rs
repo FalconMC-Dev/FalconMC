@@ -14,10 +14,10 @@ impl From<GameMode> for u8 {
 
 #[derive(Clone, Copy, Default, Debug)]
 pub struct PlayerAbilityFlags {
-    invulnerable: bool,
-    flying: bool,
-    allow_flying: bool,
-    instant_break: bool,
+    pub invulnerable: bool,
+    pub flying: bool,
+    pub allow_flying: bool,
+    pub instant_break: bool,
 }
 
 impl PlayerAbilityFlags {
@@ -39,25 +39,13 @@ impl From<PlayerAbilityFlags> for u8 {
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct Position {
-    x: f64,
-    y: f64,
-    z: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl Position {
     pub fn new(x: f64, y: f64, z: f64) -> Self { Position { x, y, z } }
-
-    pub fn x(&self) -> f64 { self.x }
-
-    pub fn y(&self) -> f64 { self.y }
-
-    pub fn z(&self) -> f64 { self.z }
-
-    pub fn set_x(&mut self, x: f64) { self.x = x; }
-
-    pub fn set_y(&mut self, y: f64) { self.y = y; }
-
-    pub fn set_z(&mut self, z: f64) { self.z = z; }
 
     /// A chunk is 16 wide to this function, this is hardcoded
     pub fn chunk_x(&self) -> i32 { (self.x as i32) >> 4 }
@@ -70,18 +58,10 @@ impl Position {
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
 pub struct LookAngles {
-    yaw: f32,
-    pitch: f32,
+    pub yaw: f32,
+    pub pitch: f32,
 }
 
 impl LookAngles {
     pub fn new(yaw: f32, pitch: f32) -> Self { LookAngles { yaw, pitch } }
-
-    pub fn yaw(&self) -> f32 { self.yaw }
-
-    pub fn pitch(&self) -> f32 { self.pitch }
-
-    pub fn set_yaw(&mut self, yaw: f32) { self.yaw = yaw; }
-
-    pub fn set_pitch(&mut self, pitch: f32) { self.pitch = pitch; }
 }

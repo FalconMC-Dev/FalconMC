@@ -13,10 +13,10 @@ static INSTANCE: OnceCell<FalconConfig> = OnceCell::new();
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct FalconConfig {
-    connection: ConnectionSettings,
-    players: PlayerSettings,
-    server: ServerSettings,
-    versions: VersionSettings,
+    pub connection: ConnectionSettings,
+    pub players: PlayerSettings,
+    pub server: ServerSettings,
+    pub versions: VersionSettings,
 }
 
 impl FalconConfig {
@@ -30,35 +30,15 @@ impl FalconConfig {
         Ok(())
     }
 
-    pub fn server_port(&self) -> u16 { self.connection.server_port }
-
-    pub fn server_ip(&self) -> IpAddr { self.connection.server_ip }
-
-    pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ { (self.server_ip(), self.server_port()) }
-
-    pub fn max_players(&self) -> i32 { self.server.max_players }
-
-    pub fn description(&self) -> &str { &self.server.description }
+    pub fn server_socket_addrs(&self) -> impl ToSocketAddrs + '_ { (self.connection.server_ip, self.connection.server_port) }
 
     pub fn world_file(&self) -> Option<&str> { self.server.world.as_deref() }
-
-    pub fn tracing_level(&self) -> LevelFilter { self.server.tracing_level }
-
-    pub fn allow_flight(&self) -> bool { self.players.allow_flight }
-
-    pub fn max_view_distance(&self) -> u8 { self.players.max_view_distance }
-
-    pub fn spawn_pos(&self) -> Position { self.players.spawn_position }
-
-    pub fn spawn_look(&self) -> LookAngles { self.players.spawn_look }
-
-    pub fn excluded_versions(&self) -> &Vec<u32> { &self.versions.excluded }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ConnectionSettings {
-    server_ip: IpAddr,
-    server_port: u16,
+    pub server_ip: IpAddr,
+    pub server_port: u16,
 }
 
 impl Default for ConnectionSettings {
@@ -72,10 +52,10 @@ impl Default for ConnectionSettings {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlayerSettings {
-    allow_flight: bool,
-    max_view_distance: u8,
-    spawn_position: Position,
-    spawn_look: LookAngles,
+    pub allow_flight: bool,
+    pub max_view_distance: u8,
+    pub spawn_position: Position,
+    pub spawn_look: LookAngles,
 }
 
 impl Default for PlayerSettings {
@@ -92,11 +72,11 @@ impl Default for PlayerSettings {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerSettings {
     #[serde(with = "tracing_serde")]
-    tracing_level: LevelFilter,
-    max_players: i32,
-    description: String,
+    pub tracing_level: LevelFilter,
+    pub max_players: i32,
+    pub description: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    world: Option<String>,
+    pub world: Option<String>,
 }
 
 impl Default for ServerSettings {
@@ -112,7 +92,7 @@ impl Default for ServerSettings {
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct VersionSettings {
-    excluded: Vec<u32>,
+    pub excluded: Vec<u32>,
 }
 
 mod tracing_serde {

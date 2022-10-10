@@ -45,7 +45,7 @@ async fn main() -> Result<()> {
              having launched (and shut down) FalconMC.",
         )?;
 
-        let filter_level = FalconConfig::global().tracing_level();
+        let filter_level = FalconConfig::global().server.tracing_level;
         handle_file.modify(|l| {
             *l.filter_mut() = filter_level;
         })?;

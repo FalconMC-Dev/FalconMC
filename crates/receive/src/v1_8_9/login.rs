@@ -20,7 +20,7 @@ mod inner {
         type Error = Infallible;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
-            let version = connection.handler_state().protocol_id();
+            let version = connection.state().protocol_id;
 
             if !FalconConfig::ALLOWED_VERSIONS.contains(&version.unsigned_abs()) {
                  connection.disconnect(ChatComponent::from_text(
@@ -28,7 +28,7 @@ mod inner {
                      ComponentStyle::with_version(version.unsigned_abs()).color_if_absent(ChatColor::Red)
                 ));
             } 
-            if FalconConfig::global().excluded_versions().contains(&version.unsigned_abs()) {
+            if FalconConfig::global().versions.excluded.contains(&version.unsigned_abs()) {
                 connection.disconnect(ChatComponent::from_text(
                     "Disabled version",
                     ComponentStyle::with_version(version.unsigned_abs()).color_if_absent(ChatColor::Red)

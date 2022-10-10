@@ -21,8 +21,8 @@ mod inner {
         type Error = Infallible;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
-            if connection.handler_state().last_keep_alive() != self.id as u64 {
-                let version = connection.handler_state().protocol_id();
+            if connection.state().last_keep_alive != self.id as u64 {
+                let version = connection.state().protocol_id;
                 connection.disconnect(ChatComponent::from_text("Received invalid Keep Alive id!", ComponentStyle::with_version(version.unsigned_abs())));
             } else {
                 connection.reset_keep_alive();

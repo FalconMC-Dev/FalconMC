@@ -26,7 +26,7 @@ mod inner {
         type Error = ReceiveError;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
-            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            let uuid = connection.state().uuid.ok_or(ReceiveError::PlayerNotFound)?;
             connection.server().player_update_view_distance(uuid, self.view_distance);
             Ok(())
         }

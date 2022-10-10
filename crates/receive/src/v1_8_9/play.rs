@@ -62,7 +62,7 @@ mod inner {
         type Error = ReceiveError;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
-            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            let uuid = connection.state().uuid.ok_or(ReceiveError::PlayerNotFound)?;
             connection.server().player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), None, self.on_ground);
             Ok(())
         }
@@ -76,7 +76,7 @@ mod inner {
         type Error = ReceiveError;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
-            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            let uuid = connection.state().uuid.ok_or(ReceiveError::PlayerNotFound)?;
             connection.server().player_update_pos_look(uuid, None, Some((self.yaw, self.pitch)), self.on_ground);
             Ok(())
         }
@@ -90,7 +90,7 @@ mod inner {
         type Error = ReceiveError;
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
-            let uuid = connection.handler_state().player_uuid().ok_or(ReceiveError::PlayerNotFound)?;
+            let uuid = connection.state().uuid.ok_or(ReceiveError::PlayerNotFound)?;
             connection.server().player_update_pos_look(uuid, Some(Position::new(self.x, self.y, self.z)), Some((self.yaw, self.pitch)), self.on_ground);
             Ok(())
         }

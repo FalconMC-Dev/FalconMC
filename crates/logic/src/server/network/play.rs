@@ -19,18 +19,18 @@ impl FalconServer {
             Some(player) => {
                 let look_angles = player.look_angles_mut();
                 if let Some((yaw, pitch)) = facing {
-                    look_angles.set_yaw(yaw);
-                    look_angles.set_pitch(pitch);
+                    look_angles.yaw = yaw;
+                    look_angles.pitch = pitch;
                 }
                 let position = player.position_mut();
                 let (old_chunk_x, old_chunk_z) = position.chunk_coords();
                 if let Some(pos) = pos {
-                    position.set_x(pos.x());
-                    position.set_z(pos.z());
-                    if pos.y() as i32 != position.y() as i32 {
+                    position.x = pos.x;
+                    position.z = pos.z;
+                    if pos.y as i32 != position.y as i32 {
                         update_viewpos = true;
                     }
-                    position.set_y(pos.y());
+                    position.y = pos.y;
                 }
 
                 let (chunk_x, chunk_z) = (position.chunk_x(), position.chunk_z());

@@ -24,19 +24,13 @@ mod inner {
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
             match self.next_state {
-                1 => connection
-                    .handler_state_mut()
-                    .set_connection_state(ConnectionState::Status),
-                2 => connection
-                    .handler_state_mut()
-                    .set_connection_state(ConnectionState::Login),
+                1 => connection.state_mut().connection_state = ConnectionState::Status,
+                2 => connection.state_mut().connection_state = ConnectionState::Login,
                 _ => {
                     connection.disconnect(ChatComponent::from_text("Impossible next state!", ComponentStyle::with_version(self.version.unsigned_abs())));
                 }
             }
-            connection
-                .handler_state_mut()
-                .set_protocol_id(self.version);
+            connection.state_mut().protocol_id = self.version;
             Ok(())
         }
 

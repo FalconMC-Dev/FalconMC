@@ -33,11 +33,11 @@ define_spec! {
     PositionAndLookSpec => pos: &Position, look: &LookAngles {
         flags: u8,
         teleport_id: i32;
-        let x: f64 = pos.x(),
-        let y: f64 = pos.y(),
-        let z: f64 = pos.z(),
-        let yaw: f32 = look.yaw(),
-        let pitch: f32 = look.pitch()
+        let x: f64 = pos.x,
+        let y: f64 = pos.y,
+        let z: f64 = pos.z,
+        let yaw: f32 = look.yaw,
+        let pitch: f32 = look.pitch
     }
 }
 

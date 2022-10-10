@@ -27,7 +27,7 @@ impl FalconConnection {
                 }
 
                 _ = self.timeout.tick() => {
-                    let style = ComponentStyle::with_version(self.handler_state().protocol_id().unsigned_abs());
+                    let style = ComponentStyle::with_version(self.state().protocol_id.unsigned_abs());
                     self.disconnect(ChatComponent::from_text(
                         "Did not receive Keep alive packet!",
                         style
@@ -45,7 +45,7 @@ impl FalconConnection {
                         ConnectionTask::Sync(task) => task.run(&mut self),
                         ConnectionTask::Async(task) => task.run(&mut self).await,
                     } {
-                        self.disconnect(ChatComponent::from_text(format!("Task errored: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                        self.disconnect(ChatComponent::from_text(format!("Task errored: {}", error), ComponentStyle::with_version(self.state.protocol_id.unsigned_abs())));
                     };
                 }
 
@@ -55,33 +55,33 @@ impl FalconConnection {
                     match n {
                         Ok(n) => {
                             if n == 0 {
-                                self.state.set_connection_state(ConnectionState::Disconnected);
+                                self.state.connection_state = ConnectionState::Disconnected;
                                 break;
                             }
                             while let Some(packet) = socket_read.next_packet() {
                                 if let Err(error) = process_packet(&mut self, packet, &mut receiver) {
-                                    self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                                    self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id.unsigned_abs())));
                                 }
                             }
                         }
                         Err(error) => {
-                            self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id().unsigned_abs())));
+                            self.disconnect(ChatComponent::from_text(format!("Error on read: {}", error), ComponentStyle::with_version(self.state.protocol_id.unsigned_abs())));
                         }
                     }
                 }
 
                 res = socket_writehalf.write_all_buf(&mut self.write_buffer), if self.write_buffer.has_remaining() => {
                     if res.is_err() {
-                        self.state.set_connection_state(ConnectionState::Disconnected);
+                        self.state.connection_state = ConnectionState::Disconnected;
                         break;
-                    } else if !self.write_buffer.has_remaining() && self.state.connection_state() == ConnectionState::Disconnected {
+                    } else if !self.write_buffer.has_remaining() && self.state.connection_state == ConnectionState::Disconnected {
                         break;
                     }
                 }
             }
         }
-        if self.handler_state().connection_state() == ConnectionState::Disconnected {
-            if let Some(uuid) = self.handler_state().player_uuid() {
+        if self.state().connection_state == ConnectionState::Disconnected {
+            if let Some(uuid) = self.state().uuid {
                 self.server().player_leave(uuid);
             }
         }
@@ -93,9 +93,9 @@ fn process_packet<R: ConnectionReceiver>(connection: &mut FalconConnection, mut 
     let span = trace_span!("packet", packet_id = %format!("{:#04X}", packet_id));
     let _enter = span.enter();
     if !receiver.receive(packet_id, &mut packet, connection)? {
-        let state = connection.handler_state().connection_state();
+        let state = connection.state().connection_state;
         if state == ConnectionState::Login || state == ConnectionState::Status {
-            let style = ComponentStyle::with_version(connection.handler_state().protocol_id().unsigned_abs()).color_if_absent(ChatColor::Red);
+            let style = ComponentStyle::with_version(connection.state().protocol_id.unsigned_abs()).color_if_absent(ChatColor::Red);
             connection.disconnect(ChatComponent::from_text("Unsupported version!", style));
         }
         trace!("Unknown packet received, skipping!");

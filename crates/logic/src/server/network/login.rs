@@ -19,9 +19,9 @@ impl FalconServer {
         let username2 = username.clone();
         connection.execute(move |connection| -> Result<(), WriteError> {
             connection.send_packet(LoginSuccessSpec::new(player_uuid, username2), falcon_send::write_login_success)?;
-            let handler_state = connection.handler_state_mut();
-            handler_state.set_connection_state(ConnectionState::Play);
-            handler_state.set_player_uuid(player_uuid);
+            let handler_state = connection.state_mut();
+            handler_state.connection_state = ConnectionState::Play;
+            handler_state.uuid = Some(player_uuid);
             Ok(())
         });
         self.login_success(username, player_uuid, protocol, connection);
@@ -33,14 +33,14 @@ impl FalconServer {
             error!(%uuid, %username, "Duplicate player joining");
         }
         info!(name = %username, "Player joined the game!");
-        let (spawn_pos, spawn_look) = (FalconConfig::global().spawn_pos(), FalconConfig::global().spawn_look());
+        let (spawn_pos, spawn_look) = (FalconConfig::global().players.spawn_position, FalconConfig::global().players.spawn_look);
         let player = FalconPlayer::new(username, uuid, self.eid_count, spawn_pos, spawn_look, protocol, connection);
         self.eid_count += 1;
 
         self.players.insert(uuid, player);
         if let Some(player) = self.players.get(&uuid) {
             let join_game_spec =
-                player.join_spec(Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 0, false, false);
+                player.join_spec(Difficulty::Peaceful, FalconConfig::global().server.max_players as u8, String::from("customized"), 0, false, false);
             player.connection().send_packet(join_game_spec, falcon_send::write_join_game);
 
             let server_difficulty = ServerDifficultySpec::new(Difficulty::Peaceful, false);

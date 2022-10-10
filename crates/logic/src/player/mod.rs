@@ -71,7 +71,7 @@ impl FalconPlayer {
     pub fn view_distance(&self) -> u8 { self.view_distance }
 
     pub fn set_view_distance(&mut self, distance: u8) {
-        self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().max_view_distance()));
+        self.view_distance = std::cmp::max(0, std::cmp::min(distance, FalconConfig::global().players.max_view_distance));
     }
 
     pub fn protocol_version(&self) -> i32 { self.protocol }
@@ -91,7 +91,7 @@ impl FalconPlayer {
     pub fn send_keep_alive(&self) {
         let elapsed = self.time.elapsed().as_secs();
         self.connection.execute(move |connection| -> Result<(), WriteError> {
-            connection.handler_state_mut().set_last_keep_alive(elapsed);
+            connection.state_mut().last_keep_alive = elapsed;
             connection.send_packet(elapsed as i64, falcon_send::write_keep_alive)?;
             Ok(())
         });
