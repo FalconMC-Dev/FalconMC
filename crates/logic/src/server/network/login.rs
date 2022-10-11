@@ -38,6 +38,7 @@ impl FalconServer {
         self.eid_count += 1;
 
         self.players.insert(uuid, player);
+
         if let Some(player) = self.players.get(&uuid) {
             let join_game_spec =
                 player.join_spec(Difficulty::Peaceful, FalconConfig::global().max_players() as u8, String::from("customized"), 0, false, false);

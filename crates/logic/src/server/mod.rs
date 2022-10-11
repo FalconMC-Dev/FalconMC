@@ -12,6 +12,7 @@ pub use wrapper::ServerWrapper;
 use crate::player::FalconPlayer;
 use crate::world::FalconWorld;
 
+mod command;
 mod network;
 mod tick;
 mod wrapper;

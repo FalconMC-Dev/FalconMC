@@ -5,7 +5,7 @@ use falcon_core::server::config::FalconConfig;
 use falcon_core::server::data::Difficulty;
 use falcon_packet_core::WriteError;
 use falcon_send::specs::play::JoinGameSpec;
-use mc_chat::ChatComponent;
+use mc_chat::{ChatComponent, ComponentStyle};
 use tokio::time::Instant;
 use uuid::Uuid;
 
@@ -110,5 +110,14 @@ impl FalconPlayer {
             reduced_debug,
             enable_respawn,
         )
+    }
+
+    fn kick(&mut self, reason: Option<&str>) {
+        let style = ComponentStyle::with_version(self.protocol.unsigned_abs());
+        let msg = match reason {
+            Some(r) => ChatComponent::from_text(format!("You've been kicked because: {}", r), style),
+            None => ChatComponent::from_text("You've been kicked!", style),
+        };
+        self.disconnect(msg);
     }
 }

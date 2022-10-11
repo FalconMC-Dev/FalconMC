@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use std::time::Duration;
 
 use tokio::runtime::Builder;
@@ -5,6 +6,7 @@ use tokio::time::MissedTickBehavior;
 use tracing::{debug, debug_span, error, info};
 
 use super::ServerTask;
+use crate::server::command::Command;
 use crate::FalconServer;
 
 impl FalconServer {
@@ -51,12 +53,23 @@ impl FalconServer {
         }
         while let Ok(command) = self.console_rx.try_recv() {
             info!(cmd = %command.trim(), "Console command execution");
-            // TODO: better commands
-            if command.trim() == "stop" {
-                info!("Shutting down server! (Stop command executed)");
-                self.should_stop = true;
-                self.shutdown_handle().send_shutdown();
-                return;
+            // TODO: more commands
+            let command_parsed: Command = match Command::from_str(command.as_str()) {
+                Ok(val) => val,
+                Err(e) => {
+                    error!(error = %e, "Error when parsing command");
+                    continue;
+                },
+            };
+            match command_parsed {
+                Command::Stop => {
+                    info!("Shutting down server! (Stop command executed)");
+                    self.should_stop = true;
+                    self.shutdown_handle().send_shutdown();
+                },
+                Command::Kick(username) => {
+                    todo!()
+                },
             }
         }
     }
