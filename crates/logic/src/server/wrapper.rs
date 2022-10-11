@@ -70,7 +70,11 @@ impl ServerWrapper {
 
     pub fn player_leave(&self, uuid: Uuid) {
         self.execute(move |server| {
-            server.player_leave(uuid);
+            let player = match server.player(uuid) {
+                Some(val) => val,
+                None => return Ok(()),
+            };
+            server.player_leave(player.username().to_string());
             Ok::<(), Infallible>(())
         });
     }

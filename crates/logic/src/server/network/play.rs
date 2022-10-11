@@ -5,7 +5,11 @@ use uuid::Uuid;
 use crate::server::FalconServer;
 
 impl FalconServer {
-    pub fn player_leave(&mut self, uuid: Uuid) {
+    pub fn player_leave(&mut self, username: String) {
+        let uuid = match self.usernames.remove(&username) {
+            Some(val) => val,
+            None => return,
+        };
         let player = self.players.remove(&uuid);
         if let Some(player) = player {
             info!(%uuid, name = player.username(), "Player disconnected!");
