@@ -64,7 +64,9 @@ impl FalconServer {
 
     pub fn player_by_username(&mut self, username: &String) -> Option<&FalconPlayer> { self.usernames.get(username).and_then(|x| self.players.get(x)) }
 
-    pub fn player_by_username_mut(&mut self, username: &String) -> Option<&mut FalconPlayer> { self.usernames.get(username).and_then(|x| self.players.get_mut(x)) }
+    pub fn player_by_username_mut(&mut self, username: &String) -> Option<&mut FalconPlayer> {
+        self.usernames.get(username).and_then(|x| self.players.get_mut(x))
+    }
 
     pub fn world(&mut self) -> &mut FalconWorld { &mut self.world }
 }
