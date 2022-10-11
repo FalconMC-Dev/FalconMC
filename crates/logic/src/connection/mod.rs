@@ -82,19 +82,19 @@ impl FalconConnection {
 impl FalconConnection {
     pub fn address(&self) -> &std::net::SocketAddr { &self.addr }
 
-    pub fn handler_state(&self) -> &falcon_core::network::PacketHandlerState { &self.state }
+    pub fn state(&self) -> &falcon_core::network::PacketHandlerState { &self.state }
 
-    pub fn handler_state_mut(&mut self) -> &mut falcon_core::network::PacketHandlerState { &mut self.state }
+    pub fn state_mut(&mut self) -> &mut falcon_core::network::PacketHandlerState { &mut self.state }
 
     #[instrument(level = "trace", skip_all)]
     pub fn send<F>(&mut self, write_fn: F) -> Result<(), WriteError>
     where
         F: FnOnce(&mut SocketWrite, i32) -> Result<(), WriteError>,
     {
-        if self.state.connection_state() == ConnectionState::Disconnected {
+        if self.state.connection_state == ConnectionState::Disconnected {
             return Ok(());
         }
-        write_fn(&mut self.write_buffer, self.state.protocol_id())?;
+        write_fn(&mut self.write_buffer, self.state.protocol_id)?;
         self.write_buffer.finish();
         Ok(())
     }
@@ -113,11 +113,11 @@ impl FalconConnection {
 
     #[instrument(level = "trace", skip_all)]
     pub fn disconnect(&mut self, reason: ChatComponent) {
-        match self.state.connection_state() {
+        match self.state.connection_state {
             ConnectionState::Play => self.send_packet(reason, falcon_send::write_play_disconnect).ok(),
             _ => self.send_packet(reason, falcon_send::write_login_disconnect).ok(),
         };
-        self.state.set_connection_state(ConnectionState::Disconnected);
+        self.state.connection_state = ConnectionState::Disconnected;
         trace!("Player connection marked as disconnected");
     }
 }

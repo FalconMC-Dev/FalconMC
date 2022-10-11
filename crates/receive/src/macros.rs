@@ -32,7 +32,7 @@ macro_rules! packet_modules {
             $(if $mod_name_rest::falcon_process_packet(packet_id, buffer, connection)? {
                 return Ok(true);
             })*
-            let connection_state = connection.handler_state().connection_state();
+            let connection_state = connection.state().connection_state;
             match connection_state {
                 $(::falcon_core::network::ConnectionState::Handshake => {
                     $(if $mod_name_handshake::falcon_process_packet(packet_id, buffer, connection)? {

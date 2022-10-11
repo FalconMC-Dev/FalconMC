@@ -22,7 +22,7 @@ mod inner {
 
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Infallible> {
             trace!("Status requested");
-            let version = connection.handler_state().protocol_id();
+            let version = connection.state().protocol_id;
             let wrapper = connection.wrapper();
             connection.server().request_status(version, wrapper);
             Ok(())
@@ -39,7 +39,7 @@ mod inner {
         fn handle_packet(self, connection: &mut FalconConnection) -> Result<(), Self::Error> {
             trace!("Sent status pong");
             connection.send_packet(self.payload, falcon_send::write_status_pong)?;
-            connection.handler_state_mut().set_connection_state(ConnectionState::Disconnected);
+            connection.state_mut().connection_state = ConnectionState::Disconnected;
             Ok(())
         }
 

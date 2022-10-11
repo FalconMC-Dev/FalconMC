@@ -24,7 +24,7 @@ pub struct ServerVersion {
 
 impl ServerVersion {
     pub fn new<T: Into<Cow<'static, str>>>(name: T, protocol_id: i32) -> Self {
-        let excluded = FalconConfig::global().excluded_versions();
+        let excluded = &FalconConfig::global().versions.excluded;
         let (name, version) = if !FalconConfig::ALLOWED_VERSIONS.contains(&protocol_id.unsigned_abs()) || excluded.contains(&protocol_id.unsigned_abs()) {
             let (name, mut protocol) = ("Unsupported version".into(), FalconConfig::ALLOWED_VERSIONS[0]);
             for version in FalconConfig::ALLOWED_VERSIONS {
