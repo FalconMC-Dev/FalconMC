@@ -34,10 +34,12 @@ impl FalconServer {
         }
         info!(name = %username, "Player joined the game!");
         let (spawn_pos, spawn_look) = (FalconConfig::global().players.spawn_position, FalconConfig::global().players.spawn_look);
-        let player = FalconPlayer::new(username, uuid, self.eid_count, spawn_pos, spawn_look, protocol, connection);
+        let player = FalconPlayer::new(username.clone(), uuid, self.eid_count, spawn_pos, spawn_look, protocol, connection);
+
         self.eid_count += 1;
 
         self.players.insert(uuid, player);
+        self.usernames.insert(username, uuid);
         if let Some(player) = self.players.get(&uuid) {
             let join_game_spec =
                 player.join_spec(Difficulty::Peaceful, FalconConfig::global().server.max_players as u8, String::from("customized"), 0, false, false);

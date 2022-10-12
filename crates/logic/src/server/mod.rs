@@ -36,6 +36,7 @@ pub struct FalconServer {
     receiver: UnboundedReceiver<ServerTask>,
     eid_count: i32,
     players: AHashMap<Uuid, FalconPlayer>,
+    usernames: AHashMap<String, Uuid>,
     world: FalconWorld,
 }
 
@@ -48,6 +49,7 @@ impl FalconServer {
             receiver,
             eid_count: 0,
             players: AHashMap::new(),
+            usernames: AHashMap::new(),
             world,
         }
     }
@@ -59,6 +61,10 @@ impl FalconServer {
     pub fn player(&self, uuid: Uuid) -> Option<&FalconPlayer> { self.players.get(&uuid) }
 
     pub fn player_mut(&mut self, uuid: Uuid) -> Option<&mut FalconPlayer> { self.players.get_mut(&uuid) }
+
+    pub fn username(&mut self, username: &String) -> Option<&FalconPlayer> { self.usernames.get(username).and_then(|x| self.players.get(x)) }
+
+    pub fn username_mut(&mut self, username: &String) -> Option<&mut FalconPlayer> { self.usernames.get(username).and_then(|x| self.players.get_mut(x)) }
 
     pub fn world(&mut self) -> &mut FalconWorld { &mut self.world }
 }
