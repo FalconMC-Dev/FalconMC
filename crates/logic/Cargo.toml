@@ -12,14 +12,14 @@ falcon_send = { path = "../send" }
 
 mc_chat = "0.3.0"
 
-tracing = "0.1.36"
-itertools = "0.10.3"
+tracing = "0.1.37"
+itertools = "0.10.5"
 flate2 = { version = "1.0.24", features = ["zlib-ng"], default-features = false }
 
-uuid = { version = "1.1.2", features = [ "v3" ] }
+uuid = { version = "1.2.1", features = [ "v3" ] }
 bytes = "1.2.1"
 anyhow = "1.0.65"
 thiserror = "1.0.37"
 ahash = "0.8.0"
 
-tokio = { version = "1.20.1", features = [ "net", "time", "tracing", "io-util" ]}
+tokio = { version = "1.21.2", features = [ "net", "time", "tracing", "io-util" ]}

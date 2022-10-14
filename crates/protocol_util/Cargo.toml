@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 falcon_proc_util = { path = "../proc_util" }
 
-syn = { version = "1.0.99", features = [ "full", "extra-traits" ] }
-itertools = { version = "0.10.3" }
+syn = { version = "1.0.102", features = [ "full", "extra-traits" ] }
+itertools = { version = "0.10.5" }
 
