@@ -12,6 +12,6 @@ proc-macro = true
 falcon_proc_util = { path = "../proc_util" }
 falcon_protocol_util = { path = "../protocol_util" }
 
-syn = { version = "1.0.99", features = [ "full", "extra-traits" ] }
+syn = { version = "1.0.102", features = [ "full", "extra-traits" ] }
 quote = "1.0.21"
-proc-macro2 = "1.0.43"
+proc-macro2 = "1.0.46"
