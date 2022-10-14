@@ -10,7 +10,7 @@ falcon_packet_core_derive = { path = "../packet_core_derive/" }
 
 bytes = "1.2.1"
 
-thiserror = "1.0.32"
+thiserror = "1.0.37"
 
 uuid = "1.2.1"
 fastnbt = "2.3.2"
