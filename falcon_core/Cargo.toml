@@ -1,0 +1,12 @@
+[package]
+name = "falcon_core"
+version = "0.3.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tracing = "0.1.37"
+uuid = "1.3.0"
+serde = { version = "1.0.158", features = [ "derive" ] }
+tokio = { version = "1.26.0", features = [ "sync", "net",  "tracing" ] }
