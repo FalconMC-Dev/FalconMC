@@ -1,6 +1,17 @@
+//! FalconMC base config module.
+//!
+//! # Note
+//! This module may grow eventually, there are
+//! no statements about that yet, though.
+
 use serde::{Deserialize, Serialize};
 use tracing::metadata::LevelFilter;
 
+/// Base config struct.
+///
+/// This config struct is as general as possible. It is meant
+/// to be used in higher crates and for that reason only provides
+/// one default option for the log level.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FalconConfig<T> {
     #[serde(with = "tracing_serde")]

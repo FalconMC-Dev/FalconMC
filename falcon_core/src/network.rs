@@ -18,7 +18,7 @@ pub const UNKNOWN_PROTOCOL: i32 = -1;
 /// # Note
 /// This could be moved to a higher crate such as the logic core crates.
 ///
-/// (For example clients might want to have a plain Uuid instead of an Option<Uuid>)
+/// (For example clients might want to have a plain `Uuid` instead of an `Option<Uuid>`)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct NetworkState {
     pub uuid: Option<Uuid>,
@@ -28,7 +28,9 @@ pub struct NetworkState {
 }
 
 impl Display for NetworkState {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { write!(f, "{:?}|{}", self.phase, self.protocol) }
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}|{}", self.phase, self.protocol)
+    }
 }
 
 impl NetworkState {
