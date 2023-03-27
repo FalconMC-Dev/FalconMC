@@ -2,6 +2,12 @@
 name = "falcon_core"
 version = "0.3.0"
 edition = "2021"
+publish = [ "falconmc" ]
+description = "Base crate of the falcon ecosystem"
+license-file = "../LICENSE"
+repository = "https://github.com/FalconMC-Dev/FalconMC"
+
+# warning: manifest has no description, license, license-file, documentation, homepage or repository.
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

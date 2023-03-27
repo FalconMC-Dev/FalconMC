@@ -1,0 +1,2 @@
+[registries]
+falconmc = { index = "https://github.com/FalconMC-Dev/falconmc-index" }
