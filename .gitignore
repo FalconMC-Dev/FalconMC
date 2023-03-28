@@ -1,5 +1,6 @@
 # cargo
 target/
+Cargo.lock
 
 # intellij
 .idea/
