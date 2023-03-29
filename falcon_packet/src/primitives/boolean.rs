@@ -1,6 +1,6 @@
 use bytes::{Buf, BufMut};
 
-use crate::{PacketRead, ReadError, PacketWrite, WriteError, PacketSize};
+use crate::{PacketRead, PacketSize, PacketWrite, ReadError, WriteError};
 
 impl PacketRead for bool {
     #[inline]
@@ -37,8 +37,9 @@ impl PacketSize for bool {
 
 #[cfg(test)]
 mod tests {
+    use bytes::{Bytes, BytesMut};
+
     use super::*;
-    use bytes::{BytesMut, Bytes};
 
     #[test]
     fn test_size() {

@@ -51,4 +51,3 @@ pub enum ReadError {
     #[error("Reached EOF of input buffer")]
     NoMoreBytes,
 }
-

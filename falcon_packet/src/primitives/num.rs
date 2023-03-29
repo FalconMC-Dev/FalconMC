@@ -1,7 +1,7 @@
 use bytes::{Buf, BufMut};
 
-use crate::{PacketRead, ReadError, PacketWrite, WriteError, PacketSize};
 use crate::primitives::{VarI32, VarI64};
+use crate::{PacketRead, PacketSize, PacketWrite, ReadError, WriteError};
 
 macro_rules! impl_num {
     ($($num:ident, $get:ident, $put:ident);*$(;)?) => {$(
@@ -111,7 +111,7 @@ impl_var! { VarI32 = i32 & u32, VarI64 = i64 & u64 }
 
 #[cfg(test)]
 mod test {
-    use bytes::{BytesMut, Bytes};
+    use bytes::{Bytes, BytesMut};
 
     use super::*;
 
@@ -159,4 +159,3 @@ mod test {
         assert_eq!(-1, VarI32::read(&mut buffer).unwrap().val());
     }
 }
-

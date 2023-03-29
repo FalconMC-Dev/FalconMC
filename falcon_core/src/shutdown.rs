@@ -123,15 +123,11 @@ impl ShutdownHandle {
     /// This shutdown handler will be dropped and won't signal a process
     /// complete anymore. There is also no way to receive a shutdown signal
     /// either (unless you clone this first).
-    pub fn into_signal_sender(self) -> broadcast::Sender<()> {
-        self.signal_sender.clone()
-    }
+    pub fn into_signal_sender(self) -> broadcast::Sender<()> { self.signal_sender.clone() }
 }
 
 impl Debug for ShutdownHandle {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("ShutdownHandle").finish()
-    }
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result { f.debug_struct("ShutdownHandle").finish() }
 }
 
 impl std::clone::Clone for ShutdownHandle {

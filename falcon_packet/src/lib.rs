@@ -9,15 +9,15 @@
 //! Six traits are introduced:
 //! - [`PacketRead`]: How to read a type from the network.
 //! - [`PacketWrite`]: How to write a type to the network.
-//! - [`PacketSize`]: Memory-efficient size computation of the data
-//!     when it would be written to the netork.
-//! - [`PacketReadSeed`]: How to read a type from the network.
-//!     This trait is used to pass data to the read implemenetation.
-//! - [`PacketWriteSeed`]: How to write a type to the network.
-//!     This trait is used to pass data to the write implemenetation.
-//! - [`PacketSizeSeed`]: Memory-efficient size computation of the data
-//!     when it would be written to the netork.
-//!     This trait is used to pass data to the size implemenetation.
+//! - [`PacketSize`]: Memory-efficient size computation of the data when it
+//!   would be written to the netork.
+//! - [`PacketReadSeed`]: How to read a type from the network. This trait is
+//!   used to pass data to the read implemenetation.
+//! - [`PacketWriteSeed`]: How to write a type to the network. This trait is
+//!   used to pass data to the write implemenetation.
+//! - [`PacketSizeSeed`]: Memory-efficient size computation of the data when it
+//!   would be written to the netork. This trait is used to pass data to the
+//!   size implemenetation.
 //!
 //! Because [Minecraft's protocol](https://wiki.vg/) doesn't
 //! translate one-to-one to Rust types, this crate offers some
@@ -27,7 +27,6 @@
 //! Some of these wrappers also help in reading
 //! from the network while maintaining high memory efficiency
 //! by leveraging the use of [`bytes::Bytes`].
-//!
 // //! ## **How to implement**
 // //! For user implementations, it is highly encouraged to use the following
 // //! derive macros:
@@ -36,11 +35,10 @@
 // //! - [`PacketSize`](falcon_packet_core_derive::PacketSize)
 
 use bytes::{Buf, BufMut};
-
 pub use error::{ReadError, WriteError};
 
-pub mod primitives;
 mod error;
+pub mod primitives;
 
 /// A data structure that can be read from a minecraft connection.
 ///
@@ -142,4 +140,3 @@ pub trait PacketSizeSeed<'a, T> {
     /// that buffer's change in length at all cost.
     fn size(self, value: &'a T) -> usize;
 }
-

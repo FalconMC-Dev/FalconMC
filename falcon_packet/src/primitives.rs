@@ -5,8 +5,8 @@
 //! - [`bool`]
 
 mod boolean;
-mod num;
 mod bytes;
+mod num;
 
 pub use self::bytes::*;
 
@@ -79,4 +79,3 @@ impl_var_int! {
     isize = as_isize, usize = as_usize, u32 = as_u32, i64 = as_i64, u64 = as_u64, i128 = as_i128, u128 = as_u128;
     VarI64: i64 => i8, u8, i16, u16, i32, u32, isize, usize, u64 + u64 = as_u64, i128 = as_i128, u128 = as_u128;
 }
-

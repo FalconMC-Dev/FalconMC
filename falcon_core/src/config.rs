@@ -53,10 +53,11 @@ mod tracing_serde {
 
 #[cfg(test)]
 mod tests {
-    use serde_test::{assert_tokens, Token, assert_de_tokens, assert_de_tokens_error};
+    use serde_test::{assert_de_tokens, assert_de_tokens_error, assert_tokens, Token};
 
     use super::*;
 
+    #[rustfmt::skip]
     #[test]
     fn test_config() {
         let mut config = FalconConfig::<()>::default();

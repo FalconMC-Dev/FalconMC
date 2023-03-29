@@ -1,8 +1,6 @@
-use std::{
-    borrow::{Borrow, Cow},
-    ops::Deref,
-    slice::Iter,
-};
+use std::borrow::{Borrow, Cow};
+use std::ops::Deref;
+use std::slice::Iter;
 
 use bytes::{Bytes, BytesMut};
 
@@ -15,13 +13,9 @@ pub enum PacketBytes {
 }
 
 impl PacketBytes {
-    pub fn new() -> Self {
-        Default::default()
-    }
+    pub fn new() -> Self { Default::default() }
 
-    pub fn from_static(bytes: &'static [u8]) -> Self {
-        PacketBytes::Slice(Bytes::from_static(bytes))
-    }
+    pub fn from_static(bytes: &'static [u8]) -> Self { PacketBytes::Slice(Bytes::from_static(bytes)) }
 }
 
 impl PacketReadSeed<PacketBytes> for usize {
@@ -54,51 +48,35 @@ impl PacketWrite for PacketBytes {
 
 impl PacketSize for PacketBytes {
     #[inline]
-    fn size(&self) -> usize {
-        self.len()
-    }
+    fn size(&self) -> usize { self.len() }
 }
 
 impl Default for PacketBytes {
-    fn default() -> Self {
-        Self::Slice(Default::default())
-    }
+    fn default() -> Self { Self::Slice(Default::default()) }
 }
 
 impl<'a> From<&'a [u8]> for PacketBytes {
-    fn from(value: &'a [u8]) -> Self {
-        PacketBytes::Slice(Bytes::copy_from_slice(value))
-    }
+    fn from(value: &'a [u8]) -> Self { PacketBytes::Slice(Bytes::copy_from_slice(value)) }
 }
 
 impl From<Bytes> for PacketBytes {
-    fn from(value: Bytes) -> Self {
-        PacketBytes::Slice(value)
-    }
+    fn from(value: Bytes) -> Self { PacketBytes::Slice(value) }
 }
 
 impl From<BytesMut> for PacketBytes {
-    fn from(value: BytesMut) -> Self {
-        PacketBytes::Slice(value.into())
-    }
+    fn from(value: BytesMut) -> Self { PacketBytes::Slice(value.into()) }
 }
 
 impl From<Vec<u8>> for PacketBytes {
-    fn from(value: Vec<u8>) -> Self {
-        PacketBytes::Vec(value)
-    }
+    fn from(value: Vec<u8>) -> Self { PacketBytes::Vec(value) }
 }
 
 impl FromIterator<u8> for PacketBytes {
-    fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
-        PacketBytes::Vec(Vec::from_iter(iter))
-    }
+    fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self { PacketBytes::Vec(Vec::from_iter(iter)) }
 }
 
 impl<'a> From<Cow<'a, [u8]>> for PacketBytes {
-    fn from(value: Cow<'a, [u8]>) -> Self {
-        PacketBytes::Slice(Bytes::copy_from_slice(value.as_ref()))
-    }
+    fn from(value: Cow<'a, [u8]>) -> Self { PacketBytes::Slice(Bytes::copy_from_slice(value.as_ref())) }
 }
 
 impl AsRef<[u8]> for PacketBytes {
@@ -131,9 +109,8 @@ impl Deref for PacketBytes {
 }
 
 impl<'a> IntoIterator for &'a PacketBytes {
-    type Item = &'a u8;
-
     type IntoIter = Iter<'a, u8>;
+    type Item = &'a u8;
 
     fn into_iter(self) -> Self::IntoIter {
         match self {
@@ -144,9 +121,8 @@ impl<'a> IntoIterator for &'a PacketBytes {
 }
 
 impl IntoIterator for PacketBytes {
-    type Item = u8;
-
     type IntoIter = IntoIter;
+    type Item = u8;
 
     fn into_iter(self) -> Self::IntoIter {
         match self {
