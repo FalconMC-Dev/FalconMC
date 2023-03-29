@@ -6,13 +6,16 @@
 
 mod boolean;
 mod num;
+mod bytes;
+
+pub use self::bytes::*;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
         #[doc = stringify!(A variable length wrapper for $base,)]
         #[doc = "see [here](https://wiki.vg/Protocol#VarInt_and_VarLong)."]
         #[repr(transparent)]
-        #[derive(Debug, Copy, Clone, PartialEq, Hash, Default)]
+        #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Hash, Default)]
         pub struct $var {
             val: $base,
         }

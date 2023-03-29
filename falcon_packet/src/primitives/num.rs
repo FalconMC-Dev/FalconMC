@@ -66,7 +66,7 @@ macro_rules! impl_var {
                 buffer: &mut B,
             ) -> Result<(), WriteError>
             where
-                B: BufMut + ?Sized,
+                B: BufMut,
             {
                 let mut value = self.val;
                 while value & -128 as $num != 0 {

@@ -20,7 +20,7 @@ impl PacketWrite for bool {
     #[inline]
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: BufMut + ?Sized,
+        B: BufMut,
     {
         if !buffer.has_remaining_mut() {
             return Err(WriteError::EndOfBuffer);

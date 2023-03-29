@@ -73,7 +73,7 @@ pub trait PacketWrite: PacketSize {
     /// This function serializes the type to the given buffer.
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: BufMut + ?Sized;
+        B: BufMut;
 }
 
 /// A data structure that can efficiently compute
@@ -99,10 +99,7 @@ pub trait PacketSize {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketReadSeed {
-    /// The type produced by using this seed.
-    type Value;
-
+pub trait PacketReadSeed<T> {
     /// This function extracts the type from the given buffer.
     ///
     /// # Important
@@ -111,7 +108,7 @@ pub trait PacketReadSeed {
     /// that the remaining length of the buffer is always
     /// checked first before reading bytes from it.
     /// This is to eliminate panics.
-    fn read<B>(self, buffer: &mut B) -> Result<Self::Value, ReadError>
+    fn read<B>(self, buffer: &mut B) -> Result<T, ReadError>
     where
         B: Buf + ?Sized;
 }
@@ -121,14 +118,11 @@ pub trait PacketReadSeed {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketWriteSeed<'a> {
-    /// The type written by using this seed.
-    type Value;
-
+pub trait PacketWriteSeed<'a, T> {
     /// This function serializes the type to the given buffer.
-    fn write<B>(self, value: &'a Self::Value, buffer: &'a mut B) -> Result<(), WriteError>
+    fn write<B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
-        B: BufMut + ?Sized;
+        B: BufMut;
 }
 
 /// A data structure that can efficiently compute
@@ -138,10 +132,7 @@ pub trait PacketWriteSeed<'a> {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketSizeSeed<'a> {
-    /// The type measured by using this seed.
-    type Value;
-
+pub trait PacketSizeSeed<'a, T> {
     /// This function computes the exact network
     /// size of the type.
     ///
@@ -149,6 +140,6 @@ pub trait PacketSizeSeed<'a> {
     /// It is highly encouraged to optimize this function.
     /// Avoid writing the type to a buffer and returning
     /// that buffer's change in length at all cost.
-    fn size(self, value: &'a Self::Value) -> usize;
+    fn size(self, value: &'a T) -> usize;
 }
 
