@@ -6,9 +6,77 @@ use bytes::{Bytes, BytesMut};
 
 use crate::{PacketReadSeed, PacketSize, PacketWrite, ReadError, WriteError};
 
+impl PacketReadSeed<Bytes> for usize {
+    fn read<B>(self, buffer: &mut B) -> Result<Bytes, ReadError>
+    where
+        B: bytes::Buf + ?Sized,
+    {
+        if buffer.remaining() < self {
+            return Err(ReadError::NoMoreBytes);
+        }
+        Ok(buffer.copy_to_bytes(self))
+    }
+}
+
+impl PacketReadSeed<BytesMut> for usize {
+    fn read<B>(self, buffer: &mut B) -> Result<BytesMut, ReadError>
+    where
+        B: bytes::Buf + ?Sized,
+    {
+        let mut bytes = BytesMut::new();
+        bytes.extend_from_slice(&PacketReadSeed::<Bytes>::read(self, buffer)?);
+        Ok(bytes)
+    }
+}
+
+impl PacketWrite for Bytes {
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
+    where
+        B: bytes::BufMut,
+    {
+        if buffer.remaining_mut() < self.len() {
+            return Err(WriteError::EndOfBuffer);
+        }
+        buffer.put(self.clone());
+        Ok(())
+    }
+}
+
+impl PacketWrite for BytesMut {
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
+    where
+        B: bytes::BufMut,
+    {
+        if buffer.remaining_mut() < self.len() {
+            return Err(WriteError::EndOfBuffer);
+        }
+        buffer.put(self.clone());
+        Ok(())
+    }
+}
+
+impl PacketSize for Bytes {
+    fn size(&self) -> usize { self.len() }
+}
+
+impl PacketSize for BytesMut {
+    fn size(&self) -> usize { self.len() }
+}
+
 /// A specialized byte buffer for the minecraft protocol.
 ///
-/// Prefer using this type over a `Vec<u8>`.
+/// This provides an efficient implementation for both reading
+/// and writing bytes between a [`Vec<u8>`] and a [`Bytes`].
+/// Therefore it might be more interesting to use than only a [`Bytes`].
+///
+/// Always use this type over a plain [`Vec<u8>`].
+///
+/// # Performance
+/// This type is meant as a read-write byte buffer that also **stores
+/// the bytes** (meaning it might perform a copy). If you just need
+/// to write a slice of bytes to the network, use
+/// [`write_bytes`](super::write_bytes). This will
+/// avoid unnecessary copies.
 ///
 /// # Note
 /// Because byte arrays must be read from a fixed length,
@@ -209,17 +277,44 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_read() {
+    fn test_bytes_read() {
         let mut buffer = Bytes::from_static(&[0, 1, 2, 3]);
-        assert!(5.read(&mut buffer).is_err());
-        let result = 1.read(&mut buffer).unwrap();
+        assert!(PacketReadSeed::<Bytes>::read(5, &mut buffer).is_err());
+        let result: Bytes = 1.read(&mut buffer).unwrap();
         assert_eq!(&[0], result.as_ref());
-        let result = 3.read(&mut buffer).unwrap();
+        let result: Bytes = 3.read(&mut buffer).unwrap();
         assert_eq!(&[1, 2, 3], result.as_ref());
     }
 
     #[test]
-    fn test_write() {
+    fn test_bytes_write() {
+        let bytes = Bytes::from_static(&[0, 1, 2, 3, 4]);
+        assert_eq!(5, bytes.size());
+        assert_eq!(5, bytes.len());
+        let mut buffer = BytesMut::new().limit(4);
+        assert!(bytes.write(&mut buffer).is_err());
+        let mut buffer = buffer.into_inner();
+        bytes.write(&mut buffer).unwrap();
+        assert_eq!(&[0, 1, 2, 3, 4], buffer.as_ref());
+
+        let bytes = [4, 3, 2, 1];
+        let bytes = Bytes::copy_from_slice(&bytes[..]);
+        bytes.write(&mut buffer).unwrap();
+        assert_eq!(&[0, 1, 2, 3, 4, 4, 3, 2, 1], buffer.as_ref());
+    }
+
+    #[test]
+    fn test_packet_read() {
+        let mut buffer = Bytes::from_static(&[0, 1, 2, 3]);
+        assert!(PacketReadSeed::<PacketBytes>::read(5, &mut buffer).is_err());
+        let result: PacketBytes = 1.read(&mut buffer).unwrap();
+        assert_eq!(&[0], result.as_ref());
+        let result: PacketBytes = 3.read(&mut buffer).unwrap();
+        assert_eq!(&[1, 2, 3], result.as_ref());
+    }
+
+    #[test]
+    fn test_packet_write() {
         let bytes = PacketBytes::from_static(&[0, 1, 2, 3, 4]);
         assert_eq!(5, bytes.size());
         assert_eq!(5, bytes.len());
@@ -238,7 +333,7 @@ mod tests {
     #[test]
     fn test_iter() {
         let mut buffer = Bytes::from_static(&[0, 1, 2, 3]);
-        let result = 4.read(&mut buffer).unwrap();
+        let result: PacketBytes = 4.read(&mut buffer).unwrap();
         for (check, &i) in result.iter().enumerate() {
             assert_eq!(check as u8, i);
         }
