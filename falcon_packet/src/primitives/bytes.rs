@@ -6,9 +6,21 @@ use bytes::{Bytes, BytesMut};
 
 use crate::{PacketReadSeed, PacketSize, PacketWrite, ReadError, WriteError};
 
+/// A specialized byte buffer for the minecraft protocol.
+///
+/// Prefer using this type over a `Vec<u8>`.
+///
+/// # Note
+/// Because byte arrays must be read from a fixed length,
+/// this type only implements [`PacketWrite`] and [`PacketSize`].
+/// [`PacketReadSeed<PacketBytes>`] is implemented for [`usize`].
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PacketBytes {
+    /// Used for owned buffer, usually used when writing `Vec<u8>` to the
+    /// network.
     Vec(Vec<u8>),
+    /// Cow buffer of sorts, usually used when reading bytes from the network.
+    /// This type allows for better performance when the bytes aren't used.
     Slice(Bytes),
 }
 
@@ -132,6 +144,11 @@ impl IntoIterator for PacketBytes {
     }
 }
 
+/// [`Iterator`] wrapper for both [`std::vec::IntoIter<u8>`] and
+/// [`bytes::buf::IntoIter<Bytes>`].
+///
+/// Used to iterate over a [`PacketBytes`] instance
+/// while consuming ownership.
 pub enum IntoIter {
     Vec(std::vec::IntoIter<u8>),
     Slice(bytes::buf::IntoIter<Bytes>),
