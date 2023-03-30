@@ -6,7 +6,7 @@
 //! The design philosophy of this crate is inspired by [serde](https://serde.rs).
 //!
 //! ## **Traits**
-//! Six traits are introduced:
+//! Five traits are introduced:
 //! - [`PacketRead`]: How to read a type from the network.
 //! - [`PacketWrite`]: How to write a type to the network.
 //! - [`PacketSize`]: Memory-efficient size computation of the data when it
@@ -15,9 +15,6 @@
 //!   used to pass data to the read implemenetation.
 //! - [`PacketWriteSeed`]: How to write a type to the network. This trait is
 //!   used to pass data to the write implemenetation.
-//! - [`PacketSizeSeed`]: Memory-efficient size computation of the data when it
-//!   would be written to the netork. This trait is used to pass data to the
-//!   size implemenetation.
 //!
 //! Because [Minecraft's protocol](https://wiki.vg/) doesn't
 //! translate one-to-one to Rust types, this crate offers some
@@ -116,27 +113,12 @@ pub trait PacketReadSeed<T> {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketWriteSeed<'a, T: ?Sized> {
+pub trait PacketWriteSeed<'a, T>
+where
+    T: PacketSize + ?Sized,
+{
     /// This function serializes the type to the given buffer.
     fn write<B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: BufMut;
-}
-
-/// A data structure that can efficiently compute
-/// its serialized size on the network buffer.
-/// It is a stateful variant of [`PacketSize`], see
-/// [`SerializeSeed`](https://docs.rs/serde/latest/serde/de/trait.DeserializeSeed.html).
-///
-/// This trait should rarely be implemented manually, if you implement this for
-/// a general type, please contribute it to this project.
-pub trait PacketSizeSeed<'a, T: ?Sized> {
-    /// This function computes the exact network
-    /// size of the type.
-    ///
-    /// # Implementors
-    /// It is highly encouraged to optimize this function.
-    /// Avoid writing the type to a buffer and returning
-    /// that buffer's change in length at all costs.
-    fn size(self, value: &'a T) -> usize;
 }

@@ -15,17 +15,22 @@
 //!     - [`&str`]
 //!     - [`PacketString`]
 //!     - [`write_str`], [`write_str_unchecked`]
+//! - Uuid types:
+//!     - [`Uuid`](::uuid::Uuid)
+//!     - [`StringUuid`]
 
 mod boolean;
 mod bytes;
 mod num;
 mod string;
 mod util;
+mod uuid;
 
 pub use util::*;
 
 pub use self::bytes::*;
 pub use self::string::*;
+pub use self::uuid::*;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(

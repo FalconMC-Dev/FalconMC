@@ -15,6 +15,10 @@ impl<'a> PacketWriteSeed<'a, str> for usize {
     }
 }
 
+impl PacketSize for str {
+    fn size(&self) -> usize { VarI32::from(self.len()).size() + self.len() }
+}
+
 /// A specialized string wrapper for the minecraft protocol.
 ///
 /// This type provides an efficient implementation for reading
@@ -84,7 +88,7 @@ impl AsRef<str> for PacketString {
     fn as_ref(&self) -> &str {
         match self {
             PacketString::Owned(v) => v.as_ref(),
-            // We assume there is valid utf-8 in the byte buffer
+            // SAFETY: We assume there is valid utf-8 in the byte buffer (invariant of the type)
             PacketString::Slice(v) => unsafe { std::str::from_utf8_unchecked(v.as_ref()) },
         }
     }
@@ -94,7 +98,7 @@ impl From<PacketString> for String {
     fn from(value: PacketString) -> Self {
         match value {
             PacketString::Owned(v) => v,
-            // We assume there is valid utf-8 in the byte buffer
+            // SAFETY: We assume there is valid utf-8 in the byte buffer (invariant of the type)
             PacketString::Slice(v) => String::from(unsafe { std::str::from_utf8_unchecked(v.as_ref()) }),
         }
     }
