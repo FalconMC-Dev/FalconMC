@@ -18,8 +18,12 @@
 //! - Uuid types:
 //!     - [`Uuid`](::uuid::Uuid)
 //!     - [`StringUuid`]
+//! - Collection types:
+//!     - [`Vec<T>`](Vec)
+//!     - [`[T]`](slice)
 //! - Iterators:
 //!     - [`iter_write`], [`iter_size`]
+//!     - [`iter_read`]
 
 mod boolean;
 mod bytes;
@@ -28,12 +32,14 @@ mod slices;
 mod string;
 mod util;
 mod uuid;
+mod vec;
 
 pub use util::*;
 
 pub use self::bytes::*;
 pub use self::string::*;
 pub use self::uuid::*;
+pub use self::vec::*;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
