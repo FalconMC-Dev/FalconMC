@@ -88,7 +88,7 @@ pub trait PacketSize {
     /// # Implementors
     /// It is highly encouraged to optimize this function.
     /// Avoid writing the type to a buffer and returning
-    /// that buffer's change in length at all cost.
+    /// that buffer's change in length at all costs.
     fn size(&self) -> usize;
 }
 
@@ -116,7 +116,7 @@ pub trait PacketReadSeed<T> {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketWriteSeed<'a, T> {
+pub trait PacketWriteSeed<'a, T: ?Sized> {
     /// This function serializes the type to the given buffer.
     fn write<B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
@@ -130,13 +130,13 @@ pub trait PacketWriteSeed<'a, T> {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketSizeSeed<'a, T> {
+pub trait PacketSizeSeed<'a, T: ?Sized> {
     /// This function computes the exact network
     /// size of the type.
     ///
     /// # Implementors
     /// It is highly encouraged to optimize this function.
     /// Avoid writing the type to a buffer and returning
-    /// that buffer's change in length at all cost.
+    /// that buffer's change in length at all costs.
     fn size(self, value: &'a T) -> usize;
 }

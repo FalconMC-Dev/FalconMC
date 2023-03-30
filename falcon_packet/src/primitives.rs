@@ -10,16 +10,22 @@
 //! - Byte array types:
 //!     - [`PacketBytes`]
 //!     - [`Bytes`](::bytes::Bytes), [`BytesMut`](::bytes::BytesMut)
-//!     - [`write_bytes`](self::util::write_bytes)
+//!     - [`write_bytes`]
+//! - String types:
+//!     - [`&str`]
+//!     - [`PacketString`]
+//!     - [`write_str`], [`write_str_unchecked`]
 
 mod boolean;
 mod bytes;
 mod num;
+mod string;
 mod util;
 
 pub use util::*;
 
 pub use self::bytes::*;
+pub use self::string::*;
 
 macro_rules! impl_var_int {
     ($($var:ident: $base:ident => $($in:ident),+ + $($out_ty:ident = $out:ident),+);*$(;)?) => {$(
