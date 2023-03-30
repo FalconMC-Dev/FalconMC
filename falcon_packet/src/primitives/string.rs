@@ -1,13 +1,37 @@
 use std::borrow::Cow;
 
 use bytes::Bytes;
+use castaway::cast;
 
 use super::{write_str, VarI32};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite, PacketWriteSeed, ReadError, WriteError};
 
+impl<T> PacketWriteSeed<T> for usize
+where
+    T: AsRef<str> + PacketSize + 'static,
+{
+    fn write<'a, B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
+    where
+        B: bytes::BufMut
+    {
+        // Specizliation for PacketString
+        if let Ok(packet_str) = cast!(value, &PacketString) {
+            let count = packet_str.as_ref().chars().count();
+            if count > self {
+                Err(WriteError::StringTooLong(self, count))
+            } else {
+                VarI32::from(packet_str.as_bytes().len()).write(buffer)?;
+                super::write_bytes(buffer, packet_str.as_bytes())
+            }
+        } else {
+            self.write(value.as_ref(), buffer)
+        }
+    }
+}
+
 /// [`usize`] acts as a maximum length here.
-impl<'a> PacketWriteSeed<'a, str> for usize {
-    fn write<B>(self, value: &'a str, buffer: &'a mut B) -> Result<(), WriteError>
+impl PacketWriteSeed<str> for usize {
+    fn write<'a, B>(self, value: &'a str, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: bytes::BufMut,
     {
@@ -121,22 +145,6 @@ impl PacketReadSeed<PacketString> for usize {
             Err(ReadError::StringTooLong(self, count))
         } else {
             Ok(PacketString::Slice(bytes))
-        }
-    }
-}
-
-/// [`usize`] acts as a maximum length here.
-impl<'a> PacketWriteSeed<'a, PacketString> for usize {
-    fn write<B>(self, value: &'a PacketString, buffer: &'a mut B) -> Result<(), WriteError>
-    where
-        B: bytes::BufMut,
-    {
-        let count = value.as_ref().chars().count();
-        if count > self {
-            Err(WriteError::StringTooLong(self, count))
-        } else {
-            VarI32::from(value.as_bytes().len()).write(buffer)?;
-            super::write_bytes(buffer, value.as_bytes())
         }
     }
 }

@@ -12,7 +12,7 @@
 //!     - [`Bytes`](::bytes::Bytes), [`BytesMut`](::bytes::BytesMut)
 //!     - [`write_bytes`]
 //! - String types:
-//!     - [`&str`]
+//!     - [`&str`] and [`AsRef<str>`]
 //!     - [`PacketString`]
 //!     - [`write_str`], [`write_str_unchecked`]
 //! - Uuid types:

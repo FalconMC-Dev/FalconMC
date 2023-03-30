@@ -113,12 +113,12 @@ pub trait PacketReadSeed<T> {
 ///
 /// This trait should rarely be implemented manually, if you implement this for
 /// a general type, please contribute it to this project.
-pub trait PacketWriteSeed<'a, T>
+pub trait PacketWriteSeed<T>
 where
     T: PacketSize + ?Sized,
 {
     /// This function serializes the type to the given buffer.
-    fn write<B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
+    fn write<'a, B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
         B: BufMut;
 }
