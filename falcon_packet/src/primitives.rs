@@ -18,10 +18,13 @@
 //! - Uuid types:
 //!     - [`Uuid`](::uuid::Uuid)
 //!     - [`StringUuid`]
+//! - Iterators:
+//!     - [`iter_write`], [`iter_size`]
 
 mod boolean;
 mod bytes;
 mod num;
+mod slices;
 mod string;
 mod util;
 mod uuid;

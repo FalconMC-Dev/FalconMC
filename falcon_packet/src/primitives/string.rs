@@ -12,10 +12,12 @@ where
 {
     fn write<'a, B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut
+        B: bytes::BufMut,
     {
         // Specizliation for PacketString
         if let Ok(packet_str) = cast!(value, &PacketString) {
+            #[cfg(all(test, feature = "verbose-test"))]
+            eprintln!("Using PacketString impl");
             let count = packet_str.as_ref().chars().count();
             if count > self {
                 Err(WriteError::StringTooLong(self, count))

@@ -1,11 +1,11 @@
-use std::{str::FromStr, ops::Deref};
+use std::ops::Deref;
+use std::str::FromStr;
 
 use bytes::Bytes;
 use uuid::Uuid;
 
+use super::{write_str_unchecked, PacketString};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite};
-
-use super::{PacketString, write_str_unchecked};
 
 impl PacketWrite for Uuid {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
@@ -29,7 +29,8 @@ impl PacketRead for Uuid {
     {
         let bytes = PacketReadSeed::<Bytes>::read(16, buffer)?;
         let array: &[u8; 16];
-        { // This block is taken from the `TryFrom` implementation for [T; N]
+        {
+            // This block is taken from the `TryFrom` implementation for [T; N]
             let ptr = bytes.as_ptr() as *const [u8; 16];
             // SAFETY: ok because PacketReadSeed::<Bytes> ensures there are 16 bytes read
             array = unsafe { &*ptr };
@@ -47,25 +48,19 @@ pub struct StringUuid {
 }
 
 impl StringUuid {
-    pub fn new() -> Self {
-        Default::default()
-    }
+    pub fn new() -> Self { Default::default() }
 
-    pub fn into_inner(self) -> Uuid {
-        self.inner
-    }
+    pub fn into_inner(self) -> Uuid { self.inner }
 }
 
 impl Deref for StringUuid {
     type Target = Uuid;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
 
 impl From<Uuid> for StringUuid {
-    fn from(uuid: Uuid) -> Self { Self { inner: uuid} }
+    fn from(uuid: Uuid) -> Self { Self { inner: uuid } }
 }
 
 impl From<StringUuid> for Uuid {
@@ -83,7 +78,7 @@ impl PacketRead for StringUuid {
     fn read<B>(buffer: &mut B) -> Result<Self, crate::ReadError>
     where
         B: bytes::Buf + ?Sized,
-        Self: Sized
+        Self: Sized,
     {
         let s: PacketString = 36.read(buffer)?;
         Ok(Uuid::from_str(s.as_ref())?.into())
@@ -93,7 +88,7 @@ impl PacketRead for StringUuid {
 impl PacketWrite for StringUuid {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
     where
-        B: bytes::BufMut
+        B: bytes::BufMut,
     {
         let mut buf = [0u8; uuid::fmt::Hyphenated::LENGTH];
         self.inner.as_hyphenated().encode_lower(&mut buf);
@@ -103,29 +98,30 @@ impl PacketWrite for StringUuid {
 }
 
 impl PacketSize for StringUuid {
-    fn size(&self) -> usize {
-        STR_UUID_LEN
-    }
+    fn size(&self) -> usize { STR_UUID_LEN }
 }
 
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
 
-    use bytes::{BytesMut, BufMut, Buf};
-
-    use crate::{ReadError, WriteError};
+    use bytes::{Buf, BufMut, BytesMut};
 
     use super::*;
+    use crate::{ReadError, WriteError};
 
     #[test]
     fn test_read() {
-        let mut buffer = Bytes::from_static(&[0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53]);
+        let mut buffer = Bytes::from_static(&[
+            0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53,
+        ]);
         let uuid = Uuid::read(&mut buffer).unwrap();
         assert_eq!("8b9fe9c4-d64e-4c2c-aa21-0c0cdb829253", uuid.hyphenated().to_string());
         let mut buffer = Bytes::from_static(&[0x01, 0x02]);
         assert_eq!(Err(ReadError::NoMoreBytes), Uuid::read(&mut buffer));
-        let mut buffer = Bytes::from_static(&[0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53, 0x24]);
+        let mut buffer = Bytes::from_static(&[
+            0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53, 0x24,
+        ]);
         let _ = Uuid::read(&mut buffer).unwrap();
         assert_eq!(&[0x24], buffer.as_ref());
     }
@@ -138,7 +134,10 @@ mod tests {
         let mut buffer = BytesMut::new();
         let uuid = Uuid::from_str("8b9fe9c4-d64e-4c2c-aa21-0c0cdb829253").unwrap();
         uuid.write(&mut buffer).unwrap();
-        assert_eq!(&[0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53], buffer.as_ref());
+        assert_eq!(
+            &[0x8b, 0x9f, 0xe9, 0xc4, 0xd6, 0x4e, 0x4c, 0x2c, 0xaa, 0x21, 0x0c, 0x0c, 0xdb, 0x82, 0x92, 0x53],
+            buffer.as_ref()
+        );
     }
 
     #[test]

@@ -1,7 +1,7 @@
 use bytes::BufMut;
 
 use super::VarI32;
-use crate::{PacketWrite, WriteError};
+use crate::{PacketSize, PacketWrite, WriteError};
 
 /// Utility function to quickly write a slice of bytes to
 /// a given buffer.
@@ -68,4 +68,44 @@ where
 {
     VarI32::from(str.as_bytes().len()).write(buffer)?;
     write_bytes(buffer, str.as_bytes())
+}
+
+/// Utility function to compute the size of
+/// any iterator of [`PacketSize`]'s.
+///
+/// # Usage
+/// While this function is very general and not necessarily
+/// inefficient, types such as slices of bytes can be computed
+/// a lot faster than iterating over the slice and counting bytes
+/// one by one.
+///
+/// So please consider more concrete implementations over the
+/// use of this function first.
+pub fn iter_size<'a, 'b, I, T>(iterator: I) -> usize
+where
+    'b: 'a,
+    T: PacketSize + 'b,
+    I: Iterator<Item = &'a T>,
+{
+    iterator.map(|element| element.size()).sum()
+}
+
+/// Utility function to write any iterator of
+/// [`PacketWrite`]'s to the network.
+///
+/// # Usage
+/// While this function is very general and not necessarily
+/// inefficient, types such as slices of bytes can be written
+/// a lot faster than going over every byte separately.
+///
+/// So please consider more concrete implementations over the
+/// use of this function first.
+pub fn iter_write<'a, 'b, I, T, B>(mut iterator: I, buffer: &mut B) -> Result<(), WriteError>
+where
+    'b: 'a,
+    B: BufMut,
+    T: PacketWrite + 'b,
+    I: Iterator<Item = &'a T>,
+{
+    iterator.try_for_each(|element| element.write(buffer))
 }
