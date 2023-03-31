@@ -6,6 +6,7 @@ use bytes::{Bytes, BytesMut};
 
 use crate::{PacketReadSeed, PacketSize, PacketWrite, ReadError, WriteError};
 
+/// Reads `self` bytes from the given buffer
 impl PacketReadSeed<Bytes> for usize {
     fn read<B>(self, buffer: &mut B) -> Result<Bytes, ReadError>
     where
@@ -18,6 +19,7 @@ impl PacketReadSeed<Bytes> for usize {
     }
 }
 
+/// Reads `self` bytes from the given buffer
 impl PacketReadSeed<BytesMut> for usize {
     fn read<B>(self, buffer: &mut B) -> Result<BytesMut, ReadError>
     where
@@ -98,6 +100,7 @@ impl PacketBytes {
     pub fn from_static(bytes: &'static [u8]) -> Self { PacketBytes::Slice(Bytes::from_static(bytes)) }
 }
 
+/// Reads `self` bytes from the given buffer
 impl PacketReadSeed<PacketBytes> for usize {
     fn read<B>(self, buffer: &mut B) -> Result<PacketBytes, ReadError>
     where

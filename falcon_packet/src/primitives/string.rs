@@ -31,7 +31,7 @@ where
     }
 }
 
-/// [`usize`] acts as a maximum length here.
+/// `self` acts as a maximum length here.
 impl PacketWriteSeed<str> for usize {
     fn write<'a, B>(self, value: &'a str, buffer: &'a mut B) -> Result<(), WriteError>
     where
@@ -130,7 +130,7 @@ impl From<PacketString> for String {
     }
 }
 
-/// [`usize`] acts as a maximum length here.
+/// `self` acts as a maximum length here.
 impl PacketReadSeed<PacketString> for usize {
     fn read<B>(self, buffer: &mut B) -> Result<PacketString, crate::ReadError>
     where

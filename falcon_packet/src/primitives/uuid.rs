@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 
 use uuid::Uuid;
@@ -49,6 +49,12 @@ impl Deref for StringUuid {
     type Target = Uuid;
 
     fn deref(&self) -> &Self::Target { &self.inner }
+}
+
+impl DerefMut for StringUuid {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.inner
+    }
 }
 
 impl From<Uuid> for StringUuid {

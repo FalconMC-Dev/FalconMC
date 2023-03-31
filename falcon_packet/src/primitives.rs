@@ -43,6 +43,7 @@ mod arrays;
 mod boolean;
 mod bytes;
 mod num;
+mod rest;
 mod slices;
 mod string;
 mod util;
