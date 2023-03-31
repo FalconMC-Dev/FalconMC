@@ -25,6 +25,7 @@
 //! - Iterators:
 //!     - [`iter_write`], [`iter_size`]
 //!     - [`iter_read`]
+//! - NBT via [`fastnbt`]
 //!
 //! # Alternatives
 //! There are a number of types that currently do not
@@ -42,6 +43,7 @@
 mod arrays;
 mod boolean;
 mod bytes;
+mod nbt;
 mod num;
 mod rest;
 mod slices;
@@ -52,6 +54,7 @@ mod vec;
 
 pub use self::arrays::*;
 pub use self::bytes::*;
+pub use self::nbt::*;
 pub use self::string::*;
 pub use self::util::*;
 pub use self::uuid::*;
