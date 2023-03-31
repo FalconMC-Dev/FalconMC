@@ -1,10 +1,9 @@
 use std::ops::Deref;
 use std::str::FromStr;
 
-use bytes::Bytes;
 use uuid::Uuid;
 
-use super::{write_str_unchecked, PacketString};
+use super::{array_read, write_str_unchecked, PacketString};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite};
 
 impl PacketWrite for Uuid {
@@ -27,15 +26,8 @@ impl PacketRead for Uuid {
         B: bytes::Buf + ?Sized,
         Self: Sized,
     {
-        let bytes = PacketReadSeed::<Bytes>::read(16, buffer)?;
-        let array: &[u8; 16];
-        {
-            // This block is taken from the `TryFrom` implementation for [T; N]
-            let ptr = bytes.as_ptr() as *const [u8; 16];
-            // SAFETY: ok because PacketReadSeed::<Bytes> ensures there are 16 bytes read
-            array = unsafe { &*ptr };
-        }
-        Ok(Uuid::from_bytes(*array))
+        let bytes: [u8; 16] = array_read(buffer)?;
+        Ok(Uuid::from_bytes(bytes))
     }
 }
 
@@ -105,7 +97,7 @@ impl PacketSize for StringUuid {
 mod tests {
     use std::str::FromStr;
 
-    use bytes::{Buf, BufMut, BytesMut};
+    use bytes::{Buf, BufMut, Bytes, BytesMut};
 
     use super::*;
     use crate::{ReadError, WriteError};

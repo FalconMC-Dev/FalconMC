@@ -46,6 +46,12 @@ pub mod primitives;
 pub trait PacketRead {
     /// This function extracts the type from the given buffer.
     ///
+    /// # Safety
+    /// If this function errors, the buffer is to
+    /// be considered **corrupt**. We don't mean Undefined
+    /// Behavior here but rather an impossibility to
+    /// correctly get the next types from the buffer.
+    ///
     /// # Important
     /// Implementations that read directly from the buffer
     /// (no redirection of this function/trait) **must ensure**
@@ -96,6 +102,12 @@ pub trait PacketSize {
 /// a general type, please contribute it to this project.
 pub trait PacketReadSeed<T> {
     /// This function extracts the type from the given buffer.
+    ///
+    /// # Safety
+    /// If this function errors, the buffer is to
+    /// be considered **corrupt**. We don't mean Undefined
+    /// Behavior here but rather an impossibility to
+    /// correctly get the next types from the buffer.
     ///
     /// # Important
     /// Implementations that read directly from the buffer

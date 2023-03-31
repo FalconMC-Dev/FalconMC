@@ -5,6 +5,12 @@ use crate::{PacketRead, PacketSize, PacketWrite, ReadError};
 /// Deserialize into any [`FromIterator<T>`] based on the amount of
 /// items `T` to expect.
 ///
+/// # Safety
+/// If this function errors, the buffer is to
+/// be considered **corrupt**. We don't mean Undefined
+/// Behavior here but rather an impossibility to
+/// correctly get the next types from the buffer.
+///
 /// # Performance
 /// Please do **not** use this function for reading byte arrays
 /// from the network. Use [`PacketBytes`](super::PacketBytes) or

@@ -1,7 +1,7 @@
 //! Collection of types that have a predefined
 //! implementation of the packet traits.
 //!
-//! Currently, all the types that are supported are:
+//! Currently, all the types that are (partially) supported are:
 //! - Primitive types:
 //!     - bool
 //!     - i8, i16, i32, i64
@@ -21,10 +21,25 @@
 //! - Collection types:
 //!     - [`Vec<T>`](Vec)
 //!     - [`[T]`](slice)
+//!     - [`[T; N]`](array)
 //! - Iterators:
 //!     - [`iter_write`], [`iter_size`]
 //!     - [`iter_read`]
+//!
+//! # Alternatives
+//! There are a number of types that currently do not
+//! implement [`PacketRead`]. This is
+//! due to the fact that specialization is not yet implemented
+//! in Rust. I don't want to provide seemingly
+//! great solutions where those solutions may be highly inefficient.
+//!
+//! Instead, there are utility functions provided for
+//! most of these types. If a type does not implement
+//! [`PacketRead`] yet, look for such a function instead.
+//!
+//! [`PacketRead`]: (super::PacketRead)
 
+mod arrays;
 mod boolean;
 mod bytes;
 mod num;
@@ -34,10 +49,10 @@ mod util;
 mod uuid;
 mod vec;
 
-pub use util::*;
-
+pub use self::arrays::*;
 pub use self::bytes::*;
 pub use self::string::*;
+pub use self::util::*;
 pub use self::uuid::*;
 pub use self::vec::*;
 
