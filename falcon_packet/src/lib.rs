@@ -33,6 +33,7 @@
 
 use bytes::{Buf, BufMut};
 pub use error::{ReadError, WriteError};
+pub use falcon_packet_derive::packet;
 
 mod error;
 pub mod primitives;

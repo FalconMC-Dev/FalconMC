@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use uuid::Uuid;
 
-use super::{array_read, write_str_unchecked, PacketString};
+use super::{bytearray_read, write_str_unchecked, PacketString};
 use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite};
 
 impl PacketWrite for Uuid {
@@ -26,7 +26,7 @@ impl PacketRead for Uuid {
         B: bytes::Buf + ?Sized,
         Self: Sized,
     {
-        let bytes: [u8; 16] = array_read(buffer)?;
+        let bytes: [u8; 16] = bytearray_read(buffer)?;
         Ok(Uuid::from_bytes(bytes))
     }
 }

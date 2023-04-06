@@ -6,8 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bytes = "1.2.1"
-thiserror = "1.0.37"
+falcon_packet_derive = { path = "falcon_packet_derive" }
+bytes = "1.4.0"
+thiserror = "1.0.40"
 uuid = "1.3.0"
 fastnbt = "2.4.3"
 serde = "1.0.159"
