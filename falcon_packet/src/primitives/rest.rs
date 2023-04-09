@@ -1,14 +1,13 @@
 use bytes::{Bytes, BytesMut};
 
-use crate::PacketReadSeed;
-
 use super::PacketBytes;
+use crate::PacketReadSeed;
 
 /// Reads until the end of the buffer
 impl PacketReadSeed<PacketBytes> for () {
     fn read<B>(self, buffer: &mut B) -> Result<PacketBytes, crate::ReadError>
     where
-        B: bytes::Buf + ?Sized
+        B: bytes::Buf + ?Sized,
     {
         buffer.remaining().read(buffer)
     }
@@ -18,7 +17,7 @@ impl PacketReadSeed<PacketBytes> for () {
 impl PacketReadSeed<Bytes> for () {
     fn read<B>(self, buffer: &mut B) -> Result<Bytes, crate::ReadError>
     where
-        B: bytes::Buf + ?Sized
+        B: bytes::Buf + ?Sized,
     {
         buffer.remaining().read(buffer)
     }
@@ -28,7 +27,7 @@ impl PacketReadSeed<Bytes> for () {
 impl PacketReadSeed<BytesMut> for () {
     fn read<B>(self, buffer: &mut B) -> Result<BytesMut, crate::ReadError>
     where
-        B: bytes::Buf + ?Sized
+        B: bytes::Buf + ?Sized,
     {
         buffer.remaining().read(buffer)
     }
@@ -37,7 +36,6 @@ impl PacketReadSeed<BytesMut> for () {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use crate::PacketRead;
 
     #[test]

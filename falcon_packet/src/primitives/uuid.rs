@@ -52,9 +52,7 @@ impl Deref for StringUuid {
 }
 
 impl DerefMut for StringUuid {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.inner }
 }
 
 impl From<Uuid> for StringUuid {

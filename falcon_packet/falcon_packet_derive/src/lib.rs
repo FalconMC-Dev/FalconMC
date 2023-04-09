@@ -6,6 +6,4 @@ use proc_macro_error::proc_macro_error;
 
 #[proc_macro_error]
 #[proc_macro]
-pub fn packet(input: TokenStream) -> TokenStream {
-    packet_core(input.into()).into()
-}
+pub fn packet(input: TokenStream) -> TokenStream { packet_core(input.into()).into() }

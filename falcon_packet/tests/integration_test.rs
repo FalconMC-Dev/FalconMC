@@ -1,8 +1,6 @@
-use bytes::Bytes;
-use bytes::BytesMut;
-use falcon_packet::packet;
-use falcon_packet::{PacketWrite, PacketRead};
+use bytes::{Bytes, BytesMut};
 use falcon_packet::primitives::PacketString;
+use falcon_packet::{packet, PacketRead, PacketWrite};
 
 packet! {
     pub struct HandshakePacket {

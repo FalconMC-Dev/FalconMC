@@ -3,8 +3,8 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-pub(crate) mod kw;
 mod data;
+pub(crate) mod kw;
 mod tests;
 
 pub use data::*;
@@ -41,24 +41,25 @@ pub fn gen_struct(input: &PacketSyntax) -> TokenStream {
 
     let inputs = input.inputs.iter();
     let init = &input.init;
-    let field_args = input.fields.iter()
-        .map(|f| &f.struct_field)
-        .filter_map(|f| if f.let_token.is_none() {
+    let field_args = input.fields.iter().map(|f| &f.struct_field).filter_map(|f| {
+        if f.let_token.is_none() {
             let ident = &f.ident;
             let ty = &f.ty;
             Some(quote!(#ident: #ty))
         } else {
             None
-        });
-    let field_inits = input.fields.iter().map(|f| &f.struct_field)
-        .filter_map(|f| if f.let_token.is_some() {
+        }
+    });
+    let field_inits = input.fields.iter().map(|f| &f.struct_field).filter_map(|f| {
+        if f.let_token.is_some() {
             let ident = &f.ident;
             let ty = &f.ty;
             let init = &f.init;
             Some(quote!(let #ident: #ty = #init;))
         } else {
             None
-        });
+        }
+    });
     let fields = input.fields.iter().map(|f| &f.struct_field.ident);
 
     let structinit = quote! {
@@ -77,10 +78,14 @@ pub fn gen_struct(input: &PacketSyntax) -> TokenStream {
 
 pub fn gen_size(input: &PacketSyntax) -> TokenStream {
     let packet_name = &input.packet_name;
-    let field_overwrites: Vec<&Ident> = input.fields.iter().filter_map(|f| match f.spec {
-        FieldSpec::Bytes((ref ident, _)) => Some(ident),
-        _ => None,
-    }).collect();
+    let field_overwrites: Vec<&Ident> = input
+        .fields
+        .iter()
+        .filter_map(|f| match f.spec {
+            FieldSpec::Bytes((ref ident, _)) => Some(ident),
+            _ => None,
+        })
+        .collect();
     let fields_preprocess = input.fields.iter().filter_map(|f| match f.spec {
         FieldSpec::Bytes((ref ident, ref expr)) => Some(quote!(let #ident = #expr;)),
         _ => None,
@@ -153,10 +158,14 @@ pub fn gen_read(input: &PacketSyntax) -> TokenStream {
 
 pub fn gen_write(input: &PacketSyntax) -> TokenStream {
     let packet_name = &input.packet_name;
-    let field_overwrites: Vec<&Ident> = input.fields.iter().filter_map(|f| match f.spec {
-        FieldSpec::Bytes((ref ident, _)) => Some(ident),
-        _ => None,
-    }).collect();
+    let field_overwrites: Vec<&Ident> = input
+        .fields
+        .iter()
+        .filter_map(|f| match f.spec {
+            FieldSpec::Bytes((ref ident, _)) => Some(ident),
+            _ => None,
+        })
+        .collect();
     let fields_preprocess = input.fields.iter().filter_map(|f| match f.spec {
         FieldSpec::Bytes((ref ident, ref expr)) => Some(quote!(let #ident = #expr;)),
         _ => None,

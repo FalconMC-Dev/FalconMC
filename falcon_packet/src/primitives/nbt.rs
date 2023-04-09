@@ -1,9 +1,10 @@
 use std::io::{Read, Write};
 
 use bytes::{Buf, BufMut};
-use serde::{Serialize, de::DeserializeOwned};
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 
-use crate::{WriteError, ReadError};
+use crate::{ReadError, WriteError};
 
 /// Utility function to write a type to a given buffer
 /// as nbt (in byte form).
@@ -95,4 +96,3 @@ impl Write for Counter {
 
     fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
 }
-

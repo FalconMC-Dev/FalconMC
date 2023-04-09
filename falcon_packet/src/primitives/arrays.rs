@@ -2,7 +2,7 @@ use std::mem::MaybeUninit;
 
 use bytes::{Buf, Bytes};
 
-use crate::{PacketReadSeed, PacketSize, PacketWrite, ReadError, PacketRead};
+use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite, ReadError};
 
 impl<T, const N: usize> PacketSize for [T; N]
 where
@@ -45,8 +45,8 @@ where
         // `MaybeUninit`s, which do not require initialization.
         let mut data: [MaybeUninit<T>; N] = unsafe { MaybeUninit::uninit().assume_init() };
 
-        // Dropping a `MaybeUninit` does nothing, so if there is a panic during this loop,
-        // we have a memory leak, but there is no memory safety issue.
+        // Dropping a `MaybeUninit` does nothing, so if there is a panic during this
+        // loop, we have a memory leak, but there is no memory safety issue.
         for (i, element) in data.iter_mut().enumerate() {
             match T::read(buffer) {
                 Ok(value) => element.write(value),
@@ -55,7 +55,7 @@ where
                     // the values that have been initialized so far
                     data.iter_mut().take(i).for_each(|e| unsafe { e.assume_init_drop() });
                     return Err(error);
-                }
+                },
             };
         }
 
