@@ -23,6 +23,7 @@ jobs:
           command: check
 
   test:
+    needs: check
     name: Test Suite
     runs-on: ubuntu-latest
     steps:
@@ -53,6 +54,7 @@ jobs:
           args: --all -- --check
 
   clippy:
+    needs: check
     name: Clippy
     runs-on: ubuntu-latest
     steps:
