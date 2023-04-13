@@ -5,10 +5,14 @@ use quote::quote;
 
 mod data;
 pub(crate) mod kw;
+mod processing;
 mod tests;
 
 pub use data::*;
+pub use processing::doctest_impls;
 use syn::{parse2, Ident};
+
+use crate::processing::{field_to_read, field_to_size, field_to_write};
 
 pub fn packet_core(input: TokenStream) -> TokenStream {
     let packet_syntax = match parse2::<PacketSyntax>(input) {
@@ -97,19 +101,7 @@ pub fn gen_size(input: &PacketSyntax) -> TokenStream {
         } else {
             quote!(self.#ident)
         };
-        let ty = &f.struct_field.ty;
-        match f.spec {
-            FieldSpec::Direct => quote!(::falcon_packet::PacketSize::size(&#ident)),
-            FieldSpec::DirectAs(ref ty) => quote!(::falcon_packet::PacketSize::size(&(#ident as #ty))),
-            FieldSpec::Var32 => quote!(::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#ident))),
-            FieldSpec::Var64 => quote!(::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#ident))),
-            FieldSpec::String(_) => quote!(::falcon_packet::PacketSize::size(<#ty as AsRef<str>>::as_ref(&#ident))),
-            FieldSpec::Bytes(_) => quote!(::falcon_packet::PacketSize::size(&#ident)),
-            FieldSpec::Rest => quote!(::falcon_packet::PacketSize::size(&#ident)),
-            FieldSpec::Array => quote!(::falcon_packet::PacketSize::size(&#ident)),
-            FieldSpec::ByteArray => quote!(::falcon_packet::PacketSize::size(&#ident)),
-            FieldSpec::Nbt => quote!(::falcon_packet::primitives::nbt_size(&#ident)),
-        }
+        field_to_size(f, ident)
     });
 
     quote!(
@@ -124,22 +116,7 @@ pub fn gen_size(input: &PacketSyntax) -> TokenStream {
 
 pub fn gen_read(input: &PacketSyntax) -> TokenStream {
     let packet_name = &input.packet_name;
-    let field_impls = input.fields.iter().map(|f| {
-        let ident = &f.struct_field.ident;
-        let ty = &f.struct_field.ty;
-        match f.spec {
-            FieldSpec::Direct => quote!(let #ident = ::falcon_packet::PacketRead::read(buffer)?;),
-            FieldSpec::DirectAs(ref ty2) => quote!(let #ident = <#ty2 as ::falcon_packet::PacketRead>::read(buffer)? as #ty;),
-            FieldSpec::Var32 => quote!(let #ident = <::falcon_packet::primitives::VarI32 as ::falcon_packet::PacketRead>::read(buffer)?.into();),
-            FieldSpec::Var64 => quote!(let #ident = <::falcon_packet::primitives::VarI64 as ::falcon_packet::PacketRead>::read(buffer)?.into();),
-            FieldSpec::String(max_len) => quote!(let #ident = ::falcon_packet::PacketReadSeed::read(#max_len, buffer)?;),
-            FieldSpec::Bytes((ref field, _)) => quote!(let #ident = ::falcon_packet::PacketReadSeed::read(self.#field as usize, buffer)?;),
-            FieldSpec::Rest => quote!(let #ident = ::falcon_packet::PacketReadSeed::read((), buffer)?;),
-            FieldSpec::Array => quote!(let #ident = ::falcon_packet::primitives::array_read(buffer)?;),
-            FieldSpec::ByteArray => quote!(let #ident = ::falcon_packet::primitives::bytearray_read(buffer)?;),
-            FieldSpec::Nbt => quote!(let #ident = ::falcon_packet::primitives::nbt_read(buffer)?;),
-        }
-    });
+    let field_impls = input.fields.iter().map(field_to_read);
     let fields = input.fields.iter().map(|f| &f.struct_field.ident);
 
     quote!(
@@ -177,19 +154,7 @@ pub fn gen_write(input: &PacketSyntax) -> TokenStream {
         } else {
             quote!(self.#ident)
         };
-        let ty = &f.struct_field.ty;
-        match f.spec {
-            FieldSpec::Direct => quote!(::falcon_packet::PacketWrite::write(&#ident, buffer)?;),
-            FieldSpec::DirectAs(ref ty) => quote!(::falcon_packet::PacketWrite::write(&(#ident as #ty), buffer)?;),
-            FieldSpec::Var32 => quote!(::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#ident), buffer)?;),
-            FieldSpec::Var64 => quote!(::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#ident), buffer)?;),
-            FieldSpec::String(max_len) => quote!(::falcon_packet::PacketWriteSeed::write(#max_len, <#ty as AsRef<str>>::as_ref(&#ident), buffer)?;),
-            FieldSpec::Bytes(_) => quote!(::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&#ident), buffer)?;),
-            FieldSpec::Rest => quote!(::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&#ident), buffer)?;),
-            FieldSpec::Array => quote!(::falcon_packet::PacketWrite::write(&#ident, buffer)?;),
-            FieldSpec::ByteArray => quote!(::falcon_packet::PacketWrite::write(&#ident, buffer)?;),
-            FieldSpec::Nbt => quote!(::falcon_packet::primitives::nbt_write(&#ident, buffer)?;),
-        }
+        field_to_write(f, ident)
     });
 
     quote!(

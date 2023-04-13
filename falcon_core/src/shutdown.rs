@@ -39,20 +39,20 @@ impl ShutdownHandle {
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```no_run
     /// use std::mem::drop;
     ///
     /// use falcon_core::ShutdownHandle;
     ///
     /// #[tokio::main]
     /// async fn main() {
-    ///     let (shutdown_handle, finish_rx) = ShutdownHandle::new();
+    ///     let (shutdown_handle, mut finish_rx) = ShutdownHandle::new();
     ///
     ///     // Pass this handle through cloning to other tasks of the program
     ///
     ///     // Drop the handle in this scope before waiting
     ///     drop(shutdown_handle);
-    ///     let _ = recv.recv().await;
+    ///     let _ = finish_rx.recv().await;
     ///     // everything is guaranteed to have shut down
     /// }
     /// ```
@@ -74,7 +74,7 @@ impl ShutdownHandle {
     /// dropped.
     ///
     /// # Examples
-    /// ```ignore
+    /// ```no_run
     /// use std::mem::drop;
     ///
     /// use falcon_core::ShutdownHandle;

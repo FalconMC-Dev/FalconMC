@@ -92,9 +92,9 @@ fn test_readgen() {
          primitives :: VarI32 as :: falcon_packet :: PacketRead > :: read (buffer) ? . into () ; let yz = < :: \
          falcon_packet :: primitives :: VarI64 as :: falcon_packet :: PacketRead > :: read (buffer) ? . into () ; let \
          name = :: falcon_packet :: PacketReadSeed :: read (16usize , buffer) ? ; let test = :: falcon_packet :: \
-         PacketReadSeed :: read (self . z as usize , buffer) ? ; let uuid = :: falcon_packet :: PacketRead :: read \
-         (buffer) ? ; let other = :: falcon_packet :: primitives :: array_read (buffer) ? ; let me = :: falcon_packet \
-         :: primitives :: bytearray_read (buffer) ? ; let x = :: falcon_packet :: primitives :: nbt_read (buffer) ? ; \
+         PacketReadSeed :: read (z as usize , buffer) ? ; let uuid = :: falcon_packet :: PacketRead :: read (buffer) \
+         ? ; let other = :: falcon_packet :: primitives :: array_read (buffer) ? ; let me = :: falcon_packet :: \
+         primitives :: bytearray_read (buffer) ? ; let x = :: falcon_packet :: primitives :: nbt_read (buffer) ? ; \
          let rest = :: falcon_packet :: PacketReadSeed :: read (() , buffer) ? ; Ok (Self { y , z , yz , name , test \
          , uuid , other , me , x , rest }) } }",
         tokens.to_string()

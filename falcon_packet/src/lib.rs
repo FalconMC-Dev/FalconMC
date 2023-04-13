@@ -24,26 +24,17 @@
 //! Some of these wrappers also help in reading
 //! from the network while maintaining high memory efficiency
 //! by leveraging the use of [`bytes::Bytes`].
-// //! ## **How to implement**
-// //! For user implementations, it is highly encouraged to use the following
-// //! derive macros:
-// //! - [`PacketRead`](falcon_packet_core_derive::PacketRead)
-// //! - [`PacketWrite`](falcon_packet_core_derive::PacketWrite)
-// //! - [`PacketSize`](falcon_packet_core_derive::PacketSize)
 
 use bytes::{Buf, BufMut};
 pub use error::{ReadError, WriteError};
-pub use falcon_packet_derive::packet;
+pub use pub_macro::*;
 
 mod error;
 pub mod primitives;
+#[rustfmt::skip]
+mod pub_macro;
 
 /// A data structure that can be read from a minecraft connection.
-///
-/// Users should aim to avoid implementing this trait directly, use the provided
-/// [derive macros].
-///
-/// [derive macros]: falcon_packet_core#derives
 pub trait PacketRead {
     /// This function extracts the type from the given buffer.
     ///
@@ -66,11 +57,6 @@ pub trait PacketRead {
 }
 
 /// A data structure that can be written to a minecraft connection.
-///
-/// Users should aim to avoid implementing this trait directly, use the provided
-/// [derive macros].
-///
-/// [derive macros]: falcon_packet_core#derives
 pub trait PacketWrite: PacketSize {
     /// This function serializes the type to the given buffer.
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
@@ -80,11 +66,6 @@ pub trait PacketWrite: PacketSize {
 
 /// A data structure that can efficiently compute
 /// its serialized size on the network buffer.
-///
-/// Users should aim to avoid implementing this trait directly, use the provided
-/// [derive macros].
-///
-/// [derive macros]: falcon_packet_core#derives
 pub trait PacketSize {
     /// This function computes the exact network
     /// size of the type.

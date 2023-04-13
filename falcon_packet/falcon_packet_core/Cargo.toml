@@ -9,7 +9,7 @@ edition = "2021"
 pretty_assertions = "1.3.0"
 
 [dependencies]
-syn = { version = "2.0.13", features = ["extra-traits", "parsing", "full" ] }
+syn = { version = "2.0.14", features = ["extra-traits", "parsing", "full" ] }
 quote = "1.0.26"
 proc-macro2 = "1.0.56"
 proc-macro-error = "1.0"
