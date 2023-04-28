@@ -181,7 +181,7 @@
 ///     ```
 ///     Writes a type using the string representation of the protocol.
 ///     There is a maximum length specified for most fields which can be
-///     left out in which case it will be a default length of 32767 bytes.
+///     left out in which case it will be a default length of `32767` bytes.
 ///     Consider using [`PacketString`] as a convenience wrapper.
 ///     ```
 ///     # falcon_packet_core::doctest_impls(
@@ -330,7 +330,27 @@
 ///     ::falcon_packet::primitives::nbt_size(&self.field)
 ///     # ));
 ///     ```
-///     <br>
+///
+/// # Custom field read/write
+///
+/// For maximum flexibility, this macro can also be used to only
+/// generate a struct with a `new()` constructor. The three packet
+/// traits are not implemented in that case. Simply omit the `packet`
+/// keyword in the macro invocation and leave out the packet types:
+/// ```no_run
+/// # use falcon_packet::packet;
+/// packet! {
+///     pub struct StructExample {
+///         num: i32,
+///         let plus_five: i32 = num + 5,
+///     }
+/// }
+/// // `StructExample::new()` expects one `i32`
+/// let packet = StructExample::new(10);
+/// ```
+/// - The visilibity before the `struct` keyword works like with normal structs.
+/// - Note that the order of the fields does not matter at all in this case.
+/// - **All fields are still `pub`**.
 ///
 /// [`PacketRead`]: super::PacketRead
 /// [`PacketWrite`]: super::PacketWrite
