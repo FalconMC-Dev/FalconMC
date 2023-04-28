@@ -81,14 +81,14 @@ fn test_sizegen() {
     let tokens = gen_size(&packet_syntax);
     assert_eq!(
         "impl :: falcon_packet :: PacketSize for PacketTest { fn size (& self) -> usize { let z = self . test . len \
-         () ; :: falcon_packet :: PacketSize :: size (& (self . y as i32)) + :: falcon_packet :: PacketSize :: size \
+         () ; :: falcon_packet :: PacketSize :: size (& ((self . y) as i32)) + :: falcon_packet :: PacketSize :: size \
          (& < i32 as Into < :: falcon_packet :: primitives :: VarI32 >> :: into (z)) + :: falcon_packet :: PacketSize \
          :: size (& < i64 as Into < :: falcon_packet :: primitives :: VarI64 >> :: into (self . yz)) + :: \
-         falcon_packet :: PacketSize :: size (< PacketString as AsRef < str >> :: as_ref (& self . name)) + :: \
-         falcon_packet :: PacketSize :: size (& self . test) + :: falcon_packet :: PacketSize :: size (& self . uuid) \
-         + :: falcon_packet :: PacketSize :: size (& self . other) + :: falcon_packet :: PacketSize :: size (& self . \
-         me) + :: falcon_packet :: primitives :: nbt_size (& self . x) + :: falcon_packet :: PacketSize :: size (& \
-         self . rest) } }",
+         falcon_packet :: PacketSize :: size (< PacketString as AsRef < str >> :: as_ref (& (self . name))) + :: \
+         falcon_packet :: PacketSize :: size (& (self . test)) + :: falcon_packet :: PacketSize :: size (& (self . \
+         uuid)) + :: falcon_packet :: PacketSize :: size (& (self . other)) + :: falcon_packet :: PacketSize :: size \
+         (& (self . me)) + :: falcon_packet :: primitives :: nbt_size (& (self . x)) + :: falcon_packet :: PacketSize \
+         :: size (& (self . rest)) } }",
         tokens.to_string()
     );
 }
@@ -156,16 +156,16 @@ fn test_writegen() {
     assert_eq!(
         "impl :: falcon_packet :: PacketWrite for PacketTest { fn write < B > (& self , buffer : & mut B) -> :: std \
          :: result :: Result < () , :: falcon_packet :: WriteError > where B : :: bytes :: BufMut { let z = self . \
-         test . len () ; :: falcon_packet :: PacketWrite :: write (& (self . y as i32) , buffer) ? ; :: falcon_packet \
-         :: PacketWrite :: write (& < i32 as Into < :: falcon_packet :: primitives :: VarI32 >> :: into (z) , buffer) \
-         ? ; :: falcon_packet :: PacketWrite :: write (& < i64 as Into < :: falcon_packet :: primitives :: VarI64 >> \
-         :: into (self . yz) , buffer) ? ; :: falcon_packet :: PacketWriteSeed :: write (16usize , < PacketString as \
-         AsRef < str >> :: as_ref (& self . name) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (< \
-         PacketBytes as AsRef < [u8] >> :: as_ref (& self . test) , buffer) ? ; :: falcon_packet :: PacketWrite :: \
-         write (& self . uuid , buffer) ? ; :: falcon_packet :: PacketWrite :: write (& self . other , buffer) ? ; :: \
-         falcon_packet :: PacketWrite :: write (& self . me , buffer) ? ; :: falcon_packet :: primitives :: nbt_write \
-         (& self . x , buffer) ? ; :: falcon_packet :: PacketWrite :: write (< PacketBytes as AsRef < [u8] >> :: \
-         as_ref (& self . rest) , buffer) ? ; Ok (()) } }",
+         test . len () ; :: falcon_packet :: PacketWrite :: write (& ((self . y) as i32) , buffer) ? ; :: \
+         falcon_packet :: PacketWrite :: write (& < i32 as Into < :: falcon_packet :: primitives :: VarI32 >> :: into \
+         (z) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (& < i64 as Into < :: falcon_packet :: primitives \
+         :: VarI64 >> :: into (self . yz) , buffer) ? ; :: falcon_packet :: PacketWriteSeed :: write (16usize , < \
+         PacketString as AsRef < str >> :: as_ref (& (self . name)) , buffer) ? ; :: falcon_packet :: PacketWrite :: \
+         write (< PacketBytes as AsRef < [u8] >> :: as_ref (& (self . test)) , buffer) ? ; :: falcon_packet :: \
+         PacketWrite :: write (& (self . uuid) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (& (self . \
+         other) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (& (self . me) , buffer) ? ; :: falcon_packet \
+         :: primitives :: nbt_write (& (self . x) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (< \
+         PacketBytes as AsRef < [u8] >> :: as_ref (& (self . rest)) , buffer) ? ; Ok (()) } }",
         tokens.to_string()
     );
 }

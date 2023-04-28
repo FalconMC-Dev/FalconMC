@@ -94,12 +94,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWrite::write(&self.field, buffer)?;
+///     ::falcon_packet::PacketWrite::write(&(self.field), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(&self.field)
+///     ::falcon_packet::PacketSize::size(&(self.field))
 ///     # ));
 ///     ```
 ///     <br>
@@ -127,12 +127,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWrite::write(&(self.field as OtherType), buffer)?;
+///     ::falcon_packet::PacketWrite::write(&((self.field) as OtherType), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(&(self.field as OtherType))
+///     ::falcon_packet::PacketSize::size(&((self.field) as OtherType))
 ///     # ));
 ///     ```
 ///     <br>
@@ -193,12 +193,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWriteSeed::write(10usize, <Type as AsRef<str>>::as_ref(&self.field), buffer)?;
+///     ::falcon_packet::PacketWriteSeed::write(10usize, <Type as AsRef<str>>::as_ref(&(self.field)), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(<Type as AsRef<str>>::as_ref(&self.field))
+///     ::falcon_packet::PacketSize::size(<Type as AsRef<str>>::as_ref(&(self.field)))
 ///     # ));
 ///     ```
 ///     <br>
@@ -229,12 +229,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWrite::write(<Type as AsRef<[u8]>>::as_ref(&self.field), buffer)?;
+///     ::falcon_packet::PacketWrite::write(<Type as AsRef<[u8]>>::as_ref(&(self.field)), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(&self.field)
+///     ::falcon_packet::PacketSize::size(&(self.field))
 ///     # ));
 ///     ```
 ///     <br>
@@ -260,12 +260,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWrite::write(<Type as AsRef<[u8]>>::as_ref(&self.field), buffer)?;
+///     ::falcon_packet::PacketWrite::write(<Type as AsRef<[u8]>>::as_ref(&(self.field)), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(&self.field)
+///     ::falcon_packet::PacketSize::size(&(self.field))
 ///     # ));
 ///     ```
 ///     <br>
@@ -292,12 +292,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketWrite::write(&self.field, buffer)?;
+///     ::falcon_packet::PacketWrite::write(&(self.field), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::PacketSize::size(&self.field)
+///     ::falcon_packet::PacketSize::size(&(self.field))
 ///     # ));
 ///     ```
 ///     <br>
@@ -322,12 +322,12 @@
 ///
 ///     // Write expands as:
 ///     # stringify!(
-///     ::falcon_packet::primitives::nbt_write(&self.field, buffer)?;
+///     ::falcon_packet::primitives::nbt_write(&(self.field), buffer)?;
 ///     # ),
 ///
 ///     // Size expands as:
 ///     # stringify!(
-///     ::falcon_packet::primitives::nbt_size(&self.field)
+///     ::falcon_packet::primitives::nbt_size(&(self.field))
 ///     # ));
 ///     ```
 ///
@@ -352,10 +352,19 @@
 /// - Note that the order of the fields does not matter at all in this case.
 /// - **All fields are still `pub`**.
 ///
+/// ## Implementing the traits
+///
+/// Manual implementation of the three packet traits can make use
+/// of the helper macros [`read`], [`write`] and [`size`].
+///
+///
 /// [`PacketRead`]: super::PacketRead
 /// [`PacketWrite`]: super::PacketWrite
 /// [`PacketSize`]: super::PacketSize
 /// [`VarI32`]: crate::primitives::VarI32
 /// [`VarI64`]: crate::primitives::VarI64
 /// [`PacketString`]: crate::primitives::PacketString
+/// [`read`]: crate::read
+/// [`write`]: crate::write
+/// [`size`]: crate::size
 pub use falcon_packet_derive::packet;

@@ -1,6 +1,6 @@
-use bytes::{Bytes, BytesMut};
+use bytes::{BufMut, Bytes, BytesMut};
 use falcon_packet::primitives::PacketString;
-use falcon_packet::{packet, PacketRead, PacketWrite};
+use falcon_packet::{packet, size, write, PacketRead, PacketSize, PacketWrite, WriteError};
 
 packet! {
     pub packet struct HandshakePacket {
@@ -27,4 +27,38 @@ fn test_handshake_write() {
     let packet = HandshakePacket::new(47, String::from("").into(), 25565, 2);
     packet.write(&mut buffer).unwrap();
     assert_eq!(&[0x2f, 0, 0x63, 0xdd, 0x02], buffer.as_ref());
+}
+
+packet! {
+    pub struct StructExample {
+        num: i32,
+        let plus_five: i32 = num + 5,
+    }
+}
+
+impl PacketWrite for StructExample {
+    fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
+    where
+        B: BufMut,
+    {
+        write! {
+            var32 => i32 = self.num,
+            self => i32 = self.num + 5,
+        }
+        Ok(())
+    }
+}
+impl PacketSize for StructExample {
+    fn size(&self) -> usize {
+        size!(
+            var32 => i32 = self.num,
+            self => i32 = self.plus_five,
+        )
+    }
+}
+
+#[test]
+fn test_impl() {
+    let example = StructExample::new(10);
+    assert_eq!(5, example.size());
 }

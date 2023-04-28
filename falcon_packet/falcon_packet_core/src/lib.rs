@@ -8,10 +8,12 @@ mod data;
 pub(crate) mod kw;
 mod processing;
 mod tests;
+mod traits;
 
 pub use data::*;
 pub use processing::doctest_impls;
-use syn::{parse2, Attribute, FnArg, Ident, Stmt, Visibility};
+use syn::{parse2, parse_quote, Attribute, FnArg, Ident, Stmt, Visibility};
+pub use traits::{packet_read, packet_size, packet_write};
 
 use crate::processing::{field_to_read, field_to_size, field_to_write};
 
@@ -136,7 +138,7 @@ pub fn gen_size(input: &PacketSyntax) -> TokenStream {
         } else {
             quote!(self.#ident)
         };
-        field_to_size(f, ident)
+        field_to_size(&f.struct_field.ty, &f.spec, ident)
     });
 
     quote!(
@@ -151,7 +153,11 @@ pub fn gen_size(input: &PacketSyntax) -> TokenStream {
 
 pub fn gen_read(input: &PacketSyntax) -> TokenStream {
     let packet_name = &input.packet_name;
-    let field_impls = input.fields.iter().map(field_to_read);
+    let buffer = parse_quote!(buffer);
+    let field_impls = input
+        .fields
+        .iter()
+        .map(|f| field_to_read(&f.struct_field.ty, &f.spec, &f.struct_field.ident, &buffer));
     let fields = input.fields.iter().map(|f| &f.struct_field.ident);
 
     quote!(
@@ -170,6 +176,7 @@ pub fn gen_read(input: &PacketSyntax) -> TokenStream {
 
 pub fn gen_write(input: &PacketSyntax) -> TokenStream {
     let packet_name = &input.packet_name;
+    let buffer = parse_quote!(buffer);
     let field_overwrites: Vec<&Ident> = input
         .fields
         .iter()
@@ -189,7 +196,7 @@ pub fn gen_write(input: &PacketSyntax) -> TokenStream {
         } else {
             quote!(self.#ident)
         };
-        field_to_write(f, ident)
+        field_to_write(&f.struct_field.ty, &f.spec, ident, &buffer)
     });
 
     quote!(

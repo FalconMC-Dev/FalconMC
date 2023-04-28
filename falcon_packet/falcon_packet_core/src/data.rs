@@ -133,100 +133,78 @@ pub struct PacketField {
 
 impl Parse for PacketField {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let lookahead = input.lookahead1();
-        if lookahead.peek(Token![self]) {
-            input.parse::<Token![self]>()?;
-            if input.peek(Token![as]) {
-                input.parse::<Token![as]>()?;
-                let spec = FieldSpec::DirectAs(input.parse::<Type>()?);
-                input.parse::<Token![=>]>()?;
-                Ok(PacketField {
-                    spec,
-                    struct_field: input.parse()?,
-                })
-            } else {
-                input.parse::<Token![=>]>()?;
-                Ok(PacketField {
-                    spec: FieldSpec::Direct,
-                    struct_field: input.parse()?,
-                })
-            }
-        } else if lookahead.peek(kw::var32) {
-            input.parse::<kw::var32>()?;
+        let (spec, field) = parse_field(input)?;
+        Ok(PacketField {
+            spec,
+            struct_field: field,
+        })
+    }
+}
+
+pub fn parse_field<T>(input: syn::parse::ParseStream) -> syn::Result<(FieldSpec, T)>
+where
+    T: Parse,
+{
+    let lookahead = input.lookahead1();
+    if lookahead.peek(Token![self]) {
+        input.parse::<Token![self]>()?;
+        if input.peek(Token![as]) {
+            input.parse::<Token![as]>()?;
+            let spec = FieldSpec::DirectAs(input.parse::<Type>()?);
             input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Var32,
-                struct_field: input.parse()?,
-            })
-        } else if lookahead.peek(kw::var64) {
-            input.parse::<kw::var64>()?;
-            input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Var64,
-                struct_field: input.parse()?,
-            })
-        } else if lookahead.peek(kw::str) {
-            input.parse::<kw::str>()?;
-            if input.peek(Paren) {
-                let content;
-                parenthesized!(content in input);
-                let spec = FieldSpec::String(content.parse::<LitInt>()?.base10_parse::<usize>()?);
-                input.parse::<Token![=>]>()?;
-                Ok(PacketField {
-                    spec,
-                    struct_field: input.parse()?,
-                })
-            } else {
-                input.parse::<Token![=>]>()?;
-                Ok(PacketField {
-                    spec: FieldSpec::String(32767),
-                    struct_field: input.parse()?,
-                })
-            }
-        } else if lookahead.peek(kw::bytes) {
-            input.parse::<kw::bytes>()?;
-            input.parse::<Token![=>]>()?;
-            let content;
-            braced!(content in input);
-            let struct_field = content.parse()?;
-            content.parse::<Token![,]>()?;
-            let ident = content.parse()?;
-            content.parse::<Token![=]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Bytes((ident, content.parse()?)),
-                struct_field,
-            })
-        } else if lookahead.peek(kw::rest) {
-            input.parse::<kw::rest>()?;
-            input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Rest,
-                struct_field: input.parse()?,
-            })
-        } else if lookahead.peek(kw::array) {
-            input.parse::<kw::array>()?;
-            input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Array,
-                struct_field: input.parse()?,
-            })
-        } else if lookahead.peek(kw::bytearray) {
-            input.parse::<kw::bytearray>()?;
-            input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::ByteArray,
-                struct_field: input.parse()?,
-            })
-        } else if lookahead.peek(kw::nbt) {
-            input.parse::<kw::nbt>()?;
-            input.parse::<Token![=>]>()?;
-            Ok(PacketField {
-                spec: FieldSpec::Nbt,
-                struct_field: input.parse()?,
-            })
+            Ok((spec, input.parse()?))
         } else {
-            return Err(lookahead.error());
+            input.parse::<Token![=>]>()?;
+            Ok((FieldSpec::Direct, input.parse()?))
         }
+    } else if lookahead.peek(kw::var32) {
+        input.parse::<kw::var32>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::Var32, input.parse()?))
+    } else if lookahead.peek(kw::var64) {
+        input.parse::<kw::var64>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::Var64, input.parse()?))
+    } else if lookahead.peek(kw::str) {
+        input.parse::<kw::str>()?;
+        if input.peek(Paren) {
+            let content;
+            parenthesized!(content in input);
+            let spec = FieldSpec::String(content.parse::<LitInt>()?.base10_parse::<usize>()?);
+            input.parse::<Token![=>]>()?;
+            Ok((spec, input.parse()?))
+        } else {
+            input.parse::<Token![=>]>()?;
+            Ok((FieldSpec::String(32767), input.parse()?))
+        }
+    } else if lookahead.peek(kw::bytes) {
+        input.parse::<kw::bytes>()?;
+        input.parse::<Token![=>]>()?;
+        let content;
+        braced!(content in input);
+        let struct_field = content.parse()?;
+        content.parse::<Token![,]>()?;
+        let ident = content.parse()?;
+        content.parse::<Token![=]>()?;
+        Ok((FieldSpec::Bytes((ident, content.parse()?)), struct_field))
+    } else if lookahead.peek(kw::rest) {
+        input.parse::<kw::rest>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::Rest, input.parse()?))
+    } else if lookahead.peek(kw::array) {
+        input.parse::<kw::array>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::Array, input.parse()?))
+    } else if lookahead.peek(kw::bytearray) {
+        input.parse::<kw::bytearray>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::ByteArray, input.parse()?))
+    } else if lookahead.peek(kw::nbt) {
+        input.parse::<kw::nbt>()?;
+        input.parse::<Token![=>]>()?;
+        Ok((FieldSpec::Nbt, input.parse()?))
+    } else {
+        return Err(lookahead.error());
     }
 }
 

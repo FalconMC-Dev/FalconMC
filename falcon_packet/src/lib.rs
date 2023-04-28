@@ -27,12 +27,14 @@
 
 use bytes::{Buf, BufMut};
 pub use error::{ReadError, WriteError};
+pub use macro_traits::*;
 pub use pub_macro::*;
 
 mod error;
 pub mod primitives;
 #[rustfmt::skip]
 mod pub_macro;
+mod macro_traits;
 
 /// A data structure that can be read from a minecraft connection.
 pub trait PacketRead {
