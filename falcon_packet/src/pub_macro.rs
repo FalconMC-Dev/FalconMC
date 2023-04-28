@@ -21,7 +21,7 @@
 /// // first field uses constructor syntax, second field uses
 /// // initializer syntax referencing the first field
 /// packet! {
-///     pub struct PacketExample {
+///     pub packet struct PacketExample {
 ///         self => num: i32,
 ///         self => let plus_five: i32 = num + 5,
 ///     }
@@ -33,7 +33,7 @@
 /// // The order doesn't matter for initialization here because
 /// // the `num` variable is taken from the parameter list of `new()`.
 /// packet! {
-///     pub struct PacketExampleSwapped {
+///     pub packet struct PacketExampleSwapped {
 ///         self => let plus_five: i32 = num + 5,
 ///         self => num: i32,
 ///     }
@@ -57,7 +57,7 @@
 /// ```no_run
 /// # use falcon_packet::packet;
 /// packet! {
-///     pub struct PacketExample => num: i32, _unused: u8 {
+///     pub packet struct PacketExample => num: i32, _unused: u8 {
 ///         self => let plus_five: i32 = num + 5,
 ///         self => constructor_field: u8
 ///     }
@@ -77,7 +77,7 @@
 ///     ```no_run
 ///     # type Type = u8;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     self => field: Type
 ///     #   }
 ///     # }
@@ -109,7 +109,7 @@
 ///     # type Type = u8;
 ///     # type OtherType = u16;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     self as OtherType => field: Type
 ///     #   }
 ///     # }
@@ -141,7 +141,7 @@
 ///     ```no_run
 ///     # type Type = i32;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     var32 => field: Type
 ///     #   }
 ///     # }
@@ -174,7 +174,7 @@
 ///     ```no_run
 ///     # type Type = falcon_packet::primitives::PacketString;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     str(10) => field: Type
 ///     #   }
 ///     # }
@@ -207,7 +207,7 @@
 ///     ```no_run
 ///     # type Type = falcon_packet::primitives::PacketBytes;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     #       var32 => len_field: usize,
 ///     bytes => { field: Type, len_field = self.field.len() }
 ///     #   }
@@ -243,7 +243,7 @@
 ///     ```no_run
 ///     # type Type = falcon_packet::primitives::PacketBytes;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     rest => field: Type
 ///     #   }
 ///     # }
@@ -275,7 +275,7 @@
 ///     # type Type = i32;
 ///     # const N: usize = 3;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     array => field: [Type; N]
 ///     #   }
 ///     # }
@@ -306,7 +306,7 @@
 ///     ```no_run
 ///     # type Type = String;
 ///     # falcon_packet::packet! {
-///     #   pub struct PacketRead {
+///     #   pub packet struct PacketRead {
 ///     nbt => field: Type
 ///     #   }
 ///     # }

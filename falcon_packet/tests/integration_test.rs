@@ -3,7 +3,7 @@ use falcon_packet::primitives::PacketString;
 use falcon_packet::{packet, PacketRead, PacketWrite};
 
 packet! {
-    pub struct HandshakePacket {
+    pub packet struct HandshakePacket {
         var32 => protocol: i32,
         str(255) => server_address: PacketString,
         self => port: u16,

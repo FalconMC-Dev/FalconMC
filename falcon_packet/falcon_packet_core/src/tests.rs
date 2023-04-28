@@ -3,14 +3,37 @@
 use pretty_assertions::assert_eq;
 use syn::parse_quote;
 
-use crate::{gen_read, gen_size, gen_struct, gen_write, PacketSyntax};
+use crate::{gen_read, gen_size, gen_struct, gen_write, PacketSyntax, StructSyntax};
 
 #[test]
-fn test_structgen() {
-    let packet_syntax: PacketSyntax = parse_quote! {
+fn test_normal_packet() {
+    let syntax: StructSyntax = parse_quote! {
         #[derive(Debug)]
         #[test]
         pub struct PacketTest => server: &Server {
+            init = {
+                let player = server.player(uuid);
+            }
+            let name: PacketString = player.name(),
+            uuid: Uuid,
+        }
+    };
+    let tokens =
+        gen_struct(&syntax.packet_name, &syntax.attrs, &syntax.vis, &syntax.init, &syntax.fields, syntax.inputs.iter());
+    assert_eq!(
+        "# [derive (Debug)] # [test] pub struct PacketTest { name : PacketString , uuid : Uuid } impl PacketTest { \
+         pub fn new (server : & Server , uuid : Uuid) -> Self { let player = server . player (uuid) ; let name : \
+         PacketString = player . name () ; Self { name , uuid } } }",
+        tokens.to_string()
+    );
+}
+
+#[test]
+fn test_structgen() {
+    let syntax: PacketSyntax = parse_quote! {
+        #[derive(Debug)]
+        #[test]
+        pub packet struct PacketTest => server: &Server {
             init = {
                 let player = server.player(uuid);
             }
@@ -18,7 +41,14 @@ fn test_structgen() {
             self => uuid: Uuid,
         }
     };
-    let tokens = gen_struct(&packet_syntax);
+    let tokens = gen_struct(
+        &syntax.packet_name,
+        &syntax.attrs,
+        &syntax.vis,
+        &syntax.init,
+        syntax.fields.iter().map(|f| &f.struct_field),
+        syntax.inputs.iter(),
+    );
     assert_eq!(
         "# [derive (Debug)] # [test] pub struct PacketTest { name : PacketString , uuid : Uuid } impl PacketTest { \
          pub fn new (server : & Server , uuid : Uuid) -> Self { let player = server . player (uuid) ; let name : \
@@ -32,7 +62,7 @@ fn test_sizegen() {
     let packet_syntax: PacketSyntax = parse_quote! {
         #[derive(Debug)]
         #[test]
-        pub struct PacketTest => server: &Server {
+        pub packet struct PacketTest => server: &Server {
             init = {
                 let player = server.player(uuid);
             }
@@ -68,7 +98,7 @@ fn test_readgen() {
     let packet_syntax: PacketSyntax = parse_quote! {
         #[derive(Debug)]
         #[test]
-        pub struct PacketTest => server: &Server {
+        pub packet struct PacketTest => server: &Server {
             init = {
                 let player = server.player(uuid);
             }
@@ -106,7 +136,7 @@ fn test_writegen() {
     let packet_syntax: PacketSyntax = parse_quote! {
         #[derive(Debug)]
         #[test]
-        pub struct PacketTest => server: &Server {
+        pub packet struct PacketTest => server: &Server {
             init = {
                 let player = server.player(uuid);
             }

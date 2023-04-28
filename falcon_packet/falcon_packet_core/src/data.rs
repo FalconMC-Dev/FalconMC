@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Colon, Comma, Eq, Let, Paren, Struct};
@@ -5,9 +6,79 @@ use syn::{braced, parenthesized, Attribute, Block, Expr, FnArg, Ident, LitInt, S
 
 use crate::kw;
 
+#[derive(Debug)]
+pub struct ValiditySyntax {
+    pub has_packet: bool,
+}
+
+impl Parse for ValiditySyntax {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        input.call(Attribute::parse_outer)?;
+        input.parse::<Visibility>()?;
+        let has_packet = if input.peek(kw::packet) {
+            input.parse::<kw::packet>()?;
+            true
+        } else {
+            false
+        };
+        input.parse::<Token![struct]>()?;
+        input.parse::<TokenStream>()?;
+        Ok(Self { has_packet })
+    }
+}
+
+pub struct StructSyntax {
+    pub attrs: Vec<Attribute>,
+    pub vis: Visibility,
+    pub struct_token: Struct,
+    pub packet_name: Ident,
+    pub inputs: Punctuated<FnArg, Token![,]>,
+    pub brace_token: Brace,
+    pub init: Vec<Stmt>,
+    pub fields: Punctuated<PacketStructField, Comma>,
+}
+
+impl Parse for StructSyntax {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let attrs = input.call(Attribute::parse_outer)?;
+        let vis = input.parse::<Visibility>()?;
+        let struct_token = input.parse::<Token![struct]>()?;
+        let packet_name = input.parse::<Ident>()?;
+        let inputs = if input.peek(Token![=>]) {
+            input.parse::<Token![=>]>()?;
+            input.call(Punctuated::<FnArg, Token![,]>::parse_separated_nonempty)?
+        } else {
+            Punctuated::new()
+        };
+        let content;
+        let brace_token = braced!(content in input);
+        let init = if content.peek(kw::init) {
+            content.parse::<kw::init>()?;
+            content.parse::<Token![=]>()?;
+            let init_content;
+            braced!(init_content in content);
+            init_content.call(Block::parse_within)?
+        } else {
+            Vec::new()
+        };
+        let fields = Punctuated::<PacketStructField, Comma>::parse_terminated(&content)?;
+        Ok(Self {
+            attrs,
+            vis,
+            struct_token,
+            packet_name,
+            inputs,
+            brace_token,
+            init,
+            fields,
+        })
+    }
+}
+
 pub struct PacketSyntax {
     pub attrs: Vec<Attribute>,
     pub vis: Visibility,
+    pub packet_token: kw::packet,
     pub struct_token: Struct,
     pub packet_name: Ident,
     pub inputs: Punctuated<FnArg, Token![,]>,
@@ -20,6 +91,7 @@ impl Parse for PacketSyntax {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse::<Visibility>()?;
+        let packet_token = input.parse::<kw::packet>()?;
         let struct_token = input.parse::<Token![struct]>()?;
         let packet_name = input.parse::<Ident>()?;
         let inputs = if input.peek(Token![=>]) {
@@ -43,6 +115,7 @@ impl Parse for PacketSyntax {
         Ok(Self {
             attrs,
             vis,
+            packet_token,
             struct_token,
             packet_name,
             inputs,
@@ -277,7 +350,7 @@ mod tests {
         let _packet: PacketSyntax = parse_quote! {
             #[derive(Debug)]
             #[test]
-            pub struct PacketTest => server: &Server {
+            pub packet struct PacketTest => server: &Server {
                 init = {
                     let player = server.player(uuid);
                 }
