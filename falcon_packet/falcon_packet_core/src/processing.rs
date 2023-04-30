@@ -1,5 +1,6 @@
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, quote_spanned};
+use syn::spanned::Spanned;
 use syn::{parse2, parse_quote, parse_str, Expr, Ident, Stmt, Type};
 
 use crate::{FieldSpec, PacketField};
@@ -28,68 +29,79 @@ pub fn doctest_impls(syntax: &str, read: &str, write: &str, size: &str) {
 }
 
 pub fn field_to_size(ty: &Type, spec: &FieldSpec, value: TokenStream) -> TokenStream {
+    let span = ty.span();
     match spec {
-        FieldSpec::Direct => quote!(::falcon_packet::PacketSize::size(&(#value))),
-        FieldSpec::DirectAs(ty) => quote!(::falcon_packet::PacketSize::size(&((#value) as #ty))),
+        FieldSpec::Direct => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&(#value))),
+        FieldSpec::DirectAs(ty) => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&((#value) as #ty))),
         FieldSpec::Var32 => {
-            quote!(::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#value)))
+            quote_spanned!(span=> ::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#value)))
         },
         FieldSpec::Var64 => {
-            quote!(::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#value)))
+            quote_spanned!(span=> ::falcon_packet::PacketSize::size(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#value)))
         },
-        FieldSpec::String(_) => quote!(::falcon_packet::PacketSize::size(<#ty as AsRef<str>>::as_ref(&(#value)))),
-        FieldSpec::Bytes(_) => quote!(::falcon_packet::PacketSize::size(&(#value))),
-        FieldSpec::Rest => quote!(::falcon_packet::PacketSize::size(&(#value))),
-        FieldSpec::Array => quote!(::falcon_packet::PacketSize::size(&(#value))),
-        FieldSpec::ByteArray => quote!(::falcon_packet::PacketSize::size(&(#value))),
-        FieldSpec::Nbt => quote!(::falcon_packet::primitives::nbt_size(&(#value))),
+        FieldSpec::String(_) => {
+            quote_spanned!(span=> ::falcon_packet::PacketSize::size(<#ty as AsRef<str>>::as_ref(&(#value))))
+        },
+        FieldSpec::Bytes(_) => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&(#value))),
+        FieldSpec::Rest => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&(#value))),
+        FieldSpec::Array => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&(#value))),
+        FieldSpec::ByteArray => quote_spanned!(span=> ::falcon_packet::PacketSize::size(&(#value))),
+        FieldSpec::Nbt => quote_spanned!(span=> ::falcon_packet::primitives::nbt_size(&(#value))),
     }
 }
 
 pub fn field_to_read(ty: &Type, spec: &FieldSpec, ident: &Ident, buffer: &Ident) -> TokenStream {
+    let span = ty.span();
     match spec {
-        FieldSpec::Direct => quote!(let #ident = ::falcon_packet::PacketRead::read(#buffer)?;),
+        FieldSpec::Direct => quote_spanned!(span=> let #ident = ::falcon_packet::PacketRead::read(#buffer)?;),
         FieldSpec::DirectAs(ty2) => {
-            quote!(let #ident = <#ty2 as ::falcon_packet::PacketRead>::read(#buffer)? as #ty;)
+            quote_spanned!(span=> let #ident = <#ty2 as ::falcon_packet::PacketRead>::read(#buffer)? as #ty;)
         },
         FieldSpec::Var32 => {
-            quote!(let #ident = <::falcon_packet::primitives::VarI32 as ::falcon_packet::PacketRead>::read(#buffer)?.into();)
+            quote_spanned!(span=> let #ident = <::falcon_packet::primitives::VarI32 as ::falcon_packet::PacketRead>::read(#buffer)?.into();)
         },
         FieldSpec::Var64 => {
-            quote!(let #ident = <::falcon_packet::primitives::VarI64 as ::falcon_packet::PacketRead>::read(#buffer)?.into();)
+            quote_spanned!(span=> let #ident = <::falcon_packet::primitives::VarI64 as ::falcon_packet::PacketRead>::read(#buffer)?.into();)
         },
-        FieldSpec::String(max_len) => quote!(let #ident = ::falcon_packet::PacketReadSeed::read(#max_len, #buffer)?;),
+        FieldSpec::String(max_len) => {
+            quote_spanned!(span=> let #ident = ::falcon_packet::PacketReadSeed::read(#max_len, #buffer)?;)
+        },
         FieldSpec::Bytes((field, _)) => {
-            quote!(let #ident = ::falcon_packet::PacketReadSeed::read(#field as usize, #buffer)?;)
+            quote_spanned!(span=> let #ident = ::falcon_packet::PacketReadSeed::read(#field as usize, #buffer)?;)
         },
-        FieldSpec::Rest => quote!(let #ident = ::falcon_packet::PacketReadSeed::read((), #buffer)?;),
-        FieldSpec::Array => quote!(let #ident = ::falcon_packet::primitives::array_read(#buffer)?;),
-        FieldSpec::ByteArray => quote!(let #ident = ::falcon_packet::primitives::bytearray_read(#buffer)?;),
-        FieldSpec::Nbt => quote!(let #ident = ::falcon_packet::primitives::nbt_read(#buffer)?;),
+        FieldSpec::Rest => quote_spanned!(span=> let #ident = ::falcon_packet::PacketReadSeed::read((), #buffer)?;),
+        FieldSpec::Array => quote_spanned!(span=> let #ident = ::falcon_packet::primitives::array_read(#buffer)?;),
+        FieldSpec::ByteArray => {
+            quote_spanned!(span=> let #ident = ::falcon_packet::primitives::bytearray_read(#buffer)?;)
+        },
+        FieldSpec::Nbt => quote_spanned!(span=> let #ident = ::falcon_packet::primitives::nbt_read(#buffer)?;),
     }
 }
 
 pub fn field_to_write(ty: &Type, spec: &FieldSpec, value: TokenStream, buffer: &Ident) -> TokenStream {
+    let span = ty.span();
     match spec {
-        FieldSpec::Direct => quote!(::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
-        FieldSpec::DirectAs(ref ty) => quote!(::falcon_packet::PacketWrite::write(&((#value) as #ty), #buffer)?;),
+        FieldSpec::Direct => quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
+        FieldSpec::DirectAs(ref ty) => {
+            quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&((#value) as #ty), #buffer)?;)
+        },
         FieldSpec::Var32 => {
-            quote!(::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#value), #buffer)?;)
+            quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI32>>::into(#value), #buffer)?;)
         },
         FieldSpec::Var64 => {
-            quote!(::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#value), #buffer)?;)
+            quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&<#ty as Into<::falcon_packet::primitives::VarI64>>::into(#value), #buffer)?;)
         },
         FieldSpec::String(max_len) => {
-            quote!(::falcon_packet::PacketWriteSeed::write(#max_len, <#ty as AsRef<str>>::as_ref(&(#value)), #buffer)?;)
+            quote_spanned!(span=> ::falcon_packet::PacketWriteSeed::write(#max_len, <#ty as AsRef<str>>::as_ref(&(#value)), #buffer)?;)
         },
         FieldSpec::Bytes(_) => {
-            quote!(::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&(#value)), #buffer)?;)
+            quote_spanned!(span=> ::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&(#value)), #buffer)?;)
         },
         FieldSpec::Rest => {
-            quote!(::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&(#value)), #buffer)?;)
+            quote_spanned!(span=> ::falcon_packet::PacketWrite::write(<#ty as AsRef<[u8]>>::as_ref(&(#value)), #buffer)?;)
         },
-        FieldSpec::Array => quote!(::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
-        FieldSpec::ByteArray => quote!(::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
-        FieldSpec::Nbt => quote!(::falcon_packet::primitives::nbt_write(&(#value), #buffer)?;),
+        FieldSpec::Array => quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
+        FieldSpec::ByteArray => quote_spanned!(span=> ::falcon_packet::PacketWrite::write(&(#value), #buffer)?;),
+        FieldSpec::Nbt => quote_spanned!(span=> ::falcon_packet::primitives::nbt_write(&(#value), #buffer)?;),
     }
 }
