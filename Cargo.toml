@@ -2,7 +2,8 @@
 
 members = [
     "falcon_*",
-    "falcon_packet/falcon_*"
+    "falcon_packet/falcon_*",
+    "falcon_protocol/falcon_*",
 ]
 
 [profile.release]
