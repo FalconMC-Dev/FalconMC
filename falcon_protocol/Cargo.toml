@@ -9,3 +9,4 @@ edition = "2021"
 falcon_protocol_derive = { path = "falcon_protocol_derive" }
 falcon_packet = { path = "../falcon_packet" }
 bytes = "1.4.0"
+downcast-rs = "1.2.0"
