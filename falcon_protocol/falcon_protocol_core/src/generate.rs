@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
@@ -6,17 +6,18 @@ use syn::{parse_quote, Arm, Type};
 
 use crate::check::{LitIntBool, VersionMappings};
 
-type PacketVersionsMap = HashMap<LitIntBool, Vec<VersionsToPacket>>;
+type PacketVersionsMap = BTreeMap<LitIntBool, Vec<VersionsToPacket>>;
 
 pub fn generate_output(mappings: VersionMappings) -> TokenStream {
     let mut result = PacketVersionsMap::new();
     let mappings = mappings.packet_to_versions;
+    let mappings = BTreeMap::from_iter(mappings.into_iter().map(|(k, v)| (TypeSorted::from(k), v)));
     let mut impls = Vec::new();
     for (packet, mappings) in mappings {
         impls.push(quote!(impl ::falcon_protocol::Packet for #packet {}));
         for (id, versions) in mappings.into_mappings() {
             let entry = result.entry(id).or_default();
-            entry.push(VersionsToPacket::new(packet.clone(), versions.into_iter().collect()));
+            entry.push(VersionsToPacket::new(packet.ty.clone(), versions.into_iter().collect()));
         }
     }
 
@@ -63,4 +64,43 @@ impl ToTokens for VersionsToPacket {
         };
         arm.to_tokens(tokens);
     }
+}
+
+#[derive(Debug, Clone)]
+struct TypeSorted {
+    pub ty: Type,
+}
+
+impl PartialEq for TypeSorted {
+    fn eq(&self, other: &Self) -> bool {
+        self.ty.to_token_stream().to_string() == other.ty.to_token_stream().to_string()
+    }
+}
+
+impl Eq for TypeSorted {}
+
+impl PartialOrd for TypeSorted {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.ty
+            .to_token_stream()
+            .to_string()
+            .partial_cmp(&other.ty.to_token_stream().to_string())
+    }
+}
+
+impl Ord for TypeSorted {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.ty
+            .to_token_stream()
+            .to_string()
+            .cmp(&other.ty.to_token_stream().to_string())
+    }
+}
+
+impl From<Type> for TypeSorted {
+    fn from(value: Type) -> Self { Self { ty: value } }
+}
+
+impl ToTokens for TypeSorted {
+    fn to_tokens(&self, tokens: &mut TokenStream) { self.ty.to_tokens(tokens); }
 }

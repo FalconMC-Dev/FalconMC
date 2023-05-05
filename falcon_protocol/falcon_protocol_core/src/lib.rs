@@ -10,6 +10,7 @@ use syn::parse::Parser;
 mod check;
 mod data;
 mod generate;
+mod tests;
 
 pub fn protocol_core(input: TokenStream) -> TokenStream {
     let syntax = match parse_mappings.parse2(input) {
