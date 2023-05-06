@@ -1,8 +1,11 @@
 use proc_macro_error::{abort, emit_error};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::Brace;
 use syn::{braced, Error, Ident, LitInt, Token, Type};
+
+use crate::check::LitIntBool;
 
 pub fn parse_mappings(input: ParseStream) -> syn::Result<Vec<PacketMappings>> {
     let mut mappings = Vec::new();
@@ -63,29 +66,34 @@ impl Parse for PacketMappings {
 /// A `LitInt` **must** always be within i32 bounds.
 /// The id `LitInt` **must** always be within i32 bounds.
 pub struct VersionsToId {
-    pub versions: Punctuated<LitInt, Token![,]>,
+    pub versions: VersionsOrAll,
     pub eq: Token![=],
     pub id: LitInt,
 }
 
 impl Parse for VersionsToId {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let versions = Punctuated::<LitInt, Token![,]>::parse_separated_nonempty(input)?;
-        // check that all versions are within i32 bounds
-        // errors are aggregated
-        let mut errors: Option<Error> = None;
-        for version in &versions {
-            if let Err(error) = version.base10_parse::<i32>() {
-                if let Some(errors) = &mut errors {
-                    errors.combine(error);
-                } else {
-                    errors = Some(error)
+        let versions = if input.peek(Token![_]) {
+            VersionsOrAll::All(input.parse::<Token![_]>()?)
+        } else {
+            let versions = Punctuated::<LitInt, Token![,]>::parse_separated_nonempty(input)?;
+            // check that all versions are within i32 bounds
+            // errors are aggregated
+            let mut errors: Option<Error> = None;
+            for version in &versions {
+                if let Err(error) = version.base10_parse::<i32>() {
+                    if let Some(errors) = &mut errors {
+                        errors.combine(error);
+                    } else {
+                        errors = Some(error)
+                    }
                 }
             }
-        }
-        if let Some(error) = errors {
-            return Err(error);
-        }
+            if let Some(error) = errors {
+                return Err(error);
+            }
+            VersionsOrAll::Versions(versions)
+        };
         let eq = input.parse::<Token![=]>()?;
         let id = input.parse::<LitInt>()?;
         // Check that id is within i32 bounds
@@ -94,11 +102,53 @@ impl Parse for VersionsToId {
     }
 }
 
+pub enum VersionsOrAll {
+    Versions(Punctuated<LitInt, Token![,]>),
+    All(Token![_]),
+}
+
+impl VersionsOrAll {
+    #[cfg(test)]
+    pub fn len(&self) -> usize {
+        match self {
+            VersionsOrAll::Versions(v) => v.len(),
+            VersionsOrAll::All(_) => 1,
+        }
+    }
+
+    pub fn into_iter(self) -> impl Iterator<Item = LitIntBool> {
+        match self {
+            VersionsOrAll::Versions(v) => VersionsIter::Versions(v.into_iter().map(|e| e.into())),
+            VersionsOrAll::All(s) => VersionsIter::All(std::iter::once(s.span().into())),
+        }
+    }
+}
+
+pub enum VersionsIter<I> {
+    Versions(I),
+    All(std::iter::Once<LitIntBool>),
+}
+
+impl<I> Iterator for VersionsIter<I>
+where
+    I: Iterator<Item = LitIntBool>,
+{
+    type Item = LitIntBool;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            VersionsIter::Versions(v) => v.next(),
+            VersionsIter::All(v) => v.next(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use syn::parse_quote;
 
     use super::*;
+    use crate::check::LitIntValue;
 
     #[test]
     fn test_versions_to_id() {
@@ -107,9 +157,9 @@ mod tests {
         };
         assert_eq!(0x02, syntax.id.base10_parse::<i32>().unwrap());
         let mut iter = syntax.versions.into_iter();
-        assert_eq!(47, iter.next().unwrap().base10_parse::<i32>().unwrap());
-        assert_eq!(23, iter.next().unwrap().base10_parse::<i32>().unwrap());
-        assert_eq!(35, iter.next().unwrap().base10_parse::<i32>().unwrap());
+        assert_eq!(LitIntValue::Number(47), iter.next().unwrap().value);
+        assert_eq!(LitIntValue::Number(23), iter.next().unwrap().value);
+        assert_eq!(LitIntValue::Number(35), iter.next().unwrap().value);
     }
 
     #[test]
@@ -168,6 +218,21 @@ mod tests {
             PacketThree: {
                 23, 22, 30 = 5660000000000000;
             }
+        };
+    }
+
+    #[test]
+    fn test_infer_syntax() {
+        let _syntax: PacketMappings = parse_quote! {
+            PacketOne: _ = 0x02,
+        };
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_infer_syntax_wrong() {
+        let _syntax: PacketMappings = parse_quote! {
+            PacketOne: _, 2 = 0x02,
         };
     }
 }

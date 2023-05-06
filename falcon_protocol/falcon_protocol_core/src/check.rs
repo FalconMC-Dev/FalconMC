@@ -1,10 +1,11 @@
 use std::collections::HashMap;
+use std::fmt::{Display, Write};
 use std::hash::{Hash, Hasher};
-use std::ops::Deref;
 
 use proc_macro2::{Span, TokenStream};
 use proc_macro_error::emit_error;
 use quote::ToTokens;
+use syn::token::Underscore;
 use syn::{LitInt, Type};
 
 use crate::data::PacketMappings;
@@ -24,7 +25,7 @@ impl VersionMappings {
             for mapping in packet_mapping.mappings {
                 let packet_id = mapping.id.into();
                 let packet_versions = result.packet_to_versions.entry(packet_mapping.ty.clone()).or_default();
-                let mut unique = packet_versions.insert(packet_id, mapping.versions.into_iter().map(|e| e.into()));
+                let mut unique = packet_versions.insert(packet_id, mapping.versions.into_iter());
                 // check that different packets have different versions for the same id
                 for version in &mut unique {
                     for (_, packet_versions) in
@@ -62,7 +63,7 @@ impl PacketVersions {
                 .iter_mut()
                 .filter(|(&p, _)| p != id)
                 .for_each(|(_, versions)| {
-                    if let Some(v) = versions.iter_mut().find(|v| v == &&version) {
+                    if let Some(v) = versions.iter_mut().find(|v| v.logical_eq(&version)) {
                         if !v.is_true() {
                             emit_error!(v.span(), "The same packet has multiple ids for the this version");
                             v.toggle();
@@ -84,7 +85,7 @@ impl PacketVersions {
 
     pub fn has_id_version(&self, id: &LitIntBool, version: &LitIntBool) -> bool {
         for (_, versions) in self.mappings.iter().filter(|&(p, _)| p == id) {
-            if versions.iter().any(|v| v == version) {
+            if versions.iter().any(|v| v.logical_eq(version)) {
                 return true;
             }
         }
@@ -95,10 +96,25 @@ impl PacketVersions {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct LitIntBool {
-    value: i32,
+pub struct LitIntBool {
+    pub(crate) value: LitIntValue,
     span: Span,
     toggle: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum LitIntValue {
+    Number(i32),
+    Any,
+}
+
+impl Display for LitIntValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            LitIntValue::Number(n) => n.fmt(f),
+            LitIntValue::Any => f.write_char('_'),
+        }
+    }
 }
 
 impl LitIntBool {
@@ -107,23 +123,45 @@ impl LitIntBool {
     pub fn toggle(&mut self) { self.toggle = !self.toggle }
 
     pub fn span(&self) -> Span { self.span }
+
+    pub fn logical_eq(&self, other: &LitIntBool) -> bool {
+        match self.value {
+            LitIntValue::Any => true,
+            LitIntValue::Number(n) => match other.value {
+                LitIntValue::Number(m) => n == m,
+                LitIntValue::Any => true,
+            },
+        }
+    }
 }
 
 impl ToTokens for LitIntBool {
-    fn to_tokens(&self, tokens: &mut TokenStream) { LitInt::new(&self.value.to_string(), self.span).to_tokens(tokens) }
-}
-
-impl Deref for LitIntBool {
-    type Target = i32;
-
-    fn deref(&self) -> &Self::Target { &self.value }
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self.value {
+            LitIntValue::Number(n) => LitInt::new(&n.to_string(), self.span).to_tokens(tokens),
+            LitIntValue::Any => Underscore {
+                spans: [self.span; 1],
+            }
+            .to_tokens(tokens),
+        }
+    }
 }
 
 impl From<LitInt> for LitIntBool {
     fn from(value: LitInt) -> Self {
         Self {
-            value: value.base10_parse::<i32>().unwrap(),
+            value: LitIntValue::Number(value.base10_parse::<i32>().unwrap()),
             span: value.span(),
+            toggle: false,
+        }
+    }
+}
+
+impl From<Span> for LitIntBool {
+    fn from(span: Span) -> Self {
+        Self {
+            value: LitIntValue::Any,
+            span,
             toggle: false,
         }
     }

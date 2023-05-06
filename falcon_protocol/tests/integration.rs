@@ -15,14 +15,14 @@ packet! {
 }
 
 packets! {
-    ExamplePacket: { 47 = 0x01 },
+    ExamplePacket: { _ = 0x01 },
     PacketTwo: { 47 = 0x03; 48 = 0x02 },
 }
 
 #[test]
 fn test_switching() {
     let mut buffer = Bytes::from_static(&[0, 0, 0, 1]);
-    let packet = read_packet(&mut buffer, 1, 48).unwrap();
+    let packet = read_packet(&mut buffer, 3, 48).unwrap();
     assert!(packet.is_none());
     let packet = read_packet(&mut buffer, 1, 47).unwrap();
     assert!(packet.is_some());
