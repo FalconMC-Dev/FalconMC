@@ -180,7 +180,8 @@ impl McReader {
     /// Flushes the input buffer and prepares the next packet.
     /// Preparing as many packets as possible will eliminate
     /// the ability to change the compression state and/or
-    /// enable encryption.
+    /// enable encryption. That's why this only happens when
+    /// not in single packet mode.
     fn flush(&mut self) -> io::Result<()> {
         if self.is_corrupted.is_some() {
             return Ok(());
@@ -190,7 +191,9 @@ impl McReader {
             if self.next_expected > 0 {
                 // packet is still being read
                 self.continue_read()?;
-                break;
+                if self.is_single_packet {
+                    break;
+                }
             } else {
                 self.needs_input = self.start_new_packet()?;
             }
@@ -229,6 +232,11 @@ impl McReader {
             Ok(stream_len) => {
                 if stream_len.as_usize() > MAX_PACKET_LEN {
                     return Err(io::Error::from(io::ErrorKind::InvalidData));
+                }
+                if self.is_single_packet
+                    && (self.input_len - self.input_pos - cursor.position() as usize) < stream_len.as_usize()
+                {
+                    return Ok(true);
                 }
                 if self.compression {
                     let stream_pos = cursor.position() as usize;
@@ -405,7 +413,6 @@ mod tests {
         reader.put_slice(&[0x05, 0x01, 0x0, 0x0, 0x0, 0x4, 0xA, 0x2, 0x01, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]);
         let packet = reader.next_packet().unwrap().unwrap();
         assert_eq!(&[0x01, 0x0, 0x0, 0x0, 0x4], &packet[..]);
-        assert!(!reader.input_is_empty());
         let packet = reader.next_packet().unwrap().unwrap();
         assert_eq!(&[0x2, 0x01, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0], &packet[..]);
         assert!(reader.next_packet().unwrap().is_none());
@@ -445,7 +452,6 @@ mod tests {
         reader.put_slice(&[0xa, 0x06, 0x01]);
         let packet = reader.next_packet().unwrap().unwrap();
         assert_eq!(&[0x01, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa], &packet[..]);
-        assert!(!reader.input_is_empty());
         assert!(reader.next_packet().unwrap().is_none());
         reader.put_slice(&[0x03, 0x02, 0x4, 0x5, 0x6]);
         let packet = reader.next_packet().unwrap().unwrap();
@@ -624,5 +630,29 @@ mod tests {
         let mut reader = McReader::new(false, true);
         VarI32::from(9000).write(&mut reader).unwrap();
         reader.put_slice(&[1; 9000]);
+    }
+
+    #[test]
+    fn test_single_packet_mode_correct_usage() {
+        let mut reader = McReader::new(false, true);
+        reader.put_slice(&[0x02, 0x01, 0x03, 0x04, 0x00, 0x02, 0x03, 0x01]);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[0x01, 0x03], &packet[..]);
+        reader.compression(true);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[0x02, 0x03, 0x01], &packet[..]);
+    }
+
+    #[test]
+    fn test_single_packet_mode_correct_usage_separated() {
+        let mut reader = McReader::new(false, true);
+        reader.put_slice(&[0x02, 0x01, 0x03, 0x04, 0x00]);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[0x01, 0x03], &packet[..]);
+        assert!(reader.next_packet().unwrap().is_none());
+        reader.put_slice(&[0x02, 0x03, 0x01]);
+        reader.compression(true);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[0x02, 0x03, 0x01], &packet[..]);
     }
 }
