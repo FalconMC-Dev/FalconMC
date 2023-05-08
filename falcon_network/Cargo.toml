@@ -1,0 +1,18 @@
+[package]
+name = "falcon_network"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+falcon_protocol = { path = "../falcon_protocol/" }
+falcon_packet = { path = "../falcon_packet/" }
+
+flate2 = { version = "1.0.26", features = ["zlib-ng"], default-features = false }
+
+bytes = "1.4.0"
+tokio = { version = "1.28.0", features = [ "net", "time", "sync", "macros", "io-util" ]}
+
+[features]
+parking_lot = ["tokio/parking_lot"]
