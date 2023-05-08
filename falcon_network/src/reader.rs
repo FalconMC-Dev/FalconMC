@@ -1,8 +1,12 @@
 use std::io::{self, Cursor, Write};
 use std::ptr;
 
+use aes::cipher::inout::InOutBuf;
+use aes::cipher::{BlockDecryptMut, KeyIvInit};
+use aes::Aes128;
 use bytes::buf::{UninitSlice, Writer};
 use bytes::{Buf, BufMut, Bytes, BytesMut};
+use cfb8::Decryptor;
 use falcon_packet::primitives::VarI32;
 use falcon_packet::{PacketRead, ReadError};
 use flate2::write::ZlibDecoder;
@@ -14,7 +18,8 @@ const MAX_PACKET_LEN: usize = 2usize.pow(21) - 1; // maximum value of a 3 byte V
 ///
 /// A reader capable of extracting minecraft packets
 /// from a minecraft network stream. Deals with
-/// compression when enabled. This buffer implements [`BufMut`].
+/// compression and encryption when enabled.
+/// This buffer implements [`BufMut`].
 ///
 /// # Example
 /// ```
@@ -52,6 +57,8 @@ pub struct McReader {
     processed: DecompressionBuffer,
     processed_pos: usize,
     compression: bool,
+    decryptor: Option<Decryptor<Aes128>>,
+    decryptor_pos: usize,
     is_single_packet: bool,
     is_corrupted: Option<io::Error>,
 }
@@ -85,6 +92,8 @@ impl McReader {
             processed: Default::default(),
             processed_pos: 0,
             compression,
+            decryptor: None,
+            decryptor_pos: 0,
             is_single_packet,
             is_corrupted: None,
         }
@@ -105,6 +114,17 @@ impl McReader {
     /// reader.compression(false);
     /// ```
     pub fn compression(&mut self, enabled: bool) { self.compression = enabled; }
+
+    /// Enables encryption.
+    ///
+    /// # Important
+    /// This is a one time operation. ***It is not
+    /// possible to disable encryption afterwards without
+    /// risking corruption of the input stream.***
+    pub fn encryption(&mut self, key: [u8; 16]) {
+        // key cannot have invalid length -> safe unwrap
+        self.decryptor = Some(Decryptor::new_from_slices(&key, &key).unwrap());
+    }
 
     /// Enables or disables single packet mode.
     ///
@@ -187,6 +207,15 @@ impl McReader {
             return Ok(());
         }
 
+        // decrypt if necessary
+        if let Some(decryptor) = &mut self.decryptor {
+            if self.decryptor_pos < self.input_len {
+                let (blocks, _) = InOutBuf::from(&mut self.input[self.decryptor_pos..self.input_len]).into_chunks();
+                decryptor.decrypt_blocks_inout_mut(blocks);
+                self.decryptor_pos = self.input_len;
+            }
+        }
+
         while self.input_pos < self.input_len && !self.needs_input {
             if self.next_expected > 0 {
                 // packet is still being read
@@ -206,6 +235,9 @@ impl McReader {
             }
         } else {
             unsafe { ptr::copy(self.input.as_ptr().add(self.input_pos), self.input.as_mut_ptr(), diff) }
+        }
+        if self.decryptor.is_some() {
+            self.decryptor_pos = diff;
         }
         self.input_len = diff;
         self.input_pos = 0;

@@ -10,6 +10,8 @@ falcon_protocol = { path = "../falcon_protocol/" }
 falcon_packet = { path = "../falcon_packet/" }
 
 flate2 = { version = "1.0.26", features = ["zlib-ng"], default-features = false }
+aes = "0.8.2"
+cfb8 = "0.8.1"
 
 bytes = "1.4.0"
 tokio = { version = "1.28.0", features = [ "net", "time", "sync", "macros", "io-util" ]}
