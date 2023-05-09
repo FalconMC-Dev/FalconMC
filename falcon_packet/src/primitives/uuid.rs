@@ -9,7 +9,7 @@ use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite};
 impl PacketWrite for Uuid {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
     where
-        B: bytes::BufMut + ?Sized
+        B: bytes::BufMut + ?Sized,
     {
         super::write_bytes(buffer, self.as_ref())
     }

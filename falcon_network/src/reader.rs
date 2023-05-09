@@ -149,6 +149,8 @@ impl McReader {
     /// Returns the next received packet or tries
     /// to flush the next packet in the buffer if no packets are ready.
     ///
+    /// TODO: detail errors
+    ///
     /// # Example
     /// ```
     /// # use falcon_network::McReader;
