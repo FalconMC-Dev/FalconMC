@@ -116,5 +116,5 @@ where
     /// This function serializes the type to the given buffer.
     fn write<'a, B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
-        B: BufMut;
+        B: BufMut + ?Sized;
 }

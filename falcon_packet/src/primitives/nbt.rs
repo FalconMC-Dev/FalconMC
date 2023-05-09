@@ -11,7 +11,7 @@ use crate::{ReadError, WriteError};
 pub fn nbt_write<T, B>(nbt: &T, buffer: &mut B) -> Result<(), WriteError>
 where
     T: Serialize,
-    B: BufMut,
+    B: BufMut + ?Sized,
 {
     let writer = Writer::new(buffer);
     Ok(fastnbt::to_writer(writer, nbt)?)

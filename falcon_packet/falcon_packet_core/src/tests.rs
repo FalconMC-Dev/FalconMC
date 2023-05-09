@@ -155,7 +155,7 @@ fn test_writegen() {
     let tokens = gen_write(&packet_syntax);
     assert_eq!(
         "impl :: falcon_packet :: PacketWrite for PacketTest { fn write < B > (& self , buffer : & mut B) -> :: std \
-         :: result :: Result < () , :: falcon_packet :: WriteError > where B : :: bytes :: BufMut { let z = self . \
+         :: result :: Result < () , :: falcon_packet :: WriteError > where B : :: bytes :: BufMut + ? Sized { let z = self . \
          test . len () ; :: falcon_packet :: PacketWrite :: write (& ((self . y) as i32) , buffer) ? ; :: \
          falcon_packet :: PacketWrite :: write (& < i32 as Into < :: falcon_packet :: primitives :: VarI32 >> :: into \
          (z) , buffer) ? ; :: falcon_packet :: PacketWrite :: write (& < i64 as Into < :: falcon_packet :: primitives \

@@ -12,7 +12,7 @@ where
 {
     fn write<'a, B>(self, value: &'a T, buffer: &'a mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         // Specizliation for PacketString
         if let Ok(packet_str) = cast!(value, &PacketString) {
@@ -35,7 +35,7 @@ where
 impl PacketWriteSeed<str> for usize {
     fn write<'a, B>(self, value: &'a str, buffer: &'a mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         write_str(buffer, self, value)
     }
