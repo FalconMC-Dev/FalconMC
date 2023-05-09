@@ -202,6 +202,7 @@ impl McReader {
     /// the ability to change the compression state and/or
     /// enable encryption. That's why this only happens when
     /// not in single packet mode.
+    /// TODO: resize output buffer within bounds
     fn flush(&mut self) -> io::Result<()> {
         if self.is_corrupted.is_some() {
             return Ok(());
@@ -258,6 +259,7 @@ impl McReader {
         Ok(())
     }
 
+    // TODO: Reserve space in output buffer
     fn start_new_packet(&mut self) -> io::Result<bool> {
         let mut cursor = Cursor::new(&self.input[self.input_pos..self.input_len]);
         match VarI32::read(&mut cursor) {
