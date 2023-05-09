@@ -34,12 +34,13 @@ impl PacketReadSeed<BytesMut> for usize {
 impl PacketWrite for Bytes {
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         if buffer.remaining_mut() < self.len() {
             return Err(WriteError::EndOfBuffer);
         }
-        buffer.put(self.clone());
+        // NOTE: see issue https://github.com/tokio-rs/bytes/issues/612
+        buffer.put_slice(self.as_ref());
         Ok(())
     }
 }
@@ -47,12 +48,13 @@ impl PacketWrite for Bytes {
 impl PacketWrite for BytesMut {
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         if buffer.remaining_mut() < self.len() {
             return Err(WriteError::EndOfBuffer);
         }
-        buffer.put(self.clone());
+        // NOTE: see issue https://github.com/tokio-rs/bytes/issues/612
+        buffer.put_slice(self.as_ref());
         Ok(())
     }
 }
@@ -116,14 +118,15 @@ impl PacketReadSeed<PacketBytes> for usize {
 impl PacketWrite for PacketBytes {
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         if buffer.remaining_mut() < self.len() {
             return Err(WriteError::EndOfBuffer);
         }
         match self {
             PacketBytes::Vec(v) => buffer.put_slice(v.as_ref()),
-            PacketBytes::Slice(v) => buffer.put(v.clone()),
+            // NOTE: see issue https://github.com/tokio-rs/bytes/issues/612
+            PacketBytes::Slice(v) => buffer.put_slice(v.as_ref()),
         }
         Ok(())
     }

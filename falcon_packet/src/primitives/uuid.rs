@@ -9,7 +9,7 @@ use crate::{PacketRead, PacketReadSeed, PacketSize, PacketWrite};
 impl PacketWrite for Uuid {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized
     {
         super::write_bytes(buffer, self.as_ref())
     }
@@ -84,7 +84,7 @@ impl PacketRead for StringUuid {
 impl PacketWrite for StringUuid {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         let mut buf = [0u8; uuid::fmt::Hyphenated::LENGTH];
         self.inner.as_hyphenated().encode_lower(&mut buf);

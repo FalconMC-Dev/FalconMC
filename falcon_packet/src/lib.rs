@@ -63,7 +63,7 @@ pub trait PacketWrite: PacketSize {
     /// This function serializes the type to the given buffer.
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: BufMut;
+        B: BufMut + ?Sized;
 }
 
 /// A data structure that can efficiently compute

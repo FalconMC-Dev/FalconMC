@@ -203,7 +203,7 @@ pub fn gen_write(input: &PacketSyntax) -> TokenStream {
         impl ::falcon_packet::PacketWrite for #packet_name {
             fn write<B>(&self, buffer: &mut B) -> ::std::result::Result<(), ::falcon_packet::WriteError>
             where
-                B: ::bytes::BufMut
+                B: ::bytes::BufMut + ?Sized
             {
                 #(#fields_preprocess)*
                 #(#fields_impl)*

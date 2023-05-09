@@ -39,7 +39,7 @@ packet! {
 impl PacketWrite for StructExample {
     fn write<B>(&self, buffer: &mut B) -> Result<(), WriteError>
     where
-        B: BufMut,
+        B: BufMut + ?Sized,
     {
         write! {
             var32 => i32 = self.num,

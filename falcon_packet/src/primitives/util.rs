@@ -13,7 +13,7 @@ use crate::{PacketSize, PacketWrite, WriteError};
 #[inline]
 pub fn write_bytes<B>(buffer: &mut B, bytes: &[u8]) -> Result<(), WriteError>
 where
-    B: BufMut,
+    B: BufMut + ?Sized,
 {
     if buffer.remaining_mut() < bytes.len() {
         return Err(WriteError::EndOfBuffer);
@@ -37,7 +37,7 @@ where
 #[inline]
 pub fn write_str<B>(buffer: &mut B, max: usize, str: &str) -> Result<(), WriteError>
 where
-    B: BufMut,
+    B: BufMut + ?Sized,
 {
     let count = str.chars().count();
     if count > max {
@@ -64,7 +64,7 @@ where
 #[inline]
 pub fn write_str_unchecked<B>(buffer: &mut B, str: &str) -> Result<(), WriteError>
 where
-    B: BufMut,
+    B: BufMut + ?Sized,
 {
     VarI32::from(str.as_bytes().len()).write(buffer)?;
     write_bytes(buffer, str.as_bytes())
@@ -103,7 +103,7 @@ where
 pub fn iter_write<'a, 'b, I, T, B>(mut iterator: I, buffer: &mut B) -> Result<(), WriteError>
 where
     'b: 'a,
-    B: BufMut,
+    B: BufMut + ?Sized,
     T: PacketWrite + 'b,
     I: Iterator<Item = &'a T>,
 {

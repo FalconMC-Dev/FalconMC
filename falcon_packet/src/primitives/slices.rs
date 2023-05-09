@@ -9,7 +9,7 @@ where
 {
     fn write<B>(&self, buffer: &mut B) -> Result<(), crate::WriteError>
     where
-        B: bytes::BufMut,
+        B: bytes::BufMut + ?Sized,
     {
         match_type!(self, {
             &[bool] as value => {
