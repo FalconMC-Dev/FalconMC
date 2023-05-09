@@ -73,7 +73,7 @@ impl McReader {
     /// ```
     /// # use falcon_network::McReader;
     /// # use bytes::BufMut;
-    /// // new reader without compression enabled
+    /// // new reader with compression disabled
     /// let mut reader = McReader::new(false, false);
     ///
     /// // input a two-byte packet

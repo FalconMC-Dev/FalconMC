@@ -27,6 +27,25 @@ pub struct McWriter {
 }
 
 impl McWriter {
+    /// Create a new writer, compression can be enabled.
+    ///
+    /// # Example
+    /// ```
+    /// # use falcon_network::McWriter;
+    /// # use bytes::{Buf, BufMut};
+    /// use falcon_packet::{PacketRead, primitives::VarI32};
+    /// // new writer compression disabled
+    /// let mut writer = McWriter::new(None);
+    /// // indicate to write a a packet of at most 10 bytes
+    /// writer.start_packet(10);
+    /// writer.put_bytes(1, 8); // turns out to be only 8 bytes
+    /// writer.finish_packet();
+    ///
+    /// let mut chunk = writer.copy_to_bytes(writer.remaining());
+    /// let length = VarI32::read(&mut chunk).unwrap().val();
+    /// assert_eq!(8, length);
+    /// assert_eq!(&[1; 8], &chunk[..]);
+    /// ```
     pub fn new(compression: Option<i32>) -> Self {
         Self {
             input: [0u8; BUF_LEN],
@@ -38,8 +57,33 @@ impl McWriter {
         }
     }
 
+    /// Enables or disables compression. This will change
+    /// the format of the output frames.
+    ///
+    /// # Example
+    /// ```
+    /// # use falcon_network::McWriter;
+    /// // create a new writer without compression
+    /// let mut writer = McWriter::new(None);
+    ///
+    /// // enable compression with a threshold of 256
+    /// writer.compression(Some(256));
+    /// // disable compression
+    /// writer.compression(None);
+    /// ```
     pub fn compression(&mut self, threshold: Option<i32>) { self.compression = threshold; }
 
+    /// Indicates to this writer a new packet frame
+    /// will follow. The `len` argument given **must** be
+    /// either exact or an upper bound. Use
+    /// [`finish_packet()`](McWriter::finish_packet)
+    /// to end the packet frame.
+    ///
+    /// # Errors
+    /// If the `len` argument is larger than the maximum
+    /// packet length allowed (2^21 - 1 = max value of a 3-byte
+    /// varint), this method will return an
+    /// [`InvalidInput`](io::ErrorKind::InvalidInput) error.
     pub fn start_packet(&mut self, len: usize) -> io::Result<()> {
         if len > MAX_PACKET_LEN {
             return Err(io::Error::from(io::ErrorKind::InvalidInput));
@@ -68,6 +112,9 @@ impl McWriter {
     }
 
     // TODO: encryption
+    //
+    /// Ends a packet frame and flushes all current bytes,
+    /// making those bytes ready to be sent over the network.
     pub fn finish_packet(&mut self) {
         if let Some(length) = self.next_length.take() {
             self.flush();
