@@ -149,7 +149,10 @@ impl McReader {
     /// Returns the next received packet or tries
     /// to flush the next packet in the buffer if no packets are ready.
     ///
-    /// TODO: detail errors
+    /// # Errors
+    /// If there is any invalid data received over the network, this
+    /// function will return an [`io::Error`]. This includes
+    /// inconsistent packet lengths and corrupted deflate stream.
     ///
     /// # Example
     /// ```
@@ -196,6 +199,13 @@ impl McReader {
         }
         let bytes = self.processed.bytes_mut().get_mut().split_to(len);
         self.processed_pos -= bytes.len() + 4; // 4 is because i32
+
+        // resize buffer to remain within bounds
+        let cap = self.processed.bytes().capacity();
+        if cap > BUF_LEN && cap > 3 * self.processed.bytes().len() {
+            let old = std::mem::replace(self.processed.bytes_mut().get_mut(), BytesMut::with_capacity(BUF_LEN));
+            self.processed.bytes_mut().get_mut().put(old);
+        }
         Ok(Some(bytes.freeze()))
     }
 
@@ -204,7 +214,6 @@ impl McReader {
     /// the ability to change the compression state and/or
     /// enable encryption. That's why this only happens when
     /// not in single packet mode.
-    /// TODO: resize output buffer within bounds
     fn flush(&mut self) -> io::Result<()> {
         if self.is_corrupted.is_some() {
             return Ok(());
@@ -261,42 +270,42 @@ impl McReader {
         Ok(())
     }
 
-    // TODO: Reserve space in output buffer
     fn start_new_packet(&mut self) -> io::Result<bool> {
         let mut cursor = Cursor::new(&self.input[self.input_pos..self.input_len]);
         match VarI32::read(&mut cursor) {
             Ok(stream_len) => {
-                if stream_len.as_usize() > MAX_PACKET_LEN {
+                let stream_pos = cursor.position() as usize;
+                let stream_len = stream_len.as_usize();
+                if stream_len > MAX_PACKET_LEN {
                     return Err(io::Error::from(io::ErrorKind::InvalidData));
                 }
-                if self.is_single_packet
-                    && (self.input_len - self.input_pos - cursor.position() as usize) < stream_len.as_usize()
-                {
+                if self.is_single_packet && (self.input_len - self.input_pos - stream_pos) < stream_len {
                     return Ok(true);
                 }
                 if self.compression {
-                    let stream_pos = cursor.position() as usize;
                     match VarI32::read(&mut cursor) {
                         Ok(length) => {
-                            if length.as_usize() > MAX_PACKET_LEN {
+                            let length_pos = cursor.position() as usize;
+                            let length = length.as_usize();
+                            if length > MAX_PACKET_LEN {
                                 return Err(io::Error::from(io::ErrorKind::InvalidData));
                             }
-                            if length.val() != 0 {
+                            if length != 0 {
                                 // write length for later reference
-                                self.processed
-                                    .bytes_mut()
-                                    .write_all(&length.as_u32().to_be_bytes())
-                                    .unwrap();
+                                let len_bytes = (length as u32).to_be_bytes();
+                                self.processed.bytes_mut().write_all(&len_bytes).unwrap();
                                 self.processed.decompress_next();
+                                self.processed.bytes_mut().get_mut().reserve(length);
                             } else {
                                 // write length for later reference
-                                self.processed
-                                    .bytes_mut()
-                                    .write_all(&(stream_len.as_u32() - 1).to_be_bytes())
-                                    .unwrap();
+                                let len_bytes = (stream_len as u32 - 1).to_be_bytes();
+                                self.processed.bytes_mut().write_all(&len_bytes).unwrap();
+                                self.processed.bytes_mut().get_mut().reserve(stream_len - 1);
                             }
-                            self.next_expected = stream_len.as_usize() - cursor.position() as usize + stream_pos;
-                            self.input_pos += cursor.position() as usize;
+                            // next_bytes = stream_len - (length_pos - stream_pos)
+                            self.next_expected = stream_len - length_pos + stream_pos;
+                            // set input at start of next packet bytes
+                            self.input_pos += length_pos;
                         },
                         Err(ReadError::NoMoreBytes) => return Ok(true),
                         Err(ReadError::VarTooLong) => return Err(io::Error::from(io::ErrorKind::InvalidData)),
@@ -305,12 +314,11 @@ impl McReader {
                         },
                     }
                 } else {
-                    self.processed
-                        .bytes_mut()
-                        .write_all(&stream_len.as_u32().to_be_bytes())
-                        .unwrap();
-                    self.next_expected = stream_len.as_usize();
-                    self.input_pos += cursor.position() as usize;
+                    let len_bytes = (stream_len as u32).to_be_bytes();
+                    self.processed.bytes_mut().write_all(&len_bytes).unwrap();
+                    self.processed.bytes_mut().get_mut().reserve(stream_len);
+                    self.next_expected = stream_len;
+                    self.input_pos += stream_pos;
                 }
             },
             Err(ReadError::NoMoreBytes) => return Ok(true),
@@ -324,6 +332,9 @@ impl McReader {
 
     #[cfg(test)]
     fn input_is_empty(&self) -> bool { self.input_len == 0 }
+
+    #[cfg(test)]
+    fn capacity(&self) -> usize { self.processed.bytes().capacity() }
 }
 
 // Only the `UninitSlice` operation is unsafe,
@@ -399,6 +410,9 @@ impl DecompressionBuffer {
         }
         Ok(self.buffer.get_ref().get_ref().len())
     }
+
+    /// Returns an immutable reference to the underlying [`BytesMut`].
+    pub fn bytes(&self) -> &BytesMut { self.buffer.get_ref().get_ref() }
 
     /// Returns a mutable reference to the underlying [`Writer`].
     pub fn bytes_mut(&mut self) -> &mut Writer<BytesMut> { self.buffer.get_mut() }
@@ -690,5 +704,20 @@ mod tests {
         reader.compression(true);
         let packet = reader.next_packet().unwrap().unwrap();
         assert_eq!(&[0x02, 0x03, 0x01], &packet[..]);
+    }
+
+    #[test]
+    fn test_shrinking() {
+        let mut reader = McReader::new(false, false);
+        VarI32::from(13000).write(&mut reader).unwrap();
+        reader.put_slice(&[1; 13000]);
+        VarI32::from(12).write(&mut reader).unwrap();
+        reader.put_slice(&[2; 12]);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[1; 13000], &packet[..]);
+        let packet = reader.next_packet().unwrap().unwrap();
+        assert_eq!(&[2; 12], &packet[..]);
+        assert!(reader.input_is_empty());
+        assert!(reader.capacity() < 10000);
     }
 }
