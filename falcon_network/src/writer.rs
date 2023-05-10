@@ -1,7 +1,11 @@
 use std::io::{self, Write};
 
+use aes::cipher::inout::InOutBuf;
+use aes::cipher::{BlockEncryptMut, KeyIvInit};
+use aes::Aes128;
 use bytes::buf::{UninitSlice, Writer};
 use bytes::{Buf, BufMut, BytesMut};
+use cfb8::Encryptor;
 use falcon_packet::primitives::VarI32;
 use falcon_packet::{PacketSize, PacketWrite};
 use flate2::write::ZlibEncoder;
@@ -24,6 +28,7 @@ pub struct McWriter {
     processed_pos: usize,
     next_length: Option<WriteLength>,
     compression: Option<i32>,
+    encryptor: Option<Encryptor<Aes128>>,
 }
 
 impl McWriter {
@@ -54,6 +59,7 @@ impl McWriter {
             processed_pos: 0,
             next_length: None,
             compression,
+            encryptor: None,
         }
     }
 
@@ -72,6 +78,18 @@ impl McWriter {
     /// writer.compression(None);
     /// ```
     pub fn compression(&mut self, threshold: Option<i32>) { self.compression = threshold; }
+
+    /// Enables or disables encryption.
+    ///
+    /// # Note
+    /// Contrary to [`McReader`](crate::McReader), this
+    /// is not a one time operation. Because packet frames
+    /// are clearly distinguishable, encryption can be
+    /// disabled without corrupting the output stream.
+    pub fn encryption(&mut self, key: [u8; 16]) {
+        // key cannot have invalid length -> safe unwrap
+        self.encryptor = Some(Encryptor::new_from_slices(&key, &key).unwrap());
+    }
 
     /// Indicates to this writer a new packet frame
     /// will follow. The `len` argument given **must** be
@@ -111,8 +129,6 @@ impl McWriter {
         Ok(())
     }
 
-    // TODO: encryption
-    //
     /// Ends a packet frame and flushes all current bytes,
     /// making those bytes ready to be sent over the network.
     pub fn finish_packet(&mut self) {
@@ -138,6 +154,14 @@ impl McWriter {
                     )
                 },
             }
+
+            // encrypt if necessary
+            if let Some(encryptor) = &mut self.encryptor {
+                let buf = &mut self.processed.bytes_mut().get_mut()[self.processed_pos..];
+                let (blocks, _) = InOutBuf::from(buf).into_chunks();
+                encryptor.encrypt_blocks_inout_mut(blocks);
+            }
+
             self.processed_pos = new_len;
         }
     }
