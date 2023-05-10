@@ -163,10 +163,16 @@ impl McWriter {
             }
 
             self.processed_pos = new_len;
+
+            // resize buffer to remain within bounds
+            let cap = self.processed.bytes().capacity();
+            if cap > BUF_LEN && cap > 3 * self.processed.bytes().len() {
+                let old = std::mem::replace(self.processed.bytes_mut().get_mut(), BytesMut::with_capacity(BUF_LEN));
+                self.processed.bytes_mut().get_mut().put(old);
+            }
         }
     }
 
-    // TODO: resize output within bounds
     fn flush(&mut self) {
         if self.input_len > 0 {
             let buf = &self.input[..self.input_len];
@@ -180,6 +186,9 @@ impl McWriter {
 
     #[cfg(test)]
     fn is_output_empty(&self) -> bool { self.processed_pos == 0 }
+
+    #[cfg(test)]
+    fn capacity(&self) -> usize { self.processed.bytes().capacity() }
 }
 
 // SAFETY: only `chunk_mut()` uses unsafe
@@ -419,5 +428,18 @@ mod tests {
         let actual_len = VarI32::read(&mut chunk).unwrap();
         assert_eq!(0, actual_len.val());
         assert_eq!(&[1; 10], &chunk[..]);
+    }
+
+    #[test]
+    fn test_shrinking() {
+        let mut writer = McWriter::new(None);
+        writer.start_packet(13000).unwrap();
+        writer.put_bytes(1, 13000);
+        writer.finish_packet();
+        let _ = writer.copy_to_bytes(13000);
+        writer.start_packet(10).unwrap();
+        writer.put_bytes(2, 10);
+        writer.finish_packet();
+        assert!(writer.capacity() < 10000);
     }
 }
