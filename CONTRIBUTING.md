@@ -69,6 +69,24 @@ For most changes, one of these two categories will make the most sense. If you f
 - Using the command line:
   - `git branch <new-branch> [base-branch]`
 
+### Strategies for Handling Deprecated or Modified Features Across Software Versions:
+  * Discontinued - The feature is no longer available after a specific version.
+    * Is it possible to emulate?
+      Yes - (anwser)
+      No - (anwser)
+  * Introduced in Version X - The feature is only accessible in versions starting from X.
+    * Is it possible to emulate?
+* Limited Availability (Versions X-Y) - The feature is only usable in a specific range of versions, excluding the latest and earliest supported versions.
+* Functionality/Data Changes: The feature has undergone modifications, but some shared functionality or data may still be present.
+  * Can it be represented as a same data structure?
+    * Yes - (anwser)
+    * No - (anwser)
+    
+#### Emulation Possible?
+While the feature itself is absent, alternative methods or workarounds may achieve similar results in newer versions.
+
+For features requiring emulation, prioritize implementation in the standard API first. Subsequently, consider offering an optional version-specific API (if applicable) and, if necessary, build the emulated feature on top of or in accordance with the existing API supporting implementation for the native feature.
+
 #### Commiting your changes
 
 In order to fully utilize Git, we recommend frequently committing your changes. Commit messages are an art we don't expect you to have mastered, but we do encourage you to follow [Atom's contribution guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md#git-commit-messages) when writing them.
