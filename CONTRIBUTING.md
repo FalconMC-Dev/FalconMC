@@ -69,33 +69,6 @@ For most changes, one of these two categories will make the most sense. If you f
 - Using the command line:
   - `git branch <new-branch> [base-branch]`
 
-### Strategies for Handling Deprecated or Modified Features Across Software Versions:
-* Discontinued - The feature is no longer available after a specific version.
-    * Is it possible to emulate?
-      Yes - (anwser)
-      No - (anwser)
-  * Introduced in Version X - The feature is only accessible in versions starting from X.
-    * Is it possible to emulate?
-* Limited Availability (Versions X-Y) - The feature is only usable in a specific range of versions, excluding the latest and earliest supported versions.
-* Functionality/Data Changes: The feature has undergone modifications, but some shared functionality or data may still be present.
-  * Does changes affect the represented data (eg. is it naming or serialization change)
-    * Yes
-      * Can functionality be emulated?
-        * Yes - (anwser)
-        * No - (anwser)
-    * No  - (anwser)
-
-#### Indicating not supported features
-If users encounter an unsupported feature it shall be handled in such a way to not introduce client desynchronization, indicate to the user that it's not possible to do that, and be as not disturbing as possible (for example, kicking a player if he uses block from newer version shall not be the case)
-
-#### Emulation Possible?
-While the feature itself is absent, alternative methods or workarounds may achieve similar results in newer versions.
-
-For features requiring emulation, prioritize implementation in the standard API first. Subsequently, consider offering an optional version-specific API (if applicable) and, if necessary, build the emulated feature on top of or in accordance with the existing API supporting implementation for the native feature.
-
-#### Unified data structure
-This multi-versioning approach leverages a flexible data structure capable of representing data from various versions. It acts as an abstracted universal data-type, converting into and out of version-specific formats. If an unsupported version is encountered, it shall use `Result::Err` or `Option::None`. This ensures seamless access to historical data, eliminating the need for managing separate structures for each version. This approach could also abstraction layer for other types. On top of it there might be implemented api that returns values (indicating it's not supported feature but not breaking anything).
-
 #### Commiting your changes
 
 In order to fully utilize Git, we recommend frequently committing your changes. Commit messages are an art we don't expect you to have mastered, but we do encourage you to follow [Atom's contribution guide](https://github.com/atom/atom/blob/master/CONTRIBUTING.md#git-commit-messages) when writing them.
@@ -119,3 +92,34 @@ Once you have submitted your PR, we will review your changes. We may have questi
 #### Profit???
 
 We sincerely thank you for your contribution to FalconMC. If you have any questions or concerns about our development cycle or how to contribute, please ask us on our [Discord server](https://discord.com/invite/HC82fwYXW5).
+
+### Strategies for Handling Deprecated or Modified Features Across Software Versions:
+
+* Discontinued - The feature is no longer available after a specific version.
+    * Is it possible to emulate?
+      Yes - (anwser)
+      No - (anwser)
+  * Introduced in Version X - The feature is only accessible in versions starting from X.
+    * Is it possible to emulate?
+* Limited Availability (Versions X-Y) - The feature is only usable in a specific range of versions, excluding the latest and earliest supported versions.
+* Functionality/Data Changes: The feature has undergone modifications, but some shared functionality or data may still be present.
+  * Does changes affect the represented data (eg. is it naming or serialization change)
+    * Yes
+      * Can functionality be emulated?
+        * Yes - (anwser)
+        * No - (anwser)
+    * No  - (anwser)
+
+#### Indicating not supported features
+
+If users encounter an unsupported feature it shall be handled in such a way to not introduce client desynchronization, indicate to the user that it's not possible to do that, and be as not disturbing as possible (for example, kicking a player if he uses block from newer version shall not be the case)
+
+#### Emulation Possible?
+
+While the feature itself is absent, alternative methods or workarounds may achieve similar results in newer versions.
+
+For features requiring emulation, prioritize implementation in the standard API first. Subsequently, consider offering an optional version-specific API (if applicable) and, if necessary, build the emulated feature on top of or in accordance with the existing API supporting implementation for the native feature.
+
+#### Unified data structure
+
+This multi-versioning approach leverages a flexible data structure capable of representing data from various versions. It acts as an abstracted universal data-type, converting into and out of version-specific formats. If an unsupported version is encountered, it shall use `Result::Err` or `Option::None`. This ensures seamless access to historical data, eliminating the need for managing separate structures for each version. This approach could also abstraction layer for other types. On top of it there might be implemented api that returns values (indicating it's not supported feature but not breaking anything).
